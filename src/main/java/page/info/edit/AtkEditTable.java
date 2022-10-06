@@ -4,8 +4,10 @@ import common.CommonStatic;
 import common.battle.data.AtkDataModel;
 import common.pack.PackData;
 import common.pack.UserProfile;
-import common.util.unit.Trait;
-import page.*;
+import page.JL;
+import page.JTF;
+import page.JTG;
+import page.Page;
 import page.info.filter.TraitList;
 import page.support.ListJtfPolicy;
 import utilpc.Interpret;
@@ -16,7 +18,6 @@ import java.awt.event.FocusEvent;
 
 import static common.util.Data.TRAIT_EVA;
 import static common.util.Data.TRAIT_RED;
-import static utilpc.Interpret.SABIS;
 
 class AtkEditTable extends Page {
 

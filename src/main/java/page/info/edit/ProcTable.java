@@ -19,15 +19,12 @@ public abstract class ProcTable extends Page {
 
 		private static final int SEC = 16;
 
-		private static final int[] UINDS = new int[] { Data.P_KB, Data.P_STOP, Data.P_SLOW, Data.P_CRIT, Data.P_WAVE, Data.P_MINIWAVE, Data.P_WEAK,  //Procs for units
+		private static final int[] INDS = new int[] { Data.P_KB, Data.P_STOP, Data.P_SLOW, Data.P_CRIT, Data.P_WAVE, Data.P_MINIWAVE, Data.P_WEAK,
 				Data.P_BREAK, Data.P_SHIELDBREAK, Data.P_WARP, Data.P_CURSE, Data.P_SATK, Data.P_POIATK, Data.P_VOLC, Data.P_BOUNTY, Data.P_ATKBASE,
 				Data.P_SEAL, Data.P_SUMMON, Data.P_MOVEWAVE, Data.P_SNIPER, Data.P_BOSS, Data.P_TIME, Data.P_THEME, Data.P_POISON, Data.P_ARMOR, Data.P_SPEED };
-		private static final int[] EINDS = new int[] { Data.P_KB, Data.P_STOP, Data.P_SLOW, Data.P_CRIT, Data.P_WAVE, Data.P_MINIWAVE, Data.P_WEAK,  //Procs for enemies
-				Data.P_BREAK, Data.P_SHIELDBREAK, Data.P_WARP, Data.P_CURSE, Data.P_SATK, Data.P_POIATK, Data.P_VOLC, Data.P_ATKBASE, Data.P_SEAL,
-				Data.P_SUMMON, Data.P_MOVEWAVE, Data.P_SNIPER, Data.P_BOSS, Data.P_TIME, Data.P_THEME, Data.P_POISON, Data.P_ARMOR, Data.P_SPEED };
 
 		protected AtkProcTable(Page p, boolean edit, boolean unit) {
-			super(p, unit ? UINDS : EINDS, edit, unit);
+			super(p, INDS, edit, unit);
 		}
 
 		@Override
