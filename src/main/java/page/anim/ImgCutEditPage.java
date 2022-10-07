@@ -8,10 +8,8 @@ import common.pack.Source;
 import common.pack.UserProfile;
 import common.system.fake.FakeImage.Marker;
 import common.util.AnimGroup;
-import common.util.anim.AnimCE;
-import common.util.anim.ImgCut;
-import common.util.anim.MaAnim;
-import common.util.anim.Part;
+import common.util.anim.*;
+import common.util.pack.Soul;
 import common.util.unit.Enemy;
 import main.MainBCU;
 import main.Opts;
@@ -233,9 +231,19 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 			BufferedImage bimg = new Importer("Add your sprite").getImg();
 			if (bimg == null)
 				return;
+			int selection = Opts.selection("What kind of animation do you want to create?",
+					"Select Animation Type",
+					"Unit/Enemy",
+					"Soul");
+			if (selection == -1)
+				return;
 			changing = true;
-			ResourceLocation rl = new ResourceLocation(ResourceLocation.LOCAL, "new anim");
-			Workspace.validate(Source.ANIM, rl);
+			ResourceLocation rl;
+			if (selection == 1)
+				rl = new ResourceLocation(ResourceLocation.LOCAL, "new soul anim", Source.BasePath.SOUL);
+			else
+				rl = new ResourceLocation(ResourceLocation.LOCAL, "new anim", Source.BasePath.ANIM);
+			Workspace.validate(rl);
 			AnimCE ac = new AnimCE(rl);
 			ac.setNum(MainBCU.builder.build(bimg));
 			ac.saveImg();
@@ -300,7 +308,7 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 					selectAnimNode(icet.anim);
 					setA(icet.anim);
 				} else {
-					str = AnimCE.getAvailable(str);
+					str = AnimCE.getAvailable(str, icet.anim.id.base);
 					icet.anim.renameTo(str);
 					jtf.setText(str);
 				}
@@ -310,8 +318,8 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 
 		copy.addActionListener(arg0 -> {
 			changing = true;
-			ResourceLocation rl = new ResourceLocation(ResourceLocation.LOCAL, icet.anim.id.id);
-			Workspace.validate(Source.ANIM, rl);
+			ResourceLocation rl = new ResourceLocation(ResourceLocation.LOCAL, icet.anim.id.id, icet.anim.id.base);
+			Workspace.validate(rl);
 			AnimCE ac = new AnimCE(rl, icet.anim);
 			ac.setEdi(icet.anim.getEdi());
 			ac.setUni(icet.anim.getUni());
@@ -501,8 +509,9 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 
 		merg.addActionListener(e -> {
 			changing = true;
-			ResourceLocation rl = new ResourceLocation(ResourceLocation.LOCAL, "merged");
-			Workspace.validate(Source.ANIM, rl);
+
+			ResourceLocation rl = new ResourceLocation(ResourceLocation.LOCAL, "merged", icet.anim.id.base);
+			Workspace.validate(rl);
 
 			TreePath[] paths = jta.getSelectionPaths();
 

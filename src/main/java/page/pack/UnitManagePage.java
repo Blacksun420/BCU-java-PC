@@ -6,6 +6,7 @@ import common.battle.BasisLU;
 import common.battle.BasisSet;
 import common.battle.data.CustomUnit;
 import common.pack.PackData.UserPack;
+import common.pack.Source;
 import common.pack.UserProfile;
 import common.util.anim.AnimCE;
 import common.util.unit.*;
@@ -23,6 +24,7 @@ import javax.swing.tree.TreePath;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class UnitManagePage extends Page {
 
@@ -137,6 +139,8 @@ public class UnitManagePage extends Page {
 		jtd.addTreeSelectionListener(arg0 -> {
 			if (changing)
 				return;
+			// boolean edi = pac != null && pac.editable && jld.getSelectedValue() != null && jld.getSelectedValue().id.base.equals(Source.BasePath.ANIM);
+			// TODO: check if above commented code is needed
 			changing = true;
 			boolean edi = pac != null && pac.editable && getSelectedAnim() != null;
 			addu.setEnabled(edi);
@@ -512,6 +516,8 @@ public class UnitManagePage extends Page {
 			changing = boo;
 		}
 		boolean b = pac != null && pac.editable;
+		// addu.setEnabled(b && jld.getSelectedValue() != null && jld.getSelectedValue().id.base.equals(Source.BasePath.ANIM));
+		// TODO: check above
 		addu.setEnabled(b && getSelectedAnim() != null);
 		edit.setEnabled(b);
 		addl.setEnabled(b);
@@ -552,6 +558,8 @@ public class UnitManagePage extends Page {
 		remu.setEnabled(b);
 		rar.setEnabled(b);
 		cbl.setEnabled(b);
+		// addf.setEnabled(b && jld.getSelectedValue() != null && jld.getSelectedValue().id.base.equals(Source.BasePath.ANIM) && unit.forms.length < 3);
+		// TODO: check above
 		addf.setEnabled(b && getSelectedAnim() != null && unit.forms.length < 3);
 		maxl.setEditable(b);
 		maxp.setEditable(b);

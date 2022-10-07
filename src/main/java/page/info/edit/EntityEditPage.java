@@ -17,9 +17,10 @@ import common.util.lang.Editors;
 import common.util.pack.Background;
 import common.util.pack.EffAnim;
 import common.util.pack.Soul;
-import common.util.pack.Soul.SoulType;
+import common.util.unit.Enemy;
+import common.util.unit.Form;
+import common.util.unit.Unit;
 import common.util.stage.Music;
-import common.util.unit.*;
 import main.Opts;
 import page.*;
 import page.anim.DIYViewPage;
@@ -788,7 +789,10 @@ public abstract class EntityEditPage extends Page {
 			case "resurrection":
 				lpst.setText(MainLocale.INFO, "Post-Death");
 				Soul s = Identifier.get(ce.death);
-				vpst.setText(s == null ? "-" : (s.len(SoulType.DEF) - ce.res.pre + "f"));
+				vpst.setText(ce.res == null ? "x" : s == null ? "-" : (s.anim.len(UType.SOUL) - ce.res.pre + "f"));
+
+				// vpst.setText(ce.res == null ? "x" : s == null ? "-" : (s.len(SoulType.DEF) - ce.res.pre + "f"));
+				// TODO: check if above commented code is needed or not
 				break;
 			case "counterattack":
 				lpst.setText(MainLocale.INFO, "Post-Counter");

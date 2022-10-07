@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 public class PackEditPage extends Page {
 
@@ -66,6 +67,30 @@ public class PackEditPage extends Page {
 	private final JList<UserPack> jlt = new JList<>(vpack);
 	private final JScrollPane jspt = new JScrollPane(jlt);
 
+	/*private final JBTN addp = new JBTN(0, "add");
+	private final JBTN remp = new JBTN(0, "rem");
+	private final JBTN adde = new JBTN(0, "add");
+	private final JBTN reme = new JBTN(0, "rem");
+	private final JBTN erea = new JBTN(0, "reassign");
+	private final JBTN adds = new JBTN(0, "add");
+	private final JBTN rems = new JBTN(0, "rem");
+	private final JBTN addr = new JBTN(0, "add");
+	private final JBTN remr = new JBTN(0, "rem");
+	private final JBTN edit = new JBTN(0, "edit");
+	private final JBTN sdiy = new JBTN(0, "sdiy");
+	private final JBTN vene = new JBTN(0, "vene");
+	private final JBTN extr = new JBTN(0, "extr");
+	private final JBTN vcas = new JBTN(0, "vcas");
+	private final JBTN vbgr = new JBTN(0, "vbgr");
+	private final JBTN vrcg = new JBTN(0, "recg");
+	private final JBTN vrlr = new JBTN(0, "relr");
+	private final JBTN cunt = new JBTN(0, "cunt");
+	private final JBTN tdiy = new JBTN(0, "ctrt");
+	private final JBTN ener = new JBTN(0, "ener");
+	private final JBTN vmsc = new JBTN(0, "cmsc");
+	private final JBTN unpk = new JBTN(0, "unpack");
+	private final JBTN recd = new JBTN(0, "replay");
+	*/
 	private final JBTN addp = new JBTN(MainLocale.PAGE, "add");
 	private final JBTN remp = new JBTN(MainLocale.PAGE, "rem");
 	private final JBTN adde = new JBTN(MainLocale.PAGE, "add");
@@ -89,6 +114,7 @@ public class PackEditPage extends Page {
 	private final JBTN vmsc = new JBTN(MainLocale.PAGE, "vmsc");
 	private final JBTN unpk = new JBTN(MainLocale.PAGE, "unpack");
 	private final JBTN recd = new JBTN(MainLocale.PAGE, "replay");
+	private final JBTN csol = new JBTN(MainLocale.PAGE, "csoul");
 	private final JTG cmbo = new JTG(MainLocale.PAGE, "usecombo");
 	private final JTF jtfp = new JTF();
 	private final JTF jtfe = new JTF();
@@ -186,6 +212,7 @@ public class PackEditPage extends Page {
 
 		set(recd, x, y, w, 950, 300, 50);
 		set(tdiy, x, y, w, 1050, 300, 50);
+		set(csol, x, y, w, 1150, 300, 50);
 
 		w += 350;
 
@@ -199,6 +226,8 @@ public class PackEditPage extends Page {
 		back.setLnr(x -> changePanel(getFront()));
 
 		recd.setLnr(x -> changePanel(new RecdPackPage(this, pac)));
+
+		csol.setLnr(x -> changePanel(new SoulEditPage(this, pac)));
 
 		vcas.addActionListener(arg0 -> {
 			if (pac != null && pac.editable)
@@ -232,6 +261,9 @@ public class PackEditPage extends Page {
 			if (changing)
 				return;
 			changing = true;
+			/*boolean editable = pac != null && jld.getSelectedValue() != null && jld.getSelectedValue().id.base.equals(Source.BasePath.ANIM) && pac.editable;
+			adde.setEnabled(editable);
+			erea.setEnabled(editable && jle.getSelectedValue() != null);*/
 			adde.setEnabled(pac != null && getSelectedAnim() != null && pac.editable);
 			erea.setEnabled(adde.isEnabled() && jle.getSelectedValue() != null);
 			changing = false;
@@ -626,6 +658,7 @@ public class PackEditPage extends Page {
 		add(vmsc);
 		add(unpk);
 		add(recd);
+		add(csol);
 		add(cmbo);
 
 		cmbo.setToolTipText("Decide whether to apply or not this pack's custom CatCombos onto your lineups");
@@ -702,6 +735,8 @@ public class PackEditPage extends Page {
 			}
 
 		jtfp.setEnabled(b);
+		// adde.setEnabled(b && jld.getSelectedValue() != null && jld.getSelectedValue().id.base.equals(Source.BasePath.ANIM));
+		// TODO: check if above commmented code is needed
 		adde.setEnabled(b && getSelectedAnim() != null);
 		adds.setEnabled(b);
 		extr.setEnabled(pac != null);
