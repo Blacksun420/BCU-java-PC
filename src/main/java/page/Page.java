@@ -1,6 +1,7 @@
 package page;
 
-import main.MainBCU;
+import plugin.ui.main.UIPlugin;
+import plugin.ui.main.util.MenuBarHandler;
 import utilpc.PP;
 
 import javax.swing.*;
@@ -12,8 +13,6 @@ import java.util.function.Consumer;
 public abstract class Page extends JPanel implements RetFunc {
 
 	private static final long serialVersionUID = 1L;
-
-	public static Color BGCOLOR = MainBCU.light || !MainBCU.nimbus ? new Color(255, 255, 255) : new Color(54, 54, 54);
 
 	static {
 		ToolTipManager.sharedInstance().setInitialDelay(100);
@@ -58,7 +57,6 @@ public abstract class Page extends JPanel implements RetFunc {
 
 	protected Page(Page p) {
 		front = p;
-		setBackground(BGCOLOR);
 		setLayout(null);
 	}
 
@@ -94,10 +92,13 @@ public abstract class Page extends JPanel implements RetFunc {
 	}
 
 	public final Page getFront() {
-		if (front != null) {
-			front.setBackground(BGCOLOR);
-		}
 		return front;
+	}
+
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		UIPlugin.paintPage(g, this);
 	}
 
 	public final PP getXY() {

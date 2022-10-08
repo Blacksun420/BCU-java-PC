@@ -160,7 +160,7 @@ public class TreaTable extends Page {
 				add(jln[i]);
 				add(jtf[i]);
 			} else
-				jln[i].setForeground(MainBCU.light ? Color.BLUE : new Color(84, 110, 122));
+				jln[i].setForeground(Color.BLUE);
 			if (--k == 0)
 				cur = colp.side(cur);
 

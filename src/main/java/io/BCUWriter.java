@@ -276,8 +276,6 @@ public class BCUWriter extends DataIO {
 		jo.addProperty("edit_lang", MainLocale.exLang);
 		jo.addProperty("edit_tooltip", MainLocale.exTTT);
 		jo.addProperty("large_screen", BattleInfoPage.DEF_LARGE);
-		jo.addProperty("style_light", MainBCU.light);
-		jo.addProperty("style_nimbus", MainBCU.nimbus);
 		jo.addProperty("author", MainBCU.author);
 		jo.addProperty("rowlayout", CommonStatic.getConfig().twoRow);
 		jo.addProperty("backup_file", CommonStatic.getConfig().backupFile == null ? "None" : CommonStatic.getConfig().backupFile);

@@ -23,9 +23,8 @@ public class AnimLCR extends DefaultListCellRenderer {
 		jl.setIcon(null);
 		jl.setHorizontalTextPosition(SwingConstants.RIGHT);
 
-		if (s && MainBCU.nimbus) {
-			jl.setBackground(MainBCU.light ? Theme.LIGHT.NIMBUS_SELECT_BG : Theme.DARK.NIMBUS_SELECT_BG);
-		}
+		if (s)
+			jl.setBackground(Theme.DARK.NIMBUS_SELECT_BG);
 
 		VImg v;
 		if (o instanceof Animable<?, ?>)

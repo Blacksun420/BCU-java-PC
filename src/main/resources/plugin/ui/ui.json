@@ -1,0 +1,64 @@
+{
+  "basic": {
+    "config": {
+      "java.lang.String": {
+        "gifFile": "",
+        "fontFile": "",
+        "iconFile": "",
+        "bgFile": ""
+      },
+      "java.lang.Boolean": {
+        "gifResize": "true",
+        "animatedChangeUI": "true",
+        "bgResize": "false",
+        "fontResize": "true",
+        "warningChangeTheme": "true",
+        "requireSwingTheme": "true"
+      },
+      "java.lang.Integer": {
+        "opaque": "50",
+        "BG-Point-X": "0",
+        "BG-Point-Y": "0",
+        "gifDelay": "10",
+        "version": "22"
+      },
+      "java.lang.Double": {
+        "padding_radio_height": "0.171",
+        "padding_radio_width": "0.028"
+      },
+      "java.awt.Color": {
+        "cd_lock": [
+          0,
+          240,
+          0
+        ],
+        "cd_backdrop": [
+          0,
+          0,
+          0
+        ],
+        "cd_loading": [
+          2,
+          255,
+          254
+        ]
+      }
+    }
+  },
+  "theme": {
+    "translations": {
+      "Dracula": "Dracula"
+    },
+    "cur": {
+      "name": "Metal",
+      "type": "Swing"
+    },
+    "favorites": [
+      {
+        "name": "Dracula",
+        "type": "Dark"
+      }
+    ]
+  },
+  "version": "0.1.0.0"
+}

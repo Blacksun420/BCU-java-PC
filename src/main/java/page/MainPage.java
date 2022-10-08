@@ -20,6 +20,7 @@ import page.info.filter.UnitFindPage;
 import page.pack.PackEditPage;
 import page.pack.ResourcePage;
 import page.view.*;
+import plugin.ui.main.page.UIPage;
 
 import javax.swing.*;
 
@@ -109,6 +110,8 @@ public class MainPage extends Page {
 		set(caic, x, y, 1500, 300, 200, 50);
 		set(camm, x, y, 1500, 400, 200, 50);
 		set(cama, x, y, 1500, 500, 200, 50);
+		set(ui, x, y, 1500, 600, 200, 50);
+
 	}
 
 	private void addListeners() {
@@ -158,6 +161,7 @@ public class MainPage extends Page {
 		});
 		comp.setLnr(() -> new ComparePage(this));
 		refr.setLnr(c -> refrTips());
+		ui.setLnr(()-> new UIPage(this));
 	}
 
 	private void ini() {
@@ -237,6 +241,9 @@ public class MainPage extends Page {
 		add(refr);
 		add(tips);
 
+		add(ui);
+		ui.setToolTipText(get(MainLocale.PAGE,"ui-tip"));
+
 		welcome.setVisible(!MainBCU.author.isEmpty());
 
 		setMemo();
@@ -257,4 +264,5 @@ public class MainPage extends Page {
 		tips.setText("<html>" + ALLTIPS[(int)(Math.random() * ALLTIPS.length)] + "</html>");
 	}
 
+	private final JBTN ui = new JBTN(0, "UI Plugin");
 }

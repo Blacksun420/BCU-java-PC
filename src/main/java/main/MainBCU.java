@@ -7,10 +7,11 @@ import common.io.PackLoader.ZipDesc.FileDesc;
 import common.io.assets.Admin;
 import common.io.assets.AssetLoader;
 import common.pack.Context;
+import common.pack.Context.ErrType;
 import common.pack.Source;
 import common.pack.Source.Workspace;
 import common.pack.UserProfile;
-import common.pack.Context.ErrType;
+import common.system.DateComparator;
 import common.system.fake.ImageBuilder;
 import common.system.files.VFile;
 import common.util.AnimGroup;
@@ -21,17 +22,18 @@ import io.BCUReader;
 import io.BCUWriter;
 import jogl.GLBBB;
 import jogl.util.GLIB;
-import page.*;
+import page.LoadPage;
+import page.MainFrame;
+import page.MainPage;
 import page.awt.AWTBBB;
 import page.awt.BBBuilder;
-import common.system.DateComparator;
 import page.battle.BattleBox;
-import utilpc.Theme;
+import plugin.Plugin;
+import plugin.ui.main.UIPlugin;
+import plugin.ui.main.util.MenuBarHandler;
 import utilpc.UtilPC;
 import utilpc.awt.FIBI;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.DecimalFormat;
@@ -284,7 +286,7 @@ public class MainBCU {
 	public static int autoSaveTime = 0;
 	public static final boolean WRITE = !new File("./.idea").exists();
 	public static boolean preload = false, trueRun = true, loaded = false, USE_JOGL = false;
-	public static boolean light = true, nimbus = false, seconds = false, buttonSound = false;
+	public static boolean seconds = false, buttonSound = false;
 	public static String author = "";
 	public static ImageBuilder<BufferedImage> builder;
 	public static boolean announce0510 = false;
@@ -318,38 +320,44 @@ public class MainBCU {
 		ImageBuilder.builder = builder = USE_JOGL ? new GLIB() : FIBI.builder;
 		BBBuilder.def = USE_JOGL ? new GLBBB() : AWTBBB.INS;
 
-		if (nimbus) {
-			if (light) {
-				Theme.LIGHT.setTheme();
-				Page.BGCOLOR = new Color(255, 255, 255);
-			} else {
-				Theme.DARK.setTheme();
-				Page.BGCOLOR = new Color(40, 40, 40);
-			}
-		} else {
-			Page.BGCOLOR = new Color(255, 255, 255);
-		}
+		// get Plugin instance
+		Plugin P = UIPlugin.getInstance();
 
+		// UIPlugin has work to do before MainFrame init
+		P.doBeforeFrameInit();
 		new MainFrame(Data.revVer(MainBCU.ver)).initialize();
+		// do after frame init
+		P.doAfterFrameInit();
+
+		// MainFrame should be invisible before calling this method
+		MainFrame.F.setVisible(true);
 		new Timer().start();
 
-		if(!announce0510 && checkOldFileExisting()) {
+		if (!announce0510 && checkOldFileExisting()) {
 			Opts.popAgreement("Before migrating v5", "<html><p style=\"width:500px\">This BCU version has completely different code structure from previous version (0-4-10-9), so others data will get reformatted. This process cannot be undone, and it may cause error while reformatting. We recommend you to backup your files (user/replays/res folder) before migrating v5. Agree on this text to continue.</p></html>");
 		} else {
 			announce0510 = true;
 		}
 
-		MenuBarHandler.initialize();
+		// check Plugin update
+		P.checkUpdate();
 		BCJSON.check();
 		CommonStatic.ctx.initProfile();
 
 		BCUReader.getData$1();
+		// Plugin may do sth
+		P.doAfterReadingLang();
 		BattleBox.StageNamePainter.read();
-		loaded = true;
-		JMenuItem menu = MenuBarHandler.getFileItem("Save All");
-			if (menu != null)
-				menu.setEnabled(true);
 
+		loaded = true;
+		afterLoading();
+		// Plugin may do sth
+		P.doAfterLoading();
+	}
+
+	private static void afterLoading() {
+		// this MenuBarHandler is not page.MenuBarHandler but plugin.ui.main.util.MenuBarHandler
+		MenuBarHandler.enableSave();
 		ast = autoSaveTime > 0 ? new AutoSaveTimer() : null;
 		MainFrame.changePanel(new MainPage());
 	}

@@ -22,8 +22,7 @@ public class TraitList extends JList<Trait> {
     public TraitList(boolean editing) {
         id = editing;
 
-        if (MainBCU.nimbus)
-            setSelectionBackground(MainBCU.light ? Theme.LIGHT.NIMBUS_SELECT_BG : Theme.DARK.NIMBUS_SELECT_BG);
+        setSelectionBackground(Theme.DARK.NIMBUS_SELECT_BG);
 
         setCellRenderer(new DefaultListCellRenderer() {
             private static final long serialVersionUID = 1L;

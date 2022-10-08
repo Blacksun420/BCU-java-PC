@@ -21,17 +21,12 @@ public class AnimTreeRenderer extends DefaultTreeCellRenderer {
 
         JLabel jl = (JLabel) comp;
 
-        if(selected)
-            if(MainBCU.nimbus) {
-                jl.setOpaque(true);
-                jl.setBorder(BorderFactory.createLineBorder(UIManager.getColor("nimbusFocus")));
-                jl.setBackground(UIManager.getColor("nimbusSelectionBackground"));
-            } else {
-                jl.setBorder(BorderFactory.createLineBorder(UIManager.getColor("Tree.selectionBorderColor")));
-            }
-        else {
-            if(MainBCU.nimbus)
-                jl.setOpaque(false);
+        if(selected) {
+            jl.setOpaque(true);
+            jl.setBorder(BorderFactory.createLineBorder(UIManager.getColor("nimbusFocus")));
+            jl.setBackground(UIManager.getColor("nimbusSelectionBackground"));
+        } else {
+            jl.setOpaque(false);
 
             jl.setBorder(null);
         }

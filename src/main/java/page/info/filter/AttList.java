@@ -36,9 +36,7 @@ public class AttList extends JList<String> {
 	}
 
 	protected AttList(int type, int para) {
-		if (MainBCU.nimbus) {
-			setSelectionBackground(MainBCU.light ? Theme.LIGHT.NIMBUS_SELECT_BG : Theme.DARK.NIMBUS_SELECT_BG);
-		}
+		setSelectionBackground(Theme.DARK.NIMBUS_SELECT_BG);
 
 		setCellRenderer(new DefaultListCellRenderer() {
 

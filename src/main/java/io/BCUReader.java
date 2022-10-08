@@ -83,8 +83,6 @@ public class BCUReader extends DataIO {
 				MainLocale.exLang = jo.get("edit_lang").getAsBoolean();
 				MainLocale.exTTT = jo.get("edit_tooltip").getAsBoolean();
 				BattleInfoPage.DEF_LARGE = jo.get("large_screen").getAsBoolean();
-				MainBCU.light = jo.get("style_light").getAsBoolean();
-				MainBCU.nimbus = jo.get("style_nimbus").getAsBoolean();
 				if(jo.has("author")) {
 					MainBCU.author = jo.get("author").getAsString();
 				}

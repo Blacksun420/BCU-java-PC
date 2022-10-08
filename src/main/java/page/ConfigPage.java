@@ -55,8 +55,6 @@ public class ConfigPage extends Page {
 	private final JL jlui = new JL(MainLocale.PAGE, "UIvol");
 	private final JL mbac = new JL(MainLocale.PAGE, "maxback");
 	private final JBTN nobac = new JBTN(MainLocale.PAGE, CommonStatic.getConfig().maxBackup != -1 ? "nobac" : "yesbac");
-	private final JBTN theme = new JBTN(MainLocale.PAGE, MainBCU.light ? "themel" : "themed");
-	private final JBTN nimbus = new JBTN(MainLocale.PAGE, MainBCU.nimbus ? "nimbus" : "tdefault");
 	private final JSlider jsmin = new JSlider(0, 100);
 	private final JSlider jsmax = new JSlider(0, 100);
 	private final JSlider jsbg = new JSlider(0, 100);
@@ -122,8 +120,6 @@ public class ConfigPage extends Page {
 		set(exla, x, y, 1100, 625, 450, 50);
 		set(extt, x, y, 1100, 700, 450, 50);
 		set(rlla, x, y, 1100, 775, 450, 50);
-		set(nimbus, x, y, 1100, 850, 200, 50);
-		set(theme, x, y, 1350, 850, 200, 50);
 		set(row, x, y, 1100, 925, 450, 50);
 		set(secs, x, y, 1100, 1000, 450, 50);
 		set(preflv, x, y, 1600, 550, 200, 50);
@@ -277,33 +273,6 @@ public class ConfigPage extends Page {
 
 		musc.addActionListener(arg0 -> BCMusic.play = musc.isSelected());
 
-		nimbus.setLnr((b) -> {
-			if (Opts.conf("This requires restart to apply. Do you want to restart?"+(MainBCU.nimbus ? "\n\nWarning : Using Nimbus theme may result in high CPU usage" : ""))) {
-				MainBCU.nimbus = !MainBCU.nimbus;
-				changePanel(new SavePage());
-			}
-		});
-
-		theme.setLnr((b) -> {
-			MainBCU.light = !MainBCU.light;
-
-			if (MainBCU.light) {
-				theme.setText(MainLocale.getLoc(MainLocale.PAGE, "themel"));
-				Theme.LIGHT.setTheme();
-				Page.BGCOLOR = new Color(255, 255, 255);
-				setBackground(BGCOLOR);
-				SwingUtilities.updateComponentTreeUI(this);
-				theme.setToolTipText(MainLocale.getLoc(MainLocale.PAGE, "themel"));
-			} else {
-				theme.setText(MainLocale.getLoc(MainLocale.PAGE, "themed"));
-				Theme.DARK.setTheme();
-				Page.BGCOLOR = new Color(40, 40, 40);
-				setBackground(BGCOLOR);
-				SwingUtilities.updateComponentTreeUI(this);
-				theme.setToolTipText(MainLocale.getLoc(MainLocale.PAGE, "themed"));
-			}
-		});
-
 		row.addActionListener(a -> {
 			CommonStatic.getConfig().twoRow = !CommonStatic.getConfig().twoRow;
 			row.setText(MainLocale.PAGE, CommonStatic.getConfig().twoRow ? "tworow" : "onerow");
@@ -370,8 +339,6 @@ public class ConfigPage extends Page {
 		set(jsbg);
 		set(jsse);
 		set(jsui);
-		add(nimbus);
-		add(theme);
 		add(row);
 		add(secs);
 		add(preflv);
@@ -431,9 +398,7 @@ public class ConfigPage extends Page {
 		bgeff.setSelected(CommonStatic.getConfig().drawBGEffect);
 		btdly.setSelected(CommonStatic.getConfig().buttonDelay);
 		stdis.setSelected(CommonStatic.getConfig().stageName);
-		if (!MainBCU.nimbus) {
-			theme.setEnabled(false);
-		}
+
 		shake.setSelected(CommonStatic.getConfig().shake);
 		addListeners();
 	}

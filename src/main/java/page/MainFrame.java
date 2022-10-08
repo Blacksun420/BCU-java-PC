@@ -3,16 +3,16 @@ package page;
 import common.system.P;
 import main.Opts;
 import main.Printer;
+import plugin.ui.main.UIPlugin;
+import plugin.ui.main.util.MenuBarHandler;
 import utilpc.PP;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.plaf.FontUIResource;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
+import java.io.File;
 import java.util.ConcurrentModificationException;
-import java.util.Enumeration;
-import java.util.List;
 
 public class MainFrame extends JFrame {
 
@@ -53,44 +53,31 @@ public class MainFrame extends JFrame {
 	}
 
 	private static void setFonts(int f) {
-		List<Object> ks = new ArrayList<>();
-		List<Object> fr = new ArrayList<>();
-		font = new Font(fontType, fontStyle, f);
-		FontUIResource fontRes = new FontUIResource(font);
-		for (Enumeration<Object> keys = UIManager.getDefaults().keys(); keys.hasMoreElements();) {
-			Object key = keys.nextElement();
-			Object value = UIManager.get(key);
-			if (value instanceof FontUIResource) {
-				ks.add(key);
-				fr.add(fontRes);
-			}
-		}
-		for (int i = 0; i < ks.size(); i++)
-			UIManager.put(ks.get(i), fr.get(i));
+		font = UIPlugin.getFont();
 	}
 
 	private boolean settingsize = false, changingPanel = false;
 
 	public MainFrame(String ver) {
 		super(Page.get(MainLocale.PAGE, "title") + " Ver " + ver);
-		//setIcon();
+		F = this;
+		setIcon();
 		setLayout(null);
 		addListener();
 		sizer();
 	}
 
 	// Currently unused function used to officially add an icon to BCU, it currently works but will be left unused until an icon is oficially added to BCU assets
-	/*private void setIcon() {
+	private void setIcon() {
 		try {
-			Image icons = ImageIO.read(new File("IconDirectoryHere.png"));
+			Image icons = ImageIO.read(new File("./assets/icon.png"));
 			super.setIconImage(icons);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}*/
+	}
 
 	public void initialize() {
-		F = this;
 		changePanel(new LoadPage());
 		Fresized();
 	}
@@ -100,7 +87,6 @@ public class MainFrame extends JFrame {
 			PP screen = new PP(Toolkit.getDefaultToolkit().getScreenSize());
 			rect = new PP(0, 0).toRectangle(new P(screen.x, screen.y));
 			setBounds(rect);
-			setVisible(true);
 			int nx = rect.width - getRootPane().getWidth();
 			int ny = rect.height - getRootPane().getHeight();
 			crect = rect;
@@ -111,7 +97,6 @@ public class MainFrame extends JFrame {
 		} else {
 			rect = crect;
 			setBounds(rect);
-			setVisible(true);
 		}
 	}
 
@@ -127,7 +112,7 @@ public class MainFrame extends JFrame {
 
 			@Override
 			public void windowClosing(WindowEvent arg0) {
-				JMenuItem menu = MenuBarHandler.getFileItem("Save All");
+				JMenuItem menu = MenuBarHandler.getFileMenu("Save All");
 				if (menu != null)
 					menu.setEnabled(false);
 

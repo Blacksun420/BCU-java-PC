@@ -40,8 +40,7 @@ class PCoinEditTable extends Page {
         private static final long serialVersionUID = 1L;
 
         protected NPList() {
-            if (MainBCU.nimbus)
-                setSelectionBackground(MainBCU.light ? Theme.LIGHT.NIMBUS_SELECT_BG : Theme.DARK.NIMBUS_SELECT_BG);
+            setSelectionBackground(Theme.DARK.NIMBUS_SELECT_BG);
         }
         protected void setListIcons() {
             setCellRenderer(new DefaultListCellRenderer() {
