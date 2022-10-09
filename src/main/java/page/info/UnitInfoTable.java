@@ -139,10 +139,8 @@ public class UnitInfoTable extends Page {
 		main[2][3].setText("" + (attack * 30 / ef.du.getItv()));
 		main[2][5].setText("" + (int) (ef.du.getSpeed() * (1 + b.getInc(Data.C_SPE) * 0.01)));
 		int respawn = b.t().getFinRes(ef.du.getRespawn());
-		if (MainBCU.seconds)
-			main[1][5].setText(MainBCU.toSeconds(respawn));
-		else
-			main[1][5].setText(respawn + "f");
+		main[1][5].setText(MainBCU.convertTime(respawn));
+
 		main[1][7].setText("" + ef.getPrice(1));
 		main[0][4].setText(Interpret.getTrait(TraitBox, 0));
 		int[][] atkData = ef.du.rawAtkData();
@@ -279,16 +277,9 @@ public class UnitInfoTable extends Page {
 		main[3][3].setText("" + (f.du.getWill() + 1));
 		main[3][4].setText(MainLocale.INFO, "TBA");
 		main[3][6].setText(MainLocale.INFO, "postaa");
-
-		if (MainBCU.seconds) {
-			main[2][7].setText(MainBCU.toSeconds(f.du.getItv()));
-			main[3][5].setText(MainBCU.toSeconds(f.du.getTBA()));
-			main[3][7].setText(MainBCU.toSeconds(f.du.getPost()));
-		} else {
-			main[2][7].setText(f.du.getItv() + "f");
-			main[3][5].setText(f.du.getTBA() + "f");
-			main[3][7].setText(f.du.getPost() + "f");
-		}
+		main[2][7].setText(MainBCU.convertTime(f.du.getItv()));
+		main[3][5].setText(MainBCU.convertTime(f.du.getTBA()));
+		main[3][7].setText(MainBCU.convertTime(f.du.getPost()));
 
 		special[0][0].setText(MainLocale.INFO, "count");
 		special[0][1].setText(f.du.getAtkLoop() < 0 ? "infinite" : f.du.getAtkLoop() + "");
@@ -315,13 +306,8 @@ public class UnitInfoTable extends Page {
 			if (use.length() > 0)
 				use.append(" / ");
 
-			if (MainBCU.seconds)
-				pre.append(MainBCU.toSeconds(atkDatum[1]));
-			else
-				pre.append(atkDatum[1]).append("f");
-
+			pre.append(MainBCU.convertTime(atkDatum[1]));
 			use.append(atkDatum[3]);
-
 		}
 		atks[3].setText(pre.toString());
 		atks[5].setText(use.toString());

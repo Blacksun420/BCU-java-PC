@@ -21,6 +21,7 @@ import common.util.unit.Enemy;
 import common.util.unit.Form;
 import common.util.unit.Unit;
 import common.util.stage.Music;
+import main.MainBCU;
 import main.Opts;
 import page.*;
 import page.anim.DIYViewPage;
@@ -112,7 +113,7 @@ public abstract class EntityEditPage extends Page {
 		Editors.setEditorSupplier(new EditCtrl(isEnemy, this));
 		pack = pac;
 		ce = e;
-		aet = new AtkEditTable(this, pack, edit, !isEnemy);
+		aet = new AtkEditTable(this, pack, edit);
 		apt = new ProcTable.AtkProcTable(aet, edit, !isEnemy);
 		aet.setProcTable(apt);
 		jsp = new JScrollPane(apt);
@@ -416,34 +417,10 @@ public abstract class EntityEditPage extends Page {
 		int n = ce.atks.length;
 
 		extra.clear();
-		if (ce.rev != null) {
-			n++;
-			extra.add(ce.rev);
-		}
-
-		if (ce.res != null) {
-			n++;
-			extra.add(ce.res);
-		}
-
-		if (ce.cntr != null) {
-			n++;
-			extra.add(ce.cntr);
-		}
-
-		if (ce.bur != null) {
-			n++;
-			extra.add(ce.bur);
-		}
-
-		if (ce.resu != null) {
-			n++;
-			extra.add(ce.resu);
-		}
-
-		if (ce.revi != null) {
-			n++;
-			extra.add(ce.revi);
+		for (int i = 0; i < ce.getSpAtks().length; i++)
+			if (ce.getSpAtks()[i] != null) {
+				n++;
+				extra.add(ce.getSpAtks()[i]);
 		}
 
 		String[] ints = new String[n];
@@ -631,36 +608,36 @@ public abstract class EntityEditPage extends Page {
 
 			adm.str = text;
 
-			if (text.equals("revenge")) {
-				remAtk(adm);
-				ce.rev = adm;
+			switch (text) {
+				case "revenge":
+					remAtk(adm);
+					ce.rev = adm;
+					break;
+				case "resurrection":
+					remAtk(adm);
+					ce.res = adm;
+					break;
+				case "counterattack":
+					remAtk(adm);
+					ce.cntr = adm;
+					break;
+				case "burrow":
+					remAtk(adm);
+					ce.bur = adm;
+					break;
+				case "resurface":
+					remAtk(adm);
+					ce.resu = adm;
+					break;
+				case "revive":
+					remAtk(adm);
+					ce.revi = adm;
+					break;
+				case "entrance":
+					remAtk(adm);
+					ce.entr = adm;
+					break;
 			}
-
-			if (text.equals("resurrection")) {
-				remAtk(adm);
-				ce.res = adm;
-			}
-
-			if (text.equals("counterattack")) {
-				remAtk(adm);
-				ce.cntr = adm;
-			}
-
-			if (text.equals("burrow")) {
-				remAtk(adm);
-				ce.bur = adm;
-			}
-
-			if (text.equals("resurface")) {
-				remAtk(adm);
-				ce.resu = adm;
-			}
-
-			if (text.equals("revive")) {
-				remAtk(adm);
-				ce.revi = adm;
-			}
-
 			return;
 		}
 
@@ -735,26 +712,11 @@ public abstract class EntityEditPage extends Page {
 		int n = ce.atks.length;
 		if (ind >= n) {
 			AtkDataModel rematk = extra.remove(ind - n);
-			switch (rematk.str) {
-				case "revenge":
-					ce.rev = null;
+			for (int i = 0; i < ce.getSpAtks().length; i++)
+				if (rematk.equals(ce.getSpAtks()[i])) {
+					ce.getSpAtks()[i] = null;
 					break;
-				case "resurrection":
-					ce.res = null;
-					break;
-				case "counterattack":
-					ce.cntr = null;
-					break;
-				case "burrow":
-					ce.bur = null;
-					break;
-				case "revive":
-					ce.revi = null;
-					break;
-				default:
-					ce.resu = null;
-					break;
-			}
+				}
 		} else if (n > 1) {
 			AtkDataModel[] datas = new AtkDataModel[n - 1];
 			if (ind >= 0)
@@ -784,14 +746,14 @@ public abstract class EntityEditPage extends Page {
 		switch (adm.str) {
 			case "revenge":
 				lpst.setText(MainLocale.INFO, "Post-HB");
-				vpst.setText(KB_TIME[INT_HB] - ce.rev.pre + "f");
+				vpst.setText(MainBCU.convertTime(KB_TIME[INT_HB] - ce.rev.pre));
 				break;
 			case "resurrection":
 				lpst.setText(MainLocale.INFO, "Post-Death");
 				Soul s = Identifier.get(ce.death);
-				vpst.setText(ce.res == null ? "x" : s == null ? "-" : (s.anim.len(UType.SOUL) - ce.res.pre + "f"));
+				vpst.setText(s == null ? "-" : MainBCU.convertTime((s.anim.len(UType.SOUL) - ce.res.pre)));
 
-				// vpst.setText(ce.res == null ? "x" : s == null ? "-" : (s.len(SoulType.DEF) - ce.res.pre + "f"));
+				// vpst.setText(s == null ? "-" : (s.len(SoulType.DEF) - ce.res.pre + "f"));
 				// TODO: check if above commented code is needed or not
 				break;
 			case "counterattack":
@@ -800,19 +762,23 @@ public abstract class EntityEditPage extends Page {
 				break;
 			case "burrow":
 				lpst.setText(MainLocale.INFO, "Post-Bury Atk");
-				vpst.setText((ce.getPack().anim.anims[4].len - ce.bur.pre + 1) + "f");
+				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[4].len - ce.bur.pre + 1));
 				break;
 			case "revive":
 				lpst.setText(MainLocale.INFO, "Post-Revival Atk");
-				vpst.setText((effas().A_ZOMBIE.getEAnim(EffAnim.ZombieEff.REVIVE).len() - ce.revi.pre) + "f");
+				vpst.setText(MainBCU.convertTime(effas().A_ZOMBIE.getEAnim(EffAnim.ZombieEff.REVIVE).len() - ce.revi.pre));
 				break;
 			case "resurface":
 				lpst.setText(MainLocale.INFO, "Post-Unburrow Atk");
-				vpst.setText((ce.getPack().anim.anims[6].len - ce.resu.pre + 1) + "f");
+				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[6].len - ce.resu.pre + 1));
+				break;
+			case "entrance":
+				lpst.setText(MainLocale.INFO, "Post-Entrance Atk");
+				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[7].len - ce.entr.pre + 1));
 				break;
 			default:
 				lpst.setText(MainLocale.INFO, "postaa");
-				vpst.setText(ce.getPost() + "f");
+				vpst.setText(MainBCU.convertTime(ce.getPost()));
 		}
 	}
 

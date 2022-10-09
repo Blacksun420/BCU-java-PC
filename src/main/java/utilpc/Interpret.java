@@ -211,7 +211,7 @@ public class Interpret extends Data {
 				if (rs == 0 && rl == 0)
 					continue;
 				String LDData = Page.get(MainLocale.UTIL, "ld0") + ": " + tb + ", " + Page.get(MainLocale.UTIL, "ld1")
-						+ ": " + rs + "~" + rl + ", " + Page.get(MainLocale.UTIL, "ld2") + ": " + (rl - rs);
+						+ ": " + rs + "~" + rl + ", " + Page.get(MainLocale.UTIL, "ld2") + ": " + Math.abs(rl - rs);
 				if (LDInts.containsKey(LDData)) {
 					List<Integer> li = LDInts.get(LDData);
 					li.add(i + 1);
@@ -253,8 +253,9 @@ public class Interpret extends Data {
 			l.add(new ProcDisplay(Page.get(MainLocale.UTIL, "ld0") + ": " + tb + ", " + Page.get(MainLocale.UTIL, "ld1") + ": " + p0 + "~" + p1 + ", "
 					+ Page.get(MainLocale.UTIL, "ld2") + ": " + r, bi));
 		}
-		AtkDataModel rev = me.getRevenge();
-		for (int z = 0; z < 6; z++) {
+
+		for (int z = 0; z < me.getSpAtks().length; z++) {
+			AtkDataModel rev = me.getSpAtks()[z];
 			if (rev != null) {
 				int revs = rev.getShortPoint();
 				int revl = rev.getLongPoint();
@@ -265,28 +266,9 @@ public class Interpret extends Data {
 					else
 						bi = (UtilPC.getIcon(2, ATK_LD));
 					l.add(new ProcDisplay(Page.get(MainLocale.UTIL, "ld1") + ": " + revs + "~" + revl +
-							", " + Page.get(MainLocale.UTIL, "ld2") + ": " + (revl - revs) +
+							", " + Page.get(MainLocale.UTIL, "ld2") + ": " + Math.abs(revl - revs) +
 							" [" + Page.get(MainLocale.UTIL, "aa" + (z + 6)) + "]", bi));
 				}
-			}
-			switch (z) {
-				case 0:
-					rev = me.getResurrection();
-					break;
-				case 1:
-					rev = me.getCounter();
-					break;
-				case 2:
-					rev = me.getGouge();
-					break;
-				case 3:
-					rev = me.getResurface();
-					break;
-				case 4:
-					rev = me.getRevive();
-					break;
-				default:
-					rev = null;
 			}
 		}
 		String imu = Page.get(MainLocale.UTIL, "imu");
@@ -429,8 +411,8 @@ public class Interpret extends Data {
 					l.get(i).text = l.get(i).text + " " + getAtkNumbers(atks);
 		}
 
-		MaskAtk rev = du.getRevenge();
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < du.getSpAtks().length; i++) {
+			MaskAtk rev = du.getSpAtks()[i];
 			if (rev != null) {
 				for(int j = 0; j < Data.PROC_TOT; j++) {
 					ProcItem item = rev.getProc().getArr(j);
@@ -442,25 +424,6 @@ public class Interpret extends Data {
 					String formatted = Formatter.format(format, item, ctx);
 					l.add(new ProcDisplay(formatted + " [" + Page.get(MainLocale.UTIL, "aa" + (6 + i)) + "]", UtilPC.getIcon(1, j)));
 				}
-			}
-			switch (i) {
-				case 0:
-					rev = du.getResurrection();
-					break;
-				case 1:
-					rev = du.getCounter();
-					break;
-				case 2:
-					rev = du.getGouge();
-					break;
-				case 3:
-					rev = du.getResurface();
-					break;
-				case 4:
-					rev = du.getRevive();
-					break;
-				default:
-					rev = null;
 			}
 		}
 
@@ -608,10 +571,8 @@ public class Interpret extends Data {
 			return de.isOmni();
 		else if (type == 5)
 			return de.getTBA() + raw[0][1] < de.getItv() / 2;
-		else if (type == 6)
-			return de.getRevenge() != null;
-		else if (type == 7)
-			return de.getResurrection() != null;
+		else if (type >= 6 && type <= 11)
+			return de.getSpAtks().length > type - 6 && de.getSpAtks()[type - 6] != null;
 		return false;
 	}
 

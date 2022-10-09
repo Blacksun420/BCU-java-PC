@@ -130,10 +130,7 @@ class ComingTable extends AbJTable {
 	protected synchronized void update(EStage est) {
 		for (int i = 0; i < link.length; i++)
 			if (link[i] != -1) {
-				if (MainBCU.seconds)
-					data[link[i]][5] = MainBCU.toSeconds(Math.abs(est.rem[i]));
-				else
-					data[link[i]][5] = Math.abs(est.rem[i]) + "f";
+				data[link[i]][5] = MainBCU.convertTime(Math.abs(est.rem[i]));
 
 				data[link[i]][3] = est.num[i] == 0 ? "infinite" : est.num[i];
 

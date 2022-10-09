@@ -302,8 +302,11 @@ public class MainBCU {
 		return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 	}
 
-	public static String toSeconds(int in) {
-		return df.format(in / 30.0) + "s";
+	public static String convertTime(int in) {
+		if (seconds)
+			return df.format(in / 30.0) + "s";
+		else //for convenience, function is built to merely return the time if player prefers it like that
+			return in + "f";
 	}
 
 	public static void main(String[] args) {

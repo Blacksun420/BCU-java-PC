@@ -320,11 +320,7 @@ public class ComparePage extends Page {
                     }
 
                     atkString.append(Math.round(atkDatum[0] * mula));
-
-                    if (MainBCU.seconds)
-                        preString.append(MainBCU.toSeconds(atkDatum[1]));
-                    else
-                        preString.append(atkDatum[1]).append("f");
+                    preString.append(MainBCU.convertTime(atkDatum[1]));
                 }
 
                 main[0][index].setText((int) (hp * mul) + "");
@@ -381,10 +377,7 @@ public class ComparePage extends Page {
                         a = (int) (a * mu.getPCoin().getAtkMultiplication(multi));
 
                     atkString.append(a);
-                    if (MainBCU.seconds)
-                        preString.append(MainBCU.toSeconds(atkDatum[1]));
-                    else
-                        preString.append(atkDatum[1]).append("f");
+                    preString.append(MainBCU.convertTime(atkDatum[1]));
                     atk += a;
 
                     int effectiveDMG = a;
@@ -410,10 +403,7 @@ public class ComparePage extends Page {
                 }
 
                 int respawn = b.t().getFinRes(mu.getRespawn());
-                if (MainBCU.seconds)
-                    unit[0][index].setText(MainBCU.toSeconds(respawn));
-                else
-                    unit[0][index].setText(respawn + "f");
+                unit[0][index].setText(MainBCU.convertTime(respawn));
 
                 double price = ef.getPrice(1);
                 unit[1][index].setText(price + "");
@@ -481,15 +471,10 @@ public class ComparePage extends Page {
             main[2][index].setText(m.getRange() + "");
             main[3][index].setText(atkString.toString());
             main[5][index].setText(preString.toString());
-            if (MainBCU.seconds) {
-                main[6][index].setText(MainBCU.toSeconds(m.getPost()));
-                main[7][index].setText(MainBCU.toSeconds(m.getItv()));
-                main[8][index].setText(MainBCU.toSeconds(m.getTBA()));
-            } else {
-                main[6][index].setText(m.getPost() + "f");
-                main[7][index].setText(m.getItv() + "f");
-                main[8][index].setText(m.getTBA() + "f");
-            }
+            main[6][index].setText(MainBCU.convertTime(m.getPost()));
+            main[7][index].setText(MainBCU.convertTime(m.getItv()));
+            main[8][index].setText(MainBCU.convertTime(m.getTBA()));
+
             main[9][index].setText(m.getSpeed() + "");
 
             ArrayList<Trait> trs = m.getTraits();

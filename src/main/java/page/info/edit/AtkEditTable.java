@@ -4,6 +4,7 @@ import common.CommonStatic;
 import common.battle.data.AtkDataModel;
 import common.pack.PackData;
 import common.pack.UserProfile;
+import main.MainBCU;
 import page.JL;
 import page.JTF;
 import page.JTG;
@@ -46,7 +47,7 @@ class AtkEditTable extends Page {
 	private final JScrollPane scrtr;
 
 	private final ListJtfPolicy ljp = new ListJtfPolicy();
-	private final boolean editable, isUnit;
+	private final boolean editable;
 
 	private double mul;
 	private double lvMul;
@@ -55,10 +56,9 @@ class AtkEditTable extends Page {
 	protected AtkDataModel adm;
 	protected ProcTable.AtkProcTable apt;
 
-	protected AtkEditTable(Page p, String pack, boolean edit, boolean unit) {
+	protected AtkEditTable(Page p, String pack, boolean edit) {
 		super(p);
 		editable = edit;
-		isUnit = unit;
 		atktr.list.addAll(UserProfile.getBCData().traits.getList().subList(TRAIT_RED,TRAIT_EVA));
 
 		PackData.UserPack pk = UserProfile.getUserPack(pack);
@@ -109,7 +109,7 @@ class AtkEditTable extends Page {
 		lvMul = lvMulti;
 
 		fatk.setText("" + (int) (Math.round(adm.atk * lvMul) * mul));
-		fpre.setText("" + adm.pre);
+		fpre.setText("" + MainBCU.convertTime(adm.pre));
 		fp0.setText("" + adm.ld0);
 		fp1.setText("" + adm.ld1);
 		ftp.setText("" + adm.targ);
@@ -226,42 +226,34 @@ class AtkEditTable extends Page {
 			int v = CommonStatic.parseIntN(text);
 			if (jtf == fatk) {
 				adm.atk = findIdealAtkValue(v);
-			}
-			if (jtf == fpre) {
-				if (v < 0)
-					v = 1;
-				adm.pre = v;
-			}
-			if (jtf == fp0) {
+			} else if (jtf == fpre) {
+				double w = CommonStatic.parseDoubleN(text);
+				adm.pre = w < 0 ? 1 : convertPreTime(w);
+			} else if (jtf == fp0) {
 				adm.ld0 = v;
 				if (adm.ld0 != 0 || adm.ld1 != 0)
 					if (adm.ld1 <= v)
 						adm.ld1 = v + 1;
-			}
-			if (jtf == fp1) {
+			} else if (jtf == fp1) {
 				adm.ld1 = v;
 				if (adm.ld0 != 0 || adm.ld1 != 0)
 					if (adm.ld0 >= v)
 						adm.ld0 = v - 1;
-			}
-			if (jtf == ftp) {
+			} else if (jtf == ftp) {
 				if (v < 1)
 					v = 1;
 				adm.targ = v;
-			}
-			if (jtf == fdr) {
+			} else if (jtf == fdr) {
 				if (v < -1)
 					v = -1;
 				if (v > 1)
 					v = 1;
 				adm.dire = v;
-			}
-			if (jtf == fct) {
+			} else if (jtf == fct) {
 				if (v < 0)
 					v = -1;
 				adm.count = v;
-			}
-			if (jtf == fmv)
+			} else if (jtf == fmv)
 				adm.move = v;
 		}
 		callBack(null);
@@ -296,6 +288,12 @@ class AtkEditTable extends Page {
 		double lvValue = Math.round(Math.abs(val) * 1.0 / mul);
 
 		return (int) ((lvValue + 0.5) * sign / lvMul);
+	}
+
+	private int convertPreTime(double val) {
+		if (!MainBCU.seconds)
+			return (int) val;
+		return (int) (val * 30);
 	}
 
 	protected void setProcTable(ProcTable.AtkProcTable a) {

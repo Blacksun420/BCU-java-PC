@@ -3,8 +3,6 @@ package page.info;
 import common.CommonStatic;
 import common.battle.BasisSet;
 import common.battle.data.AtkDataModel;
-import common.battle.data.CustomEnemy;
-import common.battle.data.DataEnemy;
 import common.pack.UserProfile;
 import common.util.Data;
 import common.util.unit.Enemy;
@@ -51,16 +49,9 @@ public class EnemyInfoTable extends Page {
 		e = de;
 		multi = mul;
 		mulatk = mula;
-		if (e.de.getRevenge() != null)
-			atkList.add(e.de.getRevenge());
-		if (e.de.getResurrection() != null)
-			atkList.add(e.de.getResurrection());
-		if (e.de.getCounter() != null)
-			atkList.add(e.de.getCounter());
-		if (e.de.getGouge() != null)
-			atkList.add(e.de.getGouge());
-		if (e.de.getResurface() != null)
-			atkList.add(e.de.getResurface());
+		for (int i = 0; i < e.de.getSpAtks().length; i++)
+			if (e.de.getSpAtks()[i] != null)
+				atkList.add(e.de.getSpAtks()[i]);
 
 		atks = new JL[e.de.rawAtkData().length + atkList.size()][8];
 		List<Interpret.ProcDisplay> ls = Interpret.getAbi(e.de);
@@ -246,24 +237,15 @@ public class EnemyInfoTable extends Page {
 		special[0][4].setText(MainLocale.INFO, "minpos");
 		special[0][5].setText(e.de.getLimit() + "");
 
-		if (MainBCU.seconds) {
-			main[2][7].setText(MainBCU.toSeconds(itv));
-			main[3][5].setText(MainBCU.toSeconds(e.de.getTBA()));
-			main[3][7].setText(MainBCU.toSeconds(e.de.getPost()));
-		} else {
-			main[2][7].setText(itv + "f");
-			main[3][5].setText(e.de.getTBA() + "f");
-			main[3][7].setText(e.de.getPost() + "f");
-		}
+		main[2][7].setText(MainBCU.convertTime(itv));
+		main[3][5].setText(MainBCU.convertTime(e.de.getTBA()));
+		main[3][7].setText(MainBCU.convertTime(e.de.getPost()));
 
 		int[][] atkData = e.de.rawAtkData();
 		for (int i = 0; i < atkData.length; i++) {
 			atks[i][0].setText(MainLocale.INFO, "atk");
 			atks[i][2].setText(MainLocale.INFO, "preaa");
-			if (MainBCU.seconds)
-				atks[i][3].setText(MainBCU.toSeconds(atkData[i][1]));
-			else
-				atks[i][3].setText(atkData[i][1] + "f");
+			atks[i][3].setText(MainBCU.convertTime(atkData[i][1]));
 			atks[i][4].setText(MainLocale.INFO, "dire");
 			atks[i][5].setText("" + atkData[i][3]);
 
@@ -290,10 +272,7 @@ public class EnemyInfoTable extends Page {
 			int ind = i + atkData.length;
 			atks[ind][0].setText(MainLocale.INFO, "atk [" + atkList.get(i).str + "]");
 			atks[ind][2].setText(MainLocale.INFO, "preaa");
-			if (MainBCU.seconds)
-				atks[ind][3].setText(MainBCU.toSeconds(atkList.get(i).pre));
-			else
-				atks[ind][3].setText(atkList.get(i).pre + "f");
+			atks[ind][3].setText(MainBCU.convertTime(atkList.get(i).pre));
 			atks[ind][4].setText(MainLocale.INFO, "dire");
 			atks[ind][5].setText("" + atkList.get(i).dire);
 		}

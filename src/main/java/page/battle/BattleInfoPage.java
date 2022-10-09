@@ -334,10 +334,8 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		timer.setText(sb.time + "f");
 		ecount.setText(sb.entityCount(1) + "/" + sb.st.max);
 		ucount.setText(sb.entityCount(-1) + "/" + sb.max_num);
-		if (MainBCU.seconds)
-			respawn.setText("respawn timer: " + MainBCU.toSeconds(sb.respawnTime));
-		else
-			respawn.setText("respawn timer: " + sb.respawnTime + "f");
+		respawn.setText("respawn timer: " + MainBCU.convertTime(sb.respawnTime));
+
 		resized();
 		if (basis.sb.getEBHP() < basis.sb.st.bgh && basis.sb.st.bg1 != null) {
 			if (!changedBG) {
