@@ -2,6 +2,7 @@ package page.view;
 
 import common.system.P;
 import common.util.anim.EAnimI;
+import common.util.pack.Background;
 import page.JTG;
 import page.RetFunc;
 import page.awt.RecdThread;
@@ -140,6 +141,8 @@ public interface ViewBox {
 	}
 
 	void setEntity(EAnimI ieAnim);
+
+	void setBackground(Background bg);
 
 	default Loader start(boolean mp4) {
 		if (getExp() != null)

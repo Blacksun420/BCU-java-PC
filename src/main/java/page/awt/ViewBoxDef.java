@@ -3,6 +3,7 @@ package page.awt;
 import common.CommonStatic;
 import common.system.fake.FakeGraphics;
 import common.util.anim.EAnimI;
+import common.util.pack.Background;
 import main.Timer;
 import page.JTG;
 import page.view.ViewBox;
@@ -21,6 +22,7 @@ class ViewBoxDef extends Canvas implements ViewBox, ViewBox.VBExporter {
 	protected boolean blank;
 
 	protected EAnimI ent;
+	protected Background bg;
 	protected Controller ctrl;
 	private Queue<BufferedImage> lbimg = null;
 	private Loader loader = null;
@@ -111,6 +113,11 @@ class ViewBoxDef extends Canvas implements ViewBox, ViewBox.VBExporter {
 	@Override
 	public void setEntity(EAnimI ieAnim) {
 		ent = ieAnim;
+	}
+
+	@Override
+	public void setBackground(Background bg) {
+		this.bg = bg;
 	}
 
 	@Override

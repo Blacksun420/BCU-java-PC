@@ -9,6 +9,8 @@ import common.system.fake.FakeImage;
 import common.system.fake.FakeTransform;
 import common.util.anim.EAnimI;
 import common.util.anim.EAnimU;
+import common.util.pack.Background;
+import common.util.pack.bgeffect.BackgroundEffect;
 import jogl.util.GLGraphics;
 import page.JTG;
 import page.anim.IconBox;
@@ -156,6 +158,11 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 	protected boolean blank;
 
 	private EAnimI ent;
+	private Background bg;
+	private BackgroundEffect bgEffect;
+	private boolean bgi;
+	private double r;
+	private int fw, sh, gh;
 
 	protected GLViewBox(Controller c) {
 		exp = new GLVBExporter(this);
@@ -170,26 +177,27 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 		int h = getHeight();
 		GLGraphics g = new GLGraphics(drawable.getGL().getGL2(), w, h);
 
-		if (!blank) {
-			if(CommonStatic.getConfig().viewerColor != -1) {
-				int rgb = CommonStatic.getConfig().viewerColor;
+		if (bg == null)
+			if (!blank) {
+				if (CommonStatic.getConfig().viewerColor != -1) {
+					int rgb = CommonStatic.getConfig().viewerColor;
 
-				int b = rgb & 0xFF;
-				int gr = (rgb >> 8) & 0xFF;
-				int r = (rgb >> 16) & 0xFF;
+					int b = rgb & 0xFF;
+					int gr = (rgb >> 8) & 0xFF;
+					int r = (rgb >> 16) & 0xFF;
 
-				g.setColor(r, gr, b);
-				g.fillRect(0, 0, w, h);
+					g.setColor(r, gr, b);
+					g.fillRect(0, 0, w, h);
+				} else {
+					int[] c = new int[]{c0.getRed(), c0.getGreen(), c0.getBlue()};
+					int[] f = new int[]{c1.getRed(), c1.getGreen(), c1.getBlue()};
+					g.gradRect(0, 0, w, h / 2, w / 2, 0, c, w / 2, h / 2, f);
+					g.gradRect(0, h / 2, w, h / 2, w / 2, h / 2, f, w / 2, h, c);
+				}
 			} else {
-				int[] c = new int[] { c0.getRed(), c0.getGreen(), c0.getBlue() };
-				int[] f = new int[] { c1.getRed(), c1.getGreen(), c1.getBlue() };
-				g.gradRect(0, 0, w, h / 2, w / 2, 0, c, w / 2, h / 2, f);
-				g.gradRect(0, h / 2, w, h / 2, w / 2, h / 2, f, w / 2, h, c);
+				g.setColor(FakeGraphics.WHITE);
+				g.fillRect(0, 0, w, h);
 			}
-		} else {
-			g.setColor(FakeGraphics.WHITE);
-			g.fillRect(0, 0, w, h);
-		}
 		draw(g);
 		g.dispose();
 		gl.glFlush();
@@ -226,7 +234,47 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 	}
 
 	@Override
+	public void setBackground(Background bg) {
+		this.bg = bg;
+		if (bg != null && bg.effect != -1) {
+			int groundHeight = ((BufferedImage) bg.parts[Background.BG].bimg()).getHeight();
+			int skyHeight = bg.top ? ((BufferedImage) bg.parts[Background.TOP].bimg()).getHeight() : 1020 - groundHeight;
+			if(skyHeight < 0)
+				skyHeight = 0;
+			r = getHeight() / (double) (groundHeight + skyHeight + 408);
+			fw = (int) (768 * r);
+
+			int i = 1;
+			while (fw * i < getWidth()) {
+				i++;
+			}
+			fw *= i * 4;
+
+			sh = (int) (skyHeight * r);
+			gh = (int) (groundHeight * r);
+
+			if(bg.effect == -bg.id.id && BackgroundEffect.mixture.containsKey(bg.id.id)) {
+				bgEffect = BackgroundEffect.mixture.get(bg.id.id);
+			} else if (bg.effect >= 0) {
+				bgEffect = CommonStatic.getBCAssets().bgEffects.get(bg.effect);
+			}
+		} else {
+			bgEffect = null;
+			fw = sh = gh = 0;
+		}
+		bgi = false;
+	}
+
+	@Override
 	public void update() {
+		if (bgEffect != null) {
+			if(!bgi) {
+				bgEffect.initialize(fw, sh - gh, gh, bg);
+				bgi = true;
+			}
+			bgEffect.update(fw, sh - gh, gh);
+		}
+
 		if (ent != null) {
 			if (ent instanceof EAnimU) {
 				EAnimU e = (EAnimU) ent;
@@ -241,6 +289,13 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 	protected void draw(FakeGraphics g) {
 		int w = getWidth();
 		int h = getHeight();
+		if (bg != null) {
+			bg.draw(g, w, h);
+			if (bgEffect != null) {
+				bgEffect.draw(g, 0, sh, r, (gh / 3), sh + (gh / 2));
+			} if(bg.overlay != null)
+				g.gradRectAlpha(0, 0, w, h, 0, 0, bg.overlayAlpha, bg.overlay[1], 0, h, bg.overlayAlpha, bg.overlay[0]);
+		}
 		g.translate(w / 2.0, h * 3 / 4.0);
 		g.setColor(FakeGraphics.BLACK);
 		if (ent != null)
