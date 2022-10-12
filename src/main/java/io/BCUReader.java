@@ -6,7 +6,6 @@ import com.google.gson.JsonParser;
 import common.CommonStatic;
 import common.CommonStatic.Config;
 import common.io.DataIO;
-import common.io.InStream;
 import common.io.json.JsonDecoder;
 import common.pack.Context.ErrType;
 import common.pack.UserProfile;
@@ -29,15 +28,13 @@ import page.support.Importer;
 import page.view.ViewBox;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Queue;
 import java.util.stream.Collectors;
 
 public class BCUReader extends DataIO {

@@ -1,8 +1,6 @@
 package io;
 
-import common.battle.data.CustomEntity;
 import common.pack.Identifier;
-import common.pack.PackData;
 import common.pack.UserProfile;
 import common.util.Data;
 import common.util.stage.Music;

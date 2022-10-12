@@ -12,10 +12,8 @@ import main.MainBCU;
 import main.Opts;
 import page.support.ColorPicker;
 import page.view.ViewBox;
-import utilpc.Theme;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class ConfigPage extends Page {
 

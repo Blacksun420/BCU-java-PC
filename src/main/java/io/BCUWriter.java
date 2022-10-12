@@ -111,19 +111,6 @@ public class BCUWriter extends DataIO {
 		}
 	}
 
-	public static PrintStream newFile(String str) {
-		File f = new File(str);
-
-		PrintStream out = null;
-		try {
-			Context.check(f);
-			out = new PrintStream(f, "UTF-8");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return out;
-	}
-
 	public static boolean writeBytes(byte[] bs, String path) {
 		File f = new File(path);
 		FileOutputStream fos = null;

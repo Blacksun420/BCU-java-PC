@@ -1,8 +1,6 @@
 package main;
 
 import common.CommonStatic;
-import common.util.Data;
-import common.util.lang.MultiLangCont;
 import common.util.stage.MapColc;
 import common.util.stage.Stage;
 import common.util.stage.StageMap;
@@ -24,15 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Opts {
 
 	public static final int MEMORY = 1001, SECTY = 1002, REQITN = 1003, INSTALL = 1004;
-
-	private static boolean nshowi, nshowu;
 	private static boolean popped = false;
-
-	public static void animErr(String f) {
-		if (nshowi)
-			return;
-		nshowi = !warning("error in reading file " + f + ", Click Cancel to supress this popup?", "IO error");
-	}
 
 	public static void backupErr(String t) {
 		pop("failed to " + t + " backup", "backup access error");
@@ -50,20 +40,8 @@ public class Opts {
 		return warning(text, "confirmation");
 	}
 
-	public static void dloadErr(String text) {
-		pop("failed to download " + text, "download error");
-	}
-
 	public static void ioErr(String text) {
 		pop(text, "IO error");
-	}
-
-	public static void loadErr(String text) {
-		pop(text, "loading error");
-	}
-
-	public static boolean packConf(String text) {
-		return warning(text, "pack conflict");
 	}
 
 	public static void pop(int id, String... is) {
@@ -108,31 +86,8 @@ public class Opts {
 		return JOptionPane.showInputDialog(null, string, "");
 	}
 
-	public static void recdErr(String name, String suf) {
-		pop("replay " + name + " uses unavailable " + suf, "replay read error");
-	}
-
-	public static void servErr(String text) {
-		pop(text, "server error");
-	}
-
 	public static void success(String text) {
 		pop(text, "success");
-	}
-
-	public static void unitErr(String f) {
-		if (nshowu)
-			return;
-		nshowu = !warning(f + ", Click Cancel to supress this popup?", "can't find unit");
-	}
-
-	public static boolean updateCheck(String s, String p) {
-		return warning(s + " update available. do you want to update? " + p, "update check");
-	}
-
-	public static void verErr(String o, String v) {
-		pop(o + " version is too old, use BCU " + v + " or " + (o.equals("BCU") ? "newer" : "older")
-				+ " version to open it", "version error");
 	}
 
 	public static boolean writeErr0(String f) {
@@ -429,7 +384,7 @@ public class Opts {
 		for(int i = 0; i < exStages.size(); i++) {
 			Stage e = exStages.get(i);
 
-			JRadioButton rb = new JRadioButton(e.getCont().toString()+" - "+e.toString());
+			JRadioButton rb = new JRadioButton(e.getCont().toString()+" - "+ e);
 
 			int finalI = i;
 

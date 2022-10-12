@@ -2,7 +2,6 @@ package page;
 
 import common.CommonStatic;
 import common.CommonStatic.Lang;
-import io.BCUWriter;
 import page.basis.ComboListTable;
 import page.battle.BattleInfoPage;
 import page.info.HeadTable;
@@ -21,16 +20,18 @@ import java.util.Map.Entry;
 
 public strictfp class MainLocale {
 
-	public static final int PAGE = 0, INFO = 1, INTERNET = 2, UTIL = 3;
+	public static final int PAGE = 0;
+	public static final int INFO = 1;
+	public static final int UTIL = 2;
 	public static final Map<String, MainLocale> NAMP = new TreeMap<>();
 	public static final Map<String, TTT> TMAP = new TreeMap<>();
 	public static final String[] LOC_NAME = { "English", "\u4E2D\u6587", "\uD55C\uAD6D\uC5B4", "\u65E5\u672C\u8A9E", "Français", "Italiano", "Español", "Deutsche" };
 	public static final int[] LOC_INDEX = {0, 1, 2, 3, 6, 9, 8, 5};
-	public static final String[] RENN = { "page", "info", "internet", "util" };
-	private static final ResourceBundle[] RENS = new ResourceBundle[4];
+	public static final String[] RENN = { "page", "info", "util" };
+	private static final ResourceBundle[] RENS = new ResourceBundle[3];
 
 	static {
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 3; i++)
 			RENS[i] = ResourceBundle.getBundle(RENN[i], Locale.ROOT, new URLClassLoader(new URL[]{MainLocale.class.getClassLoader().getResource(RENN[i]+".properties")}));
 	}
 
@@ -53,7 +54,7 @@ public strictfp class MainLocale {
 	}
 
 	public static String getLoc(int loc, String key) {
-		if (loc >= 0 && loc < 4) {
+		if (loc >= 0 && loc < 3) {
 			String loci = RENN[loc] + "_";
 			String locl = loci + langCode();
 			if (NAMP.containsKey(locl) && NAMP.get(locl).contains(key)) {
@@ -90,19 +91,6 @@ public strictfp class MainLocale {
 		for (int i = 0; i < ans.length; i++)
 			ans[i] = getLoc(loc, pre + i);
 		return ans;
-	}
-
-	public static void saveWorks() {
-		for (String loc : Lang.LOC_CODE) {
-			TTT ttt = TMAP.get(loc);
-			if (ttt != null && ttt.edited)
-				ttt.write(BCUWriter.newFile("./lib/lang/" + loc + "/tutorial.txt"));
-			for (int i = 0; i < 4; i++) {
-				MainLocale ml = NAMP.get(RENN[i] + "_" + loc);
-				if (ml != null && ml.edited)
-					ml.write(BCUWriter.newFile("./lib/lang/" + loc + "/" + RENN[i] + ".properties"));
-			}
-		}
 	}
 
 	protected static String getTTT(String page, String text) {
