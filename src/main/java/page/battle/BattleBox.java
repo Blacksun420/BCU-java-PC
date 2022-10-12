@@ -23,6 +23,7 @@ import common.util.pack.bgeffect.BackgroundEffect;
 import common.util.stage.CastleImg;
 import common.util.unit.Form;
 import main.MainBCU;
+import page.MainLocale;
 import page.RetFunc;
 import utilpc.PP;
 import utilpc.awt.FG2D;
@@ -54,6 +55,14 @@ public interface BattleBox {
 		private static final byte bar = 8;
 		private static final byte BOTTOM_GAP = 48;
 
+		/**
+		 * Draws the cat base
+		 * @param gra - Canvas
+		 * @param y - Y axis converted to battle unit
+		 * @param x - X axis converted to battle unit + shake
+		 * @param siz - Zoom
+		 * @param inf - Castle appearance parts
+		 */
 		public static void drawNyCast(FakeGraphics gra, int y, int x, double siz, int[] inf) {
 			BCAuxAssets aux = CommonStatic.getBCAssets();
 			FakeImage bimg = aux.main[2][inf[2]].getImg();
@@ -172,6 +181,8 @@ public interface BattleBox {
 				drawBGOverlay(g, midY);
 			}
 
+			deployWarn(g);
+
 			drawBtm(g);
 			drawTop(g);
 		}
@@ -274,6 +285,20 @@ public interface BattleBox {
 			return p;
 		}
 
+		private void deployWarn(FakeGraphics g) {
+			if (StageNamePainter.deploy != null && sb.entityCount(-1) >= sb.max_num) {
+				int w = box.getWidth();
+				int h = box.getHeight();
+
+				/*double avah = h * (10 - bar) / 10.0;
+				double hr = avah / StageNamePainter.deploy.getHeight();
+				double rw = hr * StageNamePainter.deploy.getWidth();
+				double rh = hr * StageNamePainter.deploy.getHeight();
+				g.drawImage(StageNamePainter.deploy, (w - rw) / 2.0, h  / (CommonStatic.getConfig().twoRow ? 2.75 : 2.5), rw, rh);*/
+				g.drawImage(StageNamePainter.deploy, (w - StageNamePainter.deploy.getWidth()) / 2.0, h  / (CommonStatic.getConfig().twoRow ? 2.75 : 2.5));
+			}
+		}
+
 		private void drawBtm(FakeGraphics g) {
 			int w = box.getWidth();
 			int h = box.getHeight();
@@ -337,6 +362,8 @@ public interface BattleBox {
 					drawLineup(g, w, h, hr, term, true, 1-sb.frontLineup);
 					drawLineup(g, w, h, hr, term, false, sb.frontLineup);
 				}
+				if (sb.unitRespawnTime > 1)
+					g.colRect(340, 644, 795, 143, 255, 0, 0, 100); //Untested
 			} else {
 				double termh = hr * aux.slot[0].getImg().getHeight() * 0.1;
 
@@ -395,6 +422,8 @@ public interface BattleBox {
 
 					if(f == null)
 						continue;
+					if (i == 0 && j == 0)
+						System.out.println(x + " - " + y + " - " + iw + "/" +  ih); //TODO
 
 					int pri = sb.elu.price[i][j];
 					if (pri == -1)
@@ -947,6 +976,7 @@ public interface BattleBox {
 	}
 
 	class StageNamePainter {
+		private static FakeImage deploy;
 		private final FakeImage img;
 		private static Font font;
 		private static final float strokeWidth = 12f;
@@ -963,6 +993,7 @@ public interface BattleBox {
 				}
 
 				font = Font.createFont(Font.TRUETYPE_FONT, f).deriveFont(102f);
+				deploy = new StageNamePainter(MainLocale.getLoc(MainLocale.UTIL, "nodeploy")).img;
 			} catch (Exception e) {
 				System.out.println("Failed to initialize font");
 				e.printStackTrace();

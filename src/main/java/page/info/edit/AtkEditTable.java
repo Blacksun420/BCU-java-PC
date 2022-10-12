@@ -4,6 +4,7 @@ import common.CommonStatic;
 import common.battle.data.AtkDataModel;
 import common.pack.PackData;
 import common.pack.UserProfile;
+import common.util.stage.Music;
 import main.MainBCU;
 import page.JL;
 import page.JTF;
@@ -16,6 +17,7 @@ import utilpc.Interpret;
 import javax.swing.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.util.Vector;
 
 import static common.util.Data.TRAIT_EVA;
 import static common.util.Data.TRAIT_RED;
@@ -44,7 +46,9 @@ class AtkEditTable extends Page {
 	private final JTF fmv = new JTF();
 	private final JTG isr = new JTG(1, "isr");
 	private final TraitList atktr = new TraitList(false);
-	private final JScrollPane scrtr;
+	private final JScrollPane scrtr = new JScrollPane(atktr);
+	private final JComboBox<Music> aud = new JComboBox<>();
+	private final JComboBox<Music> aud1 = new JComboBox<>();
 
 	private final ListJtfPolicy ljp = new ListJtfPolicy();
 	private final boolean editable;
@@ -59,17 +63,8 @@ class AtkEditTable extends Page {
 	protected AtkEditTable(Page p, String pack, boolean edit) {
 		super(p);
 		editable = edit;
-		atktr.list.addAll(UserProfile.getBCData().traits.getList().subList(TRAIT_RED,TRAIT_EVA));
 
-		PackData.UserPack pk = UserProfile.getUserPack(pack);
-		if (pk != null) {
-			atktr.list.addAll(pk.traits.getList());
-			for (PackData.UserPack pacc : UserProfile.getUserPacks())
-				if (pk.desc.dependency.contains(pacc.desc.id))
-					atktr.list.addAll(pacc.traits.getList());
-		}
-		scrtr = new JScrollPane(atktr);
-
+		pini(UserProfile.getUserPack(pack));
 		ini();
 	}
 
@@ -89,8 +84,9 @@ class AtkEditTable extends Page {
 		set(lct, x, y, 0, 300, 200, 50);
 		set(lab, x, y, 0, 350, 200, 50);
 		set(lmv, x, y, 0, 400, 200, 50);
-		set(isr, x, y, 0, 450, 200, 50);
-		set(scrtr, x, y, 50, 500, 300, 400);
+		set(isr, x, y, 0, 450, 400, 50);
+		set(aud, x, y, 0, 500, 200, 50);
+		set(scrtr, x, y, 0, 550, 400, 350);
 		set(fatk, x, y, 200, 0, 200, 50);
 		set(fpre, x, y, 200, 50, 200, 50);
 		set(fp0, x, y, 200, 100, 200, 50);
@@ -100,6 +96,7 @@ class AtkEditTable extends Page {
 		set(fct, x, y, 200, 300, 200, 50);
 		set(fab, x, y, 200, 350, 200, 50);
 		set(fmv, x, y, 200, 400, 200, 50);
+		set(aud1, x, y, 200, 500, 200, 50);
 	}
 
 	protected void setData(AtkDataModel data, double multi, double lvMulti) {
@@ -140,6 +137,25 @@ class AtkEditTable extends Page {
 		changing = false;
 	}
 
+	private void pini(PackData.UserPack pack) {
+		atktr.list.addAll(UserProfile.getBCData().traits.getList().subList(TRAIT_RED,TRAIT_EVA));
+		Vector<Music> vs = new Vector<>();
+		vs.add(null);
+		vs.addAll(UserProfile.getBCData().musics.getList());
+
+		if (pack != null) {
+			atktr.list.addAll(pack.traits.getList());
+			vs.addAll(pack.musics.getList());
+			for (PackData.UserPack pacc : UserProfile.getUserPacks())
+				if (pack.desc.dependency.contains(pacc.desc.id)) {
+					atktr.list.addAll(pacc.traits.getList());
+					vs.addAll(pacc.musics.getList());
+				}
+		}
+		aud.setModel(new DefaultComboBoxModel<>(vs));
+		aud1.setModel(new DefaultComboBoxModel<>(vs));
+	}
+
 	private void ini() {
 		set(latk);
 		set(lpre);
@@ -161,6 +177,8 @@ class AtkEditTable extends Page {
 		set(fmv);
 		add(isr);
 		add(scrtr);
+		add(aud);
+		add(aud1);
 
 		ftp.setToolTipText(
 				"<html>" + "+1 for normal attack<br>"
@@ -176,7 +194,7 @@ class AtkEditTable extends Page {
 		fpre.setToolTipText(
 				"<html>use 0 for random attack attaching to previous one.<br>pre=0 for first attack will invalidate it</html>");
 		StringBuilder ttt = new StringBuilder("<html>enter ID of abilities separated by comma or space.<br>" + "it changes the ability state"
-				+ "(has to hot has, not has to has)<br>"
+				+ "(has to not having, and viceversa)<br>"
 				+ "it won't change back until you make another attack to change it<br>");
 
 		for (int i = 0; i < Interpret.SABIS.length; i++)
@@ -189,13 +207,29 @@ class AtkEditTable extends Page {
 		setFocusCycleRoot(true);
 
 		isr.setLnr(x -> adm.range = isr.isSelected());
-		initTraits();
-	}
-
-	private void initTraits() {
 		atktr.setListData();
 		int m = ListSelectionModel.MULTIPLE_INTERVAL_SELECTION;
 		atktr.setSelectionMode(m);
+		addListeners();
+	}
+
+	private void addListeners() {
+		aud.addActionListener(x -> {
+			if (changing)
+				return;
+			changing = true;
+			Music m = (Music) aud.getSelectedItem();
+			adm.audio = m != null ? m.getID() : null;
+			changing = false;
+		});
+		aud1.addActionListener(x -> {
+			if (changing)
+				return;
+			changing = true;
+			Music m = (Music) aud.getSelectedItem();
+			adm.audio1 = m != null ? m.getID() : null;
+			changing = false;
+		});
 
 		atktr.addListSelectionListener(arg0 -> {
 			if (!changing && !atktr.getValueIsAdjusting()) {

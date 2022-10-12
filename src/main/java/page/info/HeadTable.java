@@ -118,8 +118,13 @@ public class HeadTable extends AbJTable {
 			bas2[1] = st.minSpawn + "f";
 		else
 			bas2[1] = st.minSpawn + "f ~ " + st.maxSpawn + "f";
-		bas2[2] = MainLocale.getLoc(MainLocale.INFO, "ht03");
-		bas2[3] = !st.non_con;
+		bas2[2] = Page.get(MainLocale.INFO, "uminspawn");
+		if(st.minUSpawn == st.maxUSpawn)
+			bas2[3] = st.minUSpawn + "f";
+		else
+			bas2[3] = st.minUSpawn + "f ~ " + st.maxUSpawn + "f";
+		bas2[4] = MainLocale.getLoc(MainLocale.INFO, "ht03");
+		bas2[5] = !st.non_con;
 		if(st.timeLimit != 0) {
 			bas2[4] = Page.get(MainLocale.INFO, "time");
 			bas2[5] = st.timeLimit +" min";

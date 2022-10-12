@@ -43,8 +43,10 @@ class HeadEditTable extends Page {
 	private final JTF[] star = new JTF[4];
 	private final JTF jmax = new JTF();
 	private final JL minres = new JL(MainLocale.INFO, "minspawn");
+	private final JL uminres = new JL(MainLocale.INFO, "uminspawn");
 	private final JL cost = new JL(MainLocale.INFO, "chcos");
 	private final JTF minrest = new JTF();
+	private final JTF uminrest = new JTF();
 	private final JTF cos = new JTF();
 	private final JTG dojo = new JTG(MainLocale.PAGE,"dojo");
 	private final LimitTable lt;
@@ -105,10 +107,13 @@ class HeadEditTable extends Page {
 		}
 
 		minrest.setEnabled(sta != null);
+		uminrest.setEnabled(sta != null);
 
 
-		if (sta != null)
+		if (sta != null) {
 			minrest.setText(generateMinRespawn(sta.minSpawn, sta.maxSpawn));
+			uminrest.setText(generateMinRespawn(sta.minUSpawn, sta.maxUSpawn));
+		}
 
 		bvp = null;
 		cvp = null;
@@ -119,6 +124,10 @@ class HeadEditTable extends Page {
 	protected void resized(int x, int y) {
 		int w = 1400 / 8;
 		set(name, x, y, 0, 0, w * 2, 50);
+		for (int i = 0; i < 4; i++)
+			set(star[i], x, y, w * (2 + i), 0, w, 50);
+		set(cost, x, y, w * 6, 0, w, 50);
+		set(cos, x, y, w * 7, 0, w, 50);
 		set(hea, x, y, 0, 50, w, 50);
 		set(jhea, x, y, w, 50, w, 50);
 		set(len, x, y, w * 2, 50, w, 50);
@@ -126,23 +135,21 @@ class HeadEditTable extends Page {
 		set(max, x, y, w * 4, 50, w, 50);
 		set(jmax, x, y, w * 5, 50, w, 50);
 		set(con, x, y, w * 6, 50, w, 50);
+		set(dojo, x, y, w * 7, 50, w, 50);
 		set(bg, x, y, 0, 100, w, 50);
 		set(jbg, x, y, w, 100, w, 50);
-		set(jbgh, x, y, w * 6, 100, w, 50);
-		set(jbg1, x, y, w * 7, 100, w, 50);
-		set(cas, x, y, w * 2, 100, w, 50);
-		set(jcas, x, y, w * 3, 100, w, 50);
-		set(minres, x, y, w * 4, 100, w, 50);
-		set(minrest, x, y, w * 5, 100, w, 50);
-		set(cost, x, y, w * 6, 0, w, 50);
-		set(cos, x, y, w * 7, 0, w, 50);
+		set(jbgh, x, y, w * 2, 100, w, 50);
+		set(jbg1, x, y, w * 3, 100, w, 50);
+		set(cas, x, y, w * 4, 100, w, 50);
+		set(jcas, x, y, w * 5, 100, w, 50);
 		set(mus, x, y, 0, 150, w, 50);
 		set(jm0, x, y, w, 150, w, 50);
 		set(jmh, x, y, w * 2, 150, w, 50);
 		set(jm1, x, y, w * 3, 150, w, 50);
-		set(dojo, x, y, w * 4, 150, w, 50);
-		for (int i = 0; i < 4; i++)
-			set(star[i], x, y, w * (2 + i), 0, w, 50);
+		set(minres, x, y, w * 4, 150, w, 50);
+		set(minrest, x, y, w * 5, 150, w, 50);
+		set(uminres, x, y, w * 6, 150, w, 50);
+		set(uminrest, x, y, w * 7, 150, w, 50);
 		set(lt, x, y, 0, 200, 1400, 100);
 		lt.componentResized(x, y);
 	}
@@ -185,6 +192,8 @@ class HeadEditTable extends Page {
 
 		minrest.setEnabled(true);
 		minrest.setText(generateMinRespawn(st.minSpawn, st.maxSpawn));
+		uminrest.setEnabled(true);
+		uminrest.setText(generateMinRespawn(sta.minUSpawn, sta.maxUSpawn));
 	}
 
 	private void abler(boolean b) {
@@ -270,6 +279,8 @@ class HeadEditTable extends Page {
 		add(lt);
 		set(minres);
 		set(minrest);
+		set(uminres);
+		set(uminrest);
 		set(cost);
 		set(cos);
 		con.setSelected(true);
@@ -367,6 +378,27 @@ class HeadEditTable extends Page {
 			}
 		}
 
+		if (jtf == uminrest) {
+			try {
+				int[] vals = CommonStatic.parseIntsN(jtf.getText());
+				if (vals.length == 1) {
+					if (vals[0] <= 0)
+						return;
+					sta.minUSpawn = sta.maxUSpawn = vals[0];
+				} else if (vals.length >= 2) {
+					if (vals[0] <= 0 || vals[1] <= 0)
+						return;
+					if (vals[0] == vals[1])
+						sta.minUSpawn = sta.maxUSpawn = vals[0];
+					else {
+						sta.minUSpawn = Math.min(vals[0], vals[1]);
+						sta.maxUSpawn = Math.max(vals[0], vals[1]);
+					}
+				}
+				uminrest.setText(generateMinRespawn(sta.minUSpawn, sta.maxUSpawn));
+			} catch (Exception ignored) {
+			}
+		}
 
 		if (jtf == jbg) {
 			String[] result = CommonStatic.getPackContentID(str);
