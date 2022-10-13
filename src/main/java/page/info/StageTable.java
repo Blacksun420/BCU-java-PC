@@ -34,7 +34,7 @@ public class StageTable extends AbJTable {
 	}
 
 	public static void redefine() {
-		title = Page.get(MainLocale.INFO, "t", 10);
+		title = Page.get(MainLocale.INFO, "t", 11);
 	}
 
 	protected Object[][] data;
@@ -182,7 +182,10 @@ public class StageTable extends AbJTable {
 
 			SCGroup scg = st.data.sub.get(g);
 
-			data[ind][9] = scg == null ? g != 0 ? Data.trio(g) + " - invalid" : "" : scg.toString();
+			data[ind][9] = info[i].doorchance == 0 ? "0%" : info[i].doorchance + "% - " +
+					(info[i].doordis_0 == info[i].doordis_1 ? info[i].doordis_0 : info[i].doordis_0 + " ~ " + info[i].doordis_1);
+
+			data[ind][10] = scg == null ? g != 0 ? Data.trio(g) + " - invalid" : "" : scg.toString();
 
 		}
 	}

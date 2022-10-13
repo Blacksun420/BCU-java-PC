@@ -34,9 +34,14 @@ public class BCMusic extends Data {
 	private static boolean h, h1, bh;
 
 	protected static Map<Integer, ArrayDeque<BCPlayer>> sounds = new HashMap<>();
+	protected static ArrayDeque<BCPlayer> customSounds = new ArrayDeque<>();
 
 	@SuppressWarnings("UnusedAssignment")
 	public static void clear() {
+		for (BCPlayer sound : customSounds)
+			sound.release();
+		customSounds.clear();
+
 		for (ArrayDeque<BCPlayer> clips : sounds.values()) {
 			while (true) {
 				BCPlayer c = clips.poll();
@@ -399,6 +404,8 @@ public class BCMusic extends Data {
 		player.setVolume(VOL_SE);
 
 		player.start();
+		if (ind == -1)
+			customSounds.add(player);
 	}
 
 	private static void loadSound(int ind, Clip c, int vol) {

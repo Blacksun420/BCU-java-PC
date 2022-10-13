@@ -180,11 +180,9 @@ public interface BattleBox {
 			if(sb.bg.overlay != null) {
 				drawBGOverlay(g, midY);
 			}
-
-			deployWarn(g);
-
 			drawBtm(g);
 			drawTop(g);
+			deployWarn(g);
 		}
 
 		public double getX(double x) {
@@ -354,6 +352,8 @@ public interface BattleBox {
 			hr = Math.min(hr, (box.getWidth()-iw*2.0)/aux.slot[0].getImg().getWidth()/5.9);
 
 			double term = hr * aux.slot[0].getImg().getWidth() * 0.2;
+			iw = (int) (hr * aux.slot[0].getImg().getWidth());
+			ih = (int) (hr * aux.slot[0].getImg().getHeight());
 
 			if(!CommonStatic.getConfig().twoRow) {
 				if(sb.isOneLineup) {
@@ -362,15 +362,59 @@ public interface BattleBox {
 					drawLineup(g, w, h, hr, term, true, 1-sb.frontLineup);
 					drawLineup(g, w, h, hr, term, false, sb.frontLineup);
 				}
-				if (sb.unitRespawnTime > 1)
-					g.colRect(340, 644, 795, 143, 255, 0, 0, 100); //Untested
+				if (sb.unitRespawnTime > 1 && sb.changeFrame == -1) {
+					drawDeployCooldown(g, w, h, hr, iw, ih, term, -1);
+				}
 			} else {
 				double termh = hr * aux.slot[0].getImg().getHeight() * 0.1;
 
 				drawLineupWithTwoRows(g, w, h ,hr, term, termh);
+				drawDeployCooldown(g, w, h, hr, iw, ih, term, termh);
 			}
 
 			unir = hr;
+		}
+
+		private void drawDeployCooldown(FakeGraphics g, int w, int h, double hr, int iw, int ih, double term, double termh) {
+			if (sb.unitRespawnTime <= 1 || (!CommonStatic.getConfig().twoRow && sb.changeFrame != -1))
+				return;
+			if (termh == -1)
+				g.colRect((w - iw * 5) / 2 + (int)(term * -2 - term / 2), (int)(h - ih * 1.15), (int) (iw * 5 + term * 5), (int) (ih * 1.3), 255, 0, 0, 128);
+			else
+				g.colRect((w - iw * 5) / 2 + (int)(term * -2 - term / 2), (int)(h - 2 * (ih + termh) - termh / 2), (int) (iw * 5 + term * 5), (int) (ih * 2 + termh * 2), 255, 0, 0, 128);
+			//Draw remaining time
+			FakeImage separator = aux.timer[10].getImg();
+			FakeImage m;
+
+			String time = "";
+			if (sb.unitRespawnTime / 30 >= 60)
+				time += sb.unitRespawnTime / 30 / 60 + ",";
+			time += df.format(sb.unitRespawnTime / 30.0 % 60);
+			int mw = w / 2;
+			for(int i = 0; i < time.length(); i++) {
+				if((time.charAt(i)) == '.' || (time.charAt(i)) == ',') {
+					mw -= separator.getWidth() * hr / 2;
+				} else {
+					int index = Character.getNumericValue(time.charAt(i));
+					if (index == -1)
+						throw new IllegalStateException("Invalid index : " + index + " | Tried to convert char : " + time.charAt(i));
+					mw -= aux.timer[index].getImg().getWidth() * hr / 2;
+				}
+			}
+			P p = P.newP(mw, termh == -1 ? (int)(h - ih * 0.85) : (int)(h - 1.5 * (ih + termh / 2)));
+			for(int i = 0; i < time.length(); i++) {
+				if((time.charAt(i)) == '.' || (time.charAt(i)) == ',') {
+					g.drawImage(separator, p.x, p.y, separator.getWidth() * hr, separator.getHeight() * hr);
+					p.x += separator.getWidth() * hr;
+				} else {
+					int index = Character.getNumericValue(time.charAt(i));
+					m = aux.timer[index].getImg();
+					g.drawImage(m, p.x, p.y, m.getWidth() * hr, m.getHeight() * hr);
+					p.x += m.getWidth() * hr;
+				}
+			}
+
+			P.delete(p);
 		}
 
 		private int getFireLang() {
@@ -422,8 +466,6 @@ public interface BattleBox {
 
 					if(f == null)
 						continue;
-					if (i == 0 && j == 0)
-						System.out.println(x + " - " + y + " - " + iw + "/" +  ih); //TODO
 
 					int pri = sb.elu.price[i][j];
 					if (pri == -1)

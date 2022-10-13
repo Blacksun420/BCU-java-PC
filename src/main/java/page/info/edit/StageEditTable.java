@@ -41,7 +41,7 @@ public class StageEditTable extends AbJTable implements Reorderable {
 	}
 
 	protected static void redefine() {
-		title = Page.get(MainLocale.INFO, "t", 10);
+		title = Page.get(MainLocale.INFO, "t", 11);
 	}
 
 	private SCDef stage;
@@ -163,10 +163,24 @@ public class StageEditTable extends AbJTable implements Reorderable {
 		if (c == 1) {
 			String[] is = CommonStatic.getPackEntityID((String) arg0);
 
-			if(is[0] == null || is[0].isEmpty() || is[1] == null || is[1].isEmpty())
+			if (is[0] == null || is[0].isEmpty() || is[1] == null || is[1].isEmpty())
 				return;
 
 			setEnemy(r, is[0], is[1]);
+		}else if (c == 9) {
+			int[] is = CommonStatic.parseIntsN((String) arg0);
+			if (is.length == 0)
+				return;
+			Line data = stage.datas[stage.datas.length - r - 1];
+
+			data.doorchance = (byte) Math.min(Math.abs(is[0]), 100);
+			data.doordis_0 = is.length < 2 ? 0 : (byte) Math.min(Math.abs(is[1]), 100);
+			data.doordis_1 = is.length < 3 ? data.doordis_0 : (byte) Math.min(Math.abs(is[2]), 100);
+			if (data.doordis_0 > data.doordis_1) {
+				byte d = data.doordis_0;
+				data.doordis_0 = data.doordis_1;
+				data.doordis_1 = d;
+			}
 		} else if (c > 3) {
 			int[] is = CommonStatic.parseIntsN((String) arg0);
 
@@ -360,7 +374,10 @@ public class StageEditTable extends AbJTable implements Reorderable {
 			return data.layer_0 == data.layer_1 ? data.layer_0 : data.layer_0 + "~" + data.layer_1;
 		else if (c == 8)
 			return data.kill_count;
-		else if (c == 9) {
+		else if (c == 9)
+			return data.doorchance == 0 ? "0%" : data.doorchance + "% - " + (data.doordis_0 == data.doordis_1 ?
+					data.doordis_0 : data.doordis_0 + " ~ " + data.doordis_1);
+		else if (c == 10) {
 			int g = data.group;
 
 			SCGroup scg = stage.sub.get(g);
@@ -443,7 +460,7 @@ public class StageEditTable extends AbJTable implements Reorderable {
 			}
 		else if (c == 8)
 			data.kill_count = v;
-		else if (c == 9)
+		else if (c == 10)
 			data.group = v;
 	}
 
