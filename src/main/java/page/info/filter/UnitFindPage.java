@@ -23,7 +23,7 @@ public class UnitFindPage extends Page implements SupPage<Unit> {
 	public UnitFindPage(Page p) {
 		super(p);
 
-		ufb = UnitFilterBox.getNew(this, null, 0);
+		ufb = new UnitFilterBox(this, null, 0);
 		ini();
 		resized();
 	}
@@ -31,7 +31,7 @@ public class UnitFindPage extends Page implements SupPage<Unit> {
 	public UnitFindPage(Page p, String pack, List<String> parents) {
 		super(p);
 
-		ufb = UnitFilterBox.getNew(this, pack, parents);
+		ufb = new UnitFilterBox(this, pack, parents);
 		ini();
 		resized();
 	}

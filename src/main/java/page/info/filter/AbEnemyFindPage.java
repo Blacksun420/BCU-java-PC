@@ -23,15 +23,15 @@ public class AbEnemyFindPage extends Page implements SupPage<AbEnemy> {
     public AbEnemyFindPage(Page p) {
         super(p);
 
-        efb = AbEnemyFilterBox.getNew(this);
+        efb = new AbEnemyFilterBox(this);
         ini();
         resized();
     }
 
-    public AbEnemyFindPage(Page p, String pack, String... parents) {
+    public AbEnemyFindPage(Page p, String pack, List<String> parents) {
         super(p);
 
-        efb = AbEnemyFilterBox.getNew(this, pack, parents);
+        efb = new AbEnemyFilterBox(this, pack, parents);
         ini();
         resized();
     }

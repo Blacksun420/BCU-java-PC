@@ -159,7 +159,7 @@ public abstract class EntityEditPage extends Page {
 		if ((ce.getPack() instanceof Enemy && get(jli.getSelectedIndex()).dire != -1)
 				|| (ce.getPack() instanceof Form && get(jli.getSelectedIndex()).dire != 1)) {
 			if(p != null) {
-				ans = new AbEnemyFindPage(this, pack, p.desc.dependency.toArray(new String[0]));
+				ans = new AbEnemyFindPage(this, pack, p.desc.dependency);
 			} else {
 				ans = new AbEnemyFindPage(this);
 			}

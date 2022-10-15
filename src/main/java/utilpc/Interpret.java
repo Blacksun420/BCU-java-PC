@@ -528,31 +528,20 @@ public class Interpret extends Data {
 			return e.inDic;
 		else if (t == 1)
 			return e.de.getStar() == 1;
-		else if (t == 5)
+		else if (t == 3)
 			return !e.id.pack.equals(Identifier.DEF);
 
 		List<MapColc> lis = e.findMap();
-		boolean colab = false;
 		final int recurring;
 		if (e.de instanceof DataEnemy)
-			recurring = e.findApp(DefMapColc.getMap("N")).size() + e.findApp(DefMapColc.getMap("A")).size() + e.findApp(DefMapColc.getMap("CH")).size();
+			recurring = e.findApp(DefMapColc.getMap("N")).size() + e.findApp(DefMapColc.getMap("A")).size();
 		else
 			recurring = e.findApp(UserProfile.getUserPack(e.id.pack).mc).size();
-		if (lis.contains(DefMapColc.getMap("C")))
-			if (lis.size() == 1)
-				colab = true;
-			else {
-				colab = lis.contains(DefMapColc.getMap("R")) || lis.contains(DefMapColc.getMap("CH")) || lis.contains(DefMapColc.getMap("CA"));
-				if (lis.size() > 2)
-					colab &= recurring == 0;
-			}
+		boolean colab = recurring == 0 && (lis.contains(DefMapColc.getMap("C"))
+				|| lis.contains(DefMapColc.getMap("R")) || lis.contains(DefMapColc.getMap("CH")) || lis.contains(DefMapColc.getMap("CA")));
 		if (t == 2)
-			return !colab;
-		else if (t == 3)
-			return e.id.pack.equals(Identifier.DEF) && !e.inDic;
-		else if (t == 4)
 			return colab;
-		else if (t == 6)
+		else if (t == 4)
 			return recurring > 1;
 		return false;
 	}
@@ -577,7 +566,7 @@ public class Interpret extends Data {
 	}
 
 	public static void redefine() {
-		ERARE = Page.get(MainLocale.UTIL, "er", 7);
+		ERARE = Page.get(MainLocale.UTIL, "er", 5);
 		RARITY = Page.get(MainLocale.UTIL, "r", 6);
 		TRAIT = Page.get(MainLocale.UTIL, "c", TRAIT_TOT);
 		STAR = Page.get(MainLocale.UTIL, "s", 5);

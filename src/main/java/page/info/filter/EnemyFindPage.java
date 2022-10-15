@@ -24,15 +24,15 @@ public class EnemyFindPage extends Page implements SupPage<AbEnemy> {
 	public EnemyFindPage(Page p) {
 		super(p);
 
-		efb = EnemyFilterBox.getNew(this);
+		efb = new EnemyFilterBox(this);
 		ini();
 		resized();
 	}
 
-	public EnemyFindPage(Page p, String pack, String... parents) {
+	public EnemyFindPage(Page p, String pack, List<String> parents) {
 		super(p);
 
-		efb = EnemyFilterBox.getNew(this, pack, parents);
+		efb = new EnemyFilterBox(this, pack, parents);
 		ini();
 		resized();
 	}

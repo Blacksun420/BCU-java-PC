@@ -255,7 +255,6 @@ public class BCUWriter extends DataIO {
 		jo.addProperty("JOGL", MainBCU.USE_JOGL);
 		jo.addProperty("seconds", MainBCU.seconds);
 		jo.addProperty("prefLv", CommonStatic.getConfig().prefLevel);
-		jo.addProperty("filter", MainBCU.FILTER_TYPE);
 		jo.addProperty("play_sound", BCMusic.play);
 		jo.addProperty("volume_BG", BCMusic.VOL_BG);
 		jo.addProperty("volume_SE", BCMusic.VOL_SE);

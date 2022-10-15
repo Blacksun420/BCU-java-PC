@@ -308,7 +308,7 @@ public class StageEditTable extends AbJTable implements Reorderable {
 			if(pack == null) {
 				find = new AbEnemySelectionPage(page, this, ind);
 			} else {
-				find = new AbEnemySelectionPage(page, this, ind, pack.getSID(), pack.desc.dependency.toArray(new String[0]));
+				find = new AbEnemySelectionPage(page, this, ind, pack.getSID(), pack.desc.dependency);
 			}
 
 			MainFrame.changePanel(find);

@@ -26,17 +26,17 @@ public class AbEnemySelectionPage extends Page implements SupPage<AbEnemy> {
     public AbEnemySelectionPage(Page p, StageEditTable table, int index) {
         super(p);
 
-        efb = AbEnemyFilterBox.getNew(this);
+        efb = new AbEnemyFilterBox(this);
         ini();
         resized();
         this.table = table;
         this.index = index;
     }
 
-    public AbEnemySelectionPage(Page p, StageEditTable table, int index, String pack, String... parents) {
+    public AbEnemySelectionPage(Page p, StageEditTable table, int index, String pack, List<String> parents) {
         super(p);
 
-        efb = AbEnemyFilterBox.getNew(this, pack, parents);
+        efb = new AbEnemyFilterBox(this, pack, parents);
         ini();
         resized();
         this.table = table;

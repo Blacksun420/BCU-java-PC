@@ -44,7 +44,7 @@ public class StageSearchPage extends StagePage {
     private final List<Enemy> eList = new ArrayList<>();
     private final JList<Enemy> enemies = new JList<>();
     private final JScrollPane enes = new JScrollPane(enemies);
-    private final JTG eneOrop = new JTG(0,"orop");
+    private final JTG eneOrop = new JTG(0,"ops1");
 
     private final JBTN hasBoss = new JBTN();
     private byte BossChoice = -1;

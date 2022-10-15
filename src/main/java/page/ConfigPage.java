@@ -24,7 +24,6 @@ public class ConfigPage extends Page {
 	}
 
 	private final JBTN back = new JBTN(MainLocale.PAGE, "back");
-	private final JBTN filt = new JBTN(MainLocale.PAGE, "filter" + MainBCU.FILTER_TYPE);
 	private final JBTN rlla = new JBTN(MainLocale.PAGE, "rllang");
 	private final JBTN rlpk = new JBTN(MainLocale.PAGE, "rlpks");
 	private final JTG prel = new JTG(MainLocale.PAGE, "preload");
@@ -113,7 +112,6 @@ public class ConfigPage extends Page {
 		set(jsse, x, y, 50, 1000, 1000, 100);
 		set(jlui, x, y, 50, 1100, 400, 50);
 		set(jsui, x, y, 50, 1150, 1000, 100);
-		set(filt, x, y, 1100, 550, 200, 50);
 		set(musc, x, y, 1350, 550, 200, 50);
 		set(exla, x, y, 1100, 625, 450, 50);
 		set(extt, x, y, 1100, 700, 450, 50);
@@ -264,11 +262,6 @@ public class ConfigPage extends Page {
 			changing = false;
 		});
 
-		filt.addActionListener(e -> {
-			MainBCU.FILTER_TYPE = (byte) (1 - MainBCU.FILTER_TYPE);
-			filt.setText(0, "filter" + MainBCU.FILTER_TYPE);
-		});
-
 		musc.addActionListener(arg0 -> BCMusic.play = musc.isSelected());
 
 		row.addActionListener(a -> {
@@ -326,7 +319,6 @@ public class ConfigPage extends Page {
 		set(jsmax);
 		add(jlmin);
 		add(jlmax);
-		add(filt);
 		add(musc);
 		add(rlla);
 		add(exla);
