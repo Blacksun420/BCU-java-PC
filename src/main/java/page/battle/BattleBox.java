@@ -647,6 +647,18 @@ public interface BattleBox {
 
 			CommonStatic.getConfig().battle = true;
 
+			for(int i = 0; i < sb.lea.size(); i++) {
+				EAnimCont eac = sb.lea.get(i);
+				if (!(eac instanceof DoorCont))
+					continue;
+				int dep = eac.layer * DEP;
+
+				gra.setTransform(at);
+				double p = getX(eac.pos);
+				double y = midh - (road_h - dep) * bf.sb.siz;
+				eac.draw(gra, setP(p, y), psiz);
+			}
+
 			for(int i = 0; i < sb.le.size(); i++) {
 				Entity e = sb.le.get(i);
 
@@ -735,6 +747,8 @@ public interface BattleBox {
 
 			for(int i = 0; i < sb.lea.size(); i++) {
 				EAnimCont eac = sb.lea.get(i);
+				if (eac instanceof DoorCont)
+					continue;
 
 				int dep = eac.layer * DEP;
 

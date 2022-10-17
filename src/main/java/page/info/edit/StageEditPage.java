@@ -7,20 +7,18 @@ import common.util.stage.Stage;
 import common.util.stage.StageMap;
 import common.util.stage.info.CustomStageInfo;
 import common.util.unit.AbEnemy;
-import common.util.unit.EneRand;
 import common.util.unit.Enemy;
 import page.JBTN;
 import page.Page;
 import page.battle.BattleSetupPage;
 import page.battle.StRecdPage;
-import page.info.filter.EnemyFindPage;
+import page.info.filter.AbEnemyFindPage;
 import page.support.AnimLCR;
 import page.support.RLFIM;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -71,7 +69,7 @@ public class StageEditPage extends Page {
 	private final MapColc mc;
 	private final String pack;
 
-	private final EnemyFindPage efp;
+	private final AbEnemyFindPage efp;
 
 	private boolean changing = false;
 	private Stage stage;
@@ -85,7 +83,7 @@ public class StageEditPage extends Page {
 		info = new HeadEditTable(this, pac);
 		jlsm.setListData(mc, mc.maps);
 		jle.setListData(UserProfile.getAll(pack, Enemy.class).toArray(new Enemy[0]));
-		efp = new EnemyFindPage(getThis(), pac.desc.id, pac.desc.dependency);
+		efp = new AbEnemyFindPage(getThis(), pac.desc.id, pac.desc.dependency);
 		ini();
 	}
 
@@ -101,25 +99,8 @@ public class StageEditPage extends Page {
 		info.renew();
 
 		Vector<AbEnemy> v = new Vector<>();
-
 		if (efp != null && efp.getList() != null)
 			v.addAll(efp.getList());
-
-		UserPack p = UserProfile.getUserPack(pack);
-
-		if(p != null) {
-			ArrayList<EneRand> rands = new ArrayList<>(p.randEnemies.getList());
-
-			for(String str : p.desc.dependency) {
-				UserPack parent = UserProfile.getUserPack(str);
-
-				if(parent != null) {
-					rands.addAll(parent.randEnemies.getList());
-				}
-			}
-
-			v.addAll(rands);
-		}
 
 		jle.setListData(v);
 	}

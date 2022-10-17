@@ -29,14 +29,6 @@ public class EnemyFindPage extends Page implements SupPage<AbEnemy> {
 		resized();
 	}
 
-	public EnemyFindPage(Page p, String pack, List<String> parents) {
-		super(p);
-
-		efb = new EnemyFilterBox(this, pack, parents);
-		ini();
-		resized();
-	}
-
 	@Override
 	@SuppressWarnings("unchecked")
 	public void callBack(Object o) {

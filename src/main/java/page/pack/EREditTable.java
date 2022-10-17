@@ -140,9 +140,9 @@ class EREditTable extends AbJTable implements Reorderable {
 			return -1;
 		int ind = getSelectedRow();
 		if (ind == -1)
-			ind = 0;
+			ind = rand.list.size() - 1;
 		EREnt<Identifier<AbEnemy>> er = new EREnt<>();
-		rand.list.add(er);
+		rand.list.add(ind, er);
 		er.ent = enemy == null ? null : enemy.getID();
 		return rand.list.size() - 1;
 	}

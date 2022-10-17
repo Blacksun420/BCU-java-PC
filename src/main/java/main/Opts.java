@@ -1,6 +1,7 @@
 package main;
 
 import common.CommonStatic;
+import common.pack.Source;
 import common.util.stage.MapColc;
 import common.util.stage.Stage;
 import common.util.stage.StageMap;
@@ -71,8 +72,11 @@ public class Opts {
 		int result = JOptionPane.showOptionDialog(null, text, title, opt, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
 		if(result == JOptionPane.OK_OPTION || result == JOptionPane.NO_OPTION) {
-			if(fatal)
+			if(fatal) {
+				if (!title.contains("heap space")) //Saving while out of heap space is much likelier to corrupt data
+					Source.Workspace.autoSave(); //Autosave if crashing, to preserve data without risking corruption
 				CommonStatic.def.save(false, true);
+			}
 			popped = false;
 		}
 	}

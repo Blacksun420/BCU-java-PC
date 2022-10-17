@@ -79,13 +79,12 @@ public class EnemyFilterBox extends EntityFilterBox {
 			if (p instanceof PackData.DefPack) {
 				if (rare.isSelectedIndex(3))
 					return !processOperator(3, rare.isSelectedIndex(3));
+				return true;
 			} else {
-				if (pack != null)
-					return p.getSID().equals(pack) || parents.contains(p.getSID());
 				if (!processOperator(3, rare.isSelectedIndex(3)))
 					return processOperator(3, rare.isSelectedIndex(1)) || processOperator(3, rare.isSelectedIndex(4));
 			}
-		return true;
+		return p instanceof PackData.DefPack || pack == null || p.getSID().equals(pack) || parents.contains(p.getSID());
 	}
 
 	protected boolean validateEnemy(Enemy e) {
