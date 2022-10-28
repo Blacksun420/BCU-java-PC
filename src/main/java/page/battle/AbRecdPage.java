@@ -1,6 +1,7 @@
 package page.battle;
 
 import common.CommonStatic;
+import common.battle.BasisLU;
 import common.battle.BasisSet;
 import common.pack.Identifier;
 import common.util.stage.MapColc;
@@ -25,6 +26,7 @@ public abstract class AbRecdPage extends Page {
 	private final JTF seed = new JTF();
 	private final JTG larg = new JTG(0, "larges");
 	private final JBTN imgs = new JBTN(-1, "PNG");
+	private final JBTN clu = new JBTN(0, "Copy Lineup");
 	private final JLabel len = new JLabel();
 
 	private final JL ista = new JL();
@@ -49,6 +51,7 @@ public abstract class AbRecdPage extends Page {
 		add(recd);
 		add(larg);
 		add(imgs);
+		add(clu);
 		add(vsta);
 		add(seed);
 		add(jlu);
@@ -99,6 +102,7 @@ public abstract class AbRecdPage extends Page {
 		set(recd, x, y, 600, 200, 300, 50);
 		set(larg, x, y, 950, 200, 300, 50);
 		set(imgs, x, y, 1300, 200, 300, 50);
+		set(clu, x, y, 1300, 300, 300, 50);
 		set(len, x, y, 600, 300, 300, 50);
 		set(vsta, x, y, 600, 600, 300, 50);
 		set(jlu, x, y, 950, 600, 300, 50);
@@ -173,6 +177,7 @@ public abstract class AbRecdPage extends Page {
 			setRecd(r);
 		});
 
+		clu.setLnr(x -> BasisSet.current().lb.add(getSelection().lu.copy()));
 	}
 
 }

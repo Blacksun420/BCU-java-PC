@@ -1,6 +1,7 @@
 package page.info.filter;
 
 import common.battle.data.MaskUnit;
+import common.battle.entity.Entity;
 import common.pack.Identifier;
 import common.pack.PackData;
 import common.pack.UserProfile;
@@ -8,6 +9,7 @@ import common.util.lang.MultiLangCont;
 import common.util.lang.ProcLang;
 import common.util.stage.Limit;
 import common.util.unit.Form;
+import common.util.unit.Trait;
 import common.util.unit.Unit;
 import page.JTG;
 import page.MainLocale;
@@ -17,6 +19,7 @@ import utilpc.UtilPC;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import static utilpc.Interpret.*;
@@ -94,8 +97,8 @@ public class UnitFilterBox extends EntityFilterBox {
 
 					boolean b0 = rare.isSelectedIndex(u.rarity);
 					boolean b1 = unchangeable(0);
-					for (int i : trait.getSelectedIndices()) {
-						b1 = processOperator(0, du.getTraits().contains(trait.list.get(i)));
+					for (Trait t : trait.getSelectedValuesList()) {
+						b1 = processOperator(0, checkTraitComp(du.getTraits(), t, f));
 						if (b1 != unchangeable(0))
 							break;
 					}
@@ -161,5 +164,19 @@ public class UnitFilterBox extends EntityFilterBox {
 			add(limbtn);
 			limbtn.addActionListener(l -> confirm());
 		}
+	}
+
+	private boolean checkTraitComp(ArrayList<Trait> targets, Trait t, Form f) {
+		if (targets.contains(t))
+			return true;
+		if (t.BCTrait)
+			return false;
+		if (t.others.contains(f))
+			return true;
+		if (!t.targetType)
+			return false;
+		List<Trait> temp = UserProfile.getBCData().traits.getList().subList(TRAIT_RED,TRAIT_WHITE);
+		temp.remove(TRAIT_METAL);
+		return targets.containsAll(temp);
 	}
 }
