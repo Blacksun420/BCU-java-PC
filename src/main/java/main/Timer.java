@@ -6,7 +6,7 @@ import javax.swing.*;
 
 public strictfp class Timer extends Thread {
 
-	public static int p = 33;
+	public static int fps = 1000 / 30;
 	public static int inter = 0;
 	protected static boolean state;
 
@@ -32,8 +32,8 @@ public strictfp class Timer extends Thread {
 				}
 				thr.join();
 				int delay = (int) (System.currentTimeMillis() - m);
-				inter = (inter * 9 + 100 * delay / p) / 10;
-				int sle = delay >= p ? 1 : p - delay;
+				inter = (inter * 9 + 100 * delay / fps) / 10;
+				int sle = delay >= fps ? 1 : fps - delay;
 				sleep(sle);
 			} catch (InterruptedException e) {
 				return;
@@ -47,7 +47,7 @@ strictfp class Inv extends Thread {
 
 	@Override
 	public void run() {
-		MainFrame.timer(-1);
+		MainFrame.timer(Timer.fps);
 		synchronized (this) {
 			Timer.state = true;
 		}

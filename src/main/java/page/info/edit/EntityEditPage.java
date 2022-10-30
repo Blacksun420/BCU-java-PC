@@ -28,6 +28,7 @@ import page.anim.DIYViewPage;
 import page.info.edit.SwingEditor.EditCtrl;
 import page.info.edit.SwingEditor.IdEditor;
 import page.info.filter.AbEnemyFindPage;
+import page.info.filter.AbUnitFindPage;
 import page.info.filter.EnemyFindPage;
 import page.info.filter.UnitFindPage;
 import page.support.ListJtfPolicy;
@@ -165,9 +166,9 @@ public abstract class EntityEditPage extends Page {
 			}
 		} else {
 			if(p != null) {
-				ans = new UnitFindPage(this, pack, p.desc.dependency);
+				ans = new AbUnitFindPage(this, pack, p.desc.dependency);
 			} else {
-				ans = new UnitFindPage(this);
+				ans = new AbUnitFindPage(this);
 			}
 		}
 

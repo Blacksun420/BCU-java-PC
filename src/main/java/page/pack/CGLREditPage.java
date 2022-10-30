@@ -7,13 +7,13 @@ import common.util.Data;
 import common.util.stage.CharaGroup;
 import common.util.stage.LvRestrict;
 import common.util.unit.Form;
-import common.util.unit.Unit;
 import page.JBTN;
 import page.JTF;
 import page.MainLocale;
 import page.Page;
 import page.info.filter.UnitFindPage;
-import page.support.UnitLCR;
+import page.support.AnimLCR;
+import page.support.ReorderList;
 
 import javax.swing.*;
 import java.awt.event.FocusAdapter;
@@ -31,8 +31,8 @@ public class CGLREditPage extends Page {
 	private final JList<CharaGroup> jlcg = new JList<>();
 	private final JList<CharaGroup> jlsb = new JList<>();
 	private final JList<LvRestrict> jllr = new JList<>();
-	private final JList<Unit> jlus = new JList<>();
-	private final JList<Unit> jlua = new JList<>();
+	private final ReorderList<Form> jlus = new ReorderList<>();
+	private final ReorderList<Form> jlua = new ReorderList<>();
 	private final JScrollPane jspcg = new JScrollPane(jlcg);
 	private final JScrollPane jspsb = new JScrollPane(jlsb);
 	private final JScrollPane jsplr = new JScrollPane(jllr);
@@ -82,11 +82,8 @@ public class CGLREditPage extends Page {
 	protected void renew() {
 		if (ufp != null && ufp.getList() != null) {
 			changing = true;
-			List<Unit> list = new ArrayList<>();
-			for (Form f : ufp.getList())
-				if (!list.contains(f.unit))
-					list.add(f.unit);
-			jlua.setListData(list.toArray(new Unit[0]));
+			List<Form> list = new ArrayList<>(ufp.getList());
+			jlua.setListData(list.toArray(new Form[0]));
 			jlua.clearSelection();
 			if (list.size() > 0)
 				jlua.setSelectedIndex(0);
@@ -173,26 +170,26 @@ public class CGLREditPage extends Page {
 		});
 
 		addus.addActionListener(arg0 -> {
-			List<Unit> u = jlua.getSelectedValuesList();
+			List<Form> u = jlua.getSelectedValuesList();
 			if (cg == null || u.size() == 0)
 				return;
 			changing = true;
-			cg.set.addAll(u);
+			cg.fset.addAll(u);
 			updateCG();
 			jlus.setSelectedValue(u.get(0), true);
 			changing = false;
 		});
 
 		remus.addActionListener(arg0 -> {
-			Unit u = jlus.getSelectedValue();
+			Form u = jlus.getSelectedValue();
 			if (cg == null || u == null)
 				return;
 			changing = true;
-			List<Unit> list = new ArrayList<>(cg.set);
+			List<Form> list = new ArrayList<>(cg.fset);
 			int ind = list.indexOf(u) - 1;
 			if (ind < 0 && list.size() > 1)
 				ind = 0;
-			cg.set.remove(u);
+			cg.fset.remove(u);
 			updateCG();
 			jlus.setSelectedIndex(ind);
 			changing = false;
@@ -315,8 +312,8 @@ public class CGLREditPage extends Page {
 		set(jtflr);
 		for (int i = 0; i < jtfra.length; i++)
 			set(jtfra[i] = new JTF());
-		jlus.setCellRenderer(new UnitLCR());
-		jlua.setCellRenderer(new UnitLCR());
+		jlus.setCellRenderer(new AnimLCR());
+		jlua.setCellRenderer(new AnimLCR());
 		updateCGL();
 		updateLRL();
 		addListeners();
@@ -377,9 +374,9 @@ public class CGLREditPage extends Page {
 		addsb.setEnabled(lr != null && cg != null && !lr.res.containsKey(cg));
 
 		if (cg == null)
-			jlus.setListData(new Unit[0]);
+			jlus.setListData(new Form[0]);
 		else {
-			jlus.setListData(cg.set.toArray(new Unit[0]));
+			jlus.setListData(cg.fset.toArray(new Form[0]));
 			cgt.setText(0, cg.type == 0 ? "include" : "exclude");
 			jtfna.setText(cg.name);
 		}

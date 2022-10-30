@@ -176,7 +176,7 @@ public class LvRestrictPage extends Page {
 			jlus.setListData(new Unit[0]);
 		} else {
 			set(lsb, "group: ", lr.res.get(cg));
-			jlus.setListData(cg.set.toArray(new Unit[0]));
+			jlus.setListData(cg.fset.toArray(new Unit[0]));
 		}
 	}
 

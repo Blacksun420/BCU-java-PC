@@ -1,5 +1,6 @@
 package page.info.filter;
 
+import common.util.unit.AbForm;
 import common.util.unit.Form;
 import common.util.unit.Unit;
 import page.*;
@@ -8,7 +9,7 @@ import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
-public class UnitFindPage extends Page implements SupPage<Unit> {
+public class UnitFindPage extends Page implements SupPage<AbForm> {
 
 	private static final long serialVersionUID = 1L;
 

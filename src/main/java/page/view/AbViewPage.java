@@ -77,7 +77,7 @@ public abstract class AbViewPage extends Page {
 
 	@Override
 	protected void exit() {
-		Timer.p = 33;
+		Timer.fps = 33;
 	}
 
 	@Override
@@ -127,7 +127,7 @@ public abstract class AbViewPage extends Page {
 		jst.setPaintTicks(true);
 		jst.setMajorTickSpacing(100);
 		jst.setMinorTickSpacing(25);
-		jst.setValue(Timer.p * 100 / 33);
+		jst.setValue(Timer.fps * 100 / 33);
 		jtl.setEnabled(false);
 		jtl.setPaintTicks(true);
 		jtl.setPaintLabels(true);
@@ -263,7 +263,7 @@ public abstract class AbViewPage extends Page {
 		jst.addChangeListener(arg0 -> {
 			if (jst.getValueIsAdjusting())
 				return;
-			Timer.p = jst.getValue() * 33 / 100;
+			Timer.fps = jst.getValue() * 33 / 100;
 		});
 
 		jtl.addChangeListener(arg0 -> {

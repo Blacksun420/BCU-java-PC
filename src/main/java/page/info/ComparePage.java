@@ -209,7 +209,7 @@ public class ComparePage extends Page {
 
                 Form oldf = (Form) maskEntities[finalI].getPack();
                 int fid = oldf.fid;
-                Form f = oldf.uid.get().forms[(fid + 1) % oldf.unit.forms.length];
+                Form f = oldf.uid.get().getForms()[(fid + 1) % oldf.unit.forms.length];
 
                 int[] data = CommonStatic.parseIntsN(level[finalI].getText());
                 maskEntityLvl[finalI] = f.regulateLv(data, maskEntityLvl[finalI]);

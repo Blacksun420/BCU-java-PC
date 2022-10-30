@@ -10,6 +10,7 @@ import page.info.edit.StageEditPage;
 import page.info.filter.EnemyListTable;
 import page.info.filter.UnitListTable;
 import page.pack.EREditPage;
+import page.pack.UREditPage;
 import utilpc.Interpret;
 
 import java.io.PrintStream;
@@ -118,6 +119,7 @@ public strictfp class MainLocale {
 		BattleInfoPage.redefine();
 		StageEditPage.redefine();
 		EREditPage.redefine();
+		UREditPage.redefine();
 	}
 
 	protected static void setLoc(int i, String key, String value) {

@@ -117,7 +117,7 @@ public class CharaGroupPage extends Page {
 		if (cg == null)
 			jlus.setListData(new Unit[0]);
 		else {
-			jlus.setListData(cg.set.toArray(new Unit[0]));
+			jlus.setListData(cg.fset.toArray(new Unit[0]));
 			cgt.setText(0, cg.type == 0 ? "include" : "exclude");
 		}
 	}

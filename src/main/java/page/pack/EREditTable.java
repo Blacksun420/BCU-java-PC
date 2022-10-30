@@ -5,7 +5,7 @@ import common.pack.Identifier;
 import common.pack.PackData;
 import common.pack.UserProfile;
 import common.system.ENode;
-import common.util.EREnt;
+import common.util.unit.rand.EREnt;
 import common.util.unit.AbEnemy;
 import common.util.unit.EneRand;
 import common.util.unit.Enemy;
@@ -140,8 +140,8 @@ class EREditTable extends AbJTable implements Reorderable {
 			return -1;
 		int ind = getSelectedRow();
 		if (ind == -1)
-			ind = rand.list.size() - 1;
-		EREnt<Identifier<AbEnemy>> er = new EREnt<>();
+			ind = rand.list.size();
+		EREnt er = new EREnt();
 		rand.list.add(ind, er);
 		er.ent = enemy == null ? null : enemy.getID();
 		return rand.list.size() - 1;
@@ -155,13 +155,13 @@ class EREditTable extends AbJTable implements Reorderable {
 		if (c != 0)
 			return;
 		int r = p.y / getRowHeight();
-		EREnt<Identifier<AbEnemy>> er = rand.list.get(r);
+		EREnt er = rand.list.get(r);
 		AbEnemy e = Identifier.get(er.ent);
 		if (e instanceof Enemy) {
 			java.util.List<Enemy> eList = new ArrayList<>();
 			List<int[]> muls = new ArrayList<>();
 			for (int i = rand.list.size() - 1; i >= 0; i--) {
-				EREnt<Identifier<AbEnemy>> es = rand.list.get(i);
+				EREnt es = rand.list.get(i);
 				AbEnemy se = Identifier.get(es.ent);
 				if (se instanceof Enemy && !eList.contains(se)) {
 					eList.add((Enemy) se);
@@ -197,7 +197,7 @@ class EREditTable extends AbJTable implements Reorderable {
 	private Object get(int r, int c) {
 		if (rand == null)
 			return null;
-		EREnt<Identifier<AbEnemy>> er = rand.list.get(r);
+		EREnt er = rand.list.get(r);
 		if (c == 0)
 			return Identifier.get(er.ent);
 		else if (c == 1)
@@ -210,7 +210,7 @@ class EREditTable extends AbJTable implements Reorderable {
 	private void set(int r, int c, int v, int para) {
 		if (rand == null)
 			return;
-		EREnt<Identifier<AbEnemy>> er = rand.list.get(r);
+		EREnt er = rand.list.get(r);
 		if (v < 0)
 			v = 0;
 		if (c == 1) {

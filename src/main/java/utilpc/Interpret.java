@@ -99,7 +99,7 @@ public class Interpret extends Data {
 			{ 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 } };
 
 	//Filters abilities and procs that are available for enemies. Also gives better organization to the UI
-	public static final int[] EABIIND = { ABI_GOOD, ABI_MASSIVE, ABI_MASSIVES, ABI_RESIST, ABI_RESISTS, ABI_WAVES, ABI_SNIPERI, ABI_TIMEI, ABI_GHOST, ABI_GLASS, ABI_THEMEI };
+	public static final int[] EABIIND = { ABI_GOOD, ABI_MASSIVE, ABI_MASSIVES, ABI_RESIST, ABI_RESISTS, ABI_SNIPERI, ABI_TIMEI, ABI_GHOST, ABI_GLASS, ABI_THEMEI };
 	public static final int[] EPROCIND = { Data.P_KB, Data.P_STOP, Data.P_SLOW, Data.P_WEAK, Data.P_LETHARGY, Data.P_BOUNTY, Data.P_CRIT, Data.P_WAVE, Data.P_WORKERLV,
 			Data.P_CDSETTER, Data.P_MINIWAVE, Data.P_VOLC, Data.P_BARRIER, Data.P_DEMONSHIELD, Data.P_BREAK, Data.P_SHIELDBREAK, Data.P_WARP, Data.P_CURSE,
 			Data.P_SEAL, Data.P_SATK, Data.P_POIATK, Data.P_ATKBASE, Data.P_SUMMON, Data.P_MOVEWAVE, Data.P_SNIPER, Data.P_BOSS, Data.P_TIME, Data.P_THEME,
@@ -271,14 +271,9 @@ public class Interpret extends Data {
 				}
 			}
 		}
-		String imu = Page.get(MainLocale.UTIL, "imu");
 		for (int i = 0; i < ABIS.length; i++)
 			if (((me.getAbi() >> i) & 1) > 0)
-				if (ABIS[i].startsWith("IMU"))
-					l.add(new ProcDisplay(imu + ABIS[i].substring(3), UtilPC.getIcon(0, i)));
-				else {
-					l.add(new ProcDisplay(ABIS[i], UtilPC.getIcon(0, i)));
-				}
+				l.add(new ProcDisplay(ABIS[i], UtilPC.getIcon(0, i)));
 		return l;
 	}
 
@@ -338,7 +333,10 @@ public class Interpret extends Data {
 				String format = ProcLang.get().get(i).format;
 				String formatted = Formatter.format(format, item, ctx);
 
-				l.add(new ProcDisplay(formatted, UtilPC.getIcon(1, i)));
+				if (i == P_IMUWAVE && (item.get(0) == 0 || item.get(1) == 100))
+					l.add(new ProcDisplay(formatted, (BufferedImage)CommonStatic.getBCAssets().waveShield.getImg().bimg()));
+				else
+					l.add(new ProcDisplay(formatted, UtilPC.getIcon(1, i)));
 			}
 		} else {
 			LinkedHashMap<String, List<Integer>> atkMap = new LinkedHashMap<>();
@@ -682,7 +680,7 @@ public class Interpret extends Data {
 			t.bslv[BASE_GROUND] = v;
 		else if (ind == 35)
 			t.bslv[BASE_BARRIER] = v;
-		else if (ind == 36)
+		else
 			t.bslv[BASE_CURSE] = v;
 	}
 

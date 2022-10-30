@@ -278,8 +278,8 @@ public class Opts {
 					try {
 						p.timer(0);
 						int delay = (int) (System.currentTimeMillis() - m);
-						inter = (inter * 9 + 100 * delay / Timer.p) / 10;
-						int sle = delay >= Timer.p ? 1 : Timer.p - delay;
+						inter = (inter * 9 + 100 * delay / Timer.fps) / 10;
+						int sle = delay >= Timer.fps ? 1 : Timer.fps - delay;
 						Thread.sleep(sle);
 					} catch (InterruptedException e) {
 						return;

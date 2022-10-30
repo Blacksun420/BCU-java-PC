@@ -9,7 +9,7 @@ import page.JBTN;
 import page.JTF;
 import page.JTG;
 import page.Page;
-import page.info.filter.EnemyFindPage;
+import page.info.filter.AbEnemyFindPage;
 import page.support.AnimLCR;
 
 import javax.swing.*;
@@ -17,7 +17,6 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -46,7 +45,7 @@ public class EREditPage extends Page {
 
 	private final UserPack pack;
 
-	private EnemyFindPage efp;
+	private AbEnemyFindPage efp;
 
 	private EneRand rand;
 
@@ -74,25 +73,8 @@ public class EREditPage extends Page {
 
 	@Override
 	protected void renew() {
-		if (efp != null && efp.getList() != null) {
-			Vector<AbEnemy> v = new Vector<>(efp.getList());
-
-			if(pack != null) {
-				ArrayList<EneRand> rands = new ArrayList<>(pack.randEnemies.getList());
-
-				for(String str : pack.desc.dependency) {
-					UserPack p = UserProfile.getUserPack(str);
-
-					if(p != null) {
-						rands.addAll(pack.randEnemies.getList());
-					}
-				}
-
-				v.addAll(rands);
-			}
-
-			jle.setListData(v);
-		}
+		if (efp != null && efp.getList() != null)
+			jle.setListData(new Vector<>(efp.getList()));
 	}
 
 	@Override
@@ -140,7 +122,7 @@ public class EREditPage extends Page {
 
 		veif.addActionListener(arg0 -> {
 			if (efp == null)
-				efp = new EnemyFindPage(getThis());
+				efp = new AbEnemyFindPage(getThis(), pack.desc.id, pack.desc.dependency);
 			changePanel(efp);
 		});
 

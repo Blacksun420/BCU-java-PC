@@ -6,9 +6,9 @@ import common.battle.BasisLU;
 import common.battle.BasisSet;
 import common.battle.data.CustomUnit;
 import common.pack.PackData.UserPack;
-import common.pack.Source;
 import common.pack.UserProfile;
 import common.util.anim.AnimCE;
+import common.util.stage.CharaGroup;
 import common.util.unit.*;
 import main.Opts;
 import page.*;
@@ -24,7 +24,6 @@ import javax.swing.tree.TreePath;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class UnitManagePage extends Page {
 
@@ -52,6 +51,7 @@ public class UnitManagePage extends Page {
 	private final JBTN edit = new JBTN(0, "edit");
 	private final JBTN frea = new JBTN(0, "reassign");
 	private final JBTN vuni = new JBTN(0, "vuni");
+	private final JBTN unir = new JBTN(MainLocale.PAGE, "unir");
 	private final JBTN cmbo = new JBTN(0, "combo");
 
 	private final JTF jtff = new JTF();
@@ -103,6 +103,7 @@ public class UnitManagePage extends Page {
 		set(addu, x, y, w, 800, 150, 50);
 		set(remu, x, y, w + dw, 800, 150, 50);
 		set(vuni, x, y, w, 950, 300, 50);
+		set(unir, x, y, w, 1150, 300, 50);
 		w += 300;
 		set(lbf, x, y, w, 100, 300, 50);
 		set(jspf, x, y, w, 150, 300, 600);
@@ -221,7 +222,6 @@ public class UnitManagePage extends Page {
 						break;
 					}
 				}
-
 			for (BasisSet bs : BasisSet.list())
 				for (BasisLU bl : bs.lb)
 					for (int i = 0; i < 10; i++) {
@@ -234,6 +234,13 @@ public class UnitManagePage extends Page {
 							break;
 						}
 					}
+			for (Form f : uni.forms)
+				for (CharaGroup g : pac.groups)
+					g.fset.remove(f);
+			for (UniRand ura : pac.randUnits)
+				for (int i = 0; i < ura.list.size(); i++)
+					if (ura.list.get(i).ent.unit == uni)
+						ura.list.remove(i--);
 
 			pac.units.remove(uni);
 			uni.lv.units.remove(uni);
@@ -420,6 +427,8 @@ public class UnitManagePage extends Page {
 		});
 
 		vuni.setLnr((e) -> changePanel(new UnitViewPage(this, pac.getSID())));
+
+		unir.setLnr(() -> new UREditPage(getThis(), pac));
 	}
 
 	private void ini() {
@@ -453,6 +462,7 @@ public class UnitManagePage extends Page {
 		add(reml);
 		add(jtfl);
 		add(cmbo);
+		add(unir);
 		jlu.setCellRenderer(new UnitLCR());
 		jlf.setCellRenderer(new AnimLCR());
 		jtd.setCellRenderer(new AnimTreeRenderer());
@@ -522,6 +532,7 @@ public class UnitManagePage extends Page {
 		edit.setEnabled(b);
 		addl.setEnabled(b);
 		vuni.setEnabled(pac != null);
+		unir.setEnabled(pac != null);
 		boolean boo = changing;
 		changing = true;
 		if (pac == null) {

@@ -157,7 +157,7 @@ public class FormEditPage extends EntityEditPage {
 		subListener(vene, impt, vuni, form.unit);
 
 		stat.setLnr(x -> {
-			Unit u = Identifier.get(cu.getPack().uid);
+			Unit u = (Unit) Identifier.get(cu.getPack().uid);
 			Node<Unit> nu = Node.getList(UserProfile.getAll(cu.getPack().uid.pack, Unit.class), u);
 			changePanel(new UnitInfoPage(this, nu));
 		});
