@@ -4,7 +4,7 @@ import common.system.VImg;
 import common.util.Animable;
 import common.util.anim.AnimU;
 import common.util.unit.AbEnemy;
-import main.MainBCU;
+import common.util.unit.AbForm;
 import utilpc.Theme;
 import utilpc.UtilPC;
 
@@ -31,6 +31,8 @@ public class AnimLCR extends DefaultListCellRenderer {
 			v = ((Animable<? extends AnimU<?>, ?>) o).anim == null ? null : ((Animable<? extends  AnimU<?>, ?>) o).anim.getEdi();
 		else if (o instanceof AbEnemy)
 			v = ((AbEnemy) o).getIcon();
+		else if (o instanceof AbForm)
+			v = ((AbForm) o).getIcon();
 		else
 			v = null;
 

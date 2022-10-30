@@ -1,7 +1,11 @@
 package page.pack;
 
 import common.CommonStatic;
+import common.pack.Identifier;
+import common.pack.PackData;
+import common.pack.UserProfile;
 import common.system.Node;
+import common.util.unit.AbUnit;
 import common.util.unit.Form;
 import common.util.unit.UniRand;
 import common.util.unit.Unit;
@@ -10,7 +14,10 @@ import page.MainFrame;
 import page.MainLocale;
 import page.Page;
 import page.info.UnitInfoPage;
-import page.support.*;
+import page.support.AbJTable;
+import page.support.InTableTH;
+import page.support.Reorderable;
+import page.support.UnitTCR;
 import utilpc.UtilPC;
 
 import javax.swing.text.JTextComponent;
@@ -18,7 +25,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.EventObject;
-import java.util.List;
 
 public class UREditTable extends AbJTable implements Reorderable {
 
@@ -36,13 +42,15 @@ public class UREditTable extends AbJTable implements Reorderable {
 
     private UniRand rand;
     private final Page page;
+    private final String pack;
 
-    protected UREditTable(Page p) {
+    protected UREditTable(Page p, PackData.UserPack pack) {
         super(title);
 
         page = p;
         setTransferHandler(new InTableTH(this));
-        setDefaultRenderer(Form.class, new UnitTCR(new int[getColumnCount()]));
+        setDefaultRenderer(Integer.class, new UnitTCR(new int[title.length], 0));
+        this.pack = pack == null ? null : pack.desc.id;
     }
 
     @Override
@@ -147,16 +155,20 @@ public class UREditTable extends AbJTable implements Reorderable {
         if (c != 0)
             return;
         int r = p.y / getRowHeight();
-        UREnt er = rand.list.get(r);
-        Form f = er.ent;
-        List<Unit> eList = new ArrayList<>();
-        for (int i = rand.list.size() - 1; i >= 0; i--) {
-            UREnt us = rand.list.get(i);
-            Unit su = us.ent.unit;
-            if (!eList.contains(su))
-                eList.add(su);
-        }
-        MainFrame.changePanel(new UnitInfoPage(page, Node.getList(eList, f.unit)));
+        UREnt ur = rand.list.get(r);
+        AbUnit u = Identifier.get(ur.ent.getID());
+        if (u instanceof Unit) {
+            java.util.List<Unit> uList = new ArrayList<>();
+            for (int i = rand.list.size() - 1; i >= 0; i--) {
+                UREnt es = rand.list.get(i);
+                AbUnit su = Identifier.get(es.ent.getID());
+                if (su instanceof Unit && !uList.contains(su)) {
+                    uList.add((Unit) su);
+                }
+            }
+            MainFrame.changePanel(new UnitInfoPage(page, Node.getList(uList,(Unit) u)));
+        } else if (u instanceof UniRand && pack != null && !u.getID().pack.equals(pack))
+            MainFrame.changePanel(new EREditPage(page, UserProfile.getUserPack(((UniRand) u).id.pack)));
     }
 
     protected synchronized int remLine() {
@@ -187,7 +199,7 @@ public class UREditTable extends AbJTable implements Reorderable {
         if (c == 0)
             return ur.ent;
         else if (c == 1)
-            return UtilPC.lvText(ur.ent, ur.lv.getLvs())[0];
+            return ur.ent instanceof Form ? UtilPC.lvText((Form) ur.ent, ur.lv.getLvs())[0] : new String[]{"1"};
         else if (c == 2)
             return ur.share;
         return null;

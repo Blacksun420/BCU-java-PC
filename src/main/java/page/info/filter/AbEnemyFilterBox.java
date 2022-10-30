@@ -35,7 +35,7 @@ public class AbEnemyFilterBox extends EnemyFilterBox {
                         ans.add(e);
 
         for(PackData.UserPack p : UserProfile.getUserPacks())
-            if(pack == null || pack.equals(p.desc.id) || parents.contains(p.desc.id))
+            if(validatePack(p))
                 for(EneRand rand : p.randEnemies.getList()) {
                     int diff = UtilPC.damerauLevenshteinDistance(rand.name.toLowerCase(), name.toLowerCase());
                     if(diff <= minDiff) {

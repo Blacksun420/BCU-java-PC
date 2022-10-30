@@ -5,7 +5,6 @@ import common.battle.BasisLU;
 import common.battle.BasisSet;
 import common.system.Node;
 import common.util.Data;
-import main.MainBCU;
 import page.JTF;
 import page.JTG;
 import page.Page;

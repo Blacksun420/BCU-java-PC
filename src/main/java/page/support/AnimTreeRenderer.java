@@ -3,7 +3,6 @@ package page.support;
 import common.system.VImg;
 import common.util.AnimGroup;
 import common.util.anim.AnimCE;
-import main.MainBCU;
 import utilpc.UtilPC;
 
 import javax.swing.*;

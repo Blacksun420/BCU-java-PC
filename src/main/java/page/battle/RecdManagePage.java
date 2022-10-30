@@ -3,7 +3,6 @@ package page.battle;
 import common.CommonStatic;
 import common.util.stage.Replay;
 import main.MainBCU;
-import main.Opts;
 import page.JBTN;
 import page.JTF;
 import page.Page;

@@ -3,7 +3,6 @@ package page.support;
 import common.system.VImg;
 import common.util.unit.Form;
 import common.util.unit.Unit;
-import main.MainBCU;
 import utilpc.Theme;
 import utilpc.UtilPC;
 

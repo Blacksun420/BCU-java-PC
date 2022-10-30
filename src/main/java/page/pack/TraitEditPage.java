@@ -21,13 +21,14 @@ import page.support.ReorderList;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static utilpc.UtilPC.resizeImage;
 
 public class TraitEditPage extends Page {
 
@@ -299,9 +300,9 @@ public class TraitEditPage extends Page {
             getFile("Icon must have the same width and height");
             return;
         }
-        if (bimg.getWidth() != 41 || bimg.getHeight() != 41) {
-            bimg = resizeImage(bimg);
-        }
+        if (bimg.getWidth() != 41 || bimg.getHeight() != 41)
+            bimg = resizeImage(bimg, 41, 41);
+
         if (t.icon != null)
             t.icon.setImg(MainBCU.builder.build(bimg));
         else
@@ -317,17 +318,6 @@ public class TraitEditPage extends Page {
         }
         updateCT();
         setIconImage(jlct.getSelectedValue());
-    }
-
-    private BufferedImage resizeImage(BufferedImage img) {
-        Image tmp = img.getScaledInstance(41, 41, Image.SCALE_SMOOTH);
-        BufferedImage dimg = new BufferedImage(41, 41, BufferedImage.TYPE_INT_ARGB);
-
-        Graphics2D g2d = dimg.createGraphics();
-        g2d.drawImage(tmp, 0, 0, null);
-        g2d.dispose();
-
-        return dimg;
     }
 
     private void setIconImage(Trait slt) {

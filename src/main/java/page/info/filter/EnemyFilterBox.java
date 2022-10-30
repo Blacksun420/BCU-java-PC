@@ -74,6 +74,7 @@ public class EnemyFilterBox extends EntityFilterBox {
 		getFront().callBack(ans);
 	}
 
+	@Override
 	protected boolean validatePack(PackData p) {
 		if (rare.getSelectedIndices().length > 0)
 			if (p instanceof PackData.DefPack) {
@@ -84,7 +85,7 @@ public class EnemyFilterBox extends EntityFilterBox {
 				if (!processOperator(3, rare.isSelectedIndex(3)))
 					return processOperator(3, rare.isSelectedIndex(1)) || processOperator(3, rare.isSelectedIndex(4));
 			}
-		return p instanceof PackData.DefPack || pack == null || p.getSID().equals(pack) || parents.contains(p.getSID());
+		return super.validatePack(p);
 	}
 
 	protected boolean validateEnemy(Enemy e) {

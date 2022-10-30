@@ -1,31 +1,30 @@
 package page.info.filter;
 
 import common.util.unit.AbForm;
+import common.util.unit.AbUnit;
 import page.*;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
-/**
- * Used for summon
- */
-public class AbUnitFindPage extends Page implements SupPage<AbForm> {
+public class AbUnitFindPage extends Page implements SupPage<AbUnit> {
 
     private static final long serialVersionUID = 1L;
 
     private final JBTN back = new JBTN(0, "back");
+    private final JLabel source = new JLabel("Source of unit icon: DB");
     private final JTG show = new JTG(0, "showf");
     private final AbUnitListTable ult = new AbUnitListTable(this);
-    private final JScrollPane jsp = new JScrollPane(ult);
     private final AbUnitFilterBox ufb;
+    private final JScrollPane jsp = new JScrollPane(ult);
     private final JTF seatf = new JTF();
     private final JBTN seabt = new JBTN(0, "search");
 
     public AbUnitFindPage(Page p) {
         super(p);
 
-        ufb = new AbUnitFilterBox(this, null, 0);
+        ufb = new AbUnitFilterBox(this);
         ini();
         resized();
     }
@@ -45,15 +44,19 @@ public class AbUnitFindPage extends Page implements SupPage<AbForm> {
         resized();
     }
 
+    public AbForm getForm() {
+        if (ult.getSelectedRow() == -1 || ult.getSelectedRow() > ult.list.size() - 1)
+            return null;
+        return ult.list.get(ult.getSelectedRow());
+    }
     public List<AbForm> getList() {
         return ult.list;
     }
 
     @Override
-    public AbForm getSelected() {
-        if (ult.getSelectedRow() == -1 || ult.getSelectedRow() > ult.list.size() - 1)
-            return null;
-        return ult.list.get(ult.getSelectedRow());
+    public AbUnit getSelected() {
+        AbForm f = getForm();
+        return f == null ? null : f.getID().get();
     }
 
     @Override
@@ -67,6 +70,7 @@ public class AbUnitFindPage extends Page implements SupPage<AbForm> {
     protected void resized(int x, int y) {
         setBounds(0, 0, x, y);
         set(back, x, y, 0, 0, 200, 50);
+        set(source, x, y, 0, 50, 600, 50);
         set(show, x, y, 250, 0, 200, 50);
         set(seatf, x, y, 550, 0, 1000, 50);
         set(seabt, x, y, 1600, 0, 200, 50);
@@ -116,10 +120,10 @@ public class AbUnitFindPage extends Page implements SupPage<AbForm> {
         add(show);
         add(ufb);
         add(jsp);
+        add(source);
         add(seatf);
         add(seabt);
         show.setSelected(true);
         addListeners();
     }
-
 }

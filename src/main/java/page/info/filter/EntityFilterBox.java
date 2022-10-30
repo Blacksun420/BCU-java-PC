@@ -62,6 +62,10 @@ public abstract class EntityFilterBox extends Page {
 
     protected abstract void confirm();
 
+    protected boolean validatePack(PackData p) {
+        return p instanceof PackData.DefPack || pack == null || p.getSID().equals(pack) || parents.contains(p.getSID());
+    }
+
     protected void ini() {
         opBtnListeners();
         FixIndexList.FixIndexMap<Trait> BCtraits = UserProfile.getBCData().traits;

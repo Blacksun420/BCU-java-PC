@@ -1,6 +1,10 @@
 package page.anim;
 
 import common.CommonStatic;
+import common.util.anim.AnimCE;
+import common.util.anim.ImgCut;
+import common.util.anim.MaAnim;
+import common.util.anim.Part;
 import common.pack.PackData.UserPack;
 import common.pack.Source.ResourceLocation;
 import common.pack.Source.Workspace;
@@ -8,8 +12,6 @@ import common.pack.Source;
 import common.pack.UserProfile;
 import common.system.fake.FakeImage.Marker;
 import common.util.AnimGroup;
-import common.util.anim.*;
-import common.util.pack.Soul;
 import common.util.unit.Enemy;
 import main.MainBCU;
 import main.Opts;

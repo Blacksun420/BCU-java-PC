@@ -1,12 +1,6 @@
 package page;
 
 import common.util.lang.LocaleCenter.Binder;
-import utilpc.PP;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class LocSubComp {
 

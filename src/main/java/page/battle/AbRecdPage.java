@@ -1,7 +1,6 @@
 package page.battle;
 
 import common.CommonStatic;
-import common.battle.BasisLU;
 import common.battle.BasisSet;
 import common.pack.Identifier;
 import common.util.stage.MapColc;

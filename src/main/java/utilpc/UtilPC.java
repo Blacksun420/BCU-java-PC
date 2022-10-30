@@ -143,6 +143,17 @@ public class UtilPC {
 		return new ImageIcon((Image) img.bimg());
 	}
 
+	public static BufferedImage resizeImage(BufferedImage img, int w, int h) {
+		Image tmp = img.getScaledInstance(w, h, Image.SCALE_SMOOTH);
+		BufferedImage dimg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D g2d = dimg.createGraphics();
+		g2d.drawImage(tmp, 0, 0, null);
+		g2d.dispose();
+
+		return dimg;
+	}
+
 	public static String[] lvText(Form f, ArrayList<Integer> lvs) {
 		PCoin pc = f.du.getPCoin();
 		if (pc == null)

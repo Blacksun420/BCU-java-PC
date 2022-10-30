@@ -1,24 +1,32 @@
 package page.pack;
 
+import common.CommonStatic;
+import common.pack.Context;
 import common.pack.PackData.UserPack;
+import common.pack.Source;
 import common.pack.UserProfile;
 import common.util.unit.AbEnemy;
 import common.util.unit.EneRand;
+import main.MainBCU;
 import main.Opts;
-import page.JBTN;
-import page.JTF;
-import page.JTG;
-import page.Page;
+import page.*;
 import page.info.filter.AbEnemyFindPage;
 import page.support.AnimLCR;
+import page.support.Importer;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
+
+import static utilpc.UtilPC.resizeImage;
 
 public class EREditPage extends Page {
 
@@ -34,14 +42,16 @@ public class EREditPage extends Page {
 	private final JScrollPane jspjt;
 	private final JList<EneRand> jlst = new JList<>();
 	private final JScrollPane jspst = new JScrollPane(jlst);
-	private final JBTN adds = new JBTN(0, "add");
-	private final JBTN rems = new JBTN(0, "rem");
-	private final JBTN addl = new JBTN(0, "addl");
-	private final JBTN reml = new JBTN(0, "reml");
+	private final JBTN adds = new JBTN(MainLocale.PAGE, "add");
+	private final JBTN rems = new JBTN(MainLocale.PAGE, "rem");
+	private final JBTN addl = new JBTN(MainLocale.PAGE, "addl");
+	private final JBTN reml = new JBTN(MainLocale.PAGE, "reml");
 	private final JList<AbEnemy> jle = new JList<>();
 	private final JScrollPane jspe = new JScrollPane(jle);
 	private final JTF name = new JTF();
 	private final JTG[] type = new JTG[3];
+	private final JBTN adicn = new JBTN(MainLocale.PAGE, "icon");
+	private final JBTN reicn = new JBTN(MainLocale.PAGE, "remicon");
 
 	private final UserPack pack;
 
@@ -89,6 +99,8 @@ public class EREditPage extends Page {
 		set(veif, x, y, 950, 100, 400, 50);
 		set(jspe, x, y, 950, 150, 400, 1100);
 		set(jspjt, x, y, 1400, 450, 850, 800);
+		set(adicn, x, y, 200, 150, 200, 50);
+		set(reicn, x, y, 200, 250, 200, 50);
 
 		for (int i = 0; i < 3; i++)
 			set(type[i], x, y, 1550 + 250 * i, 250, 200, 50);
@@ -149,6 +161,10 @@ public class EREditPage extends Page {
 			int ind = jlst.getSelectedIndex() - 1;
 			if (ind < 0)
 				ind = -1;
+			if (rand.icon != null) {
+				File file = ((Source.Workspace) pack.source).getRandIconFile("enemyDisplayIcons", rand.id);
+				file.delete();
+			}
 			pack.randEnemies.remove(rand);
 			change(ind, IND -> {
 				List<EneRand> l = pack.randEnemies.getList();
@@ -160,6 +176,16 @@ public class EREditPage extends Page {
 					jlst.setSelectedIndex(l.size() - 1);
 				setER(jlst.getSelectedValue());
 			});
+		});
+
+		adicn.addActionListener(arg0 -> getFile("Choose your file"));
+
+		reicn.addActionListener(arg0 -> {
+			File file = ((Source.Workspace) pack.source).getRandIconFile("enemyDisplayIcons", rand.id);
+			if (file.delete()) {
+				rand.icon = null;
+				reicn.setEnabled(false);
+			}
 		});
 
 		name.addFocusListener(new FocusAdapter() {
@@ -197,9 +223,12 @@ public class EREditPage extends Page {
 		add(reml);
 		add(jspe);
 		add(name);
+		add(adicn);
+		add(reicn);
 		for (int i = 0; i < 3; i++)
 			add(type[i] = new JTG(1, "ert" + i));
 		setES();
+		jlst.setCellRenderer(new AnimLCR());
 		jle.setCellRenderer(new AnimLCR());
 		addListeners();
 
@@ -212,6 +241,8 @@ public class EREditPage extends Page {
 			addl.setEnabled(b);
 			reml.setEnabled(b);
 			name.setEnabled(b);
+			adicn.setEnabled(b);
+			reicn.setEnabled(b && st.icon != null);
 			jt.setEnabled(b);
 			for (JTG btn : type)
 				btn.setEnabled(b);
@@ -245,4 +276,35 @@ public class EREditPage extends Page {
 		setER(pack.randEnemies.getList().get(0));
 	}
 
+	private void getFile(String str) {
+		BufferedImage bimg = new Importer(str).getImg();
+		if (bimg == null)
+			return;
+		if (bimg.getWidth() != 85 || bimg.getHeight() != 32)
+			bimg = resizeImage(bimg, 85, 32);
+
+		if (rand.icon != null)
+			rand.icon.setImg(MainBCU.builder.build(bimg));
+		else
+			rand.icon = MainBCU.builder.toVImg(bimg);
+		try {
+			File file = ((Source.Workspace) pack.source).getRandIconFile("enemyDisplayIcons", rand.id);
+			Context.check(file);
+			ImageIO.write(bimg, "PNG", file);
+		} catch (IOException e) {
+			CommonStatic.ctx.noticeErr(e, Context.ErrType.WARN, "failed to write file");
+			getFile("Failed to save file");
+			return;
+		}
+		setIconImage(jlst.getSelectedValue());
+		setES();
+	}
+
+	private void setIconImage(EneRand slt) {
+		if (rand == null)
+			return;
+		if (jlst.getSelectedValue() != slt) {
+			jlst.setSelectedValue(slt, true);
+		}
+	}
 }

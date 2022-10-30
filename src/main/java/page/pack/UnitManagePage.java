@@ -239,7 +239,7 @@ public class UnitManagePage extends Page {
 					g.fset.remove(f);
 			for (UniRand ura : pac.randUnits)
 				for (int i = 0; i < ura.list.size(); i++)
-					if (ura.list.get(i).ent.unit == uni)
+					if (((Form)ura.list.get(i).ent).unit == uni)
 						ura.list.remove(i--);
 
 			pac.units.remove(uni);

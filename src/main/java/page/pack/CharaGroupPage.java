@@ -4,11 +4,12 @@ import common.pack.PackData;
 import common.pack.PackData.UserPack;
 import common.pack.UserProfile;
 import common.util.stage.CharaGroup;
-import common.util.unit.Unit;
+import common.util.unit.Form;
 import page.JBTN;
 import page.JL;
 import page.Page;
-import page.support.UnitLCR;
+import page.support.AnimLCR;
+import page.support.ReorderList;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class CharaGroupPage extends Page {
 	private final JBTN cglr = new JBTN(0, "edit");
 	private final JList<PackData> jlpk = new JList<>(UserProfile.getAllPacks().toArray(new PackData[0]));
 	private final JList<CharaGroup> jlcg = new JList<>();
-	private final JList<Unit> jlus = new JList<>();
+	private final ReorderList<Form> jlus = new ReorderList<>();
 	private final JScrollPane jsppk = new JScrollPane(jlpk);
 	private final JScrollPane jspcg = new JScrollPane(jlcg);
 	private final JScrollPane jspus = new JScrollPane(jlus);
@@ -106,7 +107,7 @@ public class CharaGroupPage extends Page {
 		add(jspus);
 		add(cgt);
 		add(cglr);
-		jlus.setCellRenderer(new UnitLCR());
+		jlus.setCellRenderer(new AnimLCR());
 		updatePack();
 		addListeners();
 	}
@@ -115,9 +116,9 @@ public class CharaGroupPage extends Page {
 		jlcg.setSelectedValue(cg, true);
 		jlus.setEnabled(cg != null);
 		if (cg == null)
-			jlus.setListData(new Unit[0]);
+			jlus.setListData(new Form[0]);
 		else {
-			jlus.setListData(cg.fset.toArray(new Unit[0]));
+			jlus.setListData(cg.fset.toArray(new Form[0]));
 			cgt.setText(0, cg.type == 0 ? "include" : "exclude");
 		}
 	}

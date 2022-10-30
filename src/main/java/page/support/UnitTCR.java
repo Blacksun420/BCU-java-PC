@@ -1,7 +1,7 @@
 package page.support;
 
 import common.system.VImg;
-import common.util.unit.Form;
+import common.util.unit.AbForm;
 import utilpc.UtilPC;
 
 import javax.swing.*;
@@ -33,13 +33,13 @@ public class UnitTCR extends DefaultTableCellRenderer {
 		if (c != manualIndex)
 			return comp;
 		JLabel jl = (JLabel) comp;
-		Form e = (Form) v;
+		AbForm e = (AbForm) v;
 		if (e == null)
 			return jl;
 		jl.setText(e.toString());
 		jl.setIcon(null);
 		jl.setHorizontalTextPosition(SwingConstants.RIGHT);
-		VImg vimg = e.anim.getEdi();
+		VImg vimg = e.getIcon();
 		if (vimg == null)
 			return jl;
 		jl.setIcon(UtilPC.getIcon(vimg));

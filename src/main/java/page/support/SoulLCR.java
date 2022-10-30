@@ -2,7 +2,6 @@ package page.support;
 
 import common.system.VImg;
 import common.util.pack.Soul;
-import main.MainBCU;
 import utilpc.Theme;
 import utilpc.UtilPC;
 

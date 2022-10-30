@@ -1,33 +1,42 @@
 package page.pack;
 
+import common.CommonStatic;
+import common.pack.Context;
 import common.pack.PackData.UserPack;
+import common.pack.Source;
 import common.util.unit.Form;
 import common.util.unit.UniRand;
 import common.util.unit.Unit;
+import main.MainBCU;
 import main.Opts;
-import page.JBTN;
-import page.JTF;
-import page.JTG;
-import page.Page;
+import page.*;
 import page.info.filter.UnitFindPage;
 import page.support.AnimLCR;
+import page.support.Importer;
+import utilpc.UtilPC;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
+
+import static utilpc.UtilPC.resizeImage;
 
 public class UREditPage extends Page {
 
     private static final long serialVersionUID = 1L;
 
     public static void redefine() {
-        EREditTable.redefine();
+        UREditTable.redefine();
     }
 
     private final JBTN back = new JBTN(0, "back");
@@ -36,10 +45,15 @@ public class UREditPage extends Page {
     private final JScrollPane jspjt;
     private final JList<UniRand> jlst = new JList<>();
     private final JScrollPane jspst = new JScrollPane(jlst);
-    private final JBTN adds = new JBTN(0, "add");
-    private final JBTN rems = new JBTN(0, "rem");
-    private final JBTN addl = new JBTN(0, "addl");
-    private final JBTN reml = new JBTN(0, "reml");
+    private final JBTN adds = new JBTN(MainLocale.PAGE, "add");
+    private final JBTN rems = new JBTN(MainLocale.PAGE, "rem");
+    private final JBTN addl = new JBTN(MainLocale.PAGE, "addl");
+    private final JBTN reml = new JBTN(MainLocale.PAGE, "reml");
+    private final JBTN adicn = new JBTN(MainLocale.PAGE, "icon");
+    private final JBTN reicn = new JBTN(MainLocale.PAGE, "remicon");
+    private final JBTN aduni = new JBTN(MainLocale.PAGE, "icon");
+    private final JBTN reuni = new JBTN(MainLocale.PAGE, "remicon");
+    private final JLabel uni = new JLabel();
     private final JList<Form> jlu = new JList<>();
     private final JScrollPane jspe = new JScrollPane(jlu);
     private final JTF name = new JTF();
@@ -59,15 +73,10 @@ public class UREditPage extends Page {
         for (int i = 0; i < uni.size(); i++)
             Collections.addAll(forms, uni.get(i).forms);
         jlu.setListData(forms.toArray(new Form[0]));
-        jt = new UREditTable(this);
+        jt = new UREditTable(this, pac);
         jspjt = new JScrollPane(jt);
         ini();
         resized();
-    }
-
-    public UREditPage(Page page, UserPack pac, UniRand e) {
-        this(page, pac);
-        jlu.setSelectedValue(e, true);
     }
 
     @Override
@@ -95,6 +104,11 @@ public class UREditPage extends Page {
         set(veif, x, y, 950, 100, 400, 50);
         set(jspe, x, y, 950, 150, 400, 1100);
         set(jspjt, x, y, 1400, 450, 850, 800);
+        set(adicn, x, y, 200, 150, 200, 50);
+        set(reicn, x, y, 200, 250, 200, 50);
+        set(aduni, x, y, 200, 500, 200, 50);
+        set(reuni, x, y, 200, 700, 200, 50);
+        set(uni, x, y, 225, 550, 150, 150);
 
         for (int i = 0; i < 3; i++)
             set(type[i], x, y, 1550 + 250 * i, 250, 200, 50);
@@ -155,6 +169,14 @@ public class UREditPage extends Page {
             int ind = jlst.getSelectedIndex() - 1;
             if (ind < 0)
                 ind = -1;
+            if (rand.icon != null) {
+                File file = ((Source.Workspace) pack.source).getRandIconFile("unitDisplayIcons", rand.id);
+                file.delete();
+            }
+            if (rand.deployIcon != null) {
+                File file = ((Source.Workspace) pack.source).getRandIconFile("unitDeployIcons", rand.id);
+                file.delete();
+            }
             pack.randUnits.remove(rand);
             change(ind, IND -> {
                 List<UniRand> l = pack.randUnits.getList();
@@ -190,6 +212,25 @@ public class UREditPage extends Page {
             });
         }
 
+        adicn.addActionListener(arg0 -> getFile("Choose your file (recommended size: 85x32)", false));
+
+        reicn.addActionListener(arg0 -> {
+            File file = ((Source.Workspace) pack.source).getRandIconFile("unitDisplayIcons", rand.id);
+            if (file.delete()) {
+                rand.icon = null;
+                reicn.setEnabled(false);
+            }
+        });
+
+        aduni.addActionListener(arg0 -> getFile("Choose your file (recommended size: 110x85)", true));
+
+        reuni.addActionListener(arg0 -> {
+            File file = ((Source.Workspace) pack.source).getRandIconFile("unitDeployIcons", rand.id);
+            if (file.delete()) {
+                rand.icon = null;
+                reuni.setEnabled(false);
+            }
+        });
     }
 
     private void ini() {
@@ -203,9 +244,15 @@ public class UREditPage extends Page {
         add(reml);
         add(jspe);
         add(name);
+        add(adicn);
+        add(reicn);
+        add(aduni);
+        add(reuni);
+        add(uni);
         for (int i = 0; i < 3; i++)
             add(type[i] = new JTG(1, "ert" + i));
         setES();
+        jlst.setCellRenderer(new AnimLCR());
         jlu.setCellRenderer(new AnimLCR());
         addListeners();
 
@@ -218,12 +265,17 @@ public class UREditPage extends Page {
             addl.setEnabled(b);
             reml.setEnabled(b);
             name.setEnabled(b);
+            adicn.setEnabled(b);
+            reicn.setEnabled(b && st.icon != null);
+            aduni.setEnabled(b);
+            reuni.setEnabled(b && st.deployIcon != null);
             jt.setEnabled(b);
             for (JTG btn : type)
                 btn.setEnabled(b);
             rand = st;
             jt.setData(st);
             name.setText(st == null ? "" : rand.name);
+            uni.setIcon(st == null ? null : UtilPC.getIcon(st.getDeployIcon()));
             int t = st == null ? -1 : st.type;
             for (int i = 0; i < 3; i++)
                 type[i].setSelected(i == t);
@@ -251,4 +303,54 @@ public class UREditPage extends Page {
         setUR(pack.randUnits.getList().get(0));
     }
 
+    private void getFile(String str, boolean uni) {
+        BufferedImage bimg = new Importer(str).getImg();
+        if (bimg == null)
+            return;
+        if (uni) {
+            if (bimg.getWidth() != 110 || bimg.getHeight() != 85)
+                bimg = resizeImage(bimg, 110, 85);
+
+            if (rand.deployIcon != null)
+                rand.deployIcon.setImg(MainBCU.builder.build(bimg));
+            else
+                rand.deployIcon = MainBCU.builder.toVImg(bimg);
+            try {
+                File file = ((Source.Workspace) pack.source).getRandIconFile("unitDeployIcons", rand.id);
+                Context.check(file);
+                ImageIO.write(bimg, "PNG", file);
+            } catch (IOException e) {
+                CommonStatic.ctx.noticeErr(e, Context.ErrType.WARN, "failed to write file");
+                getFile("Failed to save file", true);
+                return;
+            }
+        } else {
+            if (bimg.getWidth() != 85 || bimg.getHeight() != 32)
+                bimg = resizeImage(bimg, 85, 32);
+
+            if (rand.icon != null)
+                rand.icon.setImg(MainBCU.builder.build(bimg));
+            else
+                rand.icon = MainBCU.builder.toVImg(bimg);
+            try {
+                File file = ((Source.Workspace) pack.source).getRandIconFile("unitDisplayIcons", rand.id);
+                Context.check(file);
+                ImageIO.write(bimg, "PNG", file);
+            } catch (IOException e) {
+                CommonStatic.ctx.noticeErr(e, Context.ErrType.WARN, "failed to write file");
+                getFile("Failed to save file", true);
+                return;
+            }
+        }
+        setIconImage(jlst.getSelectedValue());
+        setES();
+    }
+
+    private void setIconImage(UniRand slt) {
+        if (rand == null)
+            return;
+        if (jlst.getSelectedValue() != slt) {
+            jlst.setSelectedValue(slt, true);
+        }
+    }
 }

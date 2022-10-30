@@ -5,16 +5,13 @@ import common.pack.UserProfile;
 import common.util.Data;
 import common.util.stage.CharaGroup;
 import common.util.stage.LvRestrict;
-import common.util.unit.Unit;
+import common.util.unit.Form;
 import page.JBTN;
 import page.Page;
-import page.support.UnitLCR;
+import page.support.AnimLCR;
+import page.support.ReorderList;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Set;
 
@@ -29,7 +26,7 @@ public class LvRestrictPage extends Page {
 	private final JList<UserPack> jlpk = new JList<>(UserProfile.getUserPacks().toArray(new UserPack[0]));
 	private final JList<LvRestrict> jllr = new JList<>();
 	private final JList<CharaGroup> jlcg = new JList<>();
-	private final JList<Unit> jlus = new JList<>();
+	private final ReorderList<Form> jlus = new ReorderList<>();
 	private final JScrollPane jsppk = new JScrollPane(jlpk);
 	private final JScrollPane jsplr = new JScrollPane(jllr);
 	private final JScrollPane jspcg = new JScrollPane(jlcg);
@@ -82,60 +79,35 @@ public class LvRestrictPage extends Page {
 
 	private void addListeners() {
 
-		back.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				changePanel(getFront());
-			}
+		back.addActionListener(arg0 -> changePanel(getFront()));
+
+		cglr.addActionListener(arg0 -> changePanel(new CGLREditPage(getThis(), pack)));
+
+		jlpk.addListSelectionListener(arg0 -> {
+			if (changing || jlpk.getValueIsAdjusting())
+				return;
+			changing = true;
+			pack = jlpk.getSelectedValue();
+			updatePack();
+			changing = false;
 		});
 
-		cglr.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				changePanel(new CGLREditPage(getThis(), pack));
-			}
+		jllr.addListSelectionListener(arg0 -> {
+			if (changing || jllr.getValueIsAdjusting())
+				return;
+			changing = true;
+			lr = jllr.getSelectedValue();
+			updateLR();
+			changing = false;
 		});
 
-		jlpk.addListSelectionListener(new ListSelectionListener() {
-
-			@Override
-			public void valueChanged(ListSelectionEvent arg0) {
-				if (changing || jlpk.getValueIsAdjusting())
-					return;
-				changing = true;
-				pack = jlpk.getSelectedValue();
-				updatePack();
-				changing = false;
-			}
-
-		});
-
-		jllr.addListSelectionListener(new ListSelectionListener() {
-
-			@Override
-			public void valueChanged(ListSelectionEvent arg0) {
-				if (changing || jllr.getValueIsAdjusting())
-					return;
-				changing = true;
-				lr = jllr.getSelectedValue();
-				updateLR();
-				changing = false;
-			}
-
-		});
-
-		jlcg.addListSelectionListener(new ListSelectionListener() {
-
-			@Override
-			public void valueChanged(ListSelectionEvent arg0) {
-				if (changing || jlcg.getValueIsAdjusting())
-					return;
-				changing = true;
-				cg = jlcg.getSelectedValue();
-				updateCG();
-				changing = false;
-			}
-
+		jlcg.addListSelectionListener(arg0 -> {
+			if (changing || jlcg.getValueIsAdjusting())
+				return;
+			changing = true;
+			cg = jlcg.getSelectedValue();
+			updateCG();
+			changing = false;
 		});
 	}
 
@@ -154,7 +126,7 @@ public class LvRestrictPage extends Page {
 			add(lra[i] = new JLabel());
 			lra[i].setBorder(BorderFactory.createEtchedBorder());
 		}
-		jlus.setCellRenderer(new UnitLCR());
+		jlus.setCellRenderer(new AnimLCR());
 		updatePack();
 		addListeners();
 	}
@@ -173,10 +145,10 @@ public class LvRestrictPage extends Page {
 		jlus.setEnabled(lr != null);
 		if (cg == null) {
 			set(lsb, "group: ", null);
-			jlus.setListData(new Unit[0]);
+			jlus.setListData(new Form[0]);
 		} else {
 			set(lsb, "group: ", lr.res.get(cg));
-			jlus.setListData(cg.fset.toArray(new Unit[0]));
+			jlus.setListData(cg.fset.toArray(new Form[0]));
 		}
 	}
 

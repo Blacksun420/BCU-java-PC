@@ -2,7 +2,6 @@ package page.info.filter;
 
 import common.CommonStatic;
 import common.util.unit.Trait;
-import main.MainBCU;
 import utilpc.Interpret;
 import utilpc.Theme;
 import utilpc.UtilPC;

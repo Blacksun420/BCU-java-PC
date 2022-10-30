@@ -1,8 +1,6 @@
 package page.info.filter;
 
 import common.battle.data.MaskUnit;
-import common.battle.entity.Entity;
-import common.pack.Identifier;
 import common.pack.PackData;
 import common.pack.UserProfile;
 import common.util.lang.MultiLangCont;
@@ -19,7 +17,6 @@ import utilpc.UtilPC;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 import static utilpc.Interpret.*;
@@ -36,7 +33,7 @@ public class UnitFilterBox extends EntityFilterBox {
 	private final JScrollPane jr = new JScrollPane(rare);
 	private final JScrollPane jab = new JScrollPane(abis);
 	private final JTG limbtn = new JTG(0, "usable");
-	private final JTG inccus = new JTG(MainLocale.PAGE, "inccus"); //This button sucks, feel free to remove
+	protected final JTG inccus = new JTG(MainLocale.PAGE, "inccus"); //This button sucks, feel free to remove
 
 	public UnitFilterBox(Page p, Limit limit, int price) {
 		super(p);
@@ -76,59 +73,14 @@ public class UnitFilterBox extends EntityFilterBox {
 		List<Form> ans = new ArrayList<>();
 		minDiff = 5;
 		for(PackData p : UserProfile.getAllPacks()) {
-			if(!inccus.isSelected() && !(p instanceof PackData.DefPack)) {
+			if(!inccus.isSelected() && !(p instanceof PackData.DefPack) || !validatePack(p))
 				continue;
-			}
 
 			for (Unit u : p.units.getList())
-				for (Form f : u.forms) {
-					String fname = MultiLangCont.getStatic().FNAME.getCont(f);
-					if (fname == null)
-						fname = f.names.toString();
-					int diff = UtilPC.damerauLevenshteinDistance(fname.toLowerCase(), name.toLowerCase());
-					if (diff > minDiff)
-						continue;
-
-					MaskUnit du = f.maxu();
-					int a = du.getAbi();
-
-					if (limbtn.isSelected() && lim != null && lim.unusable(du, price))
-						continue;
-
-					boolean b0 = rare.isSelectedIndex(u.rarity);
-					boolean b1 = unchangeable(0);
-					for (Trait t : trait.getSelectedValuesList()) {
-						b1 = processOperator(0, checkTraitComp(du.getTraits(), t, f));
-						if (b1 != unchangeable(0))
-							break;
-					}
-					boolean b2 = unchangeable(1);
-					int len = SABIS.length;
-					for (int i : abis.getSelectedIndices()) {
-						if (i < len)
-							b2 = processOperator(1, ((a >> i) & 1) == 1);
-						else
-							b2 = processOperator(1, du.getAllProc().getArr(UPROCIND[i - len]).exists());
-						if (b2 != unchangeable(1))
-							break;
-					}
-					boolean b3 = unchangeable(2);
-					for (int i : atkt.getSelectedIndices()) {
-						b3 = processOperator(2, isType(du, i));
-						if (b1 != unchangeable(2))
-							break;
-					}
-
-					b0 |= rare.getSelectedIndex() == -1;
-					b1 |= trait.getSelectedIndex() == -1;
-					b2 |= abis.getSelectedIndex() == -1;
-					b3 |= atkt.getSelectedIndex() == -1;
-					if (!b0 | !b1 | !b2 | !b3)
-						continue; //Return early to not affect minDiff
-
-					minDiff = diff;
-					ans.add(f);
-				}
+				if (validateUnit(u))
+					for (Form f : u.forms)
+						if (validateForm(f))
+							ans.add(f);
 		}
 
 		for (int i = 0; i < ans.size(); i++) {
@@ -164,6 +116,57 @@ public class UnitFilterBox extends EntityFilterBox {
 			add(limbtn);
 			limbtn.addActionListener(l -> confirm());
 		}
+	}
+
+	protected boolean validateUnit(Unit u) {
+		return rare.getSelectedIndex() == -1 || rare.isSelectedIndex(u.rarity);
+	}
+
+	protected boolean validateForm(Form f) {
+		String fname = MultiLangCont.getStatic().FNAME.getCont(f);
+		if (fname == null)
+			fname = f.names.toString();
+		int diff = UtilPC.damerauLevenshteinDistance(fname.toLowerCase(), name.toLowerCase());
+		if (diff > minDiff)
+			return false;
+
+		MaskUnit du = f.maxu();
+		int a = du.getAbi();
+
+		if (limbtn.isSelected() && lim != null && lim.unusable(du, price))
+			return false;
+
+		boolean b0 = unchangeable(0);
+		for (Trait t : trait.getSelectedValuesList()) {
+			b0 = processOperator(0, checkTraitComp(du.getTraits(), t, f));
+			if (b0 != unchangeable(0))
+				break;
+		}
+		boolean b1 = unchangeable(1);
+		int len = SABIS.length;
+		for (int i : abis.getSelectedIndices()) {
+			if (i < len)
+				b1 = processOperator(1, ((a >> i) & 1) == 1);
+			else
+				b1 = processOperator(1, du.getAllProc().getArr(UPROCIND[i - len]).exists());
+			if (b1 != unchangeable(1))
+				break;
+		}
+		boolean b2 = unchangeable(2);
+		for (int i : atkt.getSelectedIndices()) {
+			b2 = processOperator(2, isType(du, i));
+			if (b0 != unchangeable(2))
+				break;
+		}
+
+		b0 |= trait.getSelectedIndex() == -1;
+		b1 |= abis.getSelectedIndex() == -1;
+		b2 |= atkt.getSelectedIndex() == -1;
+		if (!b0 | !b1 | !b2)
+			return false; //Return early to not affect minDiff
+
+		minDiff = diff;
+		return true;
 	}
 
 	private boolean checkTraitComp(ArrayList<Trait> targets, Trait t, Form f) {

@@ -5,7 +5,6 @@ import common.battle.data.CustomUnit;
 import common.pack.UserProfile;
 import common.util.Data;
 import common.util.lang.ProcLang;
-import main.MainBCU;
 import org.jcodec.common.tools.MathUtil;
 import page.*;
 import utilpc.Interpret;
