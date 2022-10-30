@@ -1,6 +1,5 @@
 package page.info.filter;
 
-import main.MainBCU;
 import page.JTG;
 import page.Page;
 import utilpc.Theme;
