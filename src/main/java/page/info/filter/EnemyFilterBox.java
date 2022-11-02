@@ -76,6 +76,8 @@ public class EnemyFilterBox extends EntityFilterBox {
 
 	@Override
 	protected boolean validatePack(PackData p) {
+		if (!super.validatePack(p))
+			return false;
 		if (rare.getSelectedIndices().length > 0)
 			if (p instanceof PackData.DefPack) {
 				if (rare.isSelectedIndex(3))
@@ -85,7 +87,7 @@ public class EnemyFilterBox extends EntityFilterBox {
 				if (!processOperator(3, rare.isSelectedIndex(3)))
 					return processOperator(3, rare.isSelectedIndex(1)) || processOperator(3, rare.isSelectedIndex(4));
 			}
-		return super.validatePack(p);
+		return true;
 	}
 
 	protected boolean validateEnemy(Enemy e) {
