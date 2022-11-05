@@ -5,6 +5,7 @@ import common.pack.Context;
 import common.pack.Context.ErrType;
 import common.pack.PackData.UserPack;
 import common.pack.Source.Workspace;
+import common.pack.UserProfile;
 import common.system.fake.FakeImage;
 import common.util.pack.Background;
 import common.util.pack.bgeffect.BackgroundEffect;
@@ -46,7 +47,7 @@ public class BGEditPage extends Page {
 	private final JTF[] cs = new JTF[4];
 	private final JL[] ol = new JL[3];
 	private final JTF[] os = new JTF[3];
-	private final JComboBox<String> eff = new JComboBox<>();
+	private final JComboBox<BackgroundEffect> eff = new JComboBox<>();
 
 	private final UserPack pack;
 	private BGViewPage bvp;
@@ -188,13 +189,7 @@ public class BGEditPage extends Page {
 			});
 		}
 
-		eff.addActionListener(e -> {
-			if(eff.getSelectedIndex() == 0) {
-				bgr.effect = -1;
-			} else {
-				bgr.effect = eff.getSelectedIndex() - 1;
-			}
-		});
+		eff.addActionListener(e -> bgr.bgEffect = eff.getSelectedItem() == null ? null : ((BackgroundEffect)eff.getSelectedItem()).getID());
 
 		overlay.setLnr(c -> {
 			if(overlay.isSelected()) {
@@ -272,23 +267,14 @@ public class BGEditPage extends Page {
 			add(os[i] = new JTF());
 			add(ol[i] = new JL(MainLocale.PAGE, "bgcl"+(i+5)));
 		}
-		Vector<String> effVector = new Vector<>();
+		Vector<BackgroundEffect> effVector = new Vector<>();
 
-		effVector.add(get(MainLocale.PAGE, "none"));
+		effVector.add(null);
 
-		for(int i = 0; i < 10; i++) {
-			effVector.add(get(MainLocale.PAGE, "bgeff"+i));
-		}
-
-		for(int i = 0; i < BackgroundEffect.jsonList.size(); i++) {
-			String temp = get(MainLocale.PAGE, "bgjson"+BackgroundEffect.jsonList.get(i));
-
-			if(temp.equals("bgjson"+BackgroundEffect.jsonList.get(i))) {
-				temp = get(MainLocale.PAGE, "bgeffdum").replace("_", ""+BackgroundEffect.jsonList.get(i));
-			}
-
-			effVector.add(temp);
-		}
+		effVector.addAll(UserProfile.getBCData().bgEffects.getList());
+		effVector.addAll(pack.bgEffects.getList());
+		for (String s : pack.desc.dependency)
+			effVector.addAll(UserProfile.getPack(s).bgEffects.getList());
 
 		eff.setModel(new DefaultComboBoxModel<>(effVector));
 
@@ -348,10 +334,10 @@ public class BGEditPage extends Page {
 				}
 			}
 
-			if(bgr.effect == -1) {
+			if(bgr.bgEffect == null) {
 				eff.setSelectedIndex(0);
 			} else {
-				eff.setSelectedIndex(bgr.effect + 1);
+				eff.setSelectedItem(bgr.bgEffect.get());
 			}
 		} else {
 			top.setEnabled(false);

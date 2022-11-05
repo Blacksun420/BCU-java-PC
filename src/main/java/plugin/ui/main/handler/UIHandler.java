@@ -76,6 +76,8 @@ public abstract class UIHandler extends SwingComponentHandler {
         conditionalOnAvailable(config.getString("bgFile"), StaticConfig.KEY_BG, this::setBG);
         conditionalOnAvailable(config.getString("iconFile"), StaticConfig.KEY_ICON, this::setIcon);
         conditionalOnAvailable(config.getString("gifFile"), this::setGIF);
+        if (config.getInteger("opaque") != null)
+            setOpaque(config.getInteger("opaque"));
         MenuBarHandler.enableSave();
         setMenuBar();
     }
@@ -105,9 +107,8 @@ public abstract class UIHandler extends SwingComponentHandler {
     }
 
     private void conditionalOnAvailable(String test, Consumer<String> todo) {
-        if (test != null && !test.isEmpty()) {
+        if (test != null && !test.isEmpty())
             todo.accept(test);
-        }
     }
 
     @Override
@@ -201,7 +202,7 @@ public abstract class UIHandler extends SwingComponentHandler {
 
     public void inputTranslation() {
         while (true) {
-            String read = input("Now theme name: " + getCur() + "\nInput your translation: ");
+            String read = input("Current theme name: " + getCur() + "\nInput your translation: ");
             if (read == null) {
                 return;
             }

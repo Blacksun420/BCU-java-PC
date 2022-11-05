@@ -235,8 +235,11 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 
 	@Override
 	public void setBackground(Background bg) {
+		if (bgEffect != null)
+			bgEffect.release();
+
 		this.bg = bg;
-		if (bg != null && bg.effect != -1) {
+		if (bg != null && bg.bgEffect != null) {
 			int groundHeight = ((BufferedImage) bg.parts[Background.BG].bimg()).getHeight();
 			int skyHeight = bg.top ? ((BufferedImage) bg.parts[Background.TOP].bimg()).getHeight() : 1020 - groundHeight;
 			if(skyHeight < 0)
@@ -253,13 +256,9 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 			sh = (int) (skyHeight * r);
 			gh = (int) (groundHeight * r);
 
-			if(bg.effect == -bg.id.id && BackgroundEffect.mixture.containsKey(bg.id.id)) {
-				bgEffect = BackgroundEffect.mixture.get(bg.id.id);
-			} else if (bg.effect >= 0) {
-				bgEffect = CommonStatic.getBCAssets().bgEffects.get(bg.effect);
-			}
+			if (bg.bgEffect != null)
+				bgEffect = bg.bgEffect.get();
 		} else {
-			bgEffect = null;
 			fw = sh = gh = 0;
 		}
 		bgi = false;
@@ -267,7 +266,7 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 
 	@Override
 	public void update() {
-		if (bgEffect != null) {
+		if (bg != null && bg.bgEffect != null) {
 			if(!bgi) {
 				bgEffect.initialize(fw, sh - gh, gh, bg);
 				bgi = true;
@@ -291,7 +290,7 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 		int h = getHeight();
 		if (bg != null) {
 			bg.draw(g, w, h);
-			if (bgEffect != null) {
+			if (bg.bgEffect != null) {
 				bgEffect.draw(g, 0, sh, r, (gh / 3), sh + (gh / 2));
 			} if(bg.overlay != null)
 				g.gradRectAlpha(0, 0, w, h, 0, 0, bg.overlayAlpha, bg.overlay[1], 0, h, bg.overlayAlpha, bg.overlay[0]);

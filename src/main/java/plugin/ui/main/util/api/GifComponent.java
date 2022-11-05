@@ -84,7 +84,7 @@ public class GifComponent extends JComponent {
                 for (int j = firstIndex; j <= i; j++) {
                     list.add(j);
                 }
-                gifBeanMap.put(i, list.toArray(new Integer[]{}));
+                gifBeanMap.put(i, list.toArray(new Integer[0]));
             }
         } catch (IOException e) {
             e.printStackTrace();

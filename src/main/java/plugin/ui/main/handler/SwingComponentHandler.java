@@ -255,7 +255,7 @@ public abstract class SwingComponentHandler {
     }
 
     public void setThemeTip(Theme theme) {
-        MenuBarHandler.setTip(" ( Now Theme: " + theme.getText() + " )");
+        MenuBarHandler.setTip(" ( Current Theme: " + theme.getText() + " )");
     }
 
     public Font getFrameFont() {

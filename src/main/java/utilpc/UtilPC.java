@@ -13,6 +13,7 @@ import common.util.unit.Form;
 import common.util.unit.Trait;
 import io.BCMusic;
 import io.BCUWriter;
+import page.MainLocale;
 import utilpc.awt.FG2D;
 
 import javax.swing.*;
@@ -73,6 +74,9 @@ public class UtilPC {
 			BCMusic.play(mus);
 		}
 
+		public String getBtnName(int m, String s) {
+			return MainLocale.getLoc(m, s);
+		}
 	}
 
 	public static ImageIcon getBg(Background bg, int w, int h) {

@@ -90,6 +90,7 @@ public class PackEditPage extends Page {
 	private final JBTN unpk = new JBTN(MainLocale.PAGE, "unpack");
 	private final JBTN recd = new JBTN(MainLocale.PAGE, "replay");
 	private final JBTN csol = new JBTN(MainLocale.PAGE, "csoul");
+	private final JBTN cbge = new JBTN(MainLocale.PAGE, "cbge");
 	private final JTG cmbo = new JTG(MainLocale.PAGE, "usecombo");
 	private final JTF jtfp = new JTF();
 	private final JTF jtfe = new JTF();
@@ -191,6 +192,7 @@ public class PackEditPage extends Page {
 
 		w += 350;
 
+		set(cbge, x, y, w, 1150, 350, 50);
 		set(lbt, x, y, w, 100, 350, 50);
 		set(jspt, x, y, w, 150, 350, 600);
 		SwingUtilities.invokeLater(() -> jtd.setUI(new TreeNodeExpander(jtd)));
@@ -203,6 +205,8 @@ public class PackEditPage extends Page {
 		recd.setLnr(x -> changePanel(new RecdPackPage(this, pac)));
 
 		csol.setLnr(x -> changePanel(new SoulEditPage(this, pac)));
+
+		cbge.setLnr(x -> changePanel(new BGEffectEditPage(this, pac)));
 
 		vcas.addActionListener(arg0 -> {
 			if (pac != null && pac.editable)
@@ -631,6 +635,7 @@ public class PackEditPage extends Page {
 		add(unpk);
 		add(recd);
 		add(csol);
+		add(cbge);
 		add(cmbo);
 
 		cmbo.setToolTipText("Decide whether to apply or not this pack's custom CatCombos onto your lineups");
@@ -707,8 +712,6 @@ public class PackEditPage extends Page {
 			}
 
 		jtfp.setEnabled(b);
-		// adde.setEnabled(b && jld.getSelectedValue() != null && jld.getSelectedValue().id.base.equals(Source.BasePath.ANIM));
-		// TODO: check if above commmented code is needed
 		adde.setEnabled(b && getSelectedAnim() != null);
 		adds.setEnabled(b);
 		extr.setEnabled(pac != null);
@@ -718,6 +721,7 @@ public class PackEditPage extends Page {
 		vmsc.setEnabled(pac != null);
 		recd.setEnabled(pac != null);
 		ener.setEnabled(pac != null);
+		cbge.setEnabled(pac != null);
 		boolean canUnpack = pac != null && !pac.editable;
 		boolean canExport = pac != null && pac.editable;
 		unpk.setEnabled(canUnpack);

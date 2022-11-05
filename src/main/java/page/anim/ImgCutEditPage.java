@@ -236,12 +236,15 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 			int selection = Opts.selection("What kind of animation do you want to create?",
 					"Select Animation Type",
 					"Unit/Enemy",
-					"Soul");
+					"Soul",
+					"Background Effect");
 			if (selection == -1)
 				return;
 			changing = true;
 			ResourceLocation rl;
-			if (selection == 1)
+			if (selection == 2)
+				rl = new ResourceLocation(ResourceLocation.LOCAL, "new bgeffect anim", Source.BasePath.BGEffect);
+			else if (selection == 1)
 				rl = new ResourceLocation(ResourceLocation.LOCAL, "new soul anim", Source.BasePath.SOUL);
 			else
 				rl = new ResourceLocation(ResourceLocation.LOCAL, "new anim", Source.BasePath.ANIM);

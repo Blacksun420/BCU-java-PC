@@ -144,14 +144,14 @@ public class MenuBarHandler {
 
             light.addActionListener(e -> {
                 utilpc.Theme.LIGHT.setTheme();
-                MenuBarHandler.setTip("( Now Theme: " + light.getText() + ")");
+                MenuBarHandler.setTip("( Current Theme: " + light.getText() + ")");
                 P.putDefaultFont(new Font(MainFrame.fontType, MainFrame.fontStyle, MainFrame.fontSize));
                 P.updateFrame();
             });
 
             dark.addActionListener(e -> {
                 utilpc.Theme.DARK.setTheme();
-                MenuBarHandler.setTip("( Now Theme: " + dark.getText() + ")");
+                MenuBarHandler.setTip("( Current Theme: " + dark.getText() + ")");
                 P.putDefaultFont(new Font(MainFrame.fontType, MainFrame.fontStyle, MainFrame.fontSize));
                 P.updateFrame();
             });
