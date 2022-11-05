@@ -288,11 +288,6 @@ public interface BattleBox {
 				int w = box.getWidth();
 				int h = box.getHeight();
 
-				/*double avah = h * (10 - bar) / 10.0;
-				double hr = avah / StageNamePainter.deploy.getHeight();
-				double rw = hr * StageNamePainter.deploy.getWidth();
-				double rh = hr * StageNamePainter.deploy.getHeight();
-				g.drawImage(StageNamePainter.deploy, (w - rw) / 2.0, h  / (CommonStatic.getConfig().twoRow ? 2.75 : 2.5), rw, rh);*/
 				g.drawImage(StageNamePainter.deploy, (w - StageNamePainter.deploy.getWidth()) / 2.0, h  / (CommonStatic.getConfig().twoRow ? 2.75 : 2.5));
 			}
 		}

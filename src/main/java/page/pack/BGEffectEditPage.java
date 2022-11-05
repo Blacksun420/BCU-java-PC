@@ -237,7 +237,7 @@ public class BGEffectEditPage extends Page {
         jlme.setListData(bges);
         jlme.setSelectedIndex(sel0);
 
-        jlbe.setListData(be.getLoadedEffects().toArray(new BackgroundEffect[0]));
+        jlbe.setListData(be.effects.toArray(new BackgroundEffect[0]));
         jlbe.setSelectedIndex(sel1);
     }
 

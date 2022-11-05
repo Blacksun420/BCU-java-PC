@@ -11,6 +11,8 @@ import common.util.anim.EAnimI;
 import common.util.anim.EAnimU;
 import common.util.pack.Background;
 import common.util.pack.bgeffect.BackgroundEffect;
+import common.util.pack.bgeffect.CustomBGEffect;
+import common.util.pack.bgeffect.JsonBGEffect;
 import jogl.util.GLGraphics;
 import page.JTG;
 import page.anim.IconBox;
@@ -259,6 +261,7 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 			if (bg.bgEffect != null)
 				bgEffect = bg.bgEffect.get();
 		} else {
+			bgEffect = null;
 			fw = sh = gh = 0;
 		}
 		bgi = false;
@@ -268,10 +271,10 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 	public void update() {
 		if (bg != null && bg.bgEffect != null) {
 			if(!bgi) {
-				bgEffect.initialize(fw, sh - gh, gh, bg);
+				bgEffect.initialize(fw, sh - gh, sh + (gh / 2.0), bg);
 				bgi = true;
 			}
-			bgEffect.update(fw, sh - gh, gh);
+			bgEffect.update(fw, sh - gh, sh + (gh / 2.0));
 		}
 
 		if (ent != null) {
@@ -290,7 +293,7 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 		int h = getHeight();
 		if (bg != null) {
 			bg.draw(g, w, h);
-			if (bg.bgEffect != null) {
+			if (bgEffect != null) {
 				bgEffect.draw(g, 0, sh, r, (gh / 3), sh + (gh / 2));
 			} if(bg.overlay != null)
 				g.gradRectAlpha(0, 0, w, h, 0, 0, bg.overlayAlpha, bg.overlay[1], 0, h, bg.overlayAlpha, bg.overlay[0]);
