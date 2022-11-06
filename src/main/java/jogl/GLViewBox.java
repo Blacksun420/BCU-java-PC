@@ -11,8 +11,6 @@ import common.util.anim.EAnimI;
 import common.util.anim.EAnimU;
 import common.util.pack.Background;
 import common.util.pack.bgeffect.BackgroundEffect;
-import common.util.pack.bgeffect.CustomBGEffect;
-import common.util.pack.bgeffect.JsonBGEffect;
 import jogl.util.GLGraphics;
 import page.JTG;
 import page.anim.IconBox;

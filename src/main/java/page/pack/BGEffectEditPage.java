@@ -15,14 +15,51 @@ import page.JBTN;
 import page.JTF;
 import page.MainLocale;
 import page.Page;
+import page.support.AnimLCR;
+import utilpc.Theme;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
+class EffectList extends JList<BackgroundEffect> {
+
+    private static final long serialVersionUID = 1L;
+
+    //editing is used to set whether the page using this is Trait Edit Page or not. May be used to add BC Traits to list at some point
+    public EffectList() {
+
+        setSelectionBackground(Theme.DARK.NIMBUS_SELECT_BG);
+
+        setCellRenderer(new DefaultListCellRenderer() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean s, boolean f) {
+                JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
+                BackgroundEffect effect = (BackgroundEffect)o;
+
+                jl.setText(effect.toString());
+                if (effect instanceof CustomBGEffect) {
+                    CustomBGEffect ceff = (CustomBGEffect)effect;
+                    if (ceff.anim.getEdi() != null)
+                        jl.setIcon(new ImageIcon((BufferedImage)ceff.anim.getEdi().getImg().bimg()));
+                } else if (effect instanceof MixedBGEffect) {
+                    MixedBGEffect meff = (MixedBGEffect)effect;
+                    for (BackgroundEffect eff : meff.effects)
+                        if (eff instanceof CustomBGEffect && ((CustomBGEffect) eff).anim.getEdi() != null)
+                            jl.setIcon(new ImageIcon((BufferedImage)((CustomBGEffect) eff).anim.getEdi().getImg().bimg()));
+                }
+                return jl;
+            }
+        });
+    }
+}
+
 public class BGEffectEditPage extends Page {
 
-    private final JList<BackgroundEffect> jlbg = new JList<>();
+    private final EffectList jlbg = new EffectList();
     private final JScrollPane jspbg = new JScrollPane(jlbg);
     private final JBTN back = new JBTN(MainLocale.PAGE, "back");
     private final JBTN addbg = new JBTN(MainLocale.PAGE, "add");
@@ -35,9 +72,9 @@ public class BGEffectEditPage extends Page {
     private final JList<AnimCE> jld = new JList<>(new Vector<>(AnimCE.map().values().stream().filter(a -> a.id.base.equals(Source.BasePath.BGEffect)).collect(Collectors.toList())));
     private final JScrollPane jspd = new JScrollPane(jld);
 
-    private final JList<BackgroundEffect> jlme = new JList<>(); //addable ones
+    private final EffectList jlme = new EffectList(); //addable ones
     private final JScrollPane jspme = new JScrollPane(jlme);
-    private final JList<BackgroundEffect> jlbe = new JList<>(); //ones in mixedbge
+    private final EffectList jlbe = new EffectList(); //ones in mixedbge
     private final JScrollPane jspbe = new JScrollPane(jlbe);
     private final JBTN addme = new JBTN(MainLocale.PAGE, "add");
     private final JBTN remme = new JBTN(MainLocale.PAGE, "rem");
@@ -173,6 +210,7 @@ public class BGEffectEditPage extends Page {
         add(rembg);
         add(jspbg);
         add(bgena);
+        jld.setCellRenderer(new AnimLCR());
         jlbg.setListData(pack.bgEffects.toArray());
         setBGE(null);
         addListeners();
