@@ -17,10 +17,10 @@ import common.util.lang.Editors;
 import common.util.pack.Background;
 import common.util.pack.EffAnim;
 import common.util.pack.Soul;
+import common.util.stage.Music;
 import common.util.unit.Enemy;
 import common.util.unit.Form;
 import common.util.unit.Unit;
-import common.util.stage.Music;
 import main.MainBCU;
 import main.Opts;
 import page.*;
@@ -107,6 +107,10 @@ public abstract class EntityEditPage extends Page {
 
 	protected final boolean editable;
 	protected final Basis bas = BasisSet.current();
+	private final JComboBox<String> atkS = new JComboBox<>();
+	private final JL jsh = new JL(MainLocale.INFO, "er2");
+	private final JTF josh = new JTF();
+
 	protected final ArrayList<AtkDataModel> extra = new ArrayList<>();
 
 	public EntityEditPage(Page p, String pac, CustomEntity e, boolean edit, boolean isEnemy) {
@@ -123,6 +127,12 @@ public abstract class EntityEditPage extends Page {
 		editable = edit;
 		if (!editable)
 			jli.setDragEnabled(false);
+
+		String[] atkSS = new String[e.getAtkTypeCount() + 1];
+		for (int i = 0; i < atkSS.length - 1; i++)
+			atkSS[i] = get(MainLocale.PAGE, "atk") + (i + 1);
+		atkSS[atkSS.length - 1] = "Special Attacks";
+		atkS.setModel(new DefaultComboBoxModel<>(atkSS));
 	}
 
 	@Override
@@ -218,6 +228,9 @@ public abstract class EntityEditPage extends Page {
 		set(fli);
 		ljp.end();
 		add(jspi);
+		add(atkS);
+		add(jsh);
+		add(josh);
 		add(aet);
 		add(jspm);
 		add(add);
@@ -330,6 +343,9 @@ public abstract class EntityEditPage extends Page {
 		set(fwp, x, y, 150, 250, 200, 50);
 		set(lwd, x, y, 50, 300, 100, 50);
 		set(fwd, x, y, 150, 300, 200, 50);
+		set(jsh, x, y, 350, 50, 100, 50);
+		set(josh, x, y, 450, 50, 200, 50);
+		set(atkS, x, y, 650, 50, 400, 50);
 
 		set(jspm, x, y, 1850, 100, 350, 900);
 		mpt.componentResized(x, y);
@@ -401,11 +417,14 @@ public abstract class EntityEditPage extends Page {
 		fwd.setText("" + ce.width);
 		ftb.setText("" + ce.tba);
 		fbs.setText("" + ce.base);
-		vitv.setText("" + ce.getItv());
+		vitv.setText((isSp() ? ce.getItv(0) : ce.getItv(getSel())) + "");
 		ftp.setText("" + ce.touch);
 		fct.setText("" + ce.loop);
 		fwp.setText("" + (ce.will + 1));
-		cdps.setText("" + (int) (Math.round(getLvAtk() * ce.allAtk()) * getAtk()) * 30 / ce.getItv());
+		if (!isSp())
+			cdps.setText("" + (int) (Math.round(getLvAtk() * ce.allAtk(getSel())) * getAtk()) * 30 / ce.getItv(getSel()));
+		else
+			cdps.setText("-");
 
 		comm.setSelected(data.common);
 		if (!comm.isSelected())
@@ -413,45 +432,39 @@ public abstract class EntityEditPage extends Page {
 
 		mpt.setData(ce.rep.proc);
 
-		int[][] raw = ce.rawAtkData();
-		int pre = 0;
-		int n = ce.atks.length;
-
-		extra.clear();
-		for (int i = 0; i < ce.getSpAtks().length; i++)
-			if (ce.getSpAtks()[i] != null) {
-				n++;
-				extra.add(ce.getSpAtks()[i]);
-		}
-
-		String[] ints = new String[n];
-
-		for (int i = 0; i < ce.atks.length; i++) {
-			ints[i] = i + 1 + " " + ce.atks[i].str;
-			pre += raw[i][1];
-			if (pre >= ce.getAnimLen())
-				ints[i] += " (out of range)";
-		}
-
-		int ix = ce.atks.length;
-
-		for (AtkDataModel atk : extra)
-			ints[ix++] = atk.str;
-
 		int ind = jli.getSelectedIndex();
+		josh.setEnabled(editable && isSp());
+		if (isSp()) {
+			extra.clear();
+			ArrayList<String> ints = new ArrayList<>();
+			for (int i = 0; i < ce.getSpAtks().length; i++)
+				if (ce.getSpAtks()[i] != null) {
+					extra.add(ce.getSpAtks()[i]);
+					ints.add(extra.get(extra.size() - 1).str);
+				}
+			jli.setListData(ints.toArray(new String[0]));
 
-		jli.setListData(ints);
-
+			if (ind >= ints.size())
+				ind = ints.size() - 1;
+		} else {
+			AtkDataModel[] raw = (AtkDataModel[]) ce.getAtks(getSel());
+			int pre = 0;
+			String[] ints = new String[ce.hits.get(getSel()).length];
+			for (int i = 0; i < ints.length; i++) {
+				ints[i] = i + 1 + " " + ce.hits.get(getSel())[i].str;
+				pre += raw[i].getPre();
+				if (pre >= ce.getAnimLen(getSel()))
+					ints[i] += " (out of range)";
+			}
+			jli.setListData(ints);
+			if (ind >= ints.length)
+				ind = ints.length - 1;
+			josh.setText("" + ce.getShare(getSel()));
+		}
 		if (ind < 0)
 			ind = 0;
-
-		if (ind >= ints.length)
-			ind = ints.length - 1;
-
 		setA(ind);
-
 		jli.setSelectedIndex(ind);
-
 		Animable<AnimU<?>, UType> ene = ce.getPack();
 
 		if (editable)
@@ -502,16 +515,15 @@ public abstract class EntityEditPage extends Page {
 		});
 
 		jli.list = new ReorderListener<String>() {
-
 			@Override
 			public void reordered(int ori, int fin) {
-				if (ori < ce.atks.length) {
-					if (fin >= ce.atks.length)
-						fin = ce.atks.length - 1;
+				if (ori < ce.hits.get(getSel()).length) {
+					if (fin >= ce.hits.get(getSel()).length)
+						fin = ce.hits.get(getSel()).length - 1;
 					List<AtkDataModel> l = new ArrayList<>();
-					Collections.addAll(l, ce.atks);
+					Collections.addAll(l, ce.hits.get(getSel()));
 					l.add(fin, l.remove(ori));
-					ce.atks = l.toArray(new AtkDataModel[0]);
+					ce.hits.set(getSel(), l.toArray(new AtkDataModel[0]));
 				}
 				setData(ce);
 				changing = false;
@@ -519,39 +531,64 @@ public abstract class EntityEditPage extends Page {
 
 			@Override
 			public void reordering() {
+				if (isSp())
+					return;
 				changing = true;
 			}
-
 		};
 
-		add.setLnr(e -> {
+		atkS.addActionListener(l -> {
+			if (changing || jli.getValueIsAdjusting())
+				return;
 			changing = true;
-			int n = ce.atks.length;
-			int ind = jli.getSelectedIndex();
-			if (ind >= ce.atks.length)
-				ind = ce.atks.length - 1;
-			AtkDataModel[] datas = new AtkDataModel[n + 1];
-			if (ind + 1 >= 0)
-				System.arraycopy(ce.atks, 0, datas, 0, ind + 1);
-			ind++;
-			datas[ind] = new AtkDataModel(ce);
-			if (n - ind >= 0)
-				System.arraycopy(ce.atks, ind, datas, ind + 1, n - ind);
-			ce.atks = datas;
+			if (jli.getSelectedIndex() >= getSelMask().length)
+				jli.setSelectedIndex(0);
+			boolean ignore = isSp();
+			if (ignore) {
+				for (int i = 0; i < ce.getSpAtks().length; i++)
+					if (ce.getSpAtks()[i] != null)
+						ignore = false;
+				if (ignore && !addSpecial())
+					atkS.setSelectedIndex(ce.getAtkTypeCount() - 1);
+			}
 			setData(ce);
-			jli.setSelectedIndex(ind);
-			setA(ind);
 			changing = false;
+		});
+
+		add.setLnr(e -> {
+			if (isSp()) {
+				addSpecial();
+			} else {
+				changing = true;
+				int n = ce.hits.get(getSel()).length;
+				int ind = jli.getSelectedIndex();
+				if (ind >= n)
+					ind = n - 1;
+				AtkDataModel[] datas = new AtkDataModel[n + 1];
+				if (ind + 1 >= 0)
+					System.arraycopy(ce.hits.get(getSel()), 0, datas, 0, ind + 1);
+				ind++;
+				datas[ind] = new AtkDataModel(ce);
+				if (n - ind >= 0)
+					System.arraycopy(ce.hits.get(getSel()), ind, datas, ind + 1, n - ind);
+				ce.hits.set(getSel(), datas);
+				setData(ce);
+				jli.setSelectedIndex(ind);
+				setA(ind);
+				changing = false;
+			}
 		});
 
 		rem.setLnr(e -> remAtk(jli.getSelectedIndex()));
 
 		copy.setLnr(e -> {
+			if (isSp())
+				return;
 			changing = true;
-			int n = ce.atks.length;
+			int n = ce.hits.get(getSel()).length;
 			int ind = jli.getSelectedIndex();
-			ce.atks = Arrays.copyOf(ce.atks, n + 1);
-			ce.atks[n] = ce.atks[ind].clone();
+			ce.hits.set(getSel(), Arrays.copyOf(ce.hits.get(getSel()), n + 1));
+			ce.hits.get(getSel())[n] = ce.hits.get(getSel())[ind].clone();
 			setData(ce);
 			jli.setSelectedIndex(n);
 			setA(n);
@@ -559,11 +596,13 @@ public abstract class EntityEditPage extends Page {
 		});
 
 		link.setLnr(e -> {
+			if (isSp())
+				return;
 			changing = true;
-			int n = ce.atks.length;
+			int n = ce.hits.get(getSel()).length;
 			int ind = jli.getSelectedIndex();
-			ce.atks = Arrays.copyOf(ce.atks, n + 1);
-			ce.atks[n] = ce.atks[ind];
+			ce.hits.set(getSel(), Arrays.copyOf(ce.hits.get(getSel()), n + 1));
+			ce.hits.get(getSel())[n] = ce.hits.get(getSel())[ind];
 			setData(ce);
 			jli.setSelectedIndex(n);
 			setA(n);
@@ -590,11 +629,74 @@ public abstract class EntityEditPage extends Page {
 
 	}
 
+	private boolean addSpecial() {
+		int selection = Opts.selection("What kind of special Attack do you want to create?",
+				"Select Attack Type",
+				"Revenge", "Resurrection", "Counterattack", "Burrow", "Resurface", "Revival", "Entry");
+		if (selection == -1)
+			return false;
+		changing = true;
+		switch (selection) {
+			case 0:
+				ce.rev = new AtkDataModel(ce);
+				ce.rev.str = "revenge";
+				break;
+			case 1:
+				ce.res = new AtkDataModel(ce);
+				ce.res.str = "resurrection";
+				break;
+			case 2:
+				ce.cntr = new AtkDataModel(ce);
+				ce.cntr.str = "counterattack";
+				break;
+			case 3:
+				ce.bur = new AtkDataModel(ce);
+				ce.bur.str = "burrow";
+				break;
+			case 4:
+				ce.resu = new AtkDataModel(ce);
+				ce.resu.str = "resurface";
+				break;
+			case 5:
+				ce.revi = new AtkDataModel(ce);
+				ce.revi.str = "revive";
+				break;
+			case 6:
+				ce.entr = new AtkDataModel(ce);
+				ce.cntr.str = "entrance";
+		}
+		return true;
+	}
+
 	private AtkDataModel get(int ind) {
-		if (ind < ce.atks.length)
-			return ce.atks[ind];
-		else
-			return extra.get(ind - ce.atks.length);
+		if (isSp())
+			return getSelMask()[getSpInd(ind)];
+		return getSelMask()[ind];
+	}
+
+	protected int getSel() {
+		return Math.max(0, atkS.getSelectedIndex());
+	}
+
+	protected boolean isSp() {
+		return getSel() == ce.getAtkTypeCount();
+	}
+
+	protected int getSpInd(int ind) {
+		int l = 0;
+		for (int i = 0; i < getSelMask().length; i++)
+			if (getSelMask()[i] != null) {
+				if (l == ind)
+					return i;
+				l++;
+			}
+		return ind;
+	}
+
+	protected AtkDataModel[] getSelMask() {
+		if (isSp())
+			return ce.getSpAtks();
+		return ce.hits.get(getSel());
 	}
 
 	protected void input(JTF jtf, String text) {
@@ -696,6 +798,9 @@ public abstract class EntityEditPage extends Page {
 						v[0] = 50;
 					ce.will = v[0] - 1;
 				}
+				if (jtf == josh)
+					ce.share[getSel()] = Math.max(1, v[0]);
+
 				getInput(jtf, v);
 			}
 		}
@@ -703,28 +808,47 @@ public abstract class EntityEditPage extends Page {
 	}
 
 	private void remAtk(AtkDataModel adm) {
-		for (int i = 0; i < ce.atks.length; i++)
-			if (ce.atks[i] == adm)
+		for (int i = 0; i < getSelMask().length; i++)
+			if (getSelMask()[i] == adm)
 				remAtk(i);
 	}
 
 	private void remAtk(int ind) {
 		changing = true;
-		int n = ce.atks.length;
-		if (ind >= n) {
-			AtkDataModel rematk = extra.remove(ind - n);
+		if (isSp()) {
+			AtkDataModel rematk = extra.remove(ind);
 			for (int i = 0; i < ce.getSpAtks().length; i++)
 				if (rematk.equals(ce.getSpAtks()[i])) {
-					ce.getSpAtks()[i] = null;
+					if (i == 0)
+						ce.rev = null;
+					else if (i == 1)
+						ce.res = null;
+					else if (i == 2)
+						ce.cntr = null;
+					else if (i == 3)
+						ce.bur = null;
+					else if (i == 4)
+						ce.resu = null;
+					else if (i == 5)
+						ce.revi = null;
+					else
+						ce.entr = null;
 					break;
 				}
-		} else if (n > 1) {
+			boolean empty = true;
+			for (int i = 0; i < ce.getSpAtks().length; i++)
+				if (ce.getSpAtks()[i] != null)
+					empty = false;
+			if (empty)
+				atkS.setSelectedIndex(ce.getAtkTypeCount() - 1);
+		} else if (ce.hits.get(getSel()).length > 1) {
+			int n = ce.hits.get(getSel()).length;
 			AtkDataModel[] datas = new AtkDataModel[n - 1];
 			if (ind >= 0)
-				System.arraycopy(ce.atks, 0, datas, 0, ind);
+				System.arraycopy(ce.hits.get(getSel()), 0, datas, 0, ind);
 			if (n - (ind + 1) >= 0)
-				System.arraycopy(ce.atks, ind + 1, datas, ind + 1 - 1, n - (ind + 1));
-			ce.atks = datas;
+				System.arraycopy(ce.hits.get(getSel()), ind + 1, datas, ind + 1 - 1, n - (ind + 1));
+			ce.hits.set(getSel(), datas);
 		}
 		setData(ce);
 		ind--;
@@ -738,12 +862,12 @@ public abstract class EntityEditPage extends Page {
 	private void setA(int ind) {
 		AtkDataModel adm = get(ind);
 		assert adm != null;
-		link.setEnabled(editable && ind < ce.atks.length);
-		copy.setEnabled(editable && ind < ce.atks.length);
-		atkn.setEnabled(editable && ind < ce.atks.length);
+		link.setEnabled(editable && ind < getSelMask().length);
+		copy.setEnabled(editable && ind < getSelMask().length);
+		atkn.setEnabled(editable && ind < getSelMask().length);
 		atkn.setText(adm.str);
 		aet.setData(adm, getAtk(), getLvAtk());
-		rem.setEnabled(editable && (ce.atks.length > 1 || ind >= ce.atks.length));
+		rem.setEnabled(editable && (getSelMask().length > 1 || ind >= getSelMask().length));
 		switch (adm.str) {
 			case "revenge":
 				lpst.setText(MainLocale.INFO, "Post-HB");
@@ -752,10 +876,7 @@ public abstract class EntityEditPage extends Page {
 			case "resurrection":
 				lpst.setText(MainLocale.INFO, "Post-Death");
 				Soul s = Identifier.get(ce.death);
-				vpst.setText(s == null ? "-" : MainBCU.convertTime((s.anim.len(UType.SOUL) - ce.res.pre)));
-
-				// vpst.setText(s == null ? "-" : (s.len(SoulType.DEF) - ce.res.pre + "f"));
-				// TODO: check if above commented code is needed or not
+				vpst.setText(s == null ? "-" : MainBCU.convertTime((s.anim.len(AnimU.SOUL[0]) - ce.res.pre)));
 				break;
 			case "counterattack":
 				lpst.setText(MainLocale.INFO, "Post-Counter");
@@ -779,8 +900,7 @@ public abstract class EntityEditPage extends Page {
 				break;
 			default:
 				lpst.setText(MainLocale.INFO, "postaa");
-				vpst.setText(MainBCU.convertTime(ce.getPost()));
+				vpst.setText(MainBCU.convertTime(ce.getPost(getSel())));
 		}
 	}
-
 }

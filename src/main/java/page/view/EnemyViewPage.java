@@ -158,8 +158,8 @@ public class EnemyViewPage extends AbViewPage {
 						}
 					}
 
-					for (Enemy ene : list)
-						copyAnim(ene);
+					//for (Enemy ene : list)
+					//	copyAnim(ene);
 				}
 			}
 		});
@@ -192,7 +192,7 @@ public class EnemyViewPage extends AbViewPage {
 		if (ei == null || ei.anim() == null)
 			return;
 		AnimD<?, ?> eau = (AnimD<?, ?>) ei.anim();
-		Source.ResourceLocation rl = new Source.ResourceLocation(Source.ResourceLocation.LOCAL, ene.toString());
+		Source.ResourceLocation rl = new Source.ResourceLocation(Source.ResourceLocation.LOCAL, ene.toString(), Source.BasePath.ANIM);
 		Source.Workspace.validate(rl);
 		new AnimCE(rl, eau);
 		changePanel(new ImgCutEditPage(getThis()));

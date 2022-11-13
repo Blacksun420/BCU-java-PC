@@ -2,6 +2,7 @@ package page.pack;
 
 import common.CommonStatic;
 import common.battle.BasisSet;
+import common.battle.data.AtkDataModel;
 import common.battle.data.CustomEnemy;
 import common.io.PackLoader;
 import common.pack.Context.ErrType;
@@ -357,8 +358,8 @@ public class PackEditPage extends Page {
 
 		adde.addActionListener(arg0 -> {
 			changing = true;
-			CustomEnemy ce = new CustomEnemy();
 			AnimCE anim = getSelectedAnim();
+			CustomEnemy ce = new CustomEnemy(anim);
 			ce.limit = CommonStatic.customEnemyMinPos(anim.mamodel);
 			Enemy e = new Enemy(pac.getNextID(Enemy.class), anim, ce);
 			pac.enemies.add(e);
@@ -401,7 +402,19 @@ public class PackEditPage extends Page {
 				Enemy e = jle.getSelectedValue();
 				AnimCE anim = getSelectedAnim();
 
-				((CustomEnemy) e.de).limit = Math.abs(anim.mamodel.parts[0][6] * 6);
+				CustomEnemy ce = (CustomEnemy)e.de;
+				ce.share = Arrays.copyOf(ce.share, anim.anim.getAtkCount());
+				if (ce.hits.size() < ce.share.length) {
+					for (int i = ce.hits.size(); i < ce.share.length; i++) {
+						ce.hits.add(new AtkDataModel[1]);
+						ce.hits.get(i)[0] = new AtkDataModel(ce);
+						ce.share[i] = 1;
+					}
+				}
+				while (ce.hits.size() > ce.share.length)
+					ce.hits.remove(ce.hits.size() - 1);
+
+				ce.limit = CommonStatic.customEnemyMinPos(anim.mamodel);
 				e.anim = anim;
 
 				edit.setEnabled(pac != null && jle.getSelectedValue() != null && jle.getSelectedValue().anim != null && pac.editable);

@@ -84,7 +84,7 @@ public class UnitListTable extends SortTable<Form> {
 		double mul = e.unit.lv.getMult(e.unit.getPrefLv());
 		double atk = b.t().getAtkMulti();
 		double def = b.t().getDefMulti();
-		int itv = e.anim != null ? du.getItv() : -1;
+		int itv = e.anim != null ? du.getItv(0) : -1;
 		if (c == 0)
 			return e.uid + "-" + e.fid;
 		else if (c == 1)
@@ -96,21 +96,21 @@ public class UnitListTable extends SortTable<Form> {
 		else if (c == 4)
 			return du.getHb();
 		else if (c == 5)
-			return (int) (Math.round(du.allAtk() * mul) * atk);
+			return (int) (Math.round(du.allAtk(0) * mul) * atk);
 		else if (c == 6)
 			return du.getRange();
 		else if (c == 7)
 			return du.getSpeed();
 		else if (c == 8)
-			return itv == -1 ? "Corrupted" : (int) (du.allAtk() * mul * atk * 30 / itv);
+			return itv == -1 ? "Corrupted" : (int) (du.allAtk(0) * mul * atk * 30 / itv);
 		else if (c == 9)
-			return du.rawAtkData()[0][1];
+			return du.getAtkModel(0, 0).getPre();
 		else if (c == 10)
 			return b.t().getFinRes(du.getRespawn());
 		else if (c == 11)
 			return e.getDefaultPrice(1);
 		else if (c == 12)
-			return du.getItv();
+			return du.getItv(0);
 		else if (c == 13)
 			return du.getWill() + 1;
 		return null;

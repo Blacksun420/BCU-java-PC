@@ -32,13 +32,13 @@ public class EntityAbilities extends Page {
 
     private void ini() {
         boolean isEnemy = me instanceof MaskEnemy;
-        List<Interpret.ProcDisplay> ls = Interpret.getAbi(me);
+        List<Interpret.ProcDisplay> ls = Interpret.getAbi(me, 0);
         ls.addAll(Interpret.getProc(me, isEnemy, lvl.stream().mapToDouble(x -> {
             if (isEnemy)
                 return x * ((MaskEnemy) me).multi(BasisSet.current()) / 100;
             else
                 return x;
-        }).toArray()));
+        }).toArray(), 0));
         proc = new JLabel[ls.size()];
         for (int i = 0; i < ls.size(); i++) {
             Interpret.ProcDisplay disp = ls.get(i);

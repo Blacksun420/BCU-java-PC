@@ -2,6 +2,7 @@ package page.info;
 
 import common.CommonStatic;
 import common.battle.BasisSet;
+import common.battle.data.MaskAtk;
 import common.battle.data.MaskUnit;
 import common.battle.data.PCoin;
 import common.util.Data;
@@ -9,10 +10,7 @@ import common.util.unit.EForm;
 import common.util.unit.Form;
 import common.util.unit.Trait;
 import main.MainBCU;
-import page.JL;
-import page.JTF;
-import page.MainLocale;
-import page.Page;
+import page.*;
 import utilpc.Interpret;
 import utilpc.UtilPC;
 
@@ -31,16 +29,21 @@ public class UnitInfoTable extends Page {
 	private final JL[][] main = new JL[4][8];
 	private final JL[][] special = new JL[1][8];
 	private final JL[] atks;
-	private final JLabel[] proc;
+	private JLabel[] proc;
 	private final JTF jtf = new JTF();
-	private final JLabel pcoin;
+	private JLabel pcoin;
 	private final JTextArea descr = new JTextArea();
 	private final JScrollPane desc = new JScrollPane(descr);
+
+	private final JL atkind = new JL();
+	private final JBTN prevatk = new JBTN(MainLocale.PAGE, "prev");
+	private final JBTN nextatk = new JBTN(MainLocale.PAGE, "next");
 
 	private final BasisSet b;
 	private final Form f;
 	private ArrayList<Integer> multi;
 	private boolean displaySpecial;
+	private int dispAtk = 0;
 
 	protected UnitInfoTable(Page p, Form de, ArrayList<Integer> lvs) {
 		super(p);
@@ -50,25 +53,8 @@ public class UnitInfoTable extends Page {
 		multi = lvs;
 		atks = new JL[6];
 
-		boolean pc = de.du.getPCoin() != null;
-		MaskUnit du = pc ? f.du.getPCoin().improve(multi) : f.du;
-		List<Interpret.ProcDisplay> ls = Interpret.getAbi(du);
-		double mul = f.unit.lv.getMult(multi.get(0));
-		ls.addAll(Interpret.getProc(du, false, new double[]{Math.round(du.getHp() * mul) * b.t().getDefMulti(), multi.get(0)}));
-		if (pc)
-			ls.add(new Interpret.ProcDisplay("",null));
-		proc = new JLabel[ls.size()];
-		for (int i = 0; i < ls.size(); i++) {
-			Interpret.ProcDisplay display = ls.get(i);
-			add(proc[i] = new JLabel(display.toString()));
-			proc[i].setBorder(BorderFactory.createEtchedBorder());
-			proc[i].setIcon(display.getIcon());
-		}
-		if (pc)
-			pcoin = proc[ls.size() - 1];
-		else
-			pcoin = null;
 		ini();
+		resetAtk();
 	}
 
 	protected UnitInfoTable(Page p, Form de, boolean sp) {
@@ -79,13 +65,23 @@ public class UnitInfoTable extends Page {
 		displaySpecial = sp;
 		multi = de.getPrefLvs();
 		atks = new JL[6];
-		MaskUnit du = f.maxu();
-		List<Interpret.ProcDisplay> ls = Interpret.getAbi(du);
+
+		ini();
+		resetAtk();
+	}
+
+	private void resetAtk() {
+		boolean pc = f.du.getPCoin() != null;
+		atkind.setText(get(MainLocale.PAGE, "atk") + " " + dispAtk);
+		MaskUnit du = pc ? f.du.getPCoin().improve(multi) : f.du;
+		List<Interpret.ProcDisplay> ls = Interpret.getAbi(du, dispAtk);
 		double mul = f.unit.lv.getMult(multi.get(0));
-		ls.addAll(Interpret.getProc(du, false, new double[]{Math.round(du.getHp() * mul) * b.t().getDefMulti(), multi.get(0)}));
-		boolean pc = de.du.getPCoin() != null;
+		ls.addAll(Interpret.getProc(du, false, new double[]{Math.round(du.getHp() * mul) * b.t().getDefMulti(), multi.get(0)}, dispAtk));
 		if (pc)
 			ls.add(new Interpret.ProcDisplay("",null));
+		if (proc != null)
+			for (JLabel p : proc)
+				remove(p);
 		proc = new JLabel[ls.size()];
 		for (int i = 0; i < ls.size(); i++) {
 			Interpret.ProcDisplay display = ls.get(i);
@@ -97,13 +93,32 @@ public class UnitInfoTable extends Page {
 			pcoin = proc[ls.size() - 1];
 		else
 			pcoin = null;
-		ini();
+		MaskAtk[] atkData = f.du.getAtks(dispAtk);
+		StringBuilder pre = new StringBuilder();
+		StringBuilder use = new StringBuilder();
+		for (MaskAtk atkDatum : atkData) {
+			if (pre.length() > 0)
+				pre.append(" / ");
+			if (use.length() > 0)
+				use.append(" / ");
+
+			pre.append(MainBCU.convertTime(atkDatum.getPre()));
+			use.append(atkDatum.getDire());
+		}
+		main[2][7].setText(MainBCU.convertTime(f.du.getItv(dispAtk)));
+		main[3][1].setText("" + f.du.isRange(dispAtk));
+		main[3][7].setText(MainBCU.convertTime(f.du.getPost(dispAtk)));
+		atks[3].setText(pre.toString());
+		atks[5].setText(use.toString());
+		reset();
 	}
 
 	protected int getH() {
 		int l = main.length + 1;
 		if (displaySpecial)
 			l += special.length;
+		if (f.du.getAtkTypeCount() > 1)
+			l += 50;
 		return (l + (proc.length + 1) / 2) * 50 + (f.getExplaination().replace("<br>", "").length() > 0 ? 200 : 0);
 	}
 
@@ -113,7 +128,7 @@ public class UnitInfoTable extends Page {
 		double atk = b.t().getAtkMulti();
 		double def = b.t().getDefMulti();
 
-		int attack = (int) (Math.round(ef.du.allAtk() * mul) * atk);
+		int attack = (int) (Math.round(ef.du.allAtk(dispAtk) * mul) * atk);
 
 		int hp = (int) (Math.round(ef.du.getHp() * mul) * def);
 
@@ -136,20 +151,20 @@ public class UnitInfoTable extends Page {
 				TraitBox[i] = trait.name;
 		}
 		main[1][3].setText(hp + " / " + ef.du.getHb());
-		main[2][3].setText("" + (attack * 30 / ef.du.getItv()));
+		main[2][3].setText("" + (attack * 30 / ef.du.getItv(dispAtk)));
 		main[2][5].setText("" + (int) (ef.du.getSpeed() * (1 + b.getInc(Data.C_SPE) * 0.01)));
 		int respawn = b.t().getFinRes(ef.du.getRespawn());
 		main[1][5].setText(MainBCU.convertTime(respawn));
 
 		main[1][7].setText("" + ef.getPrice(1));
 		main[0][4].setText(Interpret.getTrait(TraitBox, 0));
-		int[][] atkData = ef.du.rawAtkData();
+		MaskAtk[] atkData = ef.du.getAtks(dispAtk);
 		StringBuilder satk = new StringBuilder();
-		for (int[] atkDatum : atkData) {
+		for (MaskAtk atkDatum : atkData) {
 			if (satk.length() > 0)
 				satk.append(" / ");
 
-			int a = (int) (Math.round(atkDatum[0] * mul) * b.t().getAtkMulti());
+			int a = (int) (Math.round(atkDatum.getAtk() * mul) * b.t().getAtkMulti());
 
 			if (pc != null) {
 				a = (int) (a * pc.getAtkMultiplication(multi));
@@ -159,8 +174,8 @@ public class UnitInfoTable extends Page {
 		}
 		atks[1].setText(satk.toString());
 
-		List<Interpret.ProcDisplay> ls = Interpret.getAbi(ef.du);
-		ls.addAll(Interpret.getProc(ef.du, false, new double[]{mul, multi.get(0)}));
+		List<Interpret.ProcDisplay> ls = Interpret.getAbi(ef.du, dispAtk);
+		ls.addAll(Interpret.getProc(ef.du, false, new double[]{mul, multi.get(0)}, dispAtk));
 		for (JLabel l : proc) {
 			if (l != pcoin)
 				l.setText("");
@@ -196,6 +211,12 @@ public class UnitInfoTable extends Page {
 					set(jls[j], x, y, 200 * j, h, 0, 0);
 			}
 		}
+		if (f.du.getAtkTypeCount() > 1) {
+			set(prevatk, x, y, 0, h, 400, 50);
+			set(atkind, x, y, 700, h, 300, 50);
+			set(nextatk, x, y, 1200, h, 400, 50);
+			h += 50;
+		}
 		set(atks[0], x, y, 0, h, 200, 50);
 		set(atks[1], x, y, 200, h, 400, 50);
 		set(atks[2], x, y, 600, h, 200, 50);
@@ -223,6 +244,20 @@ public class UnitInfoTable extends Page {
 				reset();
 			}
 
+		});
+
+		prevatk.setLnr(sel -> {
+			dispAtk--;
+			prevatk.setEnabled(dispAtk != 0);
+			nextatk.setEnabled(true);
+			resetAtk();
+		});
+
+		nextatk.setLnr(sel -> {
+			dispAtk++;
+			prevatk.setEnabled(true);
+			nextatk.setEnabled(dispAtk != f.du.getAtkTypeCount() - 1);
+			resetAtk();
 		});
 	}
 
@@ -272,14 +307,11 @@ public class UnitInfoTable extends Page {
 		main[2][6].setText(MainLocale.INFO, "atkf");
 
 		main[3][0].setText(MainLocale.INFO, "isr");
-		main[3][1].setText("" + f.du.isRange());
 		main[3][2].setText(MainLocale.INFO, "will");
 		main[3][3].setText("" + (f.du.getWill() + 1));
 		main[3][4].setText(MainLocale.INFO, "TBA");
 		main[3][6].setText(MainLocale.INFO, "postaa");
-		main[2][7].setText(MainBCU.convertTime(f.du.getItv()));
 		main[3][5].setText(MainBCU.convertTime(f.du.getTBA()));
-		main[3][7].setText(MainBCU.convertTime(f.du.getPost()));
 
 		special[0][0].setText(MainLocale.INFO, "count");
 		special[0][1].setText(f.du.getAtkLoop() < 0 ? "infinite" : f.du.getAtkLoop() + "");
@@ -297,29 +329,19 @@ public class UnitInfoTable extends Page {
 		atks[0].setText(1, "atk");
 		atks[2].setText(1, "preaa");
 		atks[4].setText(1, "dire");
-		int[][] atkData = f.du.rawAtkData();
-		StringBuilder pre = new StringBuilder();
-		StringBuilder use = new StringBuilder();
-		for (int[] atkDatum : atkData) {
-			if (pre.length() > 0)
-				pre.append(" / ");
-			if (use.length() > 0)
-				use.append(" / ");
-
-			pre.append(MainBCU.convertTime(atkDatum[1]));
-			use.append(atkDatum[3]);
-		}
-		atks[3].setText(pre.toString());
-		atks[5].setText(use.toString());
 		special[0][5].setToolTipText("<html>This unit will stay at least "
 				+ f.du.getLimit()
 				+ " units away from the max stage length<br>once it passes that threshold.");
+		add(prevatk);
+		add(atkind);
+		add(nextatk);
 		String fDesc = f.getExplaination().replace("<br>", "\n");
 		if (fDesc.replace("\n", "").length() > 0)
 			add(desc);
 		descr.setText(f.toString().replace((f.uid == null ? "NULL" : f.uid.id) + "-" + f.fid + " ", "") + "\n" + fDesc);
 		descr.setEditable(false);
-		reset();
+		prevatk.setEnabled(false);
+		resetAtk();
 		addListeners();
 		updateTooltips();
 	}

@@ -106,7 +106,7 @@ public class Interpret extends Data {
 			Data.P_POISON, Data.P_ARMOR, Data.P_SPEED, Data.P_STRONG, Data.P_LETHAL, Data.P_BURROW, Data.P_REVIVE, Data.P_CRITI, Data.P_COUNTER, Data.P_IMUATK,
 			Data.P_DMGCUT, Data.P_DMGCAP, Data.P_REMOTESHIELD, Data.P_IMUKB, Data.P_IMUSTOP, Data.P_IMUSLOW, Data.P_IMUWAVE, Data.P_IMUVOLC, Data.P_IMUWEAK, Data.P_IMULETHARGY,
 			Data.P_IMUWARP, Data.P_IMUCURSE, Data.P_IMUSEAL, Data.P_IMUMOVING, Data.P_IMUPOI, Data.P_IMUPOIATK, Data.P_IMUARMOR, Data.P_IMUSPEED, Data.P_IMUSUMMON,
-			Data.P_IMUCANNON, Data.P_DEATHSURGE, Data.P_WEAKAURA, Data.P_STRONGAURA};
+			Data.P_IMUCANNON, Data.P_DEATHSURGE, Data.P_WEAKAURA, Data.P_STRONGAURA, Data.P_AI};
 	//Filters abilities and procs that are available for units. Also gives better organization to the UI
 	public static final int[] UPROCIND = { Data.P_BSTHUNT, Data.P_KB, Data.P_STOP, Data.P_SLOW, Data.P_WEAK, Data.P_LETHARGY, Data.P_BOUNTY, Data.P_CRIT, Data.P_WAVE,
 			Data.P_WORKERLV, Data.P_CDSETTER, Data.P_MINIWAVE, Data.P_VOLC, Data.P_BARRIER, Data.P_DEMONSHIELD, Data.P_BREAK, Data.P_SHIELDBREAK, Data.P_WARP,
@@ -114,7 +114,7 @@ public class Interpret extends Data {
 			Data.P_THEME, Data.P_POISON, Data.P_ARMOR, Data.P_SPEED, Data.P_STRONG, Data.P_LETHAL, Data.P_BURROW, Data.P_REVIVE, Data.P_CRITI, Data.P_COUNTER,
 			Data.P_IMUATK, Data.P_DMGCUT, Data.P_DMGCAP, Data.P_REMOTESHIELD, Data.P_IMUKB, Data.P_IMUSTOP, Data.P_IMUSLOW, Data.P_IMUWAVE, Data.P_IMUVOLC,
 			Data.P_IMUWEAK, Data.P_IMULETHARGY, Data.P_IMUWARP, Data.P_IMUCURSE, Data.P_IMUSEAL, Data.P_IMUMOVING, Data.P_IMUPOI, Data.P_IMUPOIATK, Data.P_IMUARMOR,
-			Data.P_IMUSPEED, Data.P_IMUSUMMON, Data.P_DEATHSURGE, Data.P_WEAKAURA, Data.P_STRONGAURA};
+			Data.P_IMUSPEED, Data.P_IMUSUMMON, Data.P_DEATHSURGE, Data.P_WEAKAURA, Data.P_STRONGAURA, Data.P_AI};
 
 	private static final DecimalFormat df;
 
@@ -125,12 +125,12 @@ public class Interpret extends Data {
 		df = (DecimalFormat) nf;
 	}
 
-	public static boolean allRangeSame(MaskEntity me) {
+	public static boolean allRangeSame(MaskEntity me, int ind) {
 		if (me instanceof CustomEntity) {
 			List<Integer> near = new ArrayList<>();
 			List<Integer> far = new ArrayList<>();
 
-			for (AtkDataModel atk : ((CustomEntity) me).atks) {
+			for (AtkDataModel atk : ((CustomEntity) me).hits.get(ind)) {
 				near.add(atk.getShortPoint());
 				far.add(atk.getLongPoint());
 			}
@@ -151,8 +151,8 @@ public class Interpret extends Data {
 				}
 			}
 		} else {
-			for (int i = 1; i < me.getAtkCount(); i++) {
-				if (me.getAtkModel(i).getShortPoint() != me.getAtkModel(0).getShortPoint() || me.getAtkModel(i).getLongPoint() != me.getAtkModel(0).getLongPoint())
+			for (int i = 1; i < me.getAtkCount(ind); i++) {
+				if (me.getAtkModel(ind, i).getShortPoint() != me.getAtkModel(ind, 0).getShortPoint() || me.getAtkModel(ind, i).getLongPoint() != me.getAtkModel(ind, 0).getLongPoint())
 					return false;
 			}
 		}
@@ -177,12 +177,12 @@ public class Interpret extends Data {
 		public ImageIcon getIcon() { return icon; }
 	}
 
-	public static List<ProcDisplay> getAbi(MaskEntity me) {
+	public static List<ProcDisplay> getAbi(MaskEntity me, int atkind) {
 		int tb = me.touchBase();
 		final MaskAtk ma;
 
-		if (me.getAtkCount() == 1) {
-			ma = me.getAtkModel(0);
+		if (me.getAtkCount(atkind) == 1) {
+			ma = me.getAtkModel(atkind,0);
 		} else {
 			ma = me.getRepAtk();
 		}
@@ -190,9 +190,9 @@ public class Interpret extends Data {
 		int lds;
 		int ldr;
 
-		if (allRangeSame(me)) {
-			lds = me.getAtkModel(0).getShortPoint();
-			ldr = me.getAtkModel(0).getLongPoint() - me.getAtkModel(0).getShortPoint();
+		if (allRangeSame(me, atkind)) {
+			lds = me.getAtkModel(atkind, 0).getShortPoint();
+			ldr = me.getAtkModel(atkind, 0).getLongPoint() - me.getAtkModel(atkind, 0).getShortPoint();
 		} else {
 			lds = ma.getShortPoint();
 			ldr = ma.getLongPoint() - ma.getShortPoint();
@@ -200,9 +200,9 @@ public class Interpret extends Data {
 
 
 		List<ProcDisplay> l = new ArrayList<>();
-		if (!allRangeSame(me)) {
+		if (!allRangeSame(me, atkind)) {
 			LinkedHashMap<String, List<Integer>> LDInts = new LinkedHashMap<>();
-			MaskAtk[] atks = me.getAtks();
+			MaskAtk[] atks = me.getAtks(atkind);
 			List<BufferedImage> ics = new ArrayList<>();
 
 			for (int i = 0; i < atks.length ; i++ ) {
@@ -233,7 +233,7 @@ public class Interpret extends Data {
 				if (inds == null) {
 					l.add(new ProcDisplay(key, ics.get(i++)));
 				} else {
-					if (inds.size() == me.getAtkCount()) {
+					if (inds.size() == me.getAtkCount(atkind)) {
 						l.add(new ProcDisplay(key, ics.get(i++)));
 					} else {
 						l.add(new ProcDisplay(key + " " + getAtkNumbers(inds), ics.get(i++)));
@@ -297,7 +297,7 @@ public class Interpret extends Data {
 		return ans;
 	}
 
-	public static List<ProcDisplay> getProc(MaskEntity du, boolean isEnemy, double[] magnification) {
+	public static List<ProcDisplay> getProc(MaskEntity du, boolean isEnemy, double[] magnification, int atkind) {
 		Formatter.Context ctx = new Formatter.Context(isEnemy, MainBCU.seconds, magnification);
 		final boolean common;
 
@@ -355,8 +355,8 @@ public class Interpret extends Data {
 				l.add(new ProcDisplay(formatted, UtilPC.getIcon(1, i)));
 			}
 
-			for (int i = 0; i < du.getAtkCount(); i++) {
-				ma = du.getAtkModel(i);
+			for (int i = 0; i < du.getAtkCount(atkind); i++) {
+				ma = du.getAtkModel(atkind, i);
 
 				for (int j = 0; j < Data.PROC_TOT; j++) {
 					ProcItem item = ma.getProc().getArr(j);
@@ -389,7 +389,7 @@ public class Interpret extends Data {
 				if (inds == null) {
 					l.add(new ProcDisplay(key, procIcons.get(i++)));
 				} else {
-					if (inds.size() == du.getAtkCount()) {
+					if (inds.size() == du.getAtkCount(atkind)) {
 						l.add(new ProcDisplay(key, procIcons.get(i++)));
 					} else {
 						l.add(new ProcDisplay(key + " " + getAtkNumbers(inds), procIcons.get(i++)));
@@ -399,10 +399,10 @@ public class Interpret extends Data {
 		}
 
 		if (du instanceof DefaultData && !((DefaultData)du).isCommon()) {
-			int[][] atkData = du.rawAtkData();
+			MaskAtk[] atkData = du.getAtks(atkind);
 			List<Integer> atks = new ArrayList<>();
 			for (int i = 0; i < atkData.length; i++)
-				if (atkData[i][2] == 1)
+				if (atkData[i].canProc())
 					atks.add(i + 1);
 			for (int i = 0; i < l.size(); i++)
 				if (!share.get(i))
@@ -544,20 +544,20 @@ public class Interpret extends Data {
 		return false;
 	}
 
-	public static boolean isType(MaskEntity de, int type) {
-		int[][] raw = de.rawAtkData();
+	public static boolean isType(MaskEntity de, int type, int ind) {
+		MaskAtk[] atks = de.getAtks(ind);
 		if (type == 0)
-			return !de.isRange();
+			return !de.isRange(ind);
 		else if (type == 1)
-			return de.isRange();
+			return de.isRange(ind);
 		else if (type == 2)
 			return de.isLD();
 		else if (type == 3)
-			return raw.length > 1;
+			return atks.length > 1;
 		else if (type == 4)
 			return de.isOmni();
 		else if (type == 5)
-			return de.getTBA() + raw[0][1] < de.getItv() / 2;
+			return de.getTBA() + atks[0].getPre() < de.getItv(ind) / 2;
 		else if (type >= 6 && type <= 11)
 			return de.getSpAtks().length > type - 6 && de.getSpAtks()[type - 6] != null;
 		return false;

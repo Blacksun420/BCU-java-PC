@@ -108,19 +108,19 @@ public class AbEnemyListTable  extends SortTable<AbEnemy> {
             else if (c == 3)
                 return e.de.getHb();
             else if (c == 4)
-                return e.de.allAtk();
+                return e.de.allAtk(0);
             else if (c == 5)
                 return e.de.getRange();
             else if (c == 6)
-                return e.de.getItv();
+                return e.de.getItv(0);
             else if (c == 7)
                 return e.de.getSpeed();
             else if (c == 8)
                 return Math.floor(e.de.getDrop() * b.t().getDropMulti()) / 100;
             else if (c == 9)
-                return e.de.rawAtkData()[0][1];
+                return e.de.getAtkModel(0, 0).getPre();
             else if (c == 10)
-                return e.de.allAtk() == 0 ? Integer.MAX_VALUE : (int) ((long) e.de.getHp() * e.de.getItv() / e.de.allAtk());
+                return e.de.allAtk(0) == 0 ? Integer.MAX_VALUE : (int) ((long) e.de.getHp() * e.de.getItv(0) / e.de.allAtk(0));
             else if (c == 11)
                 return e.de.getHb() < 2 ? (int) get(e, 10) : (int) get(e, 10) / e.de.getHb();
             else

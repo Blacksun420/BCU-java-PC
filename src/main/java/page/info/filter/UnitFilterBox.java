@@ -154,7 +154,7 @@ public class UnitFilterBox extends EntityFilterBox {
 		}
 		boolean b2 = unchangeable(2);
 		for (int i : atkt.getSelectedIndices()) {
-			b2 = processOperator(2, isType(du, i));
+			b2 = processOperator(2, isType(du, i, 0));
 			if (b0 != unchangeable(2))
 				break;
 		}

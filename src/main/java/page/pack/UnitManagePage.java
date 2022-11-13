@@ -194,8 +194,8 @@ public class UnitManagePage extends Page {
 
 		addu.addActionListener(arg0 -> {
 			changing = true;
-			CustomUnit cu = new CustomUnit();
 			AnimCE anim = getSelectedAnim();
+			CustomUnit cu = new CustomUnit(anim);
 			cu.limit = CommonStatic.customFormMinPos(anim.mamodel);
 			Unit u = new Unit(pac.getNextID(Unit.class), anim, cu);
 			pac.units.add(u);
@@ -339,8 +339,8 @@ public class UnitManagePage extends Page {
 
 		addf.addActionListener(arg0 -> {
 			changing = true;
-			CustomUnit cu = new CustomUnit();
 			AnimCE ac = getSelectedAnim();
+			CustomUnit cu = new CustomUnit(ac);
 			cu.limit = CommonStatic.customFormMinPos(ac.mamodel);
 			frm = new Form(uni, uni.forms.length, "new form", ac, cu);
 			uni.forms = Arrays.copyOf(uni.forms, uni.forms.length + 1);

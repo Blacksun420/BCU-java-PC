@@ -3,6 +3,7 @@ package page.info;
 import common.CommonStatic;
 import common.battle.BasisLU;
 import common.battle.BasisSet;
+import common.battle.data.MaskAtk;
 import common.battle.data.MaskEnemy;
 import common.battle.data.MaskEntity;
 import common.battle.data.MaskUnit;
@@ -294,7 +295,7 @@ public class ComparePage extends Page {
 
             int hp = m.getHp();
             int atk = 0;
-            int[][] atkData = m.rawAtkData();
+            MaskAtk[] atkData = m.getAtks(0);
             StringBuilder atkString = new StringBuilder();
             StringBuilder preString = new StringBuilder();
 
@@ -313,18 +314,18 @@ public class ComparePage extends Page {
 
                 abilityPanes[i].setViewportView(abilities[i] = new EntityAbilities(getFront(), m, multi));
 
-                for (int[] atkDatum : atkData) {
+                for (MaskAtk atkDatum : atkData) {
                     if (atkString.length() > 0) {
                         atkString.append(" / ");
                         preString.append(" / ");
                     }
 
-                    atkString.append(Math.round(atkDatum[0] * mula));
-                    preString.append(MainBCU.convertTime(atkDatum[1]));
+                    atkString.append(Math.round(atkDatum.getAtk() * mula));
+                    preString.append(MainBCU.convertTime(atkDatum.getPre()));
                 }
 
                 main[0][index].setText((int) (hp * mul) + "");
-                main[4][index].setText((int) (m.allAtk() * mula * 30.0 / m.getItv()) + "");
+                main[4][index].setText((int) (m.allAtk(0) * mula * 30.0 / m.getItv(0)) + "");
 
                 enem[0][index].setText(Math.floor(enemy.getDrop() * b.t().getDropMulti()) / 100 + "");
 
@@ -366,18 +367,18 @@ public class ComparePage extends Page {
                 if (mu.getPCoin() != null)
                     hp = (int) (hp * mu.getPCoin().getHPMultiplication(multi));
 
-                for (int[] atkDatum : atkData) {
+                for (MaskAtk atkDatum : atkData) {
                     if (atkString.length() > 0) {
                         atkString.append(" / ");
                         preString.append(" / ");
                     }
 
-                    int a = (int) (Math.round(atkDatum[0] * mul) * atkLv);
+                    int a = (int) (Math.round(atkDatum.getAtk() * mul) * atkLv);
                     if (mu.getPCoin() != null)
                         a = (int) (a * mu.getPCoin().getAtkMultiplication(multi));
 
                     atkString.append(a);
-                    preString.append(MainBCU.convertTime(atkDatum[1]));
+                    preString.append(MainBCU.convertTime(atkDatum.getPre()));
                     atk += a;
 
                     int effectiveDMG = a;
@@ -452,10 +453,10 @@ public class ComparePage extends Page {
                     effectiveDMG *= 2.5;
 
                 if (effectiveDMG > atk)
-                    main[4][index].setText((int) (atk * 30.0 / m.getItv())
-                            + " (" + (int) (effectiveDMG * 30.0 / m.getItv()) + ")");
+                    main[4][index].setText((int) (atk * 30.0 / m.getItv(0))
+                            + " (" + (int) (effectiveDMG * 30.0 / m.getItv(0)) + ")");
                 else
-                    main[4][index].setText((int) (atk * 30.0 / m.getItv()) + "");
+                    main[4][index].setText((int) (atk * 30.0 / m.getItv(0)) + "");
 
                 for (JBTN btn : swap[i])
                     btn.setEnabled(true);
@@ -471,8 +472,8 @@ public class ComparePage extends Page {
             main[2][index].setText(m.getRange() + "");
             main[3][index].setText(atkString.toString());
             main[5][index].setText(preString.toString());
-            main[6][index].setText(MainBCU.convertTime(m.getPost()));
-            main[7][index].setText(MainBCU.convertTime(m.getItv()));
+            main[6][index].setText(MainBCU.convertTime(m.getPost(0)));
+            main[7][index].setText(MainBCU.convertTime(m.getItv(0)));
             main[8][index].setText(MainBCU.convertTime(m.getTBA()));
 
             main[9][index].setText(m.getSpeed() + "");

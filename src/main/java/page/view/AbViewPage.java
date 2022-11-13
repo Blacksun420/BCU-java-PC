@@ -169,7 +169,7 @@ public abstract class AbViewPage extends Page {
 		}
 	}
 
-	protected <T extends Enum<T> & AnimI.AnimType<?, T>> void setAnim(AnimI<?, T> a) {
+	protected <T extends AnimI.AnimType<?, T>> void setAnim(AnimI<?, T> a) {
 		if (!changingT) {
 			int ind = jlt.getSelectedIndex();
 			if (ind == -1)
@@ -242,8 +242,10 @@ public abstract class AbViewPage extends Page {
 			AnimD<?, ?> eau = (AnimD<?, ?>) ei.anim();
 			ResourceLocation rl;
 
-			if (eau.types[0].equals(AnimU.UType.SOUL))
+			if (eau.types[0].equals(AnimU.SOUL[0]))
 				rl = new ResourceLocation(ResourceLocation.LOCAL, "new soul anim", Source.BasePath.SOUL);
+			else if (eau.types[0].equals(AnimU.BGEFFECT[0]))
+				rl = new ResourceLocation(ResourceLocation.LOCAL, "new background effect", Source.BasePath.BGEffect);
 			else
 				rl = new ResourceLocation(ResourceLocation.LOCAL, "new anim", Source.BasePath.ANIM);
 

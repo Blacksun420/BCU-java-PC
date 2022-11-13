@@ -3,15 +3,13 @@ package page.info;
 import common.CommonStatic;
 import common.battle.BasisSet;
 import common.battle.data.AtkDataModel;
+import common.battle.data.MaskAtk;
 import common.pack.UserProfile;
 import common.util.Data;
 import common.util.unit.Enemy;
 import common.util.unit.Trait;
 import main.MainBCU;
-import page.JL;
-import page.JTF;
-import page.MainLocale;
-import page.Page;
+import page.*;
 import utilpc.Interpret;
 import utilpc.UtilPC;
 
@@ -20,6 +18,7 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -29,17 +28,21 @@ public class EnemyInfoTable extends Page {
 
 	private final JL[][] main = new JL[4][8];
 	private final JL[][] special = new JL[1][8];
-	private final JL[][] atks;
-	private final JLabel[] proc;
+	private JL[][] atks;
+	private JLabel[] proc;
 	private final JTF jtf = new JTF();
 	private final JTextArea descr = new JTextArea();
 	private final JScrollPane desc = new JScrollPane(descr);
 
+	private final JL atkind = new JL();
+	private final JBTN prevatk = new JBTN(MainLocale.PAGE, "prev");
+	private final JBTN nextatk = new JBTN(MainLocale.PAGE, "next");
 
 	private final BasisSet b;
 	private final Enemy e;
 	private int multi, mulatk;
 	private boolean displaySpecial;
+	private int dispAtk = 0;
 	private final ArrayList<AtkDataModel> atkList = new ArrayList<>();
 
 	protected EnemyInfoTable(Page p, Enemy de, int mul, int mula) {
@@ -52,10 +55,28 @@ public class EnemyInfoTable extends Page {
 		for (int i = 0; i < e.de.getSpAtks().length; i++)
 			if (e.de.getSpAtks()[i] != null)
 				atkList.add(e.de.getSpAtks()[i]);
+		ini();
+	}
 
-		atks = new JL[e.de.rawAtkData().length + atkList.size()][8];
-		List<Interpret.ProcDisplay> ls = Interpret.getAbi(e.de);
-		ls.addAll(Interpret.getProc(e.de, true, new double[]{multi  * e.de.multi(b) / 100, mulatk  * e.de.multi(b) / 100}));
+	private void resetAtk() {
+		atkind.setText(get(MainLocale.PAGE, "atk") + " " + dispAtk);
+		if (atks != null)
+			for (JL[] atk : atks) {
+				for (JL jl : atk) remove(jl);
+			}
+		atks = new JL[e.de.getAtks(dispAtk).length + atkList.size()][8];
+		for (int i = 0; i < atks.length; i++)
+			for (int j = 0; j < atks[i].length; j++) {
+				add(atks[i][j] = new JL());
+				atks[i][j].setBorder(BorderFactory.createEtchedBorder());
+				if (j % 2 == 0)
+					atks[i][j].setHorizontalAlignment(SwingConstants.CENTER);
+			}
+		List<Interpret.ProcDisplay> ls = Interpret.getAbi(e.de, dispAtk);
+		if (proc != null)
+			for (JLabel p : proc)
+				remove(p);
+		ls.addAll(Interpret.getProc(e.de, true, new double[]{multi  * e.de.multi(b) / 100, mulatk  * e.de.multi(b) / 100}, dispAtk));
 		proc = new JLabel[ls.size()];
 		for (int i = 0; i < ls.size(); i++) {
 			Interpret.ProcDisplay disp = ls.get(i);
@@ -63,7 +84,44 @@ public class EnemyInfoTable extends Page {
 			proc[i].setBorder(BorderFactory.createEtchedBorder());
 			proc[i].setIcon(disp.getIcon());
 		}
-		ini();
+		main[3][7].setText(MainBCU.convertTime(e.de.getPost(dispAtk)));
+
+		MaskAtk[] atkData = e.de.getAtks(dispAtk);
+		for (int i = 0; i < atkData.length; i++) {
+			atks[i][0].setText(MainLocale.INFO, "atk");
+			atks[i][2].setText(MainLocale.INFO, "preaa");
+			atks[i][3].setText(MainBCU.convertTime(atkData[i].getPre()));
+			atks[i][4].setText(MainLocale.INFO, "dire");
+			atks[i][5].setText("" + atkData[i].getDire());
+
+			ArrayList<Trait> atrs = e.de.getAtkModel(dispAtk, i).getATKTraits();
+			if (atrs.isEmpty())
+				continue;
+			atks[i][6].setText(MainLocale.INFO, "trait");
+
+			atrs.sort(Comparator.comparingInt(t -> t.id.id));
+			atrs.sort(Comparator.comparing(t -> t.id.pack));
+			atrs.sort(Comparator.comparing(t -> !t.BCTrait));
+			String[] Atraits = new String[atrs.size()];
+			for (int j = 0; j < atrs.size(); j++) {
+				Trait trait = atrs.get(j);
+				if (trait.BCTrait)
+					Atraits[j] = Interpret.TRAIT[trait.id.id];
+				else
+					Atraits[j] = trait.name;
+			}
+			atks[i][7].setText(Interpret.getTrait(Atraits, e.de.getStar()));
+			atks[i][6].setToolTipText(atks[i][7].getText());
+		}
+		for (int i = 0; i < atkList.size(); i++) {
+			int ind = i + atkData.length;
+			atks[ind][0].setText(MainLocale.INFO, "atk [" + atkList.get(i).str + "]");
+			atks[ind][2].setText(MainLocale.INFO, "preaa");
+			atks[ind][3].setText(MainBCU.convertTime(atkList.get(i).pre));
+			atks[ind][4].setText(MainLocale.INFO, "dire");
+			atks[ind][5].setText("" + atkList.get(i).dire);
+		}
+		reset();
 	}
 
 	protected void reset() {
@@ -71,21 +129,23 @@ public class EnemyInfoTable extends Page {
 		double mula = mulatk * e.de.multi(b) / 100;
 		main[1][3].setText("" + (int) (e.de.getHp() * mul));
 		main[1][7].setText("" + Math.floor(e.de.getDrop() * b.t().getDropMulti()) / 100);
-		main[2][3].setText("" + (int) (e.de.allAtk() * mula * 30 / e.de.getItv()));
-		int[][] atkData = e.de.rawAtkData();
+		main[2][3].setText("" + (int) (e.de.allAtk(dispAtk) * mula * 30 / e.de.getItv(dispAtk)));
+		MaskAtk[] atkData = e.de.getAtks(dispAtk);
 		for (int i = 0; i < atkData.length; i++)
-			atks[i][1].setText("" + Math.round(atkData[i][0] * mula));
+			atks[i][1].setText("" + Math.round(atkData[i].getAtk() * mula));
 		for (int i = 0; i < atkList.size(); i++)
 			atks[i + atkData.length][1].setText("" + Math.round(atkList.get(i).atk * mula));
 
-		List<Interpret.ProcDisplay> ls = Interpret.getAbi(e.de);
-		ls.addAll(Interpret.getProc(e.de, true, new double[]{mul, mula}));
+		List<Interpret.ProcDisplay> ls = Interpret.getAbi(e.de, dispAtk);
+		ls.addAll(Interpret.getProc(e.de, true, new double[]{mul, mula}, dispAtk));
 
 		for (int i = 0; i < ls.size(); i++) {
 			Interpret.ProcDisplay disp = ls.get(i);
 			proc[i].setText(disp.toString());
 			updateTooltips();
 		}
+		int itv = e.de.getItv(dispAtk);
+		main[2][7].setText(MainBCU.convertTime(itv));
 	}
 
 	@Override
@@ -107,6 +167,12 @@ public class EnemyInfoTable extends Page {
 			for (int i = 0; i < special.length; i++)
 				for (int j = 0; j < special[i].length; j++)
 					set(special[i][j], x, y, 200 * i, h, 0, 0);
+		}
+		if (e.de.getAtkTypeCount() > 1) {
+			set(prevatk, x, y, 0, h, 400, 50);
+			set(atkind, x, y, 700, h, 300, 50);
+			set(nextatk, x, y, 1200, h, 400, 50);
+			h += 50;
 		}
 		for (int i = 0; i < atks.length; i++)
 			for (int j = 0; j < atks[i].length; j++)
@@ -150,12 +216,28 @@ public class EnemyInfoTable extends Page {
 			}
 
 		});
+
+		prevatk.setLnr(sel -> {
+			dispAtk--;
+			prevatk.setEnabled(dispAtk != 0);
+			nextatk.setEnabled(true);
+			resetAtk();
+		});
+
+		nextatk.setLnr(sel -> {
+			dispAtk++;
+			prevatk.setEnabled(true);
+			nextatk.setEnabled(dispAtk != e.de.getAtkTypeCount() - 1);
+			resetAtk();
+		});
 	}
 
 	protected int getH() {
 		int l = main.length + atks.length;
 		if (displaySpecial)
 			l += special.length;
+		if (e.de.getAtkTypeCount() > 1)
+			l += 50;
 		return (l + (proc.length + (proc.length % 2 == 1 ? 1 : 0)) / 2) * 50 + (e.getExplaination().replace("<br>", "").length() > 0 ? 200 : 0);
 	}
 
@@ -188,6 +270,7 @@ public class EnemyInfoTable extends Page {
 					special[i][j].setHorizontalAlignment(SwingConstants.CENTER);
 			}
 		}
+		atks = new JL[e.de.getAtks(dispAtk).length + atkList.size()][8];
 		for (int i = 0; i < atks.length; i++)
 			for (int j = 0; j < atks[i].length; j++) {
 				add(atks[i][j] = new JL());
@@ -197,7 +280,7 @@ public class EnemyInfoTable extends Page {
 			}
 		add(jtf);
 		jtf.setText(CommonStatic.toArrayFormat(multi, mulatk) + "%");
-		int itv = e.de.getItv();
+
 		main[0][0].setText("ID");
 		main[0][1].setText("" + e.id);
 		if (e.anim.getEdi() != null && e.anim.getEdi().getImg() != null)
@@ -218,7 +301,7 @@ public class EnemyInfoTable extends Page {
 		main[2][6].setText(MainLocale.INFO, "atkf");
 
 		main[3][0].setText(MainLocale.INFO, "atktype");
-		if (e.de.isRange()) {
+		if (e.de.isRange(dispAtk)) {
 			main[3][1].setText(MainLocale.INFO, "isr");
 			main[3][1].setIcon(UtilPC.createIcon(2, Data.ATK_AREA));
 		} else {
@@ -237,45 +320,8 @@ public class EnemyInfoTable extends Page {
 		special[0][4].setText(MainLocale.INFO, "minpos");
 		special[0][5].setText(e.de.getLimit() + "");
 
-		main[2][7].setText(MainBCU.convertTime(itv));
 		main[3][5].setText(MainBCU.convertTime(e.de.getTBA()));
-		main[3][7].setText(MainBCU.convertTime(e.de.getPost()));
 
-		int[][] atkData = e.de.rawAtkData();
-		for (int i = 0; i < atkData.length; i++) {
-			atks[i][0].setText(MainLocale.INFO, "atk");
-			atks[i][2].setText(MainLocale.INFO, "preaa");
-			atks[i][3].setText(MainBCU.convertTime(atkData[i][1]));
-			atks[i][4].setText(MainLocale.INFO, "dire");
-			atks[i][5].setText("" + atkData[i][3]);
-
-			ArrayList<Trait> atrs = e.de.getAtkModel(i).getATKTraits();
-			if (atrs.isEmpty())
-				continue;
-			atks[i][6].setText(MainLocale.INFO, "trait");
-
-			atrs.sort(Comparator.comparingInt(t -> t.id.id));
-			atrs.sort(Comparator.comparing(t -> t.id.pack));
-			atrs.sort(Comparator.comparing(t -> !t.BCTrait));
-			String[] Atraits = new String[atrs.size()];
-			for (int j = 0; j < atrs.size(); j++) {
-				Trait trait = atrs.get(j);
-				if (trait.BCTrait)
-					Atraits[j] = Interpret.TRAIT[trait.id.id];
-				else
-					Atraits[j] = trait.name;
-			}
-			atks[i][7].setText(Interpret.getTrait(Atraits, e.de.getStar()));
-			atks[i][6].setToolTipText(atks[i][7].getText());
-		}
-		for (int i = 0; i < atkList.size(); i++) {
-			int ind = i + atkData.length;
-			atks[ind][0].setText(MainLocale.INFO, "atk [" + atkList.get(i).str + "]");
-			atks[ind][2].setText(MainLocale.INFO, "preaa");
-			atks[ind][3].setText(MainBCU.convertTime(atkList.get(i).pre));
-			atks[ind][4].setText(MainLocale.INFO, "dire");
-			atks[ind][5].setText("" + atkList.get(i).dire);
-		}
 		if (e.de.getLimit() >= 100)
 			special[0][5].setToolTipText("<html>"
 					+ "This enemy, if it's a boss, will always stay at least "
@@ -288,12 +334,16 @@ public class EnemyInfoTable extends Page {
 					+ (100 - e.de.getLimit())
 					+ " units inside the base<br>once it passes that threshold."
 					+ "</html>");
+		add(prevatk);
+		add(atkind);
+		add(nextatk);
 		String eDesc = e.getExplaination().replace("<br>", "\n");
 		if (eDesc.replace("\n", "").length() > 0)
 			add(desc);
 		descr.setText(e.toString().replace(Data.trio(e.id.id) + " - ", "") + (e.de.getTraits().size() > 0 && !e.de.getTraits().contains(UserProfile.getBCData().traits.get(Data.TRAIT_WHITE)) ? " (" + Interpret.getTrait(TraitBox, 0) + ")" : "") + (e.de.getStar() > 2 ? " (Cool Dude)" : "") + "\n" + eDesc);
 		descr.setEditable(false);
-		reset();
+		prevatk.setEnabled(false);
+		resetAtk();
 		addListeners();
 		updateTooltips();
 	}

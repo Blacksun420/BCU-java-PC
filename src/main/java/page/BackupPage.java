@@ -408,8 +408,8 @@ public class BackupPage extends Page {
         ti.add(new DefaultMutableTreeNode("range: " + ce.getRange()));
         ti.add(new DefaultMutableTreeNode("barrier: " + ce.getProc().BARRIER.health));
 
-        for (int i = 0; i < ce.getAtkCount(); i++) {
-            AtkDataModel am = (AtkDataModel) ce.getAtkModel(i);
+        for (int i = 0; i < ce.getAtkCount(0); i++) {
+            AtkDataModel am = (AtkDataModel) ce.getAtkModel(0, i); //TODO get atks
 
             ti = new DefaultMutableTreeNode(am + "/");
 

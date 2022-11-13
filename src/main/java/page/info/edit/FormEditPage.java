@@ -193,10 +193,10 @@ public class FormEditPage extends EntityEditPage {
 		set(flv, x, y, 150, 50, 200, 50);
 		set(ldr, x, y, 50, 350, 100, 50);
 		set(fdr, x, y, 150, 350, 200, 50);
-		set(lrs, x, y, 350, 50, 100, 50);
-		set(frs, x, y, 450, 50, 200, 50);
-		set(llr, x, y, 650, 50, 100, 50);
-		set(flr, x, y, 750, 50, 200, 50);
+		set(lrs, x, y, 1050, 50, 100, 50);
+		set(frs, x, y, 1150, 50, 200, 50);
+		set(llr, x, y, 1350, 50, 100, 50);
+		set(flr, x, y, 1450, 50, 200, 50);
 		set(ueb, x, y, 50, 650, 600, 500);
 		if (editable) {
 			set(vuni, x, y, 1800, 1100, 200, 50);

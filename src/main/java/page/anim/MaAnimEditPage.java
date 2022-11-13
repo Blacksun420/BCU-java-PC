@@ -1,6 +1,8 @@
 package page.anim;
 
 import common.CommonStatic;
+import common.pack.PackData;
+import common.pack.UserProfile;
 import common.util.anim.*;
 import main.Opts;
 import page.JBTN;
@@ -57,6 +59,8 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 	private final AnimBox ab = AnimBox.getInstance();
 	private final JBTN addp = new JBTN(0, "add");
 	private final JBTN remp = new JBTN(0, "rem");
+	private final JBTN adda = new JBTN(0, "Add Attack");
+	private final JBTN rema = new JBTN(0, "Remove Attack");
 	private final JBTN addl = new JBTN(0, "addl");
 	private final JBTN reml = new JBTN(0, "reml");
 	private final JBTN advs = new JBTN(0, "advs");
@@ -218,11 +222,19 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 		set(camres, x, y, 350, 0, 200, 50);
 		set(zomres, x, y, 560, 0, 200, 50);
 
-		set(addp, x, y, 300, 750, 200, 50);
-		set(remp, x, y, 300, 800, 200, 50);
 		set(lmul, x, y, 300, 650, 200, 50);
 		set(tmul, x, y, 300, 700, 200, 50);
-		set(jspv, x, y, 300, 850, 200, 450);
+		set(addp, x, y, 300, 750, 200, 50);
+		set(remp, x, y, 300, 800, 200, 50);
+		if (maet.anim != null && maet.anim.getAtkCount() > 0) {
+			set(adda, x, y, 300, 850, 200, 50);
+			set(rema, x, y, 300, 900, 200, 50);
+			set(jspv, x, y, 300, 950, 200, 350);
+		} else {
+			set(adda, x, y, 300, 850, 0, 0);
+			set(rema, x, y, 300, 900, 0, 0);
+			set(jspv, x, y, 300, 850, 200, 450);
+		}
 		set(jspma, x, y, 500, 650, 900, 650);
 		set(jspmp, x, y, 1400, 650, 900, 650);
 		set(jspu, x, y, 0, 50, 300, 400);
@@ -399,6 +411,37 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 			setC(ind);
 		}));
 
+		adda.setLnr(a -> {
+			if(maet.getCellEditor() != null) {
+				maet.getCellEditor().stopCellEditing();
+			}
+			maet.anim.addAttack();
+			for (PackData.UserPack p : UserProfile.getUserPacks()) {
+				if (!p.editable)
+					continue;
+				p.animChanged(maet.anim, -1);
+			}
+			jlt.setSelectedIndex(jlt.getSelectedIndex() + 1);
+			setA(maet.anim);
+		});
+
+		rema.setLnr(a -> {
+			if (!Opts.conf())
+				return;
+			if(maet.getCellEditor() != null) {
+				maet.getCellEditor().stopCellEditing();
+			}
+			int ind = jlt.getSelectedIndex();
+			maet.anim.remAttack(ind);
+			jlt.setSelectedIndex(ind - 1);
+			for (PackData.UserPack p : UserProfile.getUserPacks()) {
+				if (!p.editable)
+					continue;
+				p.animChanged(maet.anim, ind - 2);
+			}
+			setA(maet.anim);
+		});
+
 		tmul.addFocusListener(new FocusAdapter() {
 
 			@Override
@@ -537,6 +580,8 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 		add(jspmp);
 		add(addp);
 		add(remp);
+		add(adda);
+		add(rema);
 		add(addl);
 		add(reml);
 		add(jtb);
