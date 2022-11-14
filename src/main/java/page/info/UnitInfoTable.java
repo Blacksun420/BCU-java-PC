@@ -118,7 +118,7 @@ public class UnitInfoTable extends Page {
 		if (displaySpecial)
 			l += special.length;
 		if (f.du.getAtkTypeCount() > 1)
-			l += 50;
+			l += 1;
 		return (l + (proc.length + 1) / 2) * 50 + (f.getExplaination().replace("<br>", "").length() > 0 ? 200 : 0);
 	}
 

@@ -237,7 +237,7 @@ public class EnemyInfoTable extends Page {
 		if (displaySpecial)
 			l += special.length;
 		if (e.de.getAtkTypeCount() > 1)
-			l += 50;
+			l += 1;
 		return (l + (proc.length + (proc.length % 2 == 1 ? 1 : 0)) / 2) * 50 + (e.getExplaination().replace("<br>", "").length() > 0 ? 200 : 0);
 	}
 
