@@ -64,6 +64,7 @@ public class ComboEditPage extends Page {
 
     protected ComboEditPage(Page p, PackData.UserPack pack) {
         super(p);
+        vpack.sort(null);
 
         pac = pack;
 

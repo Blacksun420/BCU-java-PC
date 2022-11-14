@@ -47,6 +47,7 @@ public class SoulEditPage extends Page {
 
     public SoulEditPage(Page p, PackData.UserPack pack) {
         super(p);
+        vpack.sort(null);
 
         ini(pack);
         resized();
