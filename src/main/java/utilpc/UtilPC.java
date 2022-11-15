@@ -13,6 +13,7 @@ import common.util.unit.Form;
 import common.util.unit.Trait;
 import io.BCMusic;
 import io.BCUWriter;
+import page.LoadPage;
 import page.MainLocale;
 import utilpc.awt.FG2D;
 
@@ -76,6 +77,11 @@ public class UtilPC {
 
 		public String getBtnName(int m, String s) {
 			return MainLocale.getLoc(m, s);
+		}
+
+		public void loadProgress(double d, String s) {
+			LoadPage.prog(d);
+			LoadPage.packProg(s);
 		}
 	}
 

@@ -270,7 +270,6 @@ public class PackEditPage extends Page {
 			changing = true;
 			int ind = jlp.getSelectedIndex();
 			UserProfile.unloadPack(pac);
-			UserProfile.remove(pac);
 			pac.delete();
 			vpack.remove(pac);
 			jlp.setListData(vpack);
@@ -716,11 +715,12 @@ public class PackEditPage extends Page {
 	private void setPack(UserPack pack) {
 		pac = pack;
 		boolean b = pac != null && pac.editable;
-		remp.setEnabled(pac != null && canBeDeleted(pac));
+		ArrayList<String> deps = pac != null ? parentedList(pac) : null;
+		remp.setEnabled(pac != null && deps.isEmpty());
 
 		if(pac != null)
-			if(!canBeDeleted(pac)) {
-				remp.setToolTipText(Page.get(MainLocale.PAGE, "packused"));
+			if(!deps.isEmpty()) {
+				remp.setToolTipText(Page.get(MainLocale.PAGE, "packused") + deps);
 			} else {
 				remp.setToolTipText(null);
 			}
@@ -814,15 +814,14 @@ public class PackEditPage extends Page {
 		jlr.setListData(rel);
 	}
 
-	private boolean canBeDeleted(UserPack pack) {
+	private ArrayList<String> parentedList(UserPack pack) {
+		ArrayList<String> pars = new ArrayList<>();
 		for(UserPack p : UserProfile.getUserPacks()) {
 			if(p.getSID().equals(pack.getSID()))
 				continue;
-
 			if(p.desc.dependency.contains(pack.getSID()))
-				return false;
+				pars.add(p.toString());
 		}
-
-		return true;
+		return pars;
 	}
 }

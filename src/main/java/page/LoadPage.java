@@ -9,13 +9,15 @@ public class LoadPage extends Page {
 	public static LoadPage lp;
 
 	public static void prog(double i) {
-		lp.jpb.setMaximum(1000);
 		lp.jpb.setValue((int) (i * 1000));
 	}
 
 	public static void prog(String str) {
-		if (lp != null)
-			lp.set(str);
+		lp.set(str);
+	}
+
+	public static void packProg(String str) {
+		lp.jl.setText(str);
 	}
 
 	private final JLabel jl = new JLabel();
@@ -29,11 +31,11 @@ public class LoadPage extends Page {
 
 		add(jl);
 		add(jpb);
+		lp.jpb.setMaximum(1000);
 		resized();
 	}
 
 	public void accept(double dl) {
-		jpb.setMaximum(1000);
 		jpb.setValue((int) (dl * 1000));
 	}
 
