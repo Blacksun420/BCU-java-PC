@@ -116,7 +116,7 @@ public class PackEditPage extends Page {
 		super(p);
 		AnimGroup.workspaceGroup.renewGroup();
 		vpack.sort(null);
-		AnimGroupTree agt = new AnimGroupTree(jtd);
+		AnimGroupTree agt = new AnimGroupTree(jtd, Source.BasePath.ANIM);
 		agt.renewNodes();
 
 		ini();

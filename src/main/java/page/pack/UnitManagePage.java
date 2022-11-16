@@ -77,8 +77,9 @@ public class UnitManagePage extends Page {
 
 	public UnitManagePage(Page p, UserPack pack) {
 		super(p);
-		AnimGroupTree agt = new AnimGroupTree(jtd);
+		AnimGroupTree agt = new AnimGroupTree(jtd, Source.BasePath.ANIM);
 		vpack.sort(null);
+
 		agt.renewNodes();
 
 		pac = pack;
@@ -143,7 +144,7 @@ public class UnitManagePage extends Page {
 			if (changing)
 				return;
 			changing = true;
-			boolean edi = pac != null && pac.editable && getSelectedAnim() != null && getSelectedAnim().id.base.equals(Source.BasePath.ANIM);
+			boolean edi = pac != null && pac.editable && getSelectedAnim() != null;
 			addu.setEnabled(edi);
 			addf.setEnabled(edi && uni != null);
 			frea.setEnabled(edi && jlf.getSelectedValue() != null);
@@ -526,7 +527,7 @@ public class UnitManagePage extends Page {
 			changing = boo;
 		}
 		boolean b = pac != null && pac.editable;
-		addu.setEnabled(b && getSelectedAnim() != null && getSelectedAnim().id.base.equals(Source.BasePath.ANIM));
+		addu.setEnabled(b && getSelectedAnim() != null);
 		edit.setEnabled(b);
 		addl.setEnabled(b);
 		vuni.setEnabled(pac != null);
@@ -567,7 +568,7 @@ public class UnitManagePage extends Page {
 		remu.setEnabled(b);
 		rar.setEnabled(b);
 		cbl.setEnabled(b);
-		addf.setEnabled(b && getSelectedAnim() != null && getSelectedAnim().id.base.equals(Source.BasePath.ANIM));
+		addf.setEnabled(b && getSelectedAnim() != null);
 		maxl.setEditable(b);
 		maxp.setEditable(b);
 		boolean boo = changing;
