@@ -131,7 +131,7 @@ public class EditHead extends Page implements EditLink {
 			changing = false;
 		});
 
-		save.setLnr((e) -> BCUWriter.writeData());
+		save.setLnr((e) -> BCUWriter.writeData(false));
 
 		undo.addActionListener(arg0 -> {
 			anim.restore();

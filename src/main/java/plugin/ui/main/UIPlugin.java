@@ -95,7 +95,7 @@ public class UIPlugin extends UIHandler implements Plugin {
     public void writeData() {
         UIContext.writeData();
         if (getFrame() instanceof MainFrame && MainBCU.loaded) {
-            io.BCUWriter.writeData();
+            io.BCUWriter.writeData(false);
         }
     }
 

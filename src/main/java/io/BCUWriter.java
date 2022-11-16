@@ -42,10 +42,10 @@ public class BCUWriter extends DataIO {
 	private static File log, ph;
 	private static WriteStream ps;
 
-	public static void logClose(boolean save) {
+	public static void logClose(boolean save, boolean genBackup) {
 		writeOptions();
 		if (save && MainBCU.loaded && MainBCU.trueRun) {
-			writeData();
+			writeData(genBackup);
 		}
 		if (ps.writed) {
 			ps.println("version: " + Data.revVer(MainBCU.ver));
@@ -157,13 +157,13 @@ public class BCUWriter extends DataIO {
 		return suc;
 	}
 
-	public static void writeData() {
+	public static void writeData(boolean genBackup) {
 		BasisSet.write();
 		Source.Workspace.saveLocalAnimations();
 		Source.Workspace.saveWorkspace();
 		AnimGroup.writeAnimGroup();
 		writeOptions();
-		if (CommonStatic.getConfig().maxBackup != -1)
+		if (genBackup && CommonStatic.getConfig().maxBackup != -1)
 			Backup.createBackup(null, new ArrayList<>(
 					Arrays.asList(
 							CommonStatic.ctx.getWorkspaceFile(""),
@@ -277,7 +277,7 @@ public class BCUWriter extends DataIO {
 			imp[i] = Importer.curs[i] == null ? null : Importer.curs[i].toString();
 		jo.add("export_paths", JsonEncoder.encode(exp));
 		jo.add("import_paths", JsonEncoder.encode(imp));
-		try (java.io.Writer w = new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8)) {
+		try (java.io.Writer w = new OutputStreamWriter(Files.newOutputStream(f.toPath()), StandardCharsets.UTF_8)) {
 			w.write(jo.toString());
 		} catch (Exception e) {
 			CommonStatic.ctx.noticeErr(e, ErrType.ERROR, "failed to write config");

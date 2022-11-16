@@ -52,9 +52,8 @@ public class EnemyInfoTable extends Page {
 		e = de;
 		multi = mul;
 		mulatk = mula;
-		for (int i = 0; i < e.de.getSpAtks().length; i++)
-			if (e.de.getSpAtks()[i] != null)
-				atkList.add(e.de.getSpAtks()[i]);
+		for (AtkDataModel[] atks : de.de.getSpAtks(true))
+			atkList.addAll(Arrays.asList(atks));
 		ini();
 	}
 
@@ -84,7 +83,7 @@ public class EnemyInfoTable extends Page {
 			proc[i].setBorder(BorderFactory.createEtchedBorder());
 			proc[i].setIcon(disp.getIcon());
 		}
-		main[3][7].setText(MainBCU.convertTime(e.de.getPost(dispAtk)));
+		main[3][7].setText(MainBCU.convertTime(e.de.getPost(false, dispAtk)));
 
 		MaskAtk[] atkData = e.de.getAtks(dispAtk);
 		for (int i = 0; i < atkData.length; i++) {

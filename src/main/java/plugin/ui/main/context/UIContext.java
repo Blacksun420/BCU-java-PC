@@ -164,10 +164,9 @@ public abstract class UIContext {
                 // result
                 UIDownloader.downloadLibs(missingLib);
                 Opts.pop("Download UI library successfully, please restart BCU", "success");
-                // TODO: 2022/5/26 call restart method
             }
 
-            CommonStatic.def.save(true, true);
+            CommonStatic.def.save(false, false, true);
         }
 
         public static void checkUpdate() {

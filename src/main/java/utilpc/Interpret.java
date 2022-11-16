@@ -254,22 +254,24 @@ public class Interpret extends Data {
 					+ Page.get(MainLocale.UTIL, "ld2") + ": " + r, bi));
 		}
 
-		for (int z = 0; z < me.getSpAtks().length; z++) {
-			AtkDataModel rev = me.getSpAtks()[z];
-			if (rev != null) {
-				int revs = rev.getShortPoint();
-				int revl = rev.getLongPoint();
-				if (revs != 0 || revl != 0) {
-					BufferedImage bi;
-					if (rev.isOmni())
-						bi = (UtilPC.getIcon(2, ATK_OMNI));
-					else
-						bi = (UtilPC.getIcon(2, ATK_LD));
-					l.add(new ProcDisplay(Page.get(MainLocale.UTIL, "ld1") + ": " + revs + "~" + revl +
-							", " + Page.get(MainLocale.UTIL, "ld2") + ": " + Math.abs(revl - revs) +
-							" [" + Page.get(MainLocale.UTIL, "aa" + (z + 6)) + "]", bi));
+		AtkDataModel[][] satks = me.getSpAtks(true);
+		for (int z = 0; z < satks.length; z++)
+			for (int j  = 0; j < satks[z].length; j++) {
+				AtkDataModel rev = satks[z][j];
+				if (rev != null) {
+					int revs = rev.getShortPoint();
+					int revl = rev.getLongPoint();
+					if (revs != 0 || revl != 0) {
+						BufferedImage bi;
+						if (rev.isOmni())
+							bi = (UtilPC.getIcon(2, ATK_OMNI));
+						else
+							bi = (UtilPC.getIcon(2, ATK_LD));
+						l.add(new ProcDisplay(Page.get(MainLocale.UTIL, "ld1") + ": " + revs + "~" + revl +
+								", " + Page.get(MainLocale.UTIL, "ld2") + ": " + Math.abs(revl - revs) +
+								" [" + Page.get(MainLocale.UTIL, "aa" + (z + 6)) + " " + j + "]", bi));
+					}
 				}
-			}
 		}
 		for (int i = 0; i < ABIS.length; i++)
 			if (((me.getAbi() >> i) & 1) > 0)
@@ -409,18 +411,21 @@ public class Interpret extends Data {
 					l.get(i).text = l.get(i).text + " " + getAtkNumbers(atks);
 		}
 
-		for (int i = 0; i < du.getSpAtks().length; i++) {
-			MaskAtk rev = du.getSpAtks()[i];
-			if (rev != null) {
-				for(int j = 0; j < Data.PROC_TOT; j++) {
-					ProcItem item = rev.getProc().getArr(j);
+		AtkDataModel[][] sps = du.getSpAtks(true);
+		for (int i = 0; i < sps.length; i++) {
+			for (int j = 0; j < sps[i].length; j++) {
+				AtkDataModel rev = sps[i][j];
+				if (rev != null) {
+					for (int k = 0; k < Data.PROC_TOT; k++) {
+						ProcItem item = rev.getProc().getArr(k);
 
-					if(!item.exists() || rev.getProc().sharable(j))
-						continue;
+						if (!item.exists() || rev.getProc().sharable(k))
+							continue;
 
-					String format = ProcLang.get().get(j).format;
-					String formatted = Formatter.format(format, item, ctx);
-					l.add(new ProcDisplay(formatted + " [" + Page.get(MainLocale.UTIL, "aa" + (6 + i)) + "]", UtilPC.getIcon(1, j)));
+						String format = ProcLang.get().get(k).format;
+						String formatted = Formatter.format(format, item, ctx);
+						l.add(new ProcDisplay(formatted + " [" + Page.get(MainLocale.UTIL, "aa" + (6 + i)) + " " + j + "]", UtilPC.getIcon(1, k)));
+					}
 				}
 			}
 		}
@@ -559,7 +564,7 @@ public class Interpret extends Data {
 		else if (type == 5)
 			return de.getTBA() + atks[0].getPre() < de.getItv(ind) / 2;
 		else if (type >= 6 && type <= 11)
-			return de.getSpAtks().length > type - 6 && de.getSpAtks()[type - 6] != null;
+			return de.getSpAtks(type - 6).length != 0;
 		return false;
 	}
 
@@ -570,12 +575,12 @@ public class Interpret extends Data {
 		STAR = Page.get(MainLocale.UTIL, "s", 5);
 		ABIS = Page.get(MainLocale.UTIL, "a", ABI_TOT);
 		SABIS = Page.get(MainLocale.UTIL, "sa", ABI_TOT);
-		ATKCONF = Page.get(MainLocale.UTIL, "aa", 8);
+		ATKCONF = Page.get(MainLocale.UTIL, "aa", ATK_TOT);
 		TREA = Page.get(MainLocale.UTIL, "t", 37);
 		COMF = Page.get(MainLocale.UTIL, "na", 6);
 		COMN = Page.get(MainLocale.UTIL, "nb", 25);
 		TCTX = Page.get(MainLocale.UTIL, "tc", 6);
-		PCTX = Page.get(MainLocale.UTIL, "aq", 61);
+		PCTX = Page.get(MainLocale.UTIL, "aq", PC_CORRES.length);
 		EABI = new String[EABIIND.length];
 		for (int i = 0; i < EABI.length; i++)
 			EABI[i] = SABIS[EABIIND[i]];

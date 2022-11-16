@@ -1,6 +1,7 @@
 package main;
 
 import common.CommonStatic;
+import common.pack.PackData;
 import common.pack.Source;
 import common.util.stage.MapColc;
 import common.util.stage.Stage;
@@ -8,6 +9,7 @@ import common.util.stage.StageMap;
 import common.util.stage.info.DefStageInfo;
 import page.*;
 import page.battle.BattleInfoPage;
+import page.pack.DescPage;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -75,7 +77,7 @@ public class Opts {
 			if(fatal) {
 				if (!title.contains("heap space")) //Saving while out of heap space is much likelier to corrupt data
 					Source.Workspace.autoSave(); //Autosave if crashing, to preserve data without risking corruption
-				CommonStatic.def.save(false, true);
+				CommonStatic.def.save(false, false, true);
 			}
 			popped = false;
 		}
@@ -122,7 +124,7 @@ public class Opts {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(jl);
-		//panel.add(check); //TODO - Optional Backup generation
+		panel.add(check);
 
 		int choice = JOptionPane.showConfirmDialog(null, panel, Page.get(MainLocale.PAGE, "savconf"), JOptionPane.YES_NO_CANCEL_OPTION);
 
@@ -219,7 +221,7 @@ public class Opts {
 
 			pane.setValue(cancel);
 
-			CommonStatic.def.save(false, true);
+			CommonStatic.def.save(false, false, true);
 		});
 
 		agree.setText("I read this warning and agree to proceed");
@@ -253,6 +255,55 @@ public class Opts {
 		);
 	}
 
+	public static void showPackDescPage(Page pg, PackData.UserPack pack) {
+		DescPage p = new DescPage(pg, pack);
+
+		Runnable run = new Runnable() {
+			public int inter = 0;
+			@SuppressWarnings("BusyWait")
+			@Override
+			public void run() {
+				while (true) {
+					long m = System.currentTimeMillis();
+					try {
+						p.timer(0);
+						int delay = (int) (System.currentTimeMillis() - m);
+						inter = (inter * 9 + 100 * delay / Timer.fps) / 10;
+						int sle = delay >= Timer.fps ? 1 : Timer.fps - delay;
+						Thread.sleep(sle);
+					} catch (InterruptedException e) {
+						return;
+					}
+				}
+			}
+		};
+		Thread thread = new Thread(run);
+		thread.start();
+
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+		int w = MainFrame.F.getRootPane().getWidth();
+		int h = MainFrame.F.getRootPane().getHeight();
+
+		p.setPreferredSize(new Dimension((int) (w * 0.524), (int) (h * 0.3)));
+		p.setBounds(0, 0, (int) (w * 0.525), (int) (h * 0.3));
+
+		panel.add(p);
+		panel.setPreferredSize(new Dimension((int) (w * 0.524), (int) (h * 0.368)));
+
+		panel.setBackground(new Color(64, 64, 64));
+
+		JOptionPane.showOptionDialog(
+				null,
+				panel,
+				"Pack Description",
+				JOptionPane.DEFAULT_OPTION,
+				-1,
+				null,
+				null,
+				null
+		);
+	}
 	@SuppressWarnings("MagicConstant")
 	public static void showColorPicker(String title, Page pg, int... rgb) {
 		ColorPickPage p = new ColorPickPage(pg);
@@ -287,7 +338,6 @@ public class Opts {
 				}
 			}
 		};
-
 		Thread thread = new Thread(run);
 		thread.start();
 

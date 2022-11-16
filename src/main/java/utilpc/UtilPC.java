@@ -28,8 +28,8 @@ public class UtilPC {
 	public static class PCItr implements Itf {
 
 		@Override
-		public void save(boolean save, boolean exit) {
-			CommonStatic.ctx.noticeErr(() -> BCUWriter.logClose(save), Context.ErrType.ERROR, "Save failed...");
+		public void save(boolean save, boolean genBackup, boolean exit) {
+			CommonStatic.ctx.noticeErr(() -> BCUWriter.logClose(save, genBackup), Context.ErrType.ERROR, "Save failed...");
 
 			if(exit)
 				System.exit(0);
@@ -68,9 +68,6 @@ public class UtilPC {
 		}
 
 		@Override
-		/*public void setBGM(Identifier<Music> mus, long loop) {
-			BCMusic.play(mus, loop);*/
-		// TODO: check above
 		public void setBGM(Identifier<Music> mus) {
 			BCMusic.play(mus);
 		}

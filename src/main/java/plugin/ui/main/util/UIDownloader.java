@@ -86,7 +86,7 @@ public class UIDownloader {
                     "Download finished");
 
             if (exit)
-                CommonStatic.def.save(false, true);
+                CommonStatic.def.save(false, false, true);
         }
     }
 

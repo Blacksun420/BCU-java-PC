@@ -39,7 +39,7 @@ public class SavePage extends Page {
 
     private void finishJob() {
         try {
-            CommonStatic.def.save(saveOpts[0], false);
+            CommonStatic.def.save(saveOpts[0], saveOpts[1], false);
 
             setVisible(false);
 

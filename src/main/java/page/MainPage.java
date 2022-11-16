@@ -131,7 +131,7 @@ public class MainPage extends Page {
 		caic.setLnr(() -> new ImgCutEditPage(this));
 		camm.setLnr(() -> new MaModelEditPage(this));
 		cama.setLnr(() -> new MaAnimEditPage(this));
-		save.setLnr((e) -> BCUWriter.writeData());
+		save.setLnr((e) -> BCUWriter.writeData(false));
 		vmsc.setLnr(() -> new MusicPage(this));
 		rply.setLnr(() -> new RecdManagePage(this));
 		allf.setLnr(() -> new ResourcePage(this));

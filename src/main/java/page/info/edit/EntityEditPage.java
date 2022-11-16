@@ -74,7 +74,7 @@ public abstract class EntityEditPage extends Page {
 	private final JTF fct = new JTF();
 	private final JTF fwp = new JTF();
 	protected final JTF fli = new JTF();
-	private final ReorderList<String> jli = new ReorderList<>();
+	private final ReorderList<AtkDataModel> jli = new ReorderList<>();
 	private final JScrollPane jspi = new JScrollPane(jli);
 	private final JBTN add = new JBTN(MainLocale.PAGE, "add");
 	private final JBTN rem = new JBTN(MainLocale.PAGE, "rem");
@@ -230,7 +230,8 @@ public abstract class EntityEditPage extends Page {
 		add(jspi);
 		add(atkS);
 		add(jsh);
-		add(josh);
+		if (ce.getAtkTypeCount() > 1)
+			add(josh);
 		add(aet);
 		add(jspm);
 		add(add);
@@ -433,32 +434,20 @@ public abstract class EntityEditPage extends Page {
 		mpt.setData(ce.rep.proc);
 
 		int ind = jli.getSelectedIndex();
-		josh.setEnabled(editable && isSp());
+		josh.setEnabled(editable && !isSp());
 		if (isSp()) {
 			extra.clear();
-			ArrayList<String> ints = new ArrayList<>();
-			for (int i = 0; i < ce.getSpAtks().length; i++)
-				if (ce.getSpAtks()[i] != null) {
-					extra.add(ce.getSpAtks()[i]);
-					ints.add(extra.get(extra.size() - 1).str);
-				}
-			jli.setListData(ints.toArray(new String[0]));
+			for (AtkDataModel[] atks : ce.getSpAtks(true))
+				Collections.addAll(extra, atks);
+			jli.setListData(extra.toArray(new AtkDataModel[0]));
 
-			if (ind >= ints.size())
-				ind = ints.size() - 1;
+			if (ind >= extra.size())
+				ind = extra.size() - 1;
 		} else {
-			AtkDataModel[] raw = (AtkDataModel[]) ce.getAtks(getSel());
-			int pre = 0;
-			String[] ints = new String[ce.hits.get(getSel()).length];
-			for (int i = 0; i < ints.length; i++) {
-				ints[i] = i + 1 + " " + ce.hits.get(getSel())[i].str;
-				pre += raw[i].getPre();
-				if (pre >= ce.getAnimLen(getSel()))
-					ints[i] += " (out of range)";
-			}
-			jli.setListData(ints);
-			if (ind >= ints.length)
-				ind = ints.length - 1;
+			AtkDataModel[] raw = (AtkDataModel[])ce.getAtks(getSel());
+			jli.setListData(raw);
+			if (ind >= raw.length)
+				ind = raw.length - 1;
 			josh.setText("" + ce.getShare(getSel()));
 		}
 		if (ind < 0)
@@ -514,7 +503,7 @@ public abstract class EntityEditPage extends Page {
 			changing = false;
 		});
 
-		jli.list = new ReorderListener<String>() {
+		jli.list = new ReorderListener<AtkDataModel>() {
 			@Override
 			public void reordered(int ori, int fin) {
 				if (ori < ce.hits.get(getSel()).length) {
@@ -545,10 +534,12 @@ public abstract class EntityEditPage extends Page {
 				jli.setSelectedIndex(0);
 			boolean ignore = isSp();
 			if (ignore) {
-				for (int i = 0; i < ce.getSpAtks().length; i++)
-					if (ce.getSpAtks()[i] != null)
+				for (AtkDataModel[] atks : ce.getSpAtks(true))
+					if (atks.length != 0) {
 						ignore = false;
-				if (ignore && !addSpecial())
+						break;
+					}
+				if (ignore && !addSpecial(-1, new AtkDataModel(ce)))
 					atkS.setSelectedIndex(ce.getAtkTypeCount() - 1);
 			}
 			setData(ce);
@@ -557,7 +548,7 @@ public abstract class EntityEditPage extends Page {
 
 		add.setLnr(e -> {
 			if (isSp()) {
-				addSpecial();
+				addSpecial(-1, new AtkDataModel(ce));
 			} else {
 				changing = true;
 				int n = ce.hits.get(getSel()).length;
@@ -629,8 +620,8 @@ public abstract class EntityEditPage extends Page {
 
 	}
 
-	private boolean addSpecial() {
-		int selection = Opts.selection("What kind of special Attack do you want to create?",
+	private boolean addSpecial(int sel, AtkDataModel adm) {
+		int selection = sel != -1 ? sel : Opts.selection("What kind of special Attack do you want to create?",
 				"Select Attack Type",
 				"Revenge", "Resurrection", "Counterattack", "Burrow", "Resurface", "Revival", "Entry");
 		if (selection == -1)
@@ -638,32 +629,38 @@ public abstract class EntityEditPage extends Page {
 		changing = true;
 		switch (selection) {
 			case 0:
-				ce.rev = new AtkDataModel(ce);
-				ce.rev.str = "revenge";
+				ce.revs = Arrays.copyOf(ce.revs, ce.revs.length + 1);
+				ce.revs[ce.revs.length - 1] = adm;
+				ce.revs[ce.revs.length - 1].str = "revenge" + (ce.revs.length > 1 ? " " + ce.revs.length : "");
 				break;
 			case 1:
-				ce.res = new AtkDataModel(ce);
-				ce.res.str = "resurrection";
+				ce.ress = Arrays.copyOf(ce.ress, ce.ress.length + 1);
+				ce.ress[ce.ress.length - 1] = adm;
+				ce.ress[ce.ress.length - 1].str = "resurrection" + (ce.ress.length > 1 ? " " + ce.ress.length : "");
 				break;
 			case 2:
 				ce.cntr = new AtkDataModel(ce);
 				ce.cntr.str = "counterattack";
 				break;
 			case 3:
-				ce.bur = new AtkDataModel(ce);
-				ce.bur.str = "burrow";
+				ce.burs = Arrays.copyOf(ce.burs, ce.burs.length + 1);
+				ce.burs[ce.burs.length - 1] = adm;
+				ce.burs[ce.burs.length - 1].str = "burrow" + (ce.burs.length > 1 ? " " + ce.burs.length : "");
 				break;
 			case 4:
-				ce.resu = new AtkDataModel(ce);
-				ce.resu.str = "resurface";
+				ce.resus = Arrays.copyOf(ce.resus, ce.resus.length + 1);
+				ce.resus[ce.resus.length - 1] = adm;
+				ce.resus[ce.resus.length - 1].str = "resurface" + (ce.resus.length > 1 ? " " + ce.resus.length : "");
 				break;
 			case 5:
-				ce.revi = new AtkDataModel(ce);
-				ce.revi.str = "revive";
+				ce.revis = Arrays.copyOf(ce.revis, ce.revis.length + 1);
+				ce.revis[ce.revis.length - 1] = adm;
+				ce.revis[ce.revis.length - 1].str = "revive" + (ce.revis.length > 1 ? " " + ce.revis.length : "");
 				break;
 			case 6:
-				ce.entr = new AtkDataModel(ce);
-				ce.cntr.str = "entrance";
+				ce.entrs = Arrays.copyOf(ce.entrs, ce.entrs.length + 1);
+				ce.entrs[ce.entrs.length - 1] = adm;
+				ce.entrs[ce.entrs.length - 1].str = "entrance" + (ce.entrs.length > 1 ? " " + ce.entrs.length : "");
 		}
 		return true;
 	}
@@ -695,7 +692,7 @@ public abstract class EntityEditPage extends Page {
 
 	protected AtkDataModel[] getSelMask() {
 		if (isSp())
-			return ce.getSpAtks();
+			return ce.getSpAtks(true)[getSel()];
 		return ce.hits.get(getSel());
 	}
 
@@ -706,19 +703,16 @@ public abstract class EntityEditPage extends Page {
 
 			if (adm == null || adm.str.equals(text))
 				return;
-
-			text = ce.getAvailable(text);
-
-			adm.str = text;
+			adm.checkAvail(text);
 
 			switch (text) {
 				case "revenge":
 					remAtk(adm);
-					ce.rev = adm;
+					addSpecial(0, adm);
 					break;
 				case "resurrection":
 					remAtk(adm);
-					ce.res = adm;
+					addSpecial(1, adm);
 					break;
 				case "counterattack":
 					remAtk(adm);
@@ -726,19 +720,19 @@ public abstract class EntityEditPage extends Page {
 					break;
 				case "burrow":
 					remAtk(adm);
-					ce.bur = adm;
+					addSpecial(3, adm);
 					break;
 				case "resurface":
 					remAtk(adm);
-					ce.resu = adm;
+					addSpecial(4, adm);
 					break;
 				case "revive":
 					remAtk(adm);
-					ce.revi = adm;
+					addSpecial(5, adm);
 					break;
 				case "entrance":
 					remAtk(adm);
-					ce.entr = adm;
+					addSpecial(6, adm);
 					break;
 			}
 			return;
@@ -817,28 +811,32 @@ public abstract class EntityEditPage extends Page {
 		changing = true;
 		if (isSp()) {
 			AtkDataModel rematk = extra.remove(ind);
-			for (int i = 0; i < ce.getSpAtks().length; i++)
-				if (rematk.equals(ce.getSpAtks()[i])) {
-					if (i == 0)
-						ce.rev = null;
-					else if (i == 1)
-						ce.res = null;
-					else if (i == 2)
-						ce.cntr = null;
-					else if (i == 3)
-						ce.bur = null;
-					else if (i == 4)
-						ce.resu = null;
-					else if (i == 5)
-						ce.revi = null;
-					else
-						ce.entr = null;
-					break;
+			AtkDataModel[][] sps = ce.getSpAtks(false);
+			if (rematk.equals(ce.cntr))
+				ce.cntr = null;
+			else
+				for (int i = 0; i < sps.length; i++) {
+					if (sps[i].length == 0)
+						continue;
+					if (rematk.str.contains(sps[i][0].str)) {
+						for (int j = 0; j < sps[i].length; j++)
+							if (sps[i][j] == rematk) {
+								for (int k = j; k < sps[i].length - 1; k++) {
+									sps[i][k] = sps[i][k + 1];
+									sps[i][k].str = sps[i][k].str.substring(0, sps[i][k].str.length() - 1) + (k == 0 ? "" : " " + k);
+									sps[i] = Arrays.copyOf(sps[i], sps[i].length - 1);
+								}
+								break;
+							}
+						break;
+					}
 				}
 			boolean empty = true;
-			for (int i = 0; i < ce.getSpAtks().length; i++)
-				if (ce.getSpAtks()[i] != null)
+			for (AtkDataModel[] sp : sps)
+				if (sp.length != 0) {
 					empty = false;
+					break;
+				}
 			if (empty)
 				atkS.setSelectedIndex(ce.getAtkTypeCount() - 1);
 		} else if (ce.hits.get(getSel()).length > 1) {
@@ -860,47 +858,43 @@ public abstract class EntityEditPage extends Page {
 	}
 
 	private void setA(int ind) {
-		AtkDataModel adm = get(ind);
-		assert adm != null;
+		setA(get(ind));
 		link.setEnabled(editable && ind < getSelMask().length);
 		copy.setEnabled(editable && ind < getSelMask().length);
 		atkn.setEnabled(editable && ind < getSelMask().length);
+		rem.setEnabled(editable && (isSp() || getSelMask().length > 1 || ind >= getSelMask().length));
+	}
+	private void setA(AtkDataModel adm) {
 		atkn.setText(adm.str);
 		aet.setData(adm, getAtk(), getLvAtk());
-		rem.setEnabled(editable && (getSelMask().length > 1 || ind >= getSelMask().length));
-		switch (adm.str) {
-			case "revenge":
+		rem.setEnabled(editable && (isSp() || (getSelMask().length > 1)));
+		if (isSp()) {
+			if (adm.str.contains("revenge")) {
 				lpst.setText(MainLocale.INFO, "Post-HB");
-				vpst.setText(MainBCU.convertTime(KB_TIME[INT_HB] - ce.rev.pre));
-				break;
-			case "resurrection":
+				vpst.setText(MainBCU.convertTime(KB_TIME[INT_HB] - ce.getPost(true, 0)));
+			} else if (adm.str.contains("resurrection")) {
 				lpst.setText(MainLocale.INFO, "Post-Death");
 				Soul s = Identifier.get(ce.death);
-				vpst.setText(s == null ? "-" : MainBCU.convertTime((s.anim.len(AnimU.SOUL[0]) - ce.res.pre)));
-				break;
-			case "counterattack":
+				vpst.setText(s == null ? "-" : MainBCU.convertTime((s.anim.len(AnimU.SOUL[0]) - ce.getPost(true, 1))));
+			} else if (adm.str.contains("counterattack")) {
 				lpst.setText(MainLocale.INFO, "Post-Counter");
 				vpst.setText("-");
-				break;
-			case "burrow":
+			} else if (adm.str.contains("burrow")) {
 				lpst.setText(MainLocale.INFO, "Post-Bury Atk");
-				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[4].len - ce.bur.pre + 1));
-				break;
-			case "revive":
+				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[4].len - ce.getPost(true, 2) + 1));
+			} else if (adm.str.contains("revive")) {
 				lpst.setText(MainLocale.INFO, "Post-Revival Atk");
-				vpst.setText(MainBCU.convertTime(effas().A_ZOMBIE.getEAnim(EffAnim.ZombieEff.REVIVE).len() - ce.revi.pre));
-				break;
-			case "resurface":
+				vpst.setText(MainBCU.convertTime(effas().A_ZOMBIE.getEAnim(EffAnim.ZombieEff.REVIVE).len() - ce.getPost(true, 3)));
+			} else if (adm.str.contains("resurface")) {
 				lpst.setText(MainLocale.INFO, "Post-Unburrow Atk");
-				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[6].len - ce.resu.pre + 1));
-				break;
-			case "entrance":
+				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[6].len - ce.getPost(true, 4) + 1));
+			} else {
 				lpst.setText(MainLocale.INFO, "Post-Entrance Atk");
-				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[7].len - ce.entr.pre + 1));
-				break;
-			default:
-				lpst.setText(MainLocale.INFO, "postaa");
-				vpst.setText(MainBCU.convertTime(ce.getPost(getSel())));
+				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[7].len - ce.getPost(true, 5) + 1));
+			}
+		} else {
+			lpst.setText(MainLocale.INFO, "postaa");
+			vpst.setText(MainBCU.convertTime(ce.getPost(false, getSel())));
 		}
 	}
 }

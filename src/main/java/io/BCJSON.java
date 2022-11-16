@@ -34,7 +34,7 @@ public class BCJSON {
 		} catch (Exception e) {
 			Opts.pop(e.getMessage(), "FATAL ERROR");
 			e.printStackTrace();
-			CommonStatic.def.save(false, true);
+			CommonStatic.def.save(false, false, true);
 		}
 
 		int music = json != null ? json.music : Data.SE_ALL[Data.SE_ALL.length - 1] + 1;
@@ -61,7 +61,7 @@ public class BCJSON {
 
 		while (!Data.err(AssetLoader::merge))
 			if (!Opts.conf("failed to process assets, retry?"))
-				CommonStatic.def.save(false, true);
+				CommonStatic.def.save(false, false, true);
 
 		if (jar != null) {
 			boolean updateIt = Opts.conf("New jar file update found. " + jar.desc + " Do you want to update jar file?");
@@ -88,7 +88,7 @@ public class BCJSON {
 					Opts.pop("Finished downloading BCU-" + ver + ".jar. Run this jar file from now on",
 							"Download finished");
 
-					CommonStatic.def.save(false, true);
+					CommonStatic.def.save(false, false, true);
 				}
 			}
 		}
@@ -104,7 +104,7 @@ public class BCJSON {
 						"failed to download")))
 					if (!Opts.conf("failed to download, retry?"))
 						if (quit)
-							CommonStatic.def.save(false, true);
+							CommonStatic.def.save(false, false, true);
 						else
 							break;
 				load |= l;

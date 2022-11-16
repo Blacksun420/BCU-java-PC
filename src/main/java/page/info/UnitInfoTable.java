@@ -107,7 +107,7 @@ public class UnitInfoTable extends Page {
 		}
 		main[2][7].setText(MainBCU.convertTime(f.du.getItv(dispAtk)));
 		main[3][1].setText("" + f.du.isRange(dispAtk));
-		main[3][7].setText(MainBCU.convertTime(f.du.getPost(dispAtk)));
+		main[3][7].setText(MainBCU.convertTime(f.du.getPost(false, dispAtk)));
 		atks[3].setText(pre.toString());
 		atks[5].setText(use.toString());
 		reset();

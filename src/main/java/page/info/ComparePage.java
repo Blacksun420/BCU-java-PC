@@ -472,7 +472,7 @@ public class ComparePage extends Page {
             main[2][index].setText(m.getRange() + "");
             main[3][index].setText(atkString.toString());
             main[5][index].setText(preString.toString());
-            main[6][index].setText(MainBCU.convertTime(m.getPost(0)));
+            main[6][index].setText(MainBCU.convertTime(m.getPost(false, 0)));
             main[7][index].setText(MainBCU.convertTime(m.getItv(0)));
             main[8][index].setText(MainBCU.convertTime(m.getTBA()));
 
