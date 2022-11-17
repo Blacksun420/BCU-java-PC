@@ -93,6 +93,8 @@ public class PackEditPage extends Page {
 	private final JBTN csol = new JBTN(MainLocale.PAGE, "csoul");
 	private final JBTN cbge = new JBTN(MainLocale.PAGE, "cbge");
 	private final JTG cmbo = new JTG(MainLocale.PAGE, "usecombo");
+	private final JBTN cdesc = new JBTN(MainLocale.PAGE, "desc");
+
 	private final JTF jtfp = new JTF();
 	private final JTF jtfe = new JTF();
 	private final JTF jtfs = new JTF();
@@ -105,7 +107,6 @@ public class PackEditPage extends Page {
 	private final JL lbt = new JL(0, "selepar");
 	private final JLabel pid = new JLabel();
 	private final JLabel pauth = new JLabel();
-	private final JLabel animall = new JLabel();
 
 	private UserPack pac;
 	private Enemy ene;
@@ -141,10 +142,10 @@ public class PackEditPage extends Page {
 		set(jtfp, x, y, w, 850, 400, 50);
 		set(extr, x, y, w, 950, 200, 50);
 		set(unpk, x, y, w + 200, 950, 200, 50);
-		set(pid, x, y, w, 1050, 400, 50);
-		set(pauth, x, y, w, 1100, 400, 50);
-		set(animall, x, y, w, 1150, 400, 50);
 		set(cmbo, x, y, w, 1000, 400, 50);
+		set(cdesc, x, y, w, 1050, 400, 50);
+		set(pid, x, y, w, 1100, 400, 50);
+		set(pauth, x, y, w, 1150, 400, 50);
 
 		w += 450;
 
@@ -245,7 +246,6 @@ public class PackEditPage extends Page {
 			adde.setEnabled(pac != null && getSelectedAnim() != null && pac.editable);
 			erea.setEnabled(adde.isEnabled() && jle.getSelectedValue() != null);
 			changing = false;
-
 		});
 	}
 
@@ -438,6 +438,7 @@ public class PackEditPage extends Page {
 
 		ener.setLnr(() -> new EREditPage(getThis(), pac));
 
+		cdesc.setLnr(g -> Opts.showPackDescPage(getThis(), pac));
 	}
 
 	private void addListeners$3() {
@@ -650,12 +651,12 @@ public class PackEditPage extends Page {
 		add(csol);
 		add(cbge);
 		add(cmbo);
+		add(cdesc);
 
 		cmbo.setToolTipText("Decide whether to apply or not this pack's custom CatCombos onto your lineups");
 
 		add(pid);
 		add(pauth);
-		add(animall);
 		jle.setCellRenderer(new AnimLCR());
 		jtd.setCellRenderer(new AnimTreeRenderer());
 		SwingUtilities.invokeLater(() -> jtd.setUI(new TreeNodeExpander(jtd)));
@@ -768,7 +769,6 @@ public class PackEditPage extends Page {
 		setEnemy(null);
 		pid.setVisible(pack != null);
 		pauth.setVisible(pack != null);
-		animall.setVisible(pack == null || !pack.editable);
 
 		if(pack != null) {
 			pid.setText("ID : "+pack.desc.id);
@@ -777,10 +777,6 @@ public class PackEditPage extends Page {
 			} else {
 				pauth.setText("Author : "+pack.desc.author);
 			}
-			if(pack.desc.allowAnim)
-				animall.setText("Copy Anim : Allowed");
-			else
-				animall.setText("Copy Anim : Not Allowed");
 		}
 	}
 

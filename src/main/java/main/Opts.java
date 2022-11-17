@@ -285,11 +285,11 @@ public class Opts {
 		int w = MainFrame.F.getRootPane().getWidth();
 		int h = MainFrame.F.getRootPane().getHeight();
 
-		p.setPreferredSize(new Dimension((int) (w * 0.524), (int) (h * 0.3)));
-		p.setBounds(0, 0, (int) (w * 0.525), (int) (h * 0.3));
+		p.setPreferredSize(new Dimension((int) (w * 0.545), (int) (h * 0.780)));
+		p.setBounds(25, 25, (int) (w * 0.545), (int) (h * 0.780));
 
 		panel.add(p);
-		panel.setPreferredSize(new Dimension((int) (w * 0.524), (int) (h * 0.368)));
+		panel.setPreferredSize(new Dimension((int) (w * 0.545), (int) (h * 0.780)));
 
 		panel.setBackground(new Color(64, 64, 64));
 

@@ -68,15 +68,6 @@ public class BGEditPage extends Page {
 			if (bgr != null) {
 				pack.bgs.add(bgr = bgr.copy(pack.getNextID(Background.class)));
 				setList(bgr);
-				File file = ((Workspace) pack.source).getBGFile(bgr.getID());
-				try {
-					Context.check(file);
-					FakeImage.write(bgr.img.getImg(), "PNG", file);
-				} catch (IOException e) {
-					CommonStatic.ctx.noticeErr(e, ErrType.WARN, "Failed to save file");
-					getFile("Failed to save file", bgr);
-					return;
-				}
 			}
 		}
 		bvp = null;
@@ -231,17 +222,22 @@ public class BGEditPage extends Page {
 			pack.bgs.add(bgr);
 		} else {
 			bgr.img.setImg(MainBCU.builder.build(bimg));
+			bgr.reference = null;
 			bgr.forceLoad();
 		}
-		try {
-			File file = ((Workspace) pack.source).getBGFile(bgr.id);
-			Context.check(file);
-			ImageIO.write(bimg, "PNG", file);
-		} catch (IOException e) {
-			CommonStatic.ctx.noticeErr(e, ErrType.WARN, "failed to write file");
-			getFile("Failed to save file", bgr);
-			return;
-		}
+		if (bgr.reference == null) {
+			try {
+				File file = ((Workspace) pack.source).getBGFile(bgr.id);
+				Context.check(file);
+				ImageIO.write(bimg, "PNG", file);
+			} catch (IOException e) {
+				CommonStatic.ctx.noticeErr(e, ErrType.WARN, "failed to write file");
+				getFile("Failed to save file", bgr);
+				return;
+			}
+		} else
+			((Workspace)pack.source).getBGFile(bgr.getID()).delete();
+
 		setList(bgr);
 	}
 
