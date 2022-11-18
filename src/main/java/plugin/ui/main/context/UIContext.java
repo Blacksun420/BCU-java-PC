@@ -120,7 +120,7 @@ public abstract class UIContext {
             File file = new File(StaticConfig.UI_DIRECTORY);
             if (!file.exists()) {
                 System.out.println(file.getAbsolutePath());
-                boolean mkdir = file.mkdir();
+                boolean mkdir = file.mkdirs();
                 if (!mkdir) {
                     throw new UIException("failed to create ui dir.");
                 }
