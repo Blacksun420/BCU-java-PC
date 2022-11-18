@@ -10,19 +10,19 @@
 - AI Ability
 - Weakening/Strengthening Aura
 - Descriptions, Icons, and Banners for packs
-- *Multiple Attack Animations for one entity*
-- *Units can have more than one of each specific conditional attack (Revenge, Resurrection, etc (Excluding Counter))*
+- ***Multiple Attack Animations for one entity***
+- ***Units can have more than one of each specific conditional attack (Revenge, Resurrection, etc (Excluding Counter))***
 - Everywhere Door Parameter on stages that lets enemies spawn in any given point of the battlefield (Set by percentage)
 - Remote Shield that reduces damage taken from attacks if the attacker is standing at a specific range from the attacked Entity
 - RandomUnit (Currently only usable for summon)
 - Summon more than one entity in an attack
 - Surge Blocker
-- *Wave Mitigator (Which is just a merging Wave Immunity and Wave Block into a single proc, with the proc blocker params)*
+- ***Wave Mitigator (Which is just a merging Wave Immunity and Wave Block into a single proc, with the proc blocker params)***
 - Restrictions can now only restrict a specific form rather than all forms
 - NAND/NOR operations in find pages
 - Custom SFX for attacks
 - Entry animations
-- *Custom Background Effects*
+- ***Custom Background Effects***
 ### QoL changes
 - A much slicker UI (Thanks to Hect0x1 for it)
 - Can't deploy any more text line when you reach deploy limit
@@ -33,7 +33,7 @@
 - Procs from older packs aren't distributed properly on attacks without common proc
 
 ## What does the original BCU repo branch has that this fork doesn't?
-- Annoying pop-up that appeared when you accidentally right clicked on a button
+- Annoying pop-up when right-clicking on buttons
 - Button Filter
 - Android Support
 
