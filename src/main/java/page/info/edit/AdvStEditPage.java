@@ -9,10 +9,7 @@ import common.util.stage.Stage;
 import common.util.stage.info.CustomStageInfo;
 import common.util.unit.AbEnemy;
 import main.Opts;
-import page.JBTN;
-import page.JL;
-import page.JTF;
-import page.Page;
+import page.*;
 import page.info.StageViewPage;
 import page.support.AnimLCR;
 
@@ -41,14 +38,14 @@ public class AdvStEditPage extends Page {
 
 	private final JList<Stage> jex = new JList<>();
 	private final JScrollPane jsex = new JScrollPane(jex);
-	private final JL exSt = new JL(0, "exsts");
-	private final JBTN addex = new JBTN(0, "add");
-	private final JBTN remex = new JBTN(0, "rem");
-	private final JL jlprob = new JL(0, "prob");
+	private final JL exSt = new JL(MainLocale.PAGE, "exsts");
+	private final JBTN addex = new JBTN(MainLocale.PAGE, "add");
+	private final JBTN remex = new JBTN(MainLocale.PAGE, "rem");
+	private final JL jlprob = new JL(MainLocale.INFO, "prob");
 	private final JTF jprob = new JTF();
-	private final JL jltprob = new JL(0, "total");
+	private final JL jltprob = new JL(MainLocale.PAGE, "total");
 	private final JTF jtprob = new JTF();
-	private final JBTN equal = new JBTN(0, "equalprob");
+	private final JBTN equal = new JBTN(MainLocale.PAGE, "equalprob");
 	private StageViewPage svp;
 
 	private final Stage st;

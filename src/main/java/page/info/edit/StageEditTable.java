@@ -363,7 +363,7 @@ public class StageEditTable extends AbJTable implements Reorderable {
 		else if (c == 2)
 			return (data.multiple == data.mult_atk ? data.multiple : CommonStatic.toArrayFormat(data.multiple, data.mult_atk)) + "%";
 		else if (c == 3)
-			return data.number == 0 ? "Infinite" : data.number;
+			return data.number == 0 ? Page.get(MainLocale.UTIL, "inf") : data.number;
 		else if (c == 4)
 			return (data.castle_0 >= data.castle_1 ? data.castle_0 : data.castle_0 + "~" + data.castle_1) + "%";
 		else if (c == 5)

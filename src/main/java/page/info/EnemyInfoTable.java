@@ -313,7 +313,7 @@ public class EnemyInfoTable extends Page {
 		main[3][6].setText(MainLocale.INFO, "postaa");
 
 		special[0][0].setText(MainLocale.INFO, "count");
-		special[0][1].setText(e.de.getAtkLoop() < 0 ? "infinite" : e.de.getAtkLoop() + "");
+		special[0][1].setText(e.de.getAtkLoop() < 0 ? get(MainLocale.UTIL, "inf") : e.de.getAtkLoop() + "");
 		special[0][2].setText(MainLocale.INFO, "width");
 		special[0][3].setText(e.de.getWidth() + "");
 		special[0][4].setText(MainLocale.INFO, "minpos");

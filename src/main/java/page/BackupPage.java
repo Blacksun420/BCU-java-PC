@@ -528,7 +528,7 @@ public class BackupPage extends Page {
                     data[ind][1] = info[i].enemy.pack+" - "+info[i].enemy.id;
                     data[ind][0] = info[i].boss == 1 ? "boss " : "";
                     data[ind][2] = info[i].multiple;
-                    data[ind][3] = info[i].number == 0 ? "infinite" : info[i].number;
+                    data[ind][3] = info[i].number == 0 ? get(MainLocale.UTIL, "inf") : info[i].number;
                     data[ind][4] = info[i].castle_0 + "%";
                     data[ind][5] = info[i].spawn_0;
 

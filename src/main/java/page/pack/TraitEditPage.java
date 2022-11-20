@@ -297,7 +297,7 @@ public class TraitEditPage extends Page {
         if (bimg == null)
             return;
         if (bimg.getWidth() != bimg.getHeight()) {
-            getFile("Icon must have the same width and height");
+            getFile(get(MainLocale.PAGE, "sqrwrn"));
             return;
         }
         if (bimg.getWidth() != 41 || bimg.getHeight() != 41)

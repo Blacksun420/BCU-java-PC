@@ -156,7 +156,7 @@ public class StageTable extends AbJTable {
 
 			data[ind][2] = info[i].multiple == info[i].mult_atk ? info[i].multiple+"" : CommonStatic.toArrayFormat(info[i].multiple, info[i].mult_atk);
 
-			data[ind][3] = info[i].number == 0 ? "Infinite" : info[i].number;
+			data[ind][3] = info[i].number == 0 ? Page.get(MainLocale.UTIL, "inf") : info[i].number;
 
 			if (info[i].castle_0 >= info[i].castle_1)
 				data[ind][4] = info[i].castle_0 + "%";

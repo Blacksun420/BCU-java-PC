@@ -119,7 +119,7 @@ class ComingTable extends AbJTable {
 			data[link[i]][1] = Identifier.getOr(info[i].enemy, AbEnemy.class);
 			data[link[i]][0] = info[i].boss == 1 ? "boss" : "";
 			data[link[i]][2] = CommonStatic.toArrayFormat(info[i].multiple, info[i].mult_atk);
-			data[link[i]][3] = info[i].number == 0 ? "infinite" : info[i].number;
+			data[link[i]][3] = info[i].number == 0 ? Page.get(MainLocale.UTIL, "inf") : info[i].number;
 			if (info[i].castle_0 >= info[i].castle_1)
 				data[link[i]][4] = info[i].castle_0 + "%";
 			else
@@ -132,7 +132,7 @@ class ComingTable extends AbJTable {
 			if (link[i] != -1) {
 				data[link[i]][5] = MainBCU.convertTime(Math.abs(est.rem[i]));
 
-				data[link[i]][3] = est.num[i] == 0 ? "infinite" : est.num[i];
+				data[link[i]][3] = est.num[i] == 0 ? Page.get(MainLocale.UTIL, "inf") : est.num[i];
 
 				data[link[i]][6] = est.killCounter[i];
 
