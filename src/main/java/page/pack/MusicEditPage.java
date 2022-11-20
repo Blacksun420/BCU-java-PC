@@ -5,10 +5,7 @@ import common.pack.PackData.UserPack;
 import common.util.stage.Music;
 import io.BCMusic;
 import main.Opts;
-import page.JBTN;
-import page.JL;
-import page.JTF;
-import page.Page;
+import page.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,11 +23,11 @@ public class MusicEditPage extends Page {
 	private final JList<Music> jlst = new JList<>();
 	private final JScrollPane jspst = new JScrollPane(jlst);
 
-	private final JBTN relo = new JBTN(0, "read list");
-	private final JBTN play = new JBTN(0, "start");
-	private final JBTN stop = new JBTN(0, "stop");
-	private final JBTN show = new JBTN(0, "show");
-	private final JL jlp = new JL("loop");
+	private final JBTN relo = new JBTN(MainLocale.PAGE, "read list");
+	private final JBTN play = new JBTN(MainLocale.PAGE, "start");
+	private final JBTN stop = new JBTN(MainLocale.PAGE, "stop");
+	private final JBTN show = new JBTN(MainLocale.PAGE, "show");
+	private final JL jlp = new JL(MainLocale.INFO, "loop");
 	private final JTF jtp = new JTF();
 
 	private final UserPack pack;

@@ -260,7 +260,7 @@ public class MainPage extends Page {
 	}
 
 	private void refrTips() {
-		String[] ALLTIPS = get(MainLocale.PAGE, "tip", 13);
+		String[] ALLTIPS = get(MainLocale.PAGE, "tip", 19);
 		tips.setText("<html>" + ALLTIPS[(int)(Math.random() * ALLTIPS.length)] + "</html>");
 	}
 

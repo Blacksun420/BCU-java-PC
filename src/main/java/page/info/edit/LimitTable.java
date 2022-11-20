@@ -31,10 +31,10 @@ public class LimitTable extends Page {
 	private final JTF jcmax = new JTF();
 	private final JTF jcg = new JTF();
 	private final JTF jlr = new JTF();
-	private final JBTN cgb = new JBTN(1, "ht15");
-	private final JBTN lrb = new JBTN(1, "ht16");
-	private final JTG one = new JTG(1, "ht12");
-	private final JL rar = new JL(1, "ht10");
+	private final JBTN cgb = new JBTN(MainLocale.INFO, "ht15");
+	private final JBTN lrb = new JBTN(MainLocale.INFO, "ht16");
+	private final JBTN one = new JBTN(MainLocale.INFO, "row0");
+	private final JL rar = new JL(MainLocale.INFO, "ht10");
 	private final JTG[] brars = new JTG[6];
 
 	private final UserPack pac;
@@ -105,9 +105,9 @@ public class LimitTable extends Page {
 			jcmax.setText(limits[4] + ": ");
 			jcmin.setText(limits[3] + ": ");
 			jnum.setText(limits[1] + ": ");
+			one.setText(MainLocale.getLoc(MainLocale.INFO, "row0"));
 			jcg.setText("");
 			jlr.setText("");
-			one.setSelected(false);
 			abler(false);
 			return;
 		}
@@ -122,14 +122,17 @@ public class LimitTable extends Page {
 		jcmax.setText(limits[4] + ": " + lim.max);
 		jcmin.setText(limits[3] + ": " + lim.min);
 		jnum.setText(limits[1] + ": " + lim.num);
+		one.setText(MainLocale.getLoc(MainLocale.INFO, "row" + lim.line));
 		jcg.setText("" + lim.group);
 		jlr.setText("" + lim.lvr);
-		one.setSelected(lim.line == 1);
 	}
 
 	private void addListeners() {
 
-		one.addActionListener(arg0 -> lim.line = one.isSelected() ? 1 : 0);
+		one.addActionListener(arg0 -> {
+			lim.line = lim.line + 1 % 3;
+			one.setText(MainLocale.getLoc(MainLocale.INFO, "row" + lim.line));
+		});
 
 		for (int i = 0; i < brars.length; i++) {
 			int I = i;

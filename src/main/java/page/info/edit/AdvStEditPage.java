@@ -30,11 +30,11 @@ public class AdvStEditPage extends Page {
 	private final JScrollPane jspe = new JScrollPane(jle);
 	private final SCGroupEditTable sget;
 	private final JScrollPane jspt;
-	private final JL groups = new JL(0, "groups");
-	private final JBTN addg = new JBTN(0, "add");
-	private final JBTN remg = new JBTN(0, "rem");
-	private final JBTN addt = new JBTN(0, "addl");
-	private final JBTN remt = new JBTN(0, "reml");
+	private final JL groups = new JL(MainLocale.UTIL, "groups");
+	private final JBTN addg = new JBTN(MainLocale.PAGE, "add");
+	private final JBTN remg = new JBTN(MainLocale.PAGE, "rem");
+	private final JBTN addt = new JBTN(MainLocale.PAGE, "addl");
+	private final JBTN remt = new JBTN(MainLocale.PAGE, "reml");
 
 	private final JList<Stage> jex = new JList<>();
 	private final JScrollPane jsex = new JScrollPane(jex);

@@ -171,7 +171,7 @@ public class HeadTable extends AbJTable {
 					i += 2;
 				}
 				if (lim.line > 0)
-					reg[i] = limits[2];
+					reg[i] = MainLocale.getLoc(MainLocale.INFO, "row" + lim.line);
 			}
 		}
 		data = lstr;
