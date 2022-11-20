@@ -124,7 +124,7 @@ public class HeadTable extends AbJTable {
 		else
 			bas2[3] = st.minUSpawn + "f ~ " + st.maxUSpawn + "f";
 		bas2[4] = MainLocale.getLoc(MainLocale.INFO, "ht03");
-		bas2[5] = !st.non_con;
+		bas2[5] = Page.get(MainLocale.PAGE, String.valueOf(!st.non_con));
 		if(st.timeLimit != 0) {
 			bas2[4] = Page.get(MainLocale.INFO, "time");
 			bas2[5] = st.timeLimit +" min";

@@ -296,7 +296,7 @@ public class Opts {
 		JOptionPane.showOptionDialog(
 				null,
 				panel,
-				"Pack Description",
+				Page.get(MainLocale.PAGE, "desc"),
 				JOptionPane.DEFAULT_OPTION,
 				-1,
 				null,

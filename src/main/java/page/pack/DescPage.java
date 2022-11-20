@@ -77,7 +77,7 @@ public class DescPage extends Page {
         for (StageMap smaps : pack.mc.maps)
             stageTot += smaps.list.size();
         add(psta);
-        psta.setText("Total Stages: " + stageTot);
+        psta.setText(get(MainLocale.PAGE, "sttot") + " " + stageTot);
 
         if (pack.icon != null || pack.editable) {
             add(setIcn);

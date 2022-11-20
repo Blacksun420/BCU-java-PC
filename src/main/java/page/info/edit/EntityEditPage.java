@@ -131,7 +131,7 @@ public abstract class EntityEditPage extends Page {
 		String[] atkSS = new String[e.getAtkTypeCount() + 1];
 		for (int i = 0; i < atkSS.length - 1; i++)
 			atkSS[i] = get(MainLocale.PAGE, "atk") + (i + 1);
-		atkSS[atkSS.length - 1] = "Special Attacks";
+		atkSS[atkSS.length - 1] = MainLocale.getLoc(MainLocale.PAGE, "spatk");
 		atkS.setModel(new DefaultComboBoxModel<>(atkSS));
 	}
 
