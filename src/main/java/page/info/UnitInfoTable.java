@@ -89,9 +89,11 @@ public class UnitInfoTable extends Page {
 			proc[i].setBorder(BorderFactory.createEtchedBorder());
 			proc[i].setIcon(display.getIcon());
 		}
-		if (pc)
+		if (pc) {
 			pcoin = proc[ls.size() - 1];
-		else
+			add(pcoin);
+			pcoin.setText(UtilPC.lvText(f, multi)[1]);
+		} else
 			pcoin = null;
 		MaskAtk[] atkData = f.du.getAtks(dispAtk);
 		StringBuilder pre = new StringBuilder();
@@ -285,12 +287,10 @@ public class UnitInfoTable extends Page {
 			}
 		}
 		add(jtf);
-		String[] strs = UtilPC.lvText(f, multi);
-		jtf.setText(strs[0]);
-		if (pcoin != null) {
+		jtf.setText(UtilPC.lvText(f, multi)[0]);
+		if (pcoin != null)
 			add(pcoin);
-			pcoin.setText(strs[1]);
-		}
+
 		main[0][0].setText("ID");
 		main[0][1].setText(f.uid + "-" + f.fid);
 		if (f.anim.getEdi() != null && f.anim.getEdi().getImg() != null)
