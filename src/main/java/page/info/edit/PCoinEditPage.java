@@ -20,14 +20,18 @@ public class PCoinEditPage extends Page {
     private final JBTN remP = new JBTN(0, "rempc");
     private final boolean editable;
     private final CustomUnit uni;
+    private final JPanel cont = new JPanel();
+    private final JScrollPane jsp = new JScrollPane(cont);
     private final List<PCoinEditTable> pCoinEdits = new ArrayList<>();
 
     public PCoinEditPage(Page p, Form u, boolean edi) {
         super(p);
         uni = (CustomUnit) u.du;
         editable = edi;
-        for (int i = 0; i < 5; i++)
-            pCoinEdits.add(new PCoinEditTable(this, uni, i, editable));
+
+        if (uni.pcoin != null)
+            for (int i = 0; i < uni.pcoin.info.size(); i++)
+                pCoinEdits.add(new PCoinEditTable(this, uni, i, editable));
 
         ini();
         resized();
@@ -39,8 +43,14 @@ public class PCoinEditPage extends Page {
         set(back, x, y, 0, 0, 200, 50);
         set(addP, x, y, 400, 50, 300, 50);
         set(remP, x, y, 700, 50, 300, 50);
-        for (int i = 0; i < 5; i++)
-            set(pCoinEdits.get(i), x, y, i * 400, 150, 400, 1300);
+        set(jsp, x, y, 50, 100, 2050, 1100);
+        for (int i = 0; i < pCoinEdits.size(); i++) {
+            set(pCoinEdits.get(i), x, y, i * 400, 0, 400, 1050);
+            pCoinEdits.get(i).resized();
+        }
+        cont.setPreferredSize(size(x, y, pCoinEdits.size() * 400, 1050).toDimension());
+        jsp.getHorizontalScrollBar().setUnitIncrement(size(x, y, 50));
+        jsp.revalidate();
     }
 
     private void addListeners() {
@@ -52,6 +62,9 @@ public class PCoinEditPage extends Page {
             int slot = uni.pcoin.info.size();
             uni.pcoin.info.add(new int[]{slot + 1,10,0,0,0,0,0,0,0,0,slot + 1,8,-1});
             uni.pcoin.max.add(10);
+
+            pCoinEdits.add(new PCoinEditTable(this, uni, slot, editable));
+            cont.add(pCoinEdits.get(slot));
 
             for (int i = 0; i < slot; i++)
                 if (uni.pcoin.info.get(i)[0] == slot + 1) {
@@ -67,6 +80,11 @@ public class PCoinEditPage extends Page {
 
         remP.addActionListener(arg0 -> {
             uni.pcoin = null;
+            while (!pCoinEdits.isEmpty()) {
+                cont.remove(pCoinEdits.size() - 1);
+                pCoinEdits.remove(pCoinEdits.size() - 1);
+            }
+
             setCoinTypes();
         });
     }
@@ -78,7 +96,12 @@ public class PCoinEditPage extends Page {
     }
 
     //Changes the other talent indexes once a talent is removed from the list
-    protected void removed() {
+    protected void removed(int talent) {
+        cont.remove(talent);
+        pCoinEdits.remove(talent);
+        for (int i = talent; i < uni.pcoin.info.size(); i++)
+            pCoinEdits.get(i).shiftDown();
+
         if (uni.pcoin.info.size() == 0)
             uni.pcoin = null;
         setCoinTypes();
@@ -89,7 +112,9 @@ public class PCoinEditPage extends Page {
         add(addP);
         add(remP);
         for (PCoinEditTable pce : pCoinEdits)
-            add(pce);
+            cont.add(pce);
+        cont.setLayout(null);
+        add(jsp);
         addListeners();
         setCoins();
     }
@@ -99,7 +124,7 @@ public class PCoinEditPage extends Page {
             uni.pcoin.update();
         for (PCoinEditTable pct : pCoinEdits)
             pct.setData();
-        addP.setEnabled(editable && (uni.pcoin == null || uni.pcoin.info.size() < 6));
+        addP.setEnabled(editable && (uni.pcoin == null || uni.pcoin.info.size() < PCoinEditTable.allPC.length));
         remP.setEnabled(editable && uni.pcoin != null);
     }
 }

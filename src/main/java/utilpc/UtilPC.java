@@ -180,6 +180,8 @@ public class UtilPC {
 				lab.append("[").append(Interpret.getTrait(TraitsHolder, 0)).append("]").append(" ");
 			}
 
+			while (lvs.size() <= pc.info.size())
+				lvs.add(pc.max.get(lvs.size() - 1));
 			lab.append(Interpret.PCTX[pc.info.get(0)[0]]);
 
 			StringBuilder str = new StringBuilder("Lv." + lvs.get(0) + ", {");
