@@ -23,6 +23,7 @@
 - Custom SFX for attacks
 - Entry animations
 - ***Custom Background Effects***
+- Row 2 only restriction
 ### QoL changes
 - A much slicker UI (Thanks to Hect0x1 for it)
 - Can't deploy any more text line when you reach deploy limit
