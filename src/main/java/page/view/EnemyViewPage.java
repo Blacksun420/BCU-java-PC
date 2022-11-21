@@ -33,14 +33,14 @@ public class EnemyViewPage extends AbViewPage {
 	public EnemyViewPage(Page p, Enemy e) {
 		this(p, e.getID().pack);
 		jlu.setSelectedValue(e, true);
+
 	}
 
 	public EnemyViewPage(Page p, String pac) {
 		super(p);
 		PackData pack = UserProfile.getPack(pac);
-		if(pack != null) {
+		if(pack != null)
 			jlu.setListData(new Vector<>(pack.enemies.getList()));
-		}
 		ini();
 		resized();
 	}
@@ -158,8 +158,7 @@ public class EnemyViewPage extends AbViewPage {
 						}
 					}
 
-					//for (Enemy ene : list)
-					//	copyAnim(ene);
+					copyAnim();
 				}
 			}
 		});
@@ -173,7 +172,6 @@ public class EnemyViewPage extends AbViewPage {
 		jlu.setCellRenderer(new AnimLCR());
 
 		addListeners();
-
 	}
 
 	private void copyAnim() {

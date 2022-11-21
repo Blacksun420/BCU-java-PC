@@ -13,11 +13,10 @@ import page.Page;
 import page.info.EnemyInfoPage;
 import page.pack.EREditPage;
 import page.support.EnemyTCR;
-import page.support.SortTable;
 
 import java.awt.*;
 
-public class AbEnemyListTable  extends SortTable<AbEnemy> {
+public class AbEnemyListTable extends EntityListTable<AbEnemy> {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,15 +31,10 @@ public class AbEnemyListTable  extends SortTable<AbEnemy> {
                 Page.get(MainLocale.INFO, "speed"), Page.get(MainLocale.INFO, "drop"), Page.get(MainLocale.INFO, "preaa"), "hp/dps", "HP/HB/dps" };
     }
 
-    private final Page page;
-
     private final Basis b = BasisSet.current();
 
     protected AbEnemyListTable(Page p) {
-        super(tit);
-
-        page = p;
-
+        super(p, tit);
         setDefaultRenderer(Enemy.class, new EnemyTCR());
     }
 
@@ -52,7 +46,8 @@ public class AbEnemyListTable  extends SortTable<AbEnemy> {
         return String.class;
     }
 
-    protected void clicked(Point p) {
+    @Override
+    public void clicked(Point p) {
         if (list == null)
             return;
         int c = getColumnModel().getColumnIndexAtX(p.x);

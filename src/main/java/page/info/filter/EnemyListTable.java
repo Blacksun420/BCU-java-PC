@@ -13,7 +13,7 @@ import page.support.SortTable;
 
 import java.awt.*;
 
-public class EnemyListTable extends SortTable<Enemy> {
+public class EnemyListTable extends EntityListTable<Enemy> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -28,17 +28,11 @@ public class EnemyListTable extends SortTable<Enemy> {
 				Page.get(MainLocale.INFO, "speed"), Page.get(MainLocale.INFO, "drop"), Page.get(MainLocale.INFO, "preaa"), "dps", Page.get(MainLocale.INFO, "minpos"), Page.get(MainLocale.INFO, "will") };
 	}
 
-	private final Page page;
-
 	private final Basis b = BasisSet.current();
 
 	protected EnemyListTable(Page p) {
-		super(tit);
-
-		page = p;
-
+		super(p, tit);
 		setDefaultRenderer(Enemy.class, new EnemyTCR());
-
 	}
 
 	@Override
@@ -49,7 +43,8 @@ public class EnemyListTable extends SortTable<Enemy> {
 		return String.class;
 	}
 
-	protected void clicked(Point p) {
+	@Override
+	public void clicked(Point p) {
 		if (list == null)
 			return;
 		int c = getColumnModel().getColumnIndexAtX(p.x);

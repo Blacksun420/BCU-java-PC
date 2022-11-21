@@ -7,6 +7,7 @@ import common.util.unit.Form;
 import page.JBTN;
 import page.Page;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class PCoinEditPage extends Page {
         super(p);
         uni = (CustomUnit) u.du;
         editable = edi;
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 5; i++)
             pCoinEdits.add(new PCoinEditTable(this, uni, i, editable));
 
         ini();
@@ -38,7 +39,7 @@ public class PCoinEditPage extends Page {
         set(back, x, y, 0, 0, 200, 50);
         set(addP, x, y, 400, 50, 300, 50);
         set(remP, x, y, 700, 50, 300, 50);
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 5; i++)
             set(pCoinEdits.get(i), x, y, i * 400, 150, 400, 1300);
     }
 

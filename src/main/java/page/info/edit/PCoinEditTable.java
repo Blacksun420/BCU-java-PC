@@ -89,7 +89,7 @@ class PCoinEditTable extends Page {
     private final boolean editable;
     private final JL[] chance = new JL[8];
     private final JTF[] tchance = new JTF[8];
-    protected final int talent;
+    protected int talent;
 
     private boolean changing;
     private int cTypesY = 550;

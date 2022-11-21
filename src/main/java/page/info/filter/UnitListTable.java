@@ -16,7 +16,7 @@ import page.support.UnitTCR;
 
 import java.awt.*;
 
-public class UnitListTable extends SortTable<Form> {
+public class UnitListTable extends EntityListTable<Form> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -31,17 +31,12 @@ public class UnitListTable extends SortTable<Form> {
 				Page.get(MainLocale.INFO, "speed"), "dps", Page.get(MainLocale.INFO, "preaa"), "CD", Page.get(MainLocale.INFO, "price"), Page.get(MainLocale.INFO, "atkf"), Page.get(MainLocale.INFO, "will") };
 	}
 
-	private final Page page;
-
 	public UnitListTable(Page p) {
-		super(tit);
-
-		page = p;
-
+		super(p, tit);
 		setDefaultRenderer(Enemy.class, new UnitTCR(lnk));
-
 	}
 
+	@Override
 	public void clicked(Point p) {
 		if (list == null)
 			return;
