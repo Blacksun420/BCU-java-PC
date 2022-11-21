@@ -19,6 +19,8 @@ public class UnitFindPage extends EntityFindPage<Form> implements SupPage<AbUnit
 		elt = new UnitListTable(this);
 		jsp = new JScrollPane(elt);
 		efb = new UnitFilterBox(this, null, 0);
+		ini();
+		resized();
 	}
 
 	public UnitFindPage(Page p, String pack, List<String> parents) {
@@ -27,6 +29,8 @@ public class UnitFindPage extends EntityFindPage<Form> implements SupPage<AbUnit
 		elt = new UnitListTable(this);
 		jsp = new JScrollPane(elt);
 		efb = new UnitFilterBox(this, pack, parents);
+		ini();
+		resized();
 	}
 
 	public Form getForm() {

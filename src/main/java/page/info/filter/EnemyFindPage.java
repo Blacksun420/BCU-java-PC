@@ -17,6 +17,8 @@ public class EnemyFindPage extends EntityFindPage<Enemy> implements SupPage<AbEn
 		elt = new EnemyListTable(this);
 		jsp = new JScrollPane(elt);
 		efb = new EnemyFilterBox(this);
+		ini();
+		resized();
 	}
 
 	@Override

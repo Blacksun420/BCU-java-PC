@@ -24,8 +24,6 @@ public abstract class EntityFindPage<R> extends Page {
 
     public EntityFindPage(Page p) {
         super(p);
-        ini();
-        resized();
     }
 
     @Override

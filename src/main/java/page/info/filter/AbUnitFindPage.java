@@ -17,6 +17,8 @@ public class AbUnitFindPage extends EntityFindPage<AbForm> implements SupPage<Ab
         elt = new AbUnitListTable(this);
         jsp = new JScrollPane(elt);
         efb = new AbUnitFilterBox(this);
+        ini();
+        resized();
     }
 
     public AbUnitFindPage(Page p, String pack, List<String> parents) {
@@ -25,6 +27,8 @@ public class AbUnitFindPage extends EntityFindPage<AbForm> implements SupPage<Ab
         elt = new AbUnitListTable(this);
         jsp = new JScrollPane(elt);
         efb = new AbUnitFilterBox(this, pack, parents);
+        ini();
+        resized();
     }
 
     public AbForm getForm() {

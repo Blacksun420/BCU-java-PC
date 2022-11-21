@@ -17,6 +17,8 @@ public class AbEnemyFindPage extends EntityFindPage<AbEnemy> implements SupPage<
         elt = new AbEnemyListTable(this);
         jsp = new JScrollPane(elt);
         efb = new AbEnemyFilterBox(this);
+        ini();
+        resized();
     }
 
     public AbEnemyFindPage(Page p, String pack, List<String> parents) {
@@ -25,6 +27,8 @@ public class AbEnemyFindPage extends EntityFindPage<AbEnemy> implements SupPage<
         elt = new AbEnemyListTable(this);
         jsp = new JScrollPane(elt);
         efb = new AbEnemyFilterBox(this, pack, parents);
+        ini();
+        resized();
     }
 
     @Override
