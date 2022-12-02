@@ -55,7 +55,7 @@ public class BCJSON {
 		if (font != null) {
 			LoadPage.prog(font.desc);
 			while (!CommonStatic.ctx.noticeErr(() -> font.run(LoadPage.lp::accept), ErrType.DEBUG, "failed to download"))
-				if (!Opts.conf("failed to download, retry?"))
+				if (!Opts.conf("failed to download fonts, retry?"))
 					break;
 		}
 
