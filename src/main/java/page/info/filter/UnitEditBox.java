@@ -2,6 +2,7 @@ package page.info.filter;
 
 import common.battle.data.CustomUnit;
 import common.pack.PackData.UserPack;
+import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.unit.Trait;
 import page.Page;
@@ -41,7 +42,7 @@ public class UnitEditBox extends Page {
 		ini();
 	}
 
-	public void setData(int val, ArrayList<Trait> ts) {
+	public void setData(int val, SortedPackSet<Trait> ts) {
 		changing = true;
 		for (int k = 0; k < trait.list.size(); k++)
 			if (ts.contains(trait.list.get(k)))
@@ -73,9 +74,7 @@ public class UnitEditBox extends Page {
 				ans[0] |= 1 << i;
 		for (int i = 0; i < trait.list.size(); i++)
 			if (trait.isSelectedIndex(i)) {
-				if (!cu.traits.contains(trait.list.get(i))) {
-					cu.traits.add(trait.list.get(i));
-				}
+				cu.traits.add(trait.list.get(i));
 			} else
 				cu.traits.remove(trait.list.get(i));
 		getFront().callBack(ans);

@@ -5,6 +5,7 @@ import common.battle.BasisSet;
 import common.battle.data.MaskAtk;
 import common.battle.data.MaskUnit;
 import common.battle.data.PCoin;
+import common.pack.SortedPackSet;
 import common.util.Data;
 import common.util.unit.EForm;
 import common.util.unit.Form;
@@ -19,7 +20,6 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class UnitInfoTable extends Page {
@@ -54,7 +54,6 @@ public class UnitInfoTable extends Page {
 		atks = new JL[6];
 
 		ini();
-		resetAtk();
 	}
 
 	protected UnitInfoTable(Page p, Form de, boolean sp) {
@@ -67,7 +66,6 @@ public class UnitInfoTable extends Page {
 		atks = new JL[6];
 
 		ini();
-		resetAtk();
 	}
 
 	private void resetAtk() {
@@ -140,10 +138,7 @@ public class UnitInfoTable extends Page {
 			hp = (int) (hp * pc.getHPMultiplication(multi));
 		}
 
-		ArrayList<Trait> trs = ef.du.getTraits();
-		trs.sort(Comparator.comparingInt(t -> t.id.id));
-		trs.sort(Comparator.comparing(t -> t.id.pack));
-		trs.sort(Comparator.comparing(t -> !t.BCTrait));
+		SortedPackSet<Trait> trs = ef.du.getTraits();
 		String[] TraitBox = new String[trs.size()];
 		for (int i = 0; i < trs.size(); i++) {
 			Trait trait = ef.du.getTraits().get(i);

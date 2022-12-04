@@ -7,6 +7,7 @@ import common.pack.Context;
 import common.pack.Identifier;
 import common.system.VImg;
 import common.system.fake.FakeImage;
+import common.util.Data;
 import common.util.pack.Background;
 import common.util.stage.Music;
 import common.util.unit.Form;
@@ -124,6 +125,13 @@ public class UtilPC {
 
 		g.dispose();
 		return new ImageIcon(temp);
+	}
+
+	public static BufferedImage getIcon(Data.Proc.ProcItem p, int type, int id) {
+		if (id == Data.P_IMUWAVE && (p.get(0) == 0 || p.get(1) == 100))
+			return (BufferedImage) CommonStatic.getBCAssets().waveShield.getImg().bimg();
+
+		return getIcon(type, id);
 	}
 
 	public static BufferedImage getIcon(int type, int id) {

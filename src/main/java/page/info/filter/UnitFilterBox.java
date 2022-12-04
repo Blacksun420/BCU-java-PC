@@ -2,6 +2,7 @@ package page.info.filter;
 
 import common.battle.data.MaskUnit;
 import common.pack.PackData;
+import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.lang.MultiLangCont;
 import common.util.lang.ProcLang;
@@ -169,7 +170,7 @@ public class UnitFilterBox extends EntityFilterBox {
 		return true;
 	}
 
-	private boolean checkTraitComp(ArrayList<Trait> targets, Trait t, Form f) {
+	private boolean checkTraitComp(SortedPackSet<Trait> targets, Trait t, Form f) {
 		if (targets.contains(t))
 			return true;
 		if (t.BCTrait)

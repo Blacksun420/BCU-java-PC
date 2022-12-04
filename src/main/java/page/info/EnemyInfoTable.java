@@ -4,6 +4,7 @@ import common.CommonStatic;
 import common.battle.BasisSet;
 import common.battle.data.AtkDataModel;
 import common.battle.data.MaskAtk;
+import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.Data;
 import common.util.unit.Enemy;
@@ -19,7 +20,6 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 public class EnemyInfoTable extends Page {
@@ -93,14 +93,11 @@ public class EnemyInfoTable extends Page {
 			atks[i][4].setText(MainLocale.INFO, "dire");
 			atks[i][5].setText("" + atkData[i].getDire());
 
-			ArrayList<Trait> atrs = e.de.getAtkModel(dispAtk, i).getATKTraits();
+			SortedPackSet<Trait> atrs = e.de.getAtkModel(dispAtk, i).getATKTraits();
 			if (atrs.isEmpty())
 				continue;
 			atks[i][6].setText(MainLocale.INFO, "trait");
 
-			atrs.sort(Comparator.comparingInt(t -> t.id.id));
-			atrs.sort(Comparator.comparing(t -> t.id.pack));
-			atrs.sort(Comparator.comparing(t -> !t.BCTrait));
 			String[] Atraits = new String[atrs.size()];
 			for (int j = 0; j < atrs.size(); j++) {
 				Trait trait = atrs.get(j);
@@ -241,10 +238,7 @@ public class EnemyInfoTable extends Page {
 	}
 
 	private void ini() {
-		ArrayList<Trait> trs = e.de.getTraits();
-		trs.sort(Comparator.comparingInt(t -> t.id.id));
-		trs.sort(Comparator.comparing(t -> t.id.pack));
-		trs.sort(Comparator.comparing(t -> !t.BCTrait));
+		SortedPackSet<Trait> trs = e.de.getTraits();
 		String[] TraitBox = new String[trs.size()];
 		for (int i = 0; i < trs.size(); i++) {
 			Trait trait = trs.get(i);

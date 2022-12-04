@@ -2,12 +2,12 @@ package page.info.filter;
 
 import common.battle.data.CustomEnemy;
 import common.pack.PackData.UserPack;
+import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.unit.Trait;
 import page.Page;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Vector;
 
@@ -43,7 +43,7 @@ public class EnemyEditBox extends Page {
 		ini();
 	}
 
-	public void setData(int val, ArrayList<Trait> cts) {
+	public void setData(int val, SortedPackSet<Trait> cts) {
 		changing = true;
 		for (int k = 0; k < trait.list.size(); k++)
 			if (cts.contains(trait.list.get(k)))
@@ -76,9 +76,7 @@ public class EnemyEditBox extends Page {
 				ans[0] |= 1 << EABIIND[i];
 		for (int i = 0; i < trait.list.size(); i++)
 			if (trait.isSelectedIndex(i)) {
-				if (!ce.traits.contains(trait.list.get(i))) {
-					ce.traits.add(trait.list.get(i));
-				}
+				ce.traits.add(trait.list.get(i));
 			} else
 				ce.traits.remove(trait.list.get(i));
 		getFront().callBack(ans);

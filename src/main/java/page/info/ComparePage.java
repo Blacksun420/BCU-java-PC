@@ -9,6 +9,7 @@ import common.battle.data.MaskEntity;
 import common.battle.data.MaskUnit;
 import common.pack.FixIndexList;
 import common.pack.PackData;
+import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.Data;
 import common.util.unit.EForm;
@@ -353,8 +354,8 @@ public class ComparePage extends Page {
                 double atkLv = b.t().getAtkMulti();
                 double defLv = b.t().getDefMulti();
 
-                ArrayList<Trait> traits = new ArrayList<>(trait.getSelectedValuesList());
-                ArrayList<Trait> spTraits = new ArrayList<>(UserProfile.getBCData().traits.getList()
+                SortedPackSet<Trait> traits = new SortedPackSet<>(trait.getSelectedValuesList());
+                SortedPackSet<Trait> spTraits = new SortedPackSet<>(UserProfile.getBCData().traits.getList()
                         .subList(Data.TRAIT_EVA, Data.TRAIT_BEAST + 1));
                 spTraits.retainAll(traits);
                 traits.retainAll(mu.getTraits());
@@ -478,10 +479,7 @@ public class ComparePage extends Page {
 
             main[9][index].setText(m.getSpeed() + "");
 
-            ArrayList<Trait> trs = m.getTraits();
-            trs.sort(Comparator.comparingInt(t -> t.id.id));
-            trs.sort(Comparator.comparing(t -> t.id.pack));
-            trs.sort(Comparator.comparing(t -> !t.BCTrait));
+            SortedPackSet<Trait> trs = m.getTraits();
             String[] TraitBox = new String[trs.size()];
             for (int t = 0; t < trs.size(); t++) {
                 Trait trait = m.getTraits().get(t);

@@ -301,28 +301,40 @@ public class Interpret extends Data {
 
 	public static List<ProcDisplay> getProc(MaskEntity du, boolean isEnemy, double[] magnification, int atkind) {
 		Formatter.Context ctx = new Formatter.Context(isEnemy, MainBCU.seconds, magnification);
-		final boolean common;
-
-		if(du instanceof CustomEntity) {
-			common = ((CustomEntity) du).common;
-		} else {
-			common = true;
-		}
 
 		ArrayList<ProcDisplay> l = new ArrayList<>();
-		List<Boolean> share = new ArrayList<>();
 
-		if(common) {
-			MaskAtk ma = du.getRepAtk();
+		if(du.isCommon()) {
+			Proc proc = du.getRepAtk().getProc();
 
 			for(int i = 0; i < Data.PROC_TOT; i++) {
-				ProcItem item = ma.getProc().getArr(i);
+				ProcItem item = proc.getArr(i);
 
 				if(!item.exists())
 					continue;
-				if (du instanceof DefaultData) {
+				String format = ProcLang.get().get(i).format;
+				String formatted = Formatter.format(format, item, ctx);
+
+				l.add(new ProcDisplay(formatted, UtilPC.getIcon(item,1, i)));
+			}
+		} else {
+			if (du instanceof DefaultData) {
+				MaskAtk[] atkData = du.getAtks(0);
+
+				List<Integer> atks = new ArrayList<>(3);
+				for (int i = 0; i < atkData.length; i++)
+					if (atkData[i].canProc())
+						atks.add(i + 1);
+
+				Proc proc = du.getProc();
+				String nums = getAtkNumbers(atks);
+				for(int i = 0; i < Data.PROC_TOT; i++) {
+					ProcItem item = proc.getArr(i);
+
+					if (!item.exists())
+						continue;
 					boolean p = false;
-					if (ma.getProc().sharable(i))
+					if (proc.sharable(i))
 						p = true;
 					else
 						for (int pr : BCShareable)
@@ -330,85 +342,72 @@ public class Interpret extends Data {
 								p = true;
 								break;
 							}
-					share.add(p);
+					String format = ProcLang.get().get(i).format;
+					String formatted = Formatter.format(format, item, ctx);
+					if (!p)
+						formatted += " " + nums;
+
+					l.add(new ProcDisplay(formatted, UtilPC.getIcon(item,1, i)));
 				}
-				String format = ProcLang.get().get(i).format;
-				String formatted = Formatter.format(format, item, ctx);
+			} else {
+				LinkedHashMap<String, List<Integer>> atkMap = new LinkedHashMap<>();
+				List<BufferedImage> procIcons = new ArrayList<>();
 
-				if (i == P_IMUWAVE && (item.get(0) == 0 || item.get(1) == 100))
-					l.add(new ProcDisplay(formatted, (BufferedImage)CommonStatic.getBCAssets().waveShield.getImg().bimg()));
-				else
-					l.add(new ProcDisplay(formatted, UtilPC.getIcon(1, i)));
-			}
-		} else {
-			LinkedHashMap<String, List<Integer>> atkMap = new LinkedHashMap<>();
-			List<BufferedImage> procIcons = new ArrayList<>();
+				MaskAtk ma = du.getRepAtk();
 
-			MaskAtk ma = du.getRepAtk();
+				for (int i = 0; i < Data.PROC_TOT; i++) {
+					ProcItem item = ma.getProc().getArr(i);
 
-			for (int i = 0; i < Data.PROC_TOT; i++) {
-				ProcItem item = ma.getProc().getArr(i);
-
-				if (!item.exists() || !ma.getProc().sharable(i))
-					continue;
-
-				String format = ProcLang.get().get(i).format;
-				String formatted = Formatter.format(format, item, ctx);
-				l.add(new ProcDisplay(formatted, UtilPC.getIcon(1, i)));
-			}
-
-			for (int i = 0; i < du.getAtkCount(atkind); i++) {
-				ma = du.getAtkModel(atkind, i);
-
-				for (int j = 0; j < Data.PROC_TOT; j++) {
-					ProcItem item = ma.getProc().getArr(j);
-
-					if (!item.exists() || ma.getProc().sharable(j))
+					if (!item.exists() || !ma.getProc().sharable(i))
 						continue;
 
-					String format = ProcLang.get().get(j).format;
+					String format = ProcLang.get().get(i).format;
 					String formatted = Formatter.format(format, item, ctx);
+					l.add(new ProcDisplay(formatted, UtilPC.getIcon(item, 1, i)));
+				}
 
-					if (atkMap.containsKey(formatted)) {
-						List<Integer> inds = atkMap.get(formatted);
+				for (int i = 0; i < du.getAtkCount(atkind); i++) {
+					ma = du.getAtkModel(atkind, i);
 
-						inds.add(i + 1);
-					} else {
-						List<Integer> inds = new ArrayList<>();
+					for (int j = 0; j < Data.PROC_TOT; j++) {
+						ProcItem item = ma.getProc().getArr(j);
 
-						inds.add(i + 1);
+						if (!item.exists() || ma.getProc().sharable(j))
+							continue;
 
-						atkMap.put(formatted, inds);
-						procIcons.add(UtilPC.getIcon(1, j));
+						String format = ProcLang.get().get(j).format;
+						String formatted = Formatter.format(format, item, ctx);
+
+						if (atkMap.containsKey(formatted)) {
+							List<Integer> inds = atkMap.get(formatted);
+
+							inds.add(i + 1);
+						} else {
+							List<Integer> inds = new ArrayList<>();
+
+							inds.add(i + 1);
+
+							atkMap.put(formatted, inds);
+							procIcons.add(UtilPC.getIcon(1, j));
+						}
 					}
 				}
-			}
 
-			int i = 0;
-			for (String key : atkMap.keySet()) {
-				List<Integer> inds = atkMap.get(key);
+				int i = 0;
+				for (String key : atkMap.keySet()) {
+					List<Integer> inds = atkMap.get(key);
 
-				if (inds == null) {
-					l.add(new ProcDisplay(key, procIcons.get(i++)));
-				} else {
-					if (inds.size() == du.getAtkCount(atkind)) {
+					if (inds == null) {
 						l.add(new ProcDisplay(key, procIcons.get(i++)));
 					} else {
-						l.add(new ProcDisplay(key + " " + getAtkNumbers(inds), procIcons.get(i++)));
+						if (inds.size() == du.getAtkCount(atkind)) {
+							l.add(new ProcDisplay(key, procIcons.get(i++)));
+						} else {
+							l.add(new ProcDisplay(key + " " + getAtkNumbers(inds), procIcons.get(i++)));
+						}
 					}
 				}
 			}
-		}
-
-		if (du instanceof DefaultData && !((DefaultData)du).isCommon()) {
-			MaskAtk[] atkData = du.getAtks(atkind);
-			List<Integer> atks = new ArrayList<>();
-			for (int i = 0; i < atkData.length; i++)
-				if (atkData[i].canProc())
-					atks.add(i + 1);
-			for (int i = 0; i < l.size(); i++)
-				if (!share.get(i))
-					l.get(i).text = l.get(i).text + " " + getAtkNumbers(atks);
 		}
 
 		AtkDataModel[][] sps = du.getSpAtks(true);
