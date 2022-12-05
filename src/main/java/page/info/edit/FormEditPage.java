@@ -33,12 +33,10 @@ public class FormEditPage extends EntityEditPage {
 	private final JBTN impt = new JBTN(0, "import");
 	private final JBTN vene = new JBTN(0, "enemy");
 	private final JBTN pcoin = new JBTN(0, "pcoin");
-	private final JTF[] fdesc = new JTF[4];
 	private final UnitEditBox ueb;
 	private final Form form;
 	private final CustomUnit cu;
 	private int lv;
-	private String[] uniDesc;
 
 	public FormEditPage(Page p, UserPack pac, Form f) {
 		super(p, pac.desc.id, (CustomEntity) f.du, pac.editable, false);
@@ -143,16 +141,6 @@ public class FormEditPage extends EntityEditPage {
 		add(vene);
 		add(pcoin);
 		pcoin.setLnr(x -> changePanel(new PCoinEditPage(getThis(),form, editable)));
-		for (int i = 0 ; i < fdesc.length ; i++)
-			add(fdesc[i] = new JTF());
-
-		for (JTF jtf : fdesc)
-			jtf.setEnabled(editable);
-
-		for (int i = 0; i < fdesc.length; i++) {
-			int finalI = i;
-			fdesc[i].setLnr(d -> changeDesc(finalI));
-		}
 
 		subListener(vene, impt, vuni, form.unit);
 
@@ -161,29 +149,6 @@ public class FormEditPage extends EntityEditPage {
 			Node<Unit> nu = Node.getList(UserProfile.getAll(cu.getPack().uid.pack, Unit.class), u);
 			changePanel(new UnitInfoPage(this, nu));
 		});
-	}
-
-	private void changeDesc(int line) {
-		String txt = fdesc[line].getText().trim();
-		if (!txt.equals("Description Line " + (line + 1))) {
-			uniDesc[line] = txt;
-			if (txt.length() > 63) {
-				for (int i = line; i + 1 < fdesc.length; i++) {
-					if (uniDesc[i].length() > 63) {
-						uniDesc[i + 1] = uniDesc[i].substring(63) + uniDesc[i + 1];
-						uniDesc[i] = uniDesc[i].substring(0, 63);
-					}
-				}
-				if (uniDesc[fdesc.length - 1].length() > 63)
-					uniDesc[fdesc.length - 1] = uniDesc[fdesc.length - 1].substring(0, 63);
-			}
-		}
-		String finalDesc = String.join("<br>", uniDesc);
-		if (finalDesc.length() > 12)
-			form.description.put(finalDesc);
-		else
-			form.description.put("");
-		setData(cu);
 	}
 
 	@Override
@@ -208,11 +173,6 @@ public class FormEditPage extends EntityEditPage {
 		set(impt, x, y, 50, 1150, 200, 50);
 		set(vene, x, y, 250, 1150, 200, 50);
 		set(pcoin, x, y, 450, 1150, 200, 50);
-		int h = 1000;
-		for (JTF jtf : fdesc) {
-			set(jtf, x, y, 1050, h, 750, 50);
-			h += 50;
-		}
 		ueb.resized();
 
 	}
@@ -220,12 +180,6 @@ public class FormEditPage extends EntityEditPage {
 	@Override
 	protected void setData(CustomEntity data) {
 		super.setData(data);
-		uniDesc = form.getExplaination().split("<br>",4);
-		if (uniDesc.length < 4)
-			uniDesc = new String[]{"","","",""};
-
-		for (int i = 0; i < fdesc.length; i++)
-			fdesc[i].setText("" + (uniDesc[i].length() > 0 ? uniDesc[i] : "Description Line " + (i + 1)));
 		flv.setText(lv + "");
 		frs.setText(bas.t().getFinRes(cu.getRespawn()) + "");
 		fdr.setText((int) Math.round(cu.getPrice() * 1.5) + "");

@@ -94,6 +94,8 @@ public abstract class EntityEditPage extends Page {
 	private final JScrollPane jspm;
 	private final CustomEntity ce;
 	private final String pack;
+	private final JTA entDesc = new JTA();
+	private final JScrollPane jsDesc = new JScrollPane(entDesc);
 
 	private final ProcTable.AtkProcTable apt;
 	private final JScrollPane jsp;
@@ -229,9 +231,10 @@ public abstract class EntityEditPage extends Page {
 		ljp.end();
 		add(jspi);
 		add(atkS);
-		add(jsh);
-		if (ce.getAtkTypeCount() > 1)
+		if (ce.getAtkTypeCount() > 1) {
+			add(jsh);
 			add(josh);
+		}
 		add(aet);
 		add(jspm);
 		add(add);
@@ -246,6 +249,7 @@ public abstract class EntityEditPage extends Page {
 		set(vitv);
 		add(comm);
 		add(jcbs);
+		add(jsDesc);
 		Vector<Soul> vec = new Vector<>();
 		vec.add(null);
 		vec.addAll(UserProfile.getAll(pack, Soul.class));
@@ -285,6 +289,7 @@ public abstract class EntityEditPage extends Page {
 		atkn.setEnabled(editable);
 		comm.setEnabled(editable);
 		jcbs.setEnabled(editable);
+		entDesc.setEnabled(editable);
 
 		add(jsp);
 	}
@@ -383,6 +388,7 @@ public abstract class EntityEditPage extends Page {
 		set(fli, x, y, 2000, 1000, 200, 50);
 
 		set(jcbs, x, y, 1800, 1050, 400, 50);
+		set(jsDesc, x, y, 1050, 1000, 750, 200);
 
 		jsp.getVerticalScrollBar().setUnitIncrement(size(x, y, 50));
 		jspm.getVerticalScrollBar().setUnitIncrement(size(x, y, 50));
@@ -426,6 +432,9 @@ public abstract class EntityEditPage extends Page {
 			cdps.setText("" + (int) (Math.round(getLvAtk() * ce.allAtk(getSel())) * getAtk()) * 30 / ce.getItv(getSel()));
 		else
 			cdps.setText("-");
+
+		String d = data.getPack().getExplanation();
+		entDesc.setText(d.isEmpty() ? "Description" : d);
 
 		comm.setSelected(data.common);
 		if (!comm.isSelected())
@@ -615,6 +624,18 @@ public abstract class EntityEditPage extends Page {
 			Soul s = (Soul) jcbs.getSelectedItem();
 
 			ce.death = s == null ? null : s.getID();
+			setData(ce);
+		});
+
+		entDesc.setLnr(j -> {
+			String txt = entDesc.getText();
+			if (txt.equals("Description") || txt.isEmpty())
+				ce.getPack().description.remove();
+			else {
+				if (txt.replace("\n", "").length() > 256)
+					txt = txt.substring(0, 256);
+				ce.getPack().description.put(txt);
+			}
 			setData(ce);
 		});
 

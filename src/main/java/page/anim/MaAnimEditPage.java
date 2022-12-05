@@ -12,14 +12,11 @@ import page.Page;
 import page.support.AnimTreeRenderer;
 import page.support.TreeNodeExpander;
 
-
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
@@ -67,7 +64,7 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 	private final JBTN sort = new JBTN(0, "sort");
 	private final JBTN camres = new JBTN(0, "rescam");
 	private final JBTN zomres = new JBTN(0, "reszom");
-	private final JLabel inft = new JLabel();
+	private final JTF inft = new JTF();
 	private final JLabel inff = new JLabel();
 	private final JLabel infv = new JLabel();
 	private final JLabel infm = new JLabel();
@@ -111,6 +108,7 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 		if (ind < 0 || ac == null)
 			return;
 		int time = ab.getEntity() == null ? 0 : ab.getEntity().ind();
+		setJTL();
 		ab.setEntity(ac.getEAnim(ac.types[ind]));
 		ab.getEntity().setTime(time);
 	}
@@ -266,15 +264,14 @@ public class MaAnimEditPage extends Page implements AbEditPage {
     public void timer(int t) {
 		if (!pause)
 			eupdate();
-		if (ab.getEntity() != null && mpet.part != null) {
+
+		if (mpet.part != null) {
 			Part p = mpet.part;
 			EPart ep = ab.getEntity().ent[p.ints[0]];
-			inft.setText("frame: " + ab.getEntity().ind());
 			inff.setText("part frame: " + (p.frame - p.off));
 			infv.setText("actual value: " + ep.getVal(p.ints[1]));
 			infm.setText("part value: " + p.vd);
 		} else {
-			inft.setText("");
 			inff.setText("");
 			infv.setText("");
 			infm.setText("");
@@ -442,49 +439,52 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 			setA(maet.anim);
 		});
 
-		tmul.addFocusListener(new FocusAdapter() {
+		tmul.setLnr(j -> {
+			if (changing)
+				return;
+			changing = true;
 
-			@Override
-			public void focusLost(FocusEvent e) {
-				if (changing)
-					return;
-				changing = true;
-
-				double d = CommonStatic.parseIntN(tmul.getText()) * 0.01;
-
-				if(d <= 0) {
-					tmul.setText("");
-					changing = false;
-					return;
-				}
-
-				String str = d < 1 ? "Decrease " : "Increase ";
-				if (!Opts.conf(str + "animation speed to " + (d * 100) + "%?")) {
-					changing = false;
-					return;
-				}
-
-				if (lmul.isSelected() && maet.getSelected().length > 0) {
-					for (Part p : maet.getSelected()) {
-						for (int[] line : p.moves)
-							line[0] *= d;
-						p.off *= d;
-						p.validate();
-					}
-				} else
-					for (Part p : maet.ma.parts) {
-						for (int[] line : p.moves)
-							line[0] *= d;
-						p.off *= d;
-						p.validate();
-					}
-				maet.ma.validate();
-				maet.anim.unSave("maanim multiply");
+			double d = CommonStatic.parseIntN(tmul.getText()) * 0.01;
+			if(d <= 0) {
+				tmul.setText("");
 				changing = false;
+				return;
 			}
-
+			String str = d < 1 ? "Decrease " : "Increase ";
+			if (!Opts.conf(str + "animation speed to " + (d * 100) + "%?")) {
+				changing = false;
+				return;
+			}
+			if (lmul.isSelected() && maet.getSelected().length > 0) {
+				for (Part p : maet.getSelected()) {
+					for (int[] line : p.moves)
+						line[0] *= d;
+					p.off *= d;
+					p.validate();
+				}
+			} else
+				for (Part p : maet.ma.parts) {
+					for (int[] line : p.moves)
+						line[0] *= d;
+					p.off *= d;
+					p.validate();
+				}
+			maet.ma.validate();
+			maet.anim.unSave("maanim multiply");
+			changing = false;
 		});
 
+		inft.setLnr(j -> {
+			if (changing || isAdj())
+				return;
+			int l = CommonStatic.parseIntN(inft.getText());
+			if (l < 0)
+				return;
+			changing = true;
+			ab.getEntity().setTime(l);
+			jtl.setValue(l);
+			changing = false;
+		});
 	}
 
 	private void addListeners$2() {
@@ -544,6 +544,7 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 		jtb.addActionListener(arg0 -> {
 			pause = jtb.isSelected();
 			jtl.setEnabled(pause && ab.getEntity() != null);
+			inft.setEnabled(pause && ab.getEntity() != null);
 		});
 
 		nex.addActionListener(arg0 -> eupdate());
@@ -552,6 +553,7 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 			if (isAdj() || !pause)
 				return;
 			ab.getEntity().setTime(jtl.getValue());
+			inft.setText("frame: " + ab.getEntity().ind());
 		});
 
 		advs.setLnr(() -> new AdvAnimEditPage(this, maet.anim, maet.anim.types[jlt.getSelectedIndex()]));
@@ -562,8 +564,10 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 
 	private void eupdate() {
 		ab.update();
-		if (ab.getEntity() != null)
+		if (ab.getEntity() != null) {
 			change(0, x -> jtl.setValue(ab.getEntity().ind()));
+			inft.setText(ab.getEntity() != null ? "frame: " + ab.getEntity().ind() : "");
+		}
 	}
 
 	private void ini() {
@@ -657,6 +661,9 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 			advs.setEnabled(anim != null);
 			sort.setEnabled(anim != null);
 			jtl.setEnabled(anim != null);
+			inft.setEnabled(ab.getEntity() != null);
+			inft.setText(ab.getEntity() != null ? "frame: " + ab.getEntity().ind() : "");
+
 			if (ac == null || ind == -1) {
 				maet.setAnim(null, null);
 				ab.setEntity(null);
@@ -671,27 +678,30 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 				row = -1;
 			}
 			setC(row);
-
-			jtl.setMinimum(0);
-			jtl.setMaximum(ab.getEntity().len());
-			jtl.setLabelTable(null);
-			if (ab.getEntity().len() <= 50) {
-				jtl.setMajorTickSpacing(5);
-				jtl.setMinorTickSpacing(1);
-			} else if (ab.getEntity().len() <= 200) {
-				jtl.setMajorTickSpacing(10);
-				jtl.setMinorTickSpacing(2);
-			} else if (ab.getEntity().len() <= 1000) {
-				jtl.setMajorTickSpacing(50);
-				jtl.setMinorTickSpacing(10);
-			} else if (ab.getEntity().len() <= 5000) {
-				jtl.setMajorTickSpacing(250);
-				jtl.setMinorTickSpacing(50);
-			} else {
-				jtl.setMajorTickSpacing(1000);
-				jtl.setMinorTickSpacing(200);
-			}
+			setJTL();
 		});
+	}
+
+	public void setJTL() {
+		jtl.setMinimum(0);
+		jtl.setMaximum(ab.getEntity().len());
+		jtl.setLabelTable(null);
+		if (ab.getEntity().len() <= 50) {
+			jtl.setMajorTickSpacing(5);
+			jtl.setMinorTickSpacing(1);
+		} else if (ab.getEntity().len() <= 200) {
+			jtl.setMajorTickSpacing(10);
+			jtl.setMinorTickSpacing(2);
+		} else if (ab.getEntity().len() <= 1000) {
+			jtl.setMajorTickSpacing(50);
+			jtl.setMinorTickSpacing(10);
+		} else if (ab.getEntity().len() <= 5000) {
+			jtl.setMajorTickSpacing(250);
+			jtl.setMinorTickSpacing(50);
+		} else {
+			jtl.setMajorTickSpacing(1000);
+			jtl.setMinorTickSpacing(200);
+		}
 	}
 
 	private void setC(int ind) {

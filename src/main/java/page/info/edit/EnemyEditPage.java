@@ -24,11 +24,9 @@ public class EnemyEditPage extends EntityEditPage {
 	private final JBTN stat = new JBTN(MainLocale.PAGE, "stat");
 	private final JBTN impt = new JBTN(MainLocale.PAGE, "import");
 	private final JBTN vuni = new JBTN(MainLocale.PAGE, "unit");
-	private final JTF[] edesc = new JTF[4];
 	private final EnemyEditBox eeb;
 	private final Enemy ene;
 	private final CustomEnemy ce;
-	private String[] eneDesc;
 
 	public EnemyEditPage(Page p, Enemy e, PackData.UserPack pack) {
 		super(p, e.id.pack, (CustomEntity) e.de, pack.editable, true);
@@ -71,42 +69,9 @@ public class EnemyEditPage extends EntityEditPage {
 		add(stat);
 		add(impt);
 		add(vuni);
-		for (int i = 0 ; i < edesc.length ; i++)
-			add(edesc[i] = new JTF());
-
-		for (JTF jtf : edesc)
-			jtf.setEnabled(editable);
-
-		for (int i = 0; i < edesc.length; i++) {
-			int finalI = i;
-			edesc[i].setLnr(d -> changeDesc(finalI));
-		}
 
 		stat.setLnr(x -> changePanel(new EnemyInfoPage(this, ENode.getList(UserProfile.getAll(ene.id.pack, Enemy.class), ene))));
 		subListener(impt, vuni, vene, ene);
-	}
-
-	private void changeDesc(int line) {
-		String txt = edesc[line].getText().trim();
-		if (!txt.equals("Description Line " + (line + 1))) {
-			eneDesc[line] = txt;
-			if (txt.length() > 63) {
-				for (int i = line; i + 1 < edesc.length; i++) {
-					if (eneDesc[i].length() > 63) {
-						eneDesc[i + 1] = eneDesc[i].substring(63) + eneDesc[i + 1];
-						eneDesc[i] = eneDesc[i].substring(0, 63);
-					}
-				}
-				if (eneDesc[edesc.length - 1].length() > 63)
-					eneDesc[edesc.length - 1] = eneDesc[edesc.length - 1].substring(0, 63);
-			}
-		}
-		String finalDesc = String.join("<br>", eneDesc);
-		if (finalDesc.length() > 12) //12 is the total length of "<br><br><br>", which is no description
-			ene.description.put(finalDesc);
-		else
-			ene.description.put("");
-		setData(ce);
 	}
 
 	@Override
@@ -122,19 +87,9 @@ public class EnemyEditPage extends EntityEditPage {
 			set(vuni, x, y, 450, 1150, 200, 50);
 			set(vene, x, y, 1800, 1100, 200, 50);
 			set(stat, x, y, 2000, 1100, 200, 50);
-			int h = 1000;
-			for (JTF jtf : edesc) {
-				set(jtf, x, y, 1050, h, 750, 50);
-				h += 50;
-			}
 		} else {
 			set(vene, x, y, 650, 1000, 200, 50);
 			set(stat, x, y, 850, 1000, 200, 50);
-			for (int i = 0; i < 4; i++) {
-				if (edesc.length == i)
-					break;
-				set(edesc[i], x, y, 1050, 1000 + (50 * i), 750, 50);
-			}
 		}
 		eeb.resized();
 
@@ -143,12 +98,6 @@ public class EnemyEditPage extends EntityEditPage {
 	@Override
 	protected void setData(CustomEntity data) {
 		super.setData(data);
-		eneDesc = ene.getExplaination().split("<br>",4);
-		if (eneDesc.length < 4)
-			eneDesc = new String[]{"","","",""};
-
-		for (int i = 0; i < 4; i++)
-			edesc[i].setText("" + (eneDesc[i].length() > 0 ? eneDesc[i] : "Description Line " + (i + 1)));
 		fsr.setText("star: " + ce.star);
 		fdr.setText("" + Math.floor(ce.getDrop() * bas.t().getDropMulti()) / 100);
 		fli.setText(ce.getLimit() + "");

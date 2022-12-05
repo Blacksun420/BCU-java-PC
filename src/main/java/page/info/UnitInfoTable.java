@@ -119,7 +119,7 @@ public class UnitInfoTable extends Page {
 			l += special.length;
 		if (f.du.getAtkTypeCount() > 1)
 			l += 1;
-		return (l + (proc.length + 1) / 2) * 50 + (f.getExplaination().replace("<br>", "").length() > 0 ? 200 : 0);
+		return (l + (proc.length + 1) / 2) * 50 + (f.getExplanation().replace("\n","").length() > 0 ? 200 : 0);
 	}
 
 	protected void reset() {
@@ -330,7 +330,7 @@ public class UnitInfoTable extends Page {
 		add(prevatk);
 		add(atkind);
 		add(nextatk);
-		String fDesc = f.getExplaination().replace("<br>", "\n");
+		String fDesc = f.getExplanation();
 		if (fDesc.replace("\n", "").length() > 0)
 			add(desc);
 		descr.setText(f.toString().replace((f.uid == null ? "NULL" : f.uid.id) + "-" + f.fid + " ", "") + "\n" + fDesc);

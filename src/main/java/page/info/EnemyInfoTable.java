@@ -234,7 +234,7 @@ public class EnemyInfoTable extends Page {
 			l += special.length;
 		if (e.de.getAtkTypeCount() > 1)
 			l += 1;
-		return (l + (proc.length + (proc.length % 2 == 1 ? 1 : 0)) / 2) * 50 + (e.getExplaination().replace("<br>", "").length() > 0 ? 200 : 0);
+		return (l + (proc.length + (proc.length % 2 == 1 ? 1 : 0)) / 2) * 50 + (e.getExplanation().replace("\n","").length() > 0 ? 200 : 0);
 	}
 
 	private void ini() {
@@ -330,7 +330,7 @@ public class EnemyInfoTable extends Page {
 		add(prevatk);
 		add(atkind);
 		add(nextatk);
-		String eDesc = e.getExplaination().replace("<br>", "\n");
+		String eDesc = e.getExplanation();
 		if (eDesc.replace("\n", "").length() > 0)
 			add(desc);
 		descr.setText(e.toString().replace(Data.trio(e.id.id) + " - ", "") + (e.de.getTraits().size() > 0 && !e.de.getTraits().contains(UserProfile.getBCData().traits.get(Data.TRAIT_WHITE)) ? " (" + Interpret.getTrait(TraitBox, 0) + ")" : "") + (e.de.getStar() > 2 ? " (Cool Dude)" : "") + "\n" + eDesc);
