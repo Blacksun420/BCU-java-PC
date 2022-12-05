@@ -67,17 +67,14 @@ public class StageViewPage extends StagePage {
 	@Override
 	protected void setData(Stage st) {
 		super.setData(st);
+		info.setEnabled(st != null && st.info != null);
 		cpst.setEnabled(st != null);
 		recd.setEnabled(st != null);
 	}
 
 	private void addListeners() {
 
-		info.setLnr(x -> {
-			if (stage == null || stage.info == null)
-				return;
-			Opts.pop(stage.info.getHTML(), "stage info");
-		});
+		info.setLnr(x -> Opts.pop(stage.info.getHTML(), "stage info"));
 
 		recd.setLnr(x -> changePanel(new StRecdPage(this, stage, false)));
 

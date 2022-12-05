@@ -2,18 +2,27 @@ package page.info.edit;
 
 import common.CommonStatic;
 import common.pack.PackData.UserPack;
+import common.pack.UserProfile;
 import common.util.stage.MapColc;
 import common.util.stage.SCDef;
 import common.util.stage.SCGroup;
 import common.util.stage.Stage;
 import common.util.stage.info.CustomStageInfo;
+import common.util.stage.info.StageInfo;
 import common.util.unit.AbEnemy;
+import common.util.unit.Level;
 import main.Opts;
 import page.*;
 import page.info.StageViewPage;
+import page.info.UnitInfoPage;
+import page.info.filter.UnitFindPage;
 import page.support.AnimLCR;
+import utilpc.UtilPC;
 
 import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +55,12 @@ public class AdvStEditPage extends Page {
 	private final JL jltprob = new JL(MainLocale.PAGE, "total");
 	private final JTF jtprob = new JTF();
 	private final JBTN equal = new JBTN(MainLocale.PAGE, "equalprob");
+	private final JL jubas = new JL(MainLocale.PAGE, "ubase");
+	private final JLabel lves = new JL();
+	private final JTF ubaslv = new JTF();
+
 	private StageViewPage svp;
+	private UnitFindPage ufp;
 
 	private final Stage st;
 	private final SCDef data;
@@ -84,6 +98,9 @@ public class AdvStEditPage extends Page {
 		set(jltprob, x, y, 1200, 900, 150, 50);
 		set(jtprob, x, y, 1350, 900, 150, 50);
 		set(equal, x, y, 1200, 950, 300, 50);
+		set(jubas, x, y, 1200, 1050, 300, 50);
+		set(lves, x, y, 1200, 1100, 300, 50);
+		set(ubaslv, x, y, 1200, 1150, 300, 50);
 		sget.setRowHeight(size(x, y, 50));
 	}
 
@@ -188,6 +205,31 @@ public class AdvStEditPage extends Page {
 			jtprob.setText(csi.totalChance + "%");
 		});
 
+		jubas.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				super.mouseClicked(e);
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					if (ufp == null) {
+						String pac = st.id.pack.substring(0, st.id.pack.indexOf('/'));
+						ufp = new UnitFindPage(getThis(), pac, UserProfile.getUserPack(pac).desc.dependency);
+					}
+					changePanel(ufp);
+				} else if (st.info != null && ((CustomStageInfo)st.info).ubase != null)
+					changePanel(new UnitInfoPage(getThis(), ((CustomStageInfo)st.info).ubase.unit, ((CustomStageInfo)st.info).lv.getLvs()));
+			}
+		});
+
+		ubaslv.addActionListener(l -> {
+			if (st.info == null)
+				return;
+			CustomStageInfo csi = (CustomStageInfo)st.info;
+			if (csi.ubase == null)
+				return;
+			csi.lv.setLvs(CommonStatic.parseIntsN(ubaslv.getText()));
+			ubaslv.setText(UtilPC.lvText(csi.ubase, csi.lv.getLvs())[0]);
+		});
+
 		equal.setLnr(e -> ((CustomStageInfo)st.info).equalizeChances());
 	}
 
@@ -223,6 +265,9 @@ public class AdvStEditPage extends Page {
 		add(jltprob);
 		add(jtprob);
 		add(equal);
+		add(jubas);
+		add(lves);
+		add(ubaslv);
 		jle.setCellRenderer(new AnimLCR());
 		jle.setListData(aes);
 		sdef.setText("default: " + data.sdef);
@@ -235,6 +280,7 @@ public class AdvStEditPage extends Page {
 		setListG();
 		addListeners$0();
 		addListeners$1();
+		setUBase(st.info);
 	}
 
 	private void setListG() {
@@ -267,6 +313,25 @@ public class AdvStEditPage extends Page {
 		jtprob.setText(si != null ? si.totalChance + "%" : "");
 	}
 
+	public void setUBase(StageInfo si) {
+		if (si == null || ((CustomStageInfo)si).ubase == null) {
+			ubaslv.setEnabled(false);
+			ubaslv.setText("");
+			lves.setText("");
+			jubas.setIcon(null);
+			jubas.setText("null");
+			return;
+		}
+		CustomStageInfo csi = (CustomStageInfo)si;
+		ubaslv.setEnabled(true);
+		String[] lvss = UtilPC.lvText(csi.ubase, csi.lv.getLvs());
+		lves.setText(lvss[1]);
+		ubaslv.setText(lvss[0]);
+		if (csi.ubase.getIcon() != null)
+			jubas.setIcon(new ImageIcon((BufferedImage) csi.ubase.getIcon().getImg().bimg()));
+		jubas.setText(csi.ubase.toString());
+	}
+
 	@Override
 	public void renew() {
 		if (svp != null && svp.getSelectedStages().size() > 0) {
@@ -286,6 +351,30 @@ public class AdvStEditPage extends Page {
 			csi.checkChances();
 			jex.setListData(st.info.getExStages());
 			setFollowups(csi);
+			svp = null;
+		}
+		if (ufp != null) {
+			if (st.info == null)
+				if (ufp.getForm() == null) {
+					ufp = null;
+					return;
+				} else
+					st.info = new CustomStageInfo(st);
+			CustomStageInfo csi = (CustomStageInfo)st.info;
+
+			if (csi.ubase != ufp.getForm() && (csi.ubase == null || Opts.conf("Replace base " + csi.ubase + " with " + ufp.getForm() + "?"))) {
+				csi.ubase = ufp.getForm();
+				if (csi.ubase != null)
+					csi.lv = new Level(csi.ubase.getPrefLvs());
+				else {
+					csi.lv = null;
+					if (csi.stages.isEmpty()) {
+						csi.destroy();
+					}
+				}
+				setUBase(csi);
+			}
+			ufp = null;
 		}
 	}
 

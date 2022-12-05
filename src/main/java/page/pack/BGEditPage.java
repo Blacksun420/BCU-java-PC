@@ -311,8 +311,7 @@ public class BGEditPage extends Page {
 
 		if (b) {
 			bgr.check();
-			top.setEnabled(bgr.parts.length > Background.TOP);
-
+			top.setEnabled(bgr.parts.length > Background.TOP && bgr.img.getImg().getHeight() == 1024);
 			top.setSelected(bgr.top);
 
 			for (int i = 0; i < 4; i++) {

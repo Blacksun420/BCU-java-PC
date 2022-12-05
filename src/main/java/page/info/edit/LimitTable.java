@@ -130,7 +130,7 @@ public class LimitTable extends Page {
 	private void addListeners() {
 
 		one.addActionListener(arg0 -> {
-			lim.line = lim.line + 1 % 3;
+			lim.line = (lim.line + 1) % 3;
 			one.setText(MainLocale.getLoc(MainLocale.INFO, "row" + lim.line));
 		});
 

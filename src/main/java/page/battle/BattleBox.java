@@ -583,17 +583,14 @@ public interface BattleBox {
 
 		private void drawCastle(FakeGraphics gra) {
 			FakeTransform at = gra.getTransform();
-			boolean drawCast = sb.ebase instanceof Entity;
 			int posy = (int) (midh - road_h * bf.sb.siz);
 			int posx = (int) ((sb.ebase.pos * ratio + off) * bf.sb.siz + sb.pos);
 
 			double shake = 0.0;
-
-			if(sb.ebase.health <= 0 || (drawCast ? ((EEnemy) sb.ebase).hit : ((ECastle) sb.ebase).hit) > 0) {
+			if(sb.ebase.health <= 0 || (sb.ebase.hit) > 0)
 				shake = (2 + (sb.time % 2 * -4)) * bf.sb.siz;
-			}
 
-			if (!drawCast) {
+			if (!(sb.ebase instanceof Entity)) {
 				Identifier<CastleImg> cind = sb.st.castle;
 				VImg cast = Identifier.getOr(cind, CastleImg.class).img;
 				FakeImage bimg = cast.getImg();
@@ -617,12 +614,22 @@ public interface BattleBox {
 			posx = (int) (((sb.st.len - 800) * ratio + off) * bf.sb.siz + sb.pos);
 
 			shake = 0.0;
-
-			if(sb.ubase.health <= 0 || ((ECastle)sb.ubase).hit > 0) {
+			if(sb.ubase.health <= 0 || sb.ubase.hit > 0)
 				shake = (2 + (sb.time % 2 * -4)) * bf.sb.siz;
-			}
 
-			drawNyCast(gra, (int) (midh - road_h * bf.sb.siz), (int) (posx + shake), bf.sb.siz, sb.nyc);
+			if (sb.ubase instanceof ECastle)
+				drawNyCast(gra, (int) (midh - road_h * bf.sb.siz), (int) (posx + shake), bf.sb.siz, sb.nyc);
+			else {
+				if(sb.temp_inten == 0 || (sb.ubase.getAbi() & Data.AB_TIMEI) == 0) {
+					posx = (int) getX(sb.ubase.pos);
+
+					((Entity) sb.ubase).anim.draw(gra, setP(posx + shake, (int) (midh - road_h * bf.sb.siz)), bf.sb.siz * sprite);
+
+					if(sb.ubase.health > 0)
+						((Entity) sb.ubase).anim.drawEff(gra, setP(posx + shake, (int) (midh - road_h * bf.sb.siz)), bf.sb.siz * sprite);
+					gra.setTransform(at);
+				}
+			}
 			posx += castw * bf.sb.siz / 2;
 			Res.getBase(sb.ubase, setSym(gra, bf.sb.siz, posx, posy, 1), false);
 		}
@@ -724,7 +731,18 @@ public interface BattleBox {
 				}
 			}
 
-			if(sb.ubase instanceof ECastle) {
+			if(sb.ubase instanceof Entity) {
+				if (sb.temp_inten == 0 || (sb.ubase.getAbi() & Data.AB_TIMEI) > 0) {
+					if (((Entity) sb.ubase).anim.smoke != null && !((Entity) sb.ubase).anim.smoke.done()) {
+						gra.setTransform(at);
+
+						double sx = getX(((Entity) sb.ubase).anim.smokeX);
+						double sy = midh - (road_h - ((Entity) sb.ubase).anim.smokeLayer * DEP + 100.0) * bf.sb.siz;
+
+						((Entity) sb.ubase).anim.smoke.draw(gra, setP(sx, sy), psiz * 1.2);
+					}
+				}
+			} else if(sb.ubase instanceof ECastle) {
 				if(sb.temp_inten == 0 && ((ECastle) sb.ubase).smoke != null && !((ECastle) sb.ubase).smoke.done()) {
 					gra.setTransform(at);
 
@@ -805,7 +823,7 @@ public interface BattleBox {
 				if((sb.ebase.getAbi() * Data.AB_TIMEI) != 0) {
 					double shake = 0.0;
 
-					if(sb.ebase.health <= 0 || (sb.ebase instanceof ECastle && ((ECastle) sb.ebase).hit > 0) || (sb.ebase instanceof EEnemy && ((EEnemy) sb.ebase).hit > 0)) {
+					if(sb.ebase.health <= 0 || sb.ebase.hit > 0) {
 						shake = (2 + (sb.time % 2 * -4)) * bf.sb.siz;
 					}
 
@@ -821,6 +839,26 @@ public interface BattleBox {
 
 						if (sb.ebase.health > 0 && (((Entity) sb.ebase).anim.corpse == null || ((Entity) sb.ebase).anim.corpse.type == EffAnim.ZombieEff.BACK))
 							((Entity) sb.ebase).anim.drawEff(gra, setP(posx + shake, posy), bf.sb.siz * sprite);
+					}
+				}
+				if((sb.ubase.getAbi() * Data.AB_TIMEI) != 0) {
+					double shake = 0.0;
+
+					if(sb.ubase.health <= 0 || sb.ubase.hit > 0)
+						shake = (2 + (sb.time % 2 * -4)) * bf.sb.siz;
+
+					if (sb.ubase instanceof Entity) {
+						int posx = (int) getX(sb.ubase.pos);
+						int posy = (int) (midh - road_h * bf.sb.siz);
+
+						((Entity) sb.ubase).anim.draw(gra, setP(posx + shake, posy), bf.sb.siz * sprite);
+
+						if(((Entity) sb.ubase).anim.smoke != null) {
+							((Entity) sb.ubase).anim.smoke.draw(gra, setP(posx + shake, posy), bf.sb.siz * sprite);
+						}
+
+						if (sb.ubase.health > 0 && (((Entity) sb.ubase).anim.corpse == null || ((Entity) sb.ubase).anim.corpse.type == EffAnim.ZombieEff.BACK))
+							((Entity) sb.ubase).anim.drawEff(gra, setP(posx + shake, posy), bf.sb.siz * sprite);
 					}
 				}
 

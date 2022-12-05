@@ -142,7 +142,7 @@ public class DescPage extends Page {
                 if (editable)
                     if (e.getButton() == MouseEvent.BUTTON1)
                         getImage(true, "Choose an icon for your pack");
-                    else if (e.getButton() == MouseEvent.BUTTON2 && Opts.conf()) {
+                    else if (Opts.conf()) {
                         File file = CommonStatic.ctx.getWorkspaceFile(pack.getSID() + "/icon.png");
                         if (file.delete()) {
                             pack.icon = null;
@@ -158,7 +158,7 @@ public class DescPage extends Page {
                 if (editable)
                     if (e.getButton() == MouseEvent.BUTTON1)
                         getImage(false, "Choose a banner for your pack (Recommended Res: 1050x550)");
-                    else if (e.getButton() == MouseEvent.BUTTON2 && Opts.conf()) {
+                    else if (Opts.conf()) {
                         File file = CommonStatic.ctx.getWorkspaceFile(pack.getSID() + "/banner.png");
                         if (file.delete()) {
                             pack.icon = null;
