@@ -30,6 +30,8 @@
 - A much slicker UI (Thanks to Hect0x1 for it)
 - Can't deploy any more text line when you reach deploy limit
 - Units now actually flip to face the right way when their speed ends up being a negative number
+- Multiple lines are easier to set up in descrpitions, and are no longer limited to 4
+- Manual frame change on Maanim Edit Page, auto-update MaEP slider when increasing anim length
 ### Bugs Fixed here that remain unfixed in the original repo
 - Strong Against/Massive Dmg/etc don't work via adv. trait targetting
 - Cursed/Sealed units become unaffected by trait-targetting enemies
