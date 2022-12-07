@@ -1,5 +1,6 @@
 package page.info.filter;
 
+import common.pack.SortedPackSet;
 import common.util.unit.AbUnit;
 import common.util.unit.Form;
 import common.util.unit.Unit;
@@ -7,7 +8,6 @@ import page.Page;
 import page.SupPage;
 
 import javax.swing.*;
-import java.util.List;
 
 public class UnitFindPage extends EntityFindPage<Form> implements SupPage<AbUnit> {
 
@@ -23,7 +23,7 @@ public class UnitFindPage extends EntityFindPage<Form> implements SupPage<AbUnit
 		resized();
 	}
 
-	public UnitFindPage(Page p, String pack, List<String> parents) {
+	public UnitFindPage(Page p, String pack, SortedPackSet<String> parents) {
 		super(p);
 
 		elt = new UnitListTable(this);

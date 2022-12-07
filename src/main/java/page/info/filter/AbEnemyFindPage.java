@@ -1,11 +1,11 @@
 package page.info.filter;
 
+import common.pack.SortedPackSet;
 import common.util.unit.AbEnemy;
 import page.Page;
 import page.SupPage;
 
 import javax.swing.*;
-import java.util.List;
 
 public class AbEnemyFindPage extends EntityFindPage<AbEnemy> implements SupPage<AbEnemy> {
 
@@ -21,7 +21,7 @@ public class AbEnemyFindPage extends EntityFindPage<AbEnemy> implements SupPage<
         resized();
     }
 
-    public AbEnemyFindPage(Page p, String pack, List<String> parents) {
+    public AbEnemyFindPage(Page p, String pack, SortedPackSet<String> parents) {
         super(p);
 
         elt = new AbEnemyListTable(this);

@@ -7,6 +7,7 @@ import common.battle.data.CustomEnemy;
 import common.io.PackLoader;
 import common.pack.Context.ErrType;
 import common.pack.PackData.UserPack;
+import common.pack.SortedPackSet;
 import common.pack.Source;
 import common.pack.Source.Workspace;
 import common.pack.Source.ZipSource;
@@ -716,7 +717,7 @@ public class PackEditPage extends Page {
 	private void setPack(UserPack pack) {
 		pac = pack;
 		boolean b = pac != null && pac.editable;
-		ArrayList<String> deps = pac != null ? parentedList(pac) : null;
+		SortedPackSet<String> deps = pac != null ? parentedList(pac) : null;
 		remp.setEnabled(pac != null && deps.isEmpty());
 
 		if(pac != null)
@@ -810,8 +811,8 @@ public class PackEditPage extends Page {
 		jlr.setListData(rel);
 	}
 
-	private ArrayList<String> parentedList(UserPack pack) {
-		ArrayList<String> pars = new ArrayList<>();
+	private SortedPackSet<String> parentedList(UserPack pack) {
+		SortedPackSet<String> pars = new SortedPackSet<>();
 		for(UserPack p : UserProfile.getUserPacks()) {
 			if(p.getSID().equals(pack.getSID()))
 				continue;

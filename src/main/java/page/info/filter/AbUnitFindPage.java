@@ -1,11 +1,12 @@
 package page.info.filter;
 
+import common.pack.SortedPackSet;
 import common.util.unit.AbForm;
 import common.util.unit.AbUnit;
-import page.*;
+import page.Page;
+import page.SupPage;
 
 import javax.swing.*;
-import java.util.List;
 
 public class AbUnitFindPage extends EntityFindPage<AbForm> implements SupPage<AbUnit> {
 
@@ -21,7 +22,7 @@ public class AbUnitFindPage extends EntityFindPage<AbForm> implements SupPage<Ab
         resized();
     }
 
-    public AbUnitFindPage(Page p, String pack, List<String> parents) {
+    public AbUnitFindPage(Page p, String pack, SortedPackSet<String> parents) {
         super(p);
 
         elt = new AbUnitListTable(this);

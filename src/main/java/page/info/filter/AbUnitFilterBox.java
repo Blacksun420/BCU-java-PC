@@ -1,5 +1,6 @@
 package page.info.filter;
 
+import common.pack.SortedPackSet;
 import common.util.unit.AbForm;
 import common.util.unit.Form;
 import common.util.unit.UniRand;
@@ -26,7 +27,7 @@ public class AbUnitFilterBox extends UnitFilterBox {
         super(p, lim, pri);
     }
 
-    public AbUnitFilterBox(Page p, String pack, List<String> parent) {
+    public AbUnitFilterBox(Page p, String pack, SortedPackSet<String> parent) {
         super(p, pack, parent);
     }
 

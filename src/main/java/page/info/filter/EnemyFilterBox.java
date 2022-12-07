@@ -1,6 +1,7 @@
 package page.info.filter;
 
 import common.pack.PackData;
+import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.lang.MultiLangCont;
 import common.util.lang.ProcLang;
@@ -31,7 +32,7 @@ public class EnemyFilterBox extends EntityFilterBox {
 		confirm();
 	}
 
-	protected EnemyFilterBox(Page p, String pack, List<String> parent) {
+	protected EnemyFilterBox(Page p, String pack, SortedPackSet<String> parent) {
 		super(p, pack, parent);
 
 		ini();

@@ -1,5 +1,6 @@
 package page.info.filter;
 
+import common.pack.SortedPackSet;
 import common.util.unit.AbEnemy;
 import main.Opts;
 import page.*;
@@ -33,7 +34,7 @@ public class AbEnemySelectionPage extends Page implements SupPage<AbEnemy> {
         this.index = index;
     }
 
-    public AbEnemySelectionPage(Page p, StageEditTable table, int index, String pack, List<String> parents) {
+    public AbEnemySelectionPage(Page p, StageEditTable table, int index, String pack, SortedPackSet<String> parents) {
         super(p);
 
         efb = new AbEnemyFilterBox(this, pack, parents);

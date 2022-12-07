@@ -15,25 +15,6 @@ public class AttList extends JList<String> {
 
 	private static final long serialVersionUID = 1L;
 
-	protected static void btnDealer(int x, int y, JTG[][] btns, JTG[] orop, int... ord) {
-		int h = 0, or = 0;
-		for (JTG[] sub : btns) {
-			int w = 0, j = 0;
-			if (ord[or] >= 0)
-				Page.set(orop[ord[or]], x, y, 0, h, 200, 50);
-			while (j < sub.length) {
-				if (!sub[j].getText().equals("(null)")) {
-					Page.set(sub[j], x, y, 250 + w % 10 * 175, h + w / 10 * 50, 175, 50);
-					w++;
-				}
-				j++;
-			}
-			h += (w - 1) / 10 * 50 + 50;
-			or++;
-		}
-
-	}
-
 	protected AttList(int type, int para) {
 		setSelectionBackground(Theme.DARK.NIMBUS_SELECT_BG);
 

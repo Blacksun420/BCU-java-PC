@@ -9,7 +9,6 @@ import page.MainLocale;
 import page.Page;
 import page.info.EnemyInfoPage;
 import page.support.EnemyTCR;
-import page.support.SortTable;
 
 import java.awt.*;
 

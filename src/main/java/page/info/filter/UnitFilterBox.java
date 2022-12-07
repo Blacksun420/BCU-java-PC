@@ -45,7 +45,7 @@ public class UnitFilterBox extends EntityFilterBox {
 		confirm();
 	}
 
-	public UnitFilterBox(Page p, String pack, List<String> parent) {
+	public UnitFilterBox(Page p, String pack, SortedPackSet<String> parent) {
 		super(p, pack, parent);
 		lim = null;
 		price = 0;

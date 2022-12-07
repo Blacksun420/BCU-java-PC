@@ -1,6 +1,7 @@
 package page.info.filter;
 
 import common.pack.PackData;
+import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.lang.MultiLangCont;
 import common.util.unit.AbEnemy;
@@ -20,7 +21,7 @@ public class AbEnemyFilterBox extends EnemyFilterBox {
         super(p);
     }
 
-    public AbEnemyFilterBox(Page p, String pack, List<String> parent) {
+    public AbEnemyFilterBox(Page p, String pack, SortedPackSet<String> parent) {
         super(p, pack, parent);
     }
 

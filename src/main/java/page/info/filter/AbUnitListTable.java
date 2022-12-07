@@ -11,7 +11,6 @@ import page.MainLocale;
 import page.Page;
 import page.info.UnitInfoPage;
 import page.pack.UREditPage;
-import page.support.SortTable;
 import page.support.UnitTCR;
 
 import java.awt.*;

@@ -2,6 +2,7 @@ package page.info.filter;
 
 import common.pack.FixIndexList;
 import common.pack.PackData;
+import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.unit.Trait;
 import page.JBTN;
@@ -9,7 +10,6 @@ import page.MainLocale;
 import page.Page;
 
 import javax.swing.*;
-import java.util.List;
 import java.util.Vector;
 
 import static utilpc.Interpret.ATKCONF;
@@ -19,7 +19,7 @@ public abstract class EntityFilterBox extends Page {
 
     public String name = ""; //Keeps all data for all filter pages. Consider rare and abis are the only difference between unit and enemy filters, as well as confirm function
     protected int minDiff = 5;
-    protected final List<String> parents;
+    protected final SortedPackSet<String> parents;
     protected final String pack;
 
     protected final JBTN[] orop = new JBTN[4];
@@ -37,7 +37,7 @@ public abstract class EntityFilterBox extends Page {
         parents = null;
     }
 
-    protected EntityFilterBox(Page p, String pack, List<String> parent) {
+    protected EntityFilterBox(Page p, String pack, SortedPackSet<String> parent) {
         super(p);
 
         this.pack = pack;
