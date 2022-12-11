@@ -687,33 +687,36 @@ public abstract class EntityEditPage extends Page {
 	}
 
 	private AtkDataModel get(int ind) {
-		if (isSp())
-			return getSelMask()[getSpInd(ind)];
+		if (isSp()) {
+			int real = 0;
+			AtkDataModel[][] sps = ce.getSpAtks(true);
+			while (ind >= sps[real].length)
+				ind -= sps[real++].length;
+
+			return sps[real][sps[real].length - 1 - ind];
+		}
 		return getSelMask()[ind];
 	}
 
-	protected int getSel() {
+	private int getSel() {
 		return Math.max(0, atkS.getSelectedIndex());
 	}
 
-	protected boolean isSp() {
+	private boolean isSp() {
 		return getSel() == ce.getAtkTypeCount();
 	}
 
-	protected int getSpInd(int ind) {
-		int l = 0;
-		for (int i = 0; i < getSelMask().length; i++)
-			if (getSelMask()[i] != null) {
-				if (l == ind)
-					return i;
-				l++;
+	private AtkDataModel[] getSelMask() {
+		if (isSp()) {
+			int num = getSel();
+			int real = 0;
+			AtkDataModel[][] sps = ce.getSpAtks(true);
+			while (num >= sps[real].length) {
+				real++;
+				num -= sps[real].length;
 			}
-		return ind;
-	}
-
-	protected AtkDataModel[] getSelMask() {
-		if (isSp())
-			return ce.getSpAtks(true)[getSel()];
+			return sps[real];
+		}
 		return ce.hits.get(getSel());
 	}
 
@@ -877,15 +880,15 @@ public abstract class EntityEditPage extends Page {
 
 	private void setA(int ind) {
 		setA(get(ind));
-		link.setEnabled(editable && ind < getSelMask().length);
-		copy.setEnabled(editable && ind < getSelMask().length);
-		atkn.setEnabled(editable && ind < getSelMask().length);
+		boolean b = editable && ind < getSelMask().length;
+		link.setEnabled(b);
+		copy.setEnabled(b);
+		atkn.setEnabled(b);
 		rem.setEnabled(editable && (isSp() || getSelMask().length > 1 || ind >= getSelMask().length));
 	}
 	private void setA(AtkDataModel adm) {
 		atkn.setText(adm.str);
 		aet.setData(adm, getAtk(), getLvAtk());
-		rem.setEnabled(editable && (isSp() || (getSelMask().length > 1)));
 		if (isSp()) {
 			if (adm.str.contains("revenge")) {
 				lpst.setText(MainLocale.INFO, "Post-HB");

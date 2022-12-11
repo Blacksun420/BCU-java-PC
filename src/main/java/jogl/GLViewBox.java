@@ -267,7 +267,7 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 
 	@Override
 	public void update() {
-		if (bg != null && bg.bgEffect != null) {
+		if (bg != null && bgEffect != null) {
 			if(!bgi) {
 				bgEffect.initialize(fw, sh - gh, sh + (gh / 2.0), bg);
 				bgi = true;

@@ -121,7 +121,7 @@ public class MainBCU {
 			LoadPage.prog("reading local animation group data");
 			AnimGroup.readGroupData();
 			LoadPage.prog("reading packs");
-			UserProfile.loadPacks();
+			UserProfile.loadPacks(true);
 			LoadPage.prog("reading basis");
 			BasisSet.read();
 			LoadPage.prog("reading replays");

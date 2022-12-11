@@ -6,7 +6,6 @@ import common.pack.Context.ErrType;
 import common.pack.PackData.UserPack;
 import common.pack.Source.Workspace;
 import common.pack.UserProfile;
-import common.system.fake.FakeImage;
 import common.util.pack.Background;
 import common.util.pack.bgeffect.BackgroundEffect;
 import main.MainBCU;
