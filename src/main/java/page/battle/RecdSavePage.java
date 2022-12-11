@@ -8,8 +8,6 @@ import page.JBTN;
 import page.JTF;
 import page.Page;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
@@ -48,8 +46,8 @@ public class RecdSavePage extends Page {
 			public void focusLost(FocusEvent arg0) {
 				String str = jtf.getText().trim();
 				if (str.length() == 0)
-					str = "new replay " + recd.st.toString();
-				str = MainBCU.validate(str, '#');
+					str = "new " + recd.st.get().toString() + " replay";
+				str = MainBCU.validate(str, '-');
 				jtf.setText(name = str);
 			}
 		});
@@ -58,7 +56,7 @@ public class RecdSavePage extends Page {
 			if (Replay.getMap().containsKey(name) && !Opts.conf("A replay named " + name + " already exists. Do you wish to overwrite?"))
 				return;
 
-			recd.rename(name, true);
+			recd.rename(name);
 			recd.write();
 			Replay.getMap().put(recd.rl.id, recd);
 
@@ -75,8 +73,8 @@ public class RecdSavePage extends Page {
 		add(jtf);
 		add(save);
 		addListeners();
-		String initName = name = "new replay " + recd.st.toString().replaceAll("/", "-");
-		jtf.setText(initName);
+		name = "new " + MainBCU.validate(recd.st.get().toString(),'-') + " replay";
+		jtf.setText(name);
 	}
 
 }

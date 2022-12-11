@@ -2,8 +2,10 @@ package page.battle;
 
 import common.util.stage.Replay;
 import common.util.stage.Stage;
+import main.MainBCU;
 import main.Opts;
 import page.JBTN;
+import page.JL;
 import page.JTF;
 import page.Page;
 import page.support.ReorderList;
@@ -21,6 +23,7 @@ public class StRecdPage extends AbRecdPage {
 	private final JBTN addr = new JBTN(0, "add");
 	private final JBTN remr = new JBTN(0, "rem");
 	private final JTF jtf = new JTF();
+	private final JL stdat = new JL();
 
 	protected final Stage st;
 
@@ -58,6 +61,7 @@ public class StRecdPage extends AbRecdPage {
 	@Override
 	protected void resized(int x, int y) {
 		super.resized(x, y);
+		set(stdat, x, y, 50, 50, 500, 50);
 		set(jsp, x, y, 50, 100, 500, 1100);
 		set(addr, x, y, 600, 400, 300, 50);
 		set(remr, x, y, 950, 400, 300, 50);
@@ -81,7 +85,7 @@ public class StRecdPage extends AbRecdPage {
 		super.setRecd(r);
 		remr.setEnabled(editable && r != null);
 		jtf.setEditable(editable && r != null);
-		jtf.setText(r == null ? "" : r.rl.toString());
+		jtf.setText(r == null ? "" : r.rl.id);
 	}
 
 	private void addListeners() {
@@ -121,7 +125,7 @@ public class StRecdPage extends AbRecdPage {
 			Replay r = list.getSelectedValue();
 			if (isAdj() || r == null)
 				return;
-			r.rename(jtf.getText(), true);
+			r.rename(MainBCU.validate(jtf.getText(), '-'));
 		});
 
 	}
@@ -131,6 +135,8 @@ public class StRecdPage extends AbRecdPage {
 		add(addr);
 		add(remr);
 		add(jtf);
+		add(stdat);
+		stdat.setText(st + "'s replays");
 		setList();
 		addListeners();
 	}

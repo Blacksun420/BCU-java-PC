@@ -50,6 +50,7 @@ public class RecdManagePage extends AbRecdPage {
 		for (PackData.UserPack pack : UserProfile.getUserPacks())
 			replays.addAll(pack.getReplays()); // FIXME Pack replays don't load properly after reopening BCU
 		jlr.setListData(replays);
+		System.out.println(replays);
 		jlr.setSelectedValue(r, true);
 		setRecd(r);
 		change(false);
@@ -77,7 +78,7 @@ public class RecdManagePage extends AbRecdPage {
 			Replay r = jlr.getSelectedValue();
 			if (r == null)
 				return;
-			r.rename(MainBCU.validate(rena.getText().trim(),'#'), true);
+			r.rename(MainBCU.validate(rena.getText().trim(),'-'));
 			rena.setText(r.rl.id);
 		});
 

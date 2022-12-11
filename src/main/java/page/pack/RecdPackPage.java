@@ -2,6 +2,9 @@ package page.pack;
 
 import common.pack.PackData.UserPack;
 import common.util.stage.Replay;
+import main.MainBCU;
+import main.Opts;
+import page.JL;
 import page.JTF;
 import page.Page;
 import page.battle.AbRecdPage;
@@ -15,6 +18,7 @@ public class RecdPackPage extends AbRecdPage {
 	private final JTF rena = new JTF();
 	private final JList<Replay> jlr = new JList<>();
 	private final JScrollPane jspr = new JScrollPane(jlr);
+	private final JL stdat = new JL();
 
 	private final UserPack pac;
 
@@ -34,6 +38,7 @@ public class RecdPackPage extends AbRecdPage {
 	@Override
 	protected void resized(int x, int y) {
 		super.resized(x, y);
+		set(stdat, x, y, 50, 50, 500, 50);
 		set(jspr, x, y, 50, 100, 500, 1100);
 		set(rena, x, y, 600, 500, 300, 50);
 	}
@@ -69,7 +74,7 @@ public class RecdPackPage extends AbRecdPage {
 			Replay r = jlr.getSelectedValue();
 			if (r == null)
 				return;
-			r.rename(rena.getText().trim(), true);
+			r.rename(MainBCU.validate(rena.getText().trim(), '-'));
 			rena.setText(r.rl.id);
 		});
 
@@ -78,6 +83,8 @@ public class RecdPackPage extends AbRecdPage {
 	private void ini() {
 		add(jspr);
 		add(rena);
+		add(stdat);
+		stdat.setText(pac + "'s replays");
 		addListeners();
 	}
 
