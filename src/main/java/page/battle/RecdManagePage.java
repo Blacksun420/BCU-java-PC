@@ -84,13 +84,11 @@ public class RecdManagePage extends AbRecdPage {
 		dele.addActionListener(arg0 -> {
 			Replay r = jlr.getSelectedValue();
 			File f = CommonStatic.ctx.getWorkspaceFile(r.rl.getPath() + ".replay");
-			if (f.exists())
-				f.delete();
-			else {
+			if (f.exists() && f.delete()) {
 				Replay.getMap().remove(r.rl.id);
 				setList();
+				setRecd(null);
 			}
-			setRecd(null);
 		});
 
 	}
