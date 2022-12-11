@@ -48,9 +48,8 @@ public class RecdManagePage extends AbRecdPage {
 		Replay r = jlr.getSelectedValue();
 		Vector<Replay> replays = new Vector<>(Replay.getMap().values());
 		for (PackData.UserPack pack : UserProfile.getUserPacks())
-			replays.addAll(pack.getReplays()); // FIXME Pack replays don't load properly after reopening BCU
+			replays.addAll(pack.getReplays());
 		jlr.setListData(replays);
-		System.out.println(replays);
 		jlr.setSelectedValue(r, true);
 		setRecd(r);
 		change(false);
