@@ -17,6 +17,8 @@ import static utilpc.Interpret.TRAIT_EVA;
 
 public abstract class EntityFilterBox extends Page {
 
+    private static final long serialVersionUID = 1L;
+
     public String name = ""; //Keeps all data for all filter pages. Consider rare and abis are the only difference between unit and enemy filters, as well as confirm function
     protected int minDiff = 5;
     protected final SortedPackSet<String> parents;

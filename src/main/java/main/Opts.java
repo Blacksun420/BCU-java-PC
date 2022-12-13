@@ -10,6 +10,7 @@ import common.util.stage.info.DefStageInfo;
 import page.*;
 import page.battle.BattleInfoPage;
 import page.pack.DescPage;
+import utilpc.UtilPC;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -284,21 +285,22 @@ public class Opts {
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 		int w = MainFrame.F.getRootPane().getWidth();
 		int h = MainFrame.F.getRootPane().getHeight();
+		int ph = pack.banner == null && !pack.editable ? (int) (h * 0.395) : (int) (h * 0.790);
 
-		p.setPreferredSize(new Dimension((int) (w * 0.545), (int) (h * 0.780)));
-		p.setBounds(25, 25, (int) (w * 0.545), (int) (h * 0.780));
+		p.setPreferredSize(new Dimension((int) (w * 0.545), ph));
+		p.setBounds(25, 25, (int) (w * 0.545), ph);
 
 		panel.add(p);
-		panel.setPreferredSize(new Dimension((int) (w * 0.545), (int) (h * 0.780)));
+		panel.setPreferredSize(new Dimension((int) (w * 0.545), ph));
 
 		panel.setBackground(new Color(64, 64, 64));
 
 		JOptionPane.showOptionDialog(
 				null,
 				panel,
-				Page.get(MainLocale.PAGE, "desc"),
+				(pack.toString().equals(pack.getSID()) ? "" : pack.getSID() + " - ") + Page.get(MainLocale.PAGE, "pdesc").replace("_", pack.toString()),
 				JOptionPane.DEFAULT_OPTION,
-				-1,
+				JOptionPane.PLAIN_MESSAGE,
 				null,
 				null,
 				null

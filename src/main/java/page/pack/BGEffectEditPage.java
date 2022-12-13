@@ -59,6 +59,8 @@ class EffectList extends JList<BackgroundEffect> {
 
 public class BGEffectEditPage extends Page {
 
+    private static final long serialVersionUID = 1L;
+
     private final EffectList jlbg = new EffectList();
     private final JScrollPane jspbg = new JScrollPane(jlbg);
     private final JBTN back = new JBTN(MainLocale.PAGE, "back");

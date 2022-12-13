@@ -23,11 +23,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class Interpret extends Data {
 
@@ -165,12 +166,11 @@ public class Interpret extends Data {
 	}
 
 	public static class ProcDisplay {
-		private String text;
-		private ImageIcon icon = null;
-		public ProcDisplay(String desc, BufferedImage img) {
+		private final String text;
+		private final ImageIcon icon;
+		public ProcDisplay(String desc, ImageIcon img) {
 			text = desc;
-			if (img != null)
-				icon = new ImageIcon(img);
+			icon = img;
 		}
 		@Override
 		public String toString() { return text; }
@@ -203,7 +203,7 @@ public class Interpret extends Data {
 		if (!allRangeSame(me, atkind)) {
 			LinkedHashMap<String, List<Integer>> LDInts = new LinkedHashMap<>();
 			MaskAtk[] atks = me.getAtks(atkind);
-			List<BufferedImage> ics = new ArrayList<>();
+			List<ImageIcon> ics = new ArrayList<>();
 
 			for (int i = 0; i < atks.length ; i++ ) {
 				int rs = atks[i].getShortPoint();
@@ -244,7 +244,7 @@ public class Interpret extends Data {
 			int p0 = Math.min(lds, lds + ldr);
 			int p1 = Math.max(lds, lds + ldr);
 			int r = Math.abs(ldr);
-			BufferedImage bi;
+			ImageIcon bi;
 			if (me.isOmni()) {
 				bi = UtilPC.getIcon(2, ATK_OMNI);
 			} else {
@@ -262,7 +262,7 @@ public class Interpret extends Data {
 					int revs = rev.getShortPoint();
 					int revl = rev.getLongPoint();
 					if (revs != 0 || revl != 0) {
-						BufferedImage bi;
+						ImageIcon bi;
 						if (rev.isOmni())
 							bi = (UtilPC.getIcon(2, ATK_OMNI));
 						else
@@ -351,7 +351,7 @@ public class Interpret extends Data {
 				}
 			} else {
 				LinkedHashMap<String, List<Integer>> atkMap = new LinkedHashMap<>();
-				List<BufferedImage> procIcons = new ArrayList<>();
+				List<ImageIcon> procIcons = new ArrayList<>();
 
 				MaskAtk ma = du.getRepAtk();
 
@@ -735,6 +735,23 @@ public class Interpret extends Data {
 
 				return builder.append(" Attack]").toString();
 		}
+	}
+
+	public static String translateDate(String date) {
+		StringBuilder ans = new StringBuilder();
+		int[] times = CommonStatic.parseIntsN(date);
+		switch (CommonStatic.getConfig().lang) {
+			case 3: //Japanese
+				ans.append(times[0]).append('月').append(times[1]).append('日').append(times[2]).append("年、")
+						.append(times[3] >= 12 ? "午後" : "午前").append((times[3] - 1) % 12 + 1).append('時');
+				break;
+			default: //English, also used for placeholder
+				String[] ms = new String[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+				ans.append(ms[times[0] - 1]).append(' ').append(getNumberExtension(times[1])).append(",").append(times[2]).append(" at ")
+						.append((times[3] - 1) % 12 + 1).append(times[3] >= 12 ? "PM" : "AM");
+				break;
+		}
+		return ans.toString();
 	}
 
 	private static String getNumberExtension(int i) {

@@ -54,18 +54,18 @@ class PCoinEditTable extends Page {
                         case Data.PC_AB:
                             for (int i = 0; i < Data.ABI_TOT; i++)
                                 if (((val[1] >> i) & 1) == 1) {
-                                    jl.setIcon(UtilPC.createIcon(0, i));
+                                    jl.setIcon(UtilPC.getIcon(0, i));
                                 }
                             break;
                         case Data.PC_P:
                         case Data.PC_IMU:
-                            jl.setIcon(UtilPC.createIcon(1, val[1]));
+                            jl.setIcon(UtilPC.getIcon(1, val[1]));
                             break;
                         case Data.PC_BASE:
-                            jl.setIcon(UtilPC.createIcon(4, val[1]));
+                            jl.setIcon(UtilPC.getIcon(4, val[1]));
                             break;
                         case Data.PC_TRAIT:
-                            jl.setIcon(UtilPC.createIcon(3, val[1]));
+                            jl.setIcon(UtilPC.getIcon(3, val[1]));
                             break;
                     }
                     return jl;
@@ -331,18 +331,18 @@ class PCoinEditTable extends Page {
             if (pdata[0] != -1)
                 if (pdata[0] == Data.PC_IMU) {
                     pCoin.setText(ProcLang.get().get(pdata[1]).full_name);
-                    pCoin.setIcon(UtilPC.createIcon(1, pdata[1]));
+                    pCoin.setIcon(UtilPC.getIcon(1, pdata[1]));
                 } else if (pdata[0] == Data.PC_AB) {
                     for (int i = 0; i < Data.ABI_TOT; i++) {
                         if (((pdata[1] >> i) & 1) == 1) {
                             pCoin.setText(Interpret.SABIS[i]);
-                            pCoin.setIcon(UtilPC.createIcon(0, i));
+                            pCoin.setIcon(UtilPC.getIcon(0, i));
                             break;
                         }
                     }
                 } else {
                     pCoin.setText(Interpret.TRAIT[pdata[1]]);
-                    pCoin.setIcon(UtilPC.createIcon(3,pdata[1]));
+                    pCoin.setIcon(UtilPC.getIcon(3,pdata[1]));
                 }
             else {
                 pCoin.setText("(None)");
@@ -359,7 +359,7 @@ class PCoinEditTable extends Page {
             chance[0].setText(text + " (Lv1)");
             chance[1].setText(text + " (Lv" + maxlv + ")");
             pCoin.setText(text);
-            pCoin.setIcon(UtilPC.createIcon(4, pdata[1]));
+            pCoin.setIcon(UtilPC.getIcon(4, pdata[1]));
         }
         if (pdata[0] == Data.PC_P) {
             int procChance = unit.getProc().getArr(pdata[1]).get(0);
@@ -370,7 +370,7 @@ class PCoinEditTable extends Page {
             ProcLang.ItemLang lang = ProcLang.get().get(pdata[1]);
             String[] langText = lang.list();
             pCoin.setText(lang.full_name);
-            pCoin.setIcon(UtilPC.createIcon(1, pdata[1]));
+            pCoin.setIcon(UtilPC.getIcon(1, pdata[1]));
 
             chance[0].setVisible(true);
             chance[1].setVisible(true);

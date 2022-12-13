@@ -296,10 +296,10 @@ public class EnemyInfoTable extends Page {
 		main[3][0].setText(MainLocale.INFO, "atktype");
 		if (e.de.isRange(dispAtk)) {
 			main[3][1].setText(MainLocale.INFO, "isr");
-			main[3][1].setIcon(UtilPC.createIcon(2, Data.ATK_AREA));
+			main[3][1].setIcon(UtilPC.getIcon(2, Data.ATK_AREA));
 		} else {
 			main[3][1].setText(MainLocale.INFO, "single");
-			main[3][1].setIcon(UtilPC.createIcon(2, Data.ATK_SINGLE));
+			main[3][1].setIcon(UtilPC.getIcon(2, Data.ATK_SINGLE));
 		}
 		main[3][2].setText(MainLocale.INFO, "will");
 		main[3][3].setText("" + (e.de.getWill() + 1));

@@ -127,29 +127,24 @@ public class UtilPC {
 		return new ImageIcon(temp);
 	}
 
-	public static BufferedImage getIcon(Data.Proc.ProcItem p, int type, int id) {
+	public static ImageIcon getIcon(Data.Proc.ProcItem p, int type, int id) {
 		if (id == Data.P_IMUWAVE && (p.get(0) == 0 || p.get(1) == 100))
-			return (BufferedImage) CommonStatic.getBCAssets().waveShield.getImg().bimg();
+			return getIcon(CommonStatic.getBCAssets().waveShield);
 
 		return getIcon(type, id);
 	}
 
-	public static BufferedImage getIcon(int type, int id) {
+	public static ImageIcon getIcon(int type, int id) {
 		type += id / 100;
 		id %= 100;
 		if (CommonStatic.getBCAssets().icon[type][id] == null)
 			return null;
-		return (BufferedImage) CommonStatic.getBCAssets().icon[type][id].getImg().bimg();
-	}
-
-	public static ImageIcon createIcon(int type, int id) {
-		BufferedImage img = getIcon(type, id);
-		if (img != null)
-			return new ImageIcon(img);
-		return null;
+		return getIcon(CommonStatic.getBCAssets().icon[type][id]);
 	}
 
 	public static ImageIcon getIcon(VImg v) {
+		if (v == null)
+			return null;
 		FakeImage img = v.getImg();
 		if (img == null)
 			return null;

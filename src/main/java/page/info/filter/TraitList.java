@@ -31,7 +31,7 @@ public class TraitList extends JList<Trait> {
                 Trait trait = (Trait)o;
                 if (trait.BCTrait) {
                     jl.setText(Interpret.TRAIT[trait.id.id]);
-                    jl.setIcon(UtilPC.createIcon(3, trait.id.id));
+                    jl.setIcon(UtilPC.getIcon(3, trait.id.id));
                 } else {
                     if (!editing)
                         jl.setText(trait.name);

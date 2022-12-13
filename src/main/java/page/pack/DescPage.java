@@ -3,11 +3,11 @@ package page.pack;
 import common.CommonStatic;
 import common.pack.Context;
 import common.pack.PackData.UserPack;
-import common.util.stage.StageMap;
 import main.MainBCU;
 import main.Opts;
 import page.*;
 import page.support.Importer;
+import utilpc.Interpret;
 import utilpc.UtilPC;
 
 import javax.imageio.ImageIO;
@@ -24,8 +24,6 @@ public class DescPage extends Page {
 
     private static final long serialVersionUID = 1L;
 
-    private final JL pname = new JL();
-    private final JL pid = new JL();
     private final JL pauth = new JL();
     private final JL panim = new JL();
     private final JLabel picon = new JLabel();
@@ -35,6 +33,7 @@ public class DescPage extends Page {
     private final JTF tver = new JTF();
     private final JL pbcuver = new JL();
     private final JL pdate = new JL();
+    private final JL pdatexp = new JL();
     private final JTA descDisplay = new JTA();
     private final JScrollPane descPane = new JScrollPane(descDisplay);
 
@@ -54,30 +53,25 @@ public class DescPage extends Page {
         add(descPane);
         descDisplay.setText(pack.desc.desc);
         descDisplay.setEnabled(editable);
-        add(pname);
-        pname.setText(pack.toString());
-        add(pid);
-        pid.setText("ID: " + pack.getSID());
         add(pauth);
-        pauth.setText(pack.desc.author == null ? "Unknown Creator" : "Made by " + pack.desc.author);
+        pauth.setText(pack.desc.author == null ? "No Author" : "By " + pack.desc.author);
+        add(pdate);
+        pdate.setText(pack.desc.creationDate == null ? "Unknown Creation Date" : get(MainLocale.PAGE, "cdate") + Interpret.translateDate(pack.desc.creationDate));
         if (!pack.editable) {
             add(panim);
             panim.setText((pack.desc.parentPassword == null ? "Parentable, " : "Unparentable, ") + "anims " +  (pack.desc.allowAnim ? "copyable" : "uncopyable"));
             add(pver);
-            pver.setText("Pack Version " + pack.desc.version);
+            pver.setText("Version: " + pack.desc.version);
             add(pbcuver);
-            pbcuver.setText("BCU Version: " + pack.desc.BCU_VERSION + (pack.desc.FORK_VERSION > 0 ? " " + pack.desc.FORK_VERSION + "f" : ""));
-            add(pdate);
-            pdate.setText(pack.desc.creationDate == null ? "Unknown Creation Date" : "Created at " + pack.desc.creationDate);
+            pbcuver.setText("Core Ver: " + pack.desc.BCU_VERSION + (pack.desc.FORK_VERSION > 0 ? " " + pack.desc.FORK_VERSION + "f" : ""));
+            add(pdatexp);
+            pdatexp.setText(pack.desc.exportDate == null ? "Unknown Export Date" : get(MainLocale.PAGE, "edate") + Interpret.translateDate(pack.desc.exportDate));
         } else {
             add(tver);
             tver.setText("Version " + pack.desc.version);
         }
-        int stageTot = 0;
-        for (StageMap smaps : pack.mc.maps)
-            stageTot += smaps.list.size();
         add(psta);
-        psta.setText(get(MainLocale.PAGE, "sttot") + " " + stageTot);
+        psta.setText(get(MainLocale.PAGE, "sttot") + " " + pack.mc.getStageCount());
 
         if (pack.icon != null || pack.editable) {
             add(setIcn);
@@ -105,29 +99,34 @@ public class DescPage extends Page {
         setComponentZOrder(descPane, 2);
         if (h == 50) {
             set(pbanner, x, y, 0, 0, 0, 0);
-            set(picon, x, y, 500, 0, 200, 200);
+            set(picon, x, y, 500, 0, 182, 182);
             set(setIcn, x, y, 100, 0, 300, 50);
             set(setBnr, x, y, 680, 0, 300, 50);
         } else {
             set(pbanner, x, y, 0, 0, 1300, 650);
-            set(picon, x, y, 0, 475, 182, 182);
-            if (pack.icon == null)
-                set(setIcn, x, y, 32, 475, 182, 182);
+            setComponentZOrder(pbanner, 1);
+            if (pack.icon == null) {
+                set(setIcn, x, y, 0, 475, 182, 182);
+                set(picon, x, y, 0, 475, 0, 0);
+                setComponentZOrder(setIcn, 0);
+            } else {
+                set(picon, x, y, 0, 475, 182, 182);
+                set(setIcn, x, y, 0, 475, 0, 0);
+                setComponentZOrder(picon, 0);
+            }
             set(setBnr, x, y, 680, 0, 0, 0);
         }
-        setComponentZOrder(pbanner, 1);
-        setComponentZOrder(picon, 0);
-        set(pname, x, y, 900, h, 350, 50);
-        set(pid, x, y, 900, h + 50, 350, 50);
-        set(pauth, x, y, 900, h + 100, 350, 50);
-        set(psta, x, y, 900, h + 200, 350, 50);
+        set(pauth, x, y, 900, h, 350, 50);
+        set(psta, x, y, 900, h + 100, 350, 50);
         if (!pack.editable) {
-            set(panim, x, y, 900, h + 150, 350, 50);
-            set(pver, x, y, 900, h + 250, 350, 50);
-            set(pbcuver, x, y, 900, h + 300, 350, 50);
-            set(pdate, x, y, 900, h + 350, 350, 50);
+            set(panim, x, y, 900, h + 50, 350, 50);
+            set(pver, x, y, 900, h + 150, 150, 50);
+            set(pbcuver, x, y, 1050, h + 150, 200, 50);
+            set(pdate, x, y, 900, h + 200, 350, 50);
+            set(pdatexp, x, y, 900, h + 250, 350, 50);
         } else {
-            set(tver, x, y, 900, h + 150, 350, 50);
+            set(tver, x, y, 900, h + 50, 350, 50);
+            set(pdate, x, y, 900, h + 150, 350, 100);
         }
     }
 

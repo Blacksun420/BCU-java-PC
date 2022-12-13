@@ -44,10 +44,8 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Vector;
 
 public class PackEditPage extends Page {
 
@@ -94,13 +92,13 @@ public class PackEditPage extends Page {
 	private final JBTN csol = new JBTN(MainLocale.PAGE, "csoul");
 	private final JBTN cbge = new JBTN(MainLocale.PAGE, "cbge");
 	private final JTG cmbo = new JTG(MainLocale.PAGE, "usecombo");
-	private final JBTN cdesc = new JBTN(MainLocale.PAGE, "desc");
+	private final JBTN cdesc = new JBTN(MainLocale.PAGE, "pinfo");
 
 	private final JTF jtfp = new JTF();
 	private final JTF jtfe = new JTF();
 	private final JTF jtfs = new JTF();
 
-	private final JL lbp = new JL(0, "pack");
+	private final JComboBox<String> lbp = new JComboBox<>();
 	private final JL lbe = new JL(0, "enemy");
 	private final JL lbd = new JL(0, "seleanim");
 	private final JL lbs = new JL(0, "stage");
@@ -112,12 +110,11 @@ public class PackEditPage extends Page {
 	private UserPack pac;
 	private Enemy ene;
 	private StageMap sm;
-	private boolean changing = false;
+	private boolean changing = false, unsorted = true;
 
 	public PackEditPage(Page p) {
 		super(p);
 		AnimGroup.workspaceGroup.renewGroup();
-		vpack.sort(null);
 		AnimGroupTree agt = new AnimGroupTree(jtd, Source.BasePath.ANIM);
 		agt.renewNodes();
 
@@ -531,7 +528,7 @@ public class PackEditPage extends Page {
 
 					if(pack == null) {
 						Opts.pop("Can't get parent pack ["+id+".pack.bcuzip] from data, aborting parent pack adding", "Can't find parent pack");
-						pac.desc.dependency.removeAll(passedParents);
+						passedParents.forEach(pac.desc.dependency::remove);
 						changing = false;
 						return;
 					}
@@ -544,7 +541,7 @@ public class PackEditPage extends Page {
 
 						if(pass == null) {
 							changing = false;
-							pac.desc.dependency.removeAll(passedParents);
+							passedParents.forEach(pac.desc.dependency::remove);
 							return;
 						}
 
@@ -552,7 +549,7 @@ public class PackEditPage extends Page {
 
 						if(!Arrays.equals(pack.desc.parentPassword, md5)) {
 							Opts.pop("You typed incorrect password", "Incorrect password");
-							pac.desc.dependency.removeAll(passedParents);
+							passedParents.forEach(pac.desc.dependency::remove);
 							changing = false;
 							return;
 						}
@@ -589,6 +586,48 @@ public class PackEditPage extends Page {
 				setRely(jlr.getSelectedValue());
 			}
 			changing = false;
+		});
+
+		lbp.addActionListener(j -> {
+			int method = lbp.getSelectedIndex();
+			switch (method) {
+				case 0:
+					if (unsorted)
+						return;
+					Vector<UserPack> vpack2 = new Vector<>(UserProfile.getUserPacks());
+					vpack.clear();
+					vpack.addAll(vpack2); //Dunno a more efficient way to unsort a list
+					break;
+				case 1:
+					vpack.sort(null);
+					break;
+				case 2:
+					vpack.sort(Comparator.comparing(UserPack::getSID));
+					break;
+				case 3:
+					vpack.sort(Comparator.comparing(p -> p.desc.getN("author")));
+					break;
+				case 4:
+					vpack.sort(Comparator.comparing(p -> p.desc.BCU_VERSION));
+					vpack.sort(Comparator.comparingInt(p -> p.desc.FORK_VERSION));
+					break;
+				case 5:
+					vpack.sort(Comparator.comparing(p -> p.desc.getN("cdate")));
+					break;
+				case 6:
+					vpack.sort(Comparator.comparing(p -> p.desc.getN("edate")));
+					break;
+				case 7:
+					vpack.sort(Comparator.comparingInt(p -> p.enemies.size()));
+					break;
+				case 8:
+					vpack.sort(Comparator.comparingInt(p -> p.units.size()));
+					break;
+				case 9:
+					vpack.sort(Comparator.comparingInt(p -> p.mc.getStageCount()));
+					break;
+			}
+			unsorted = method == 0;
 		});
 
 	}
@@ -661,6 +700,8 @@ public class PackEditPage extends Page {
 		jle.setCellRenderer(new AnimLCR());
 		jtd.setCellRenderer(new AnimTreeRenderer());
 		SwingUtilities.invokeLater(() -> jtd.setUI(new TreeNodeExpander(jtd)));
+		String[] sortMethods = get(MainLocale.PAGE, "psort", 10);
+		lbp.setModel(new DefaultComboBoxModel<>(sortMethods));
 		setPack(null);
 		addListeners();
 		addListeners$1();
