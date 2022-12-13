@@ -10,7 +10,6 @@ import common.util.stage.info.DefStageInfo;
 import page.*;
 import page.battle.BattleInfoPage;
 import page.pack.DescPage;
-import utilpc.UtilPC;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -283,15 +282,14 @@ public class Opts {
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-		int w = MainFrame.F.getRootPane().getWidth();
-		int h = MainFrame.F.getRootPane().getHeight();
-		int ph = pack.banner == null && !pack.editable ? (int) (h * 0.395) : (int) (h * 0.790);
+		int w = (int)(MainFrame.F.getRootPane().getWidth() * 0.545);
+		int h = (int)(MainFrame.F.getRootPane().getHeight() * (pack.banner == null && !pack.editable ? 0.225 : 0.71));
 
-		p.setPreferredSize(new Dimension((int) (w * 0.545), ph));
-		p.setBounds(25, 25, (int) (w * 0.545), ph);
+		p.setPreferredSize(new Dimension(w, h));
+		p.setBounds(25, 25, w, h);
 
 		panel.add(p);
-		panel.setPreferredSize(new Dimension((int) (w * 0.545), ph));
+		panel.setPreferredSize(new Dimension(w, h));
 
 		panel.setBackground(new Color(64, 64, 64));
 

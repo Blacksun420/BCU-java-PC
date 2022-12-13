@@ -51,7 +51,7 @@ public class DescPage extends Page {
 
     private void ini() {
         add(descPane);
-        descDisplay.setText(pack.desc.desc);
+        descDisplay.setText(pack.desc.info.toString());
         descDisplay.setEnabled(editable);
         add(pauth);
         pauth.setText(pack.desc.author == null ? "No Author" : "By " + pack.desc.author);
@@ -94,10 +94,10 @@ public class DescPage extends Page {
 
     @Override
     protected void resized(int x, int y) {
-        int h = pack.banner == null ? 50 : 650;
-        set(descPane, x, y, 0, h, 900, 400);
+        int h = pack.banner == null ? pack.editable ? 50 : 0 : 650;
+        set(descPane, x, y, 0, h, 900, 300);
         setComponentZOrder(descPane, 2);
-        if (h == 50) {
+        if (h != 650) {
             set(pbanner, x, y, 0, 0, 0, 0);
             set(picon, x, y, 500, 0, 182, 182);
             set(setIcn, x, y, 100, 0, 300, 50);
@@ -126,12 +126,12 @@ public class DescPage extends Page {
             set(pdatexp, x, y, 900, h + 250, 350, 50);
         } else {
             set(tver, x, y, 900, h + 50, 350, 50);
-            set(pdate, x, y, 900, h + 150, 350, 100);
+            set(pdate, x, y, 900, h + 150, 350, 50);
         }
     }
 
     private void addListeners() {
-        descDisplay.setLnr(c -> pack.desc.desc = descDisplay.getText());
+        descDisplay.setLnr(c -> pack.desc.info.put(descDisplay.getText()));
 
         picon.addMouseListener(new MouseAdapter() {
             @Override
