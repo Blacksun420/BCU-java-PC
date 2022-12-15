@@ -299,7 +299,7 @@ public class StageEditTable extends AbJTable implements Reorderable {
 					else
 						muls.add(new int[]{info[i].multiple,info[i].mult_atk});
 				}
-				MainFrame.changePanel(new EnemyInfoPage(page, ENode.getList(eList, (Enemy)e, muls)));
+				MainFrame.changePanel(new EnemyInfoPage(page, ENode.getListE(eList, (Enemy)e, muls)));
 			} if (e instanceof EneRand)
 				MainFrame.changePanel(new EREditPage(page, pack, (EneRand) e));
 		} else if(button == MouseEvent.BUTTON3) {
@@ -308,7 +308,7 @@ public class StageEditTable extends AbJTable implements Reorderable {
 			if(pack == null) {
 				find = new AbEnemySelectionPage(page, this, ind);
 			} else {
-				find = new AbEnemySelectionPage(page, this, ind, pack.getSID(), pack.desc.dependency);
+				find = new AbEnemySelectionPage(page, this, ind, pack);
 			}
 
 			MainFrame.changePanel(find);

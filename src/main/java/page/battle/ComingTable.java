@@ -105,7 +105,7 @@ class ComingTable extends AbJTable {
 				muls.add(new int[]{d[0],d[1]});
 			}
 		}
-		MainFrame.changePanel(new EnemyInfoPage(page, ENode.getList(eList, e, muls)));
+		MainFrame.changePanel(new EnemyInfoPage(page, ENode.getListE(eList, e, muls)));
 
 	}
 

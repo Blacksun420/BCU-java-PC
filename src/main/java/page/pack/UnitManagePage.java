@@ -4,17 +4,20 @@ package page.pack;
 import common.CommonStatic;
 import common.battle.BasisLU;
 import common.battle.BasisSet;
+import common.battle.data.AtkDataModel;
 import common.battle.data.CustomUnit;
 import common.pack.PackData.UserPack;
 import common.pack.Source;
 import common.pack.UserProfile;
 import common.util.anim.AnimCE;
+import common.util.anim.AnimU;
 import common.util.stage.CharaGroup;
 import common.util.unit.*;
 import main.Opts;
 import page.*;
 import page.anim.AnimGroupTree;
 import page.info.edit.FormEditPage;
+import page.info.filter.UnitFindPage;
 import page.support.*;
 import page.view.UnitViewPage;
 import utilpc.Interpret;
@@ -32,7 +35,7 @@ public class UnitManagePage extends Page {
 
 	private final JBTN back = new JBTN(0, "back");
 	private final Vector<UserPack> vpack = new Vector<>(UserProfile.getUserPacks());
-	private final JList<UserPack> jlp = new JList<>(vpack);
+	private final PackEditPage.PackList jlp = new PackEditPage.PackList(vpack);
 	private final JScrollPane jspp = new JScrollPane(jlp);
 	private final JList<Unit> jlu = new JList<>();
 	private final JScrollPane jspu = new JScrollPane(jlu);
@@ -54,6 +57,7 @@ public class UnitManagePage extends Page {
 	private final JBTN vuni = new JBTN(0, "vuni");
 	private final JBTN unir = new JBTN(MainLocale.PAGE, "unir");
 	private final JBTN cmbo = new JBTN(0, "combo");
+	private final JBTN cdesc = new JBTN(MainLocale.PAGE, "pinfo");
 
 	private final JTF jtff = new JTF();
 	private final JTF maxl = new JTF();
@@ -62,7 +66,7 @@ public class UnitManagePage extends Page {
 	private final JComboBox<String> rar = new JComboBox<>(Interpret.RARITY);
 	private final JComboBox<UnitLevel> cbl = new JComboBox<>();
 
-	private final JL lbp = new JL(0, "pack");
+	private final JComboBox<String> lbp = new JComboBox<>();
 	private final JL lbu = new JL(0, "unit");
 	private final JL lbd = new JL(0, "seleanim");
 	private final JL lbml = new JL(0, "maxl");
@@ -72,8 +76,9 @@ public class UnitManagePage extends Page {
 	private UserPack pac;
 	private Unit uni;
 	private Form frm;
+	private UnitFindPage ufp;
 	private UnitLevel ul;
-	private boolean changing = false;
+	private boolean changing = false, unsorted = true;
 
 	public UnitManagePage(Page p, UserPack pack) {
 		super(p);
@@ -88,6 +93,10 @@ public class UnitManagePage extends Page {
 
 	@Override
 	protected void renew() {
+		if (ufp != null && ufp.getForm() != null)
+			unitAnim(((Form)ufp.getForm()).anim);
+		ufp = null;
+
 		setPack(pac);
 	}
 
@@ -95,11 +104,10 @@ public class UnitManagePage extends Page {
 	protected void resized(int x, int y) {
 		setBounds(0, 0, x, y);
 		set(back, x, y, 0, 0, 200, 50);
-
 		int w = 50, dw = 150;
-
 		set(lbp, x, y, w, 100, 400, 50);
 		set(jspp, x, y, w, 150, 400, 600);
+		set(cdesc, x, y, w, 800, 400, 50);
 		w += 450;
 		set(lbu, x, y, w, 100, 300, 50);
 		set(jspu, x, y, w, 150, 300, 600);
@@ -115,7 +123,6 @@ public class UnitManagePage extends Page {
 		set(addf, x, y, w, 800, 150, 50);
 		set(remf, x, y, w + dw, 800, 150, 50);
 		set(edit, x, y, w, 950, 300, 50);
-
 		w += 300;
 		set(lbd, x, y, w, 100, 300, 50);
 		set(jspd, x, y, w, 150, 300, 600);
@@ -144,7 +151,7 @@ public class UnitManagePage extends Page {
 			if (changing)
 				return;
 			changing = true;
-			boolean edi = pac != null && pac.editable && getSelectedAnim() != null;
+			boolean edi = pac != null && pac.editable;
 			addu.setEnabled(edi);
 			addf.setEnabled(edi && uni != null);
 			frea.setEnabled(edi && jlf.getSelectedValue() != null);
@@ -194,16 +201,12 @@ public class UnitManagePage extends Page {
 		});
 
 		addu.addActionListener(arg0 -> {
-			changing = true;
 			AnimCE anim = getSelectedAnim();
-			CustomUnit cu = new CustomUnit(anim);
-			cu.limit = CommonStatic.customFormMinPos(anim.mamodel);
-			Unit u = new Unit(pac.getNextID(Unit.class), anim, cu);
-			pac.units.add(u);
-			jlu.setListData(pac.units.toRawArray());
-			jlu.setSelectedValue(u, true);
-			setUnit(u);
-			changing = false;
+			uni = null;
+			if (anim == null)
+				changePanel(ufp = new UnitFindPage(this, false, pac));
+			else
+				unitAnim(anim);
 		});
 
 		remu.addActionListener(arg0 -> {
@@ -228,7 +231,7 @@ public class UnitManagePage extends Page {
 					for (int i = 0; i < 10; i++) {
 						if (bl.lu.fs[i / 5][i % 5] == null)
 							break;
-						if (bl.lu.fs[i / 5][i % 5].unit == uni) {
+						if (bl.lu.fs[i / 5][i % 5].unit() == uni) {
 							bl.lu.fs[i / 5][i % 5] = null;
 							bl.lu.arrange();
 							bl.lu.renew();
@@ -303,25 +306,14 @@ public class UnitManagePage extends Page {
 		});
 
 		frea.setLnr(a -> {
-			if(jlf.getSelectedValue() == null || (!(jlf.getSelectedValue().du instanceof CustomUnit)))
+			if(jlf.getSelectedValue() == null)
 				return;
 
-			if(Opts.conf(get(MainLocale.PAGE, "reasanim"))) {
-				changing = true;
-
-				Form f = jlf.getSelectedValue();
-
-				f.anim = getSelectedAnim();
-
-				edit.setEnabled(jlf.getSelectedValue() != null && jlf.getSelectedValue().anim != null && pac.editable);
-
-				if(f.anim == null)
-					edit.setToolTipText(get(MainLocale.PAGE, "corrrea"));
-				else
-					edit.setToolTipText(null);
-
-				changing = false;
-			}
+			AnimCE anim = getSelectedAnim();
+			if (anim == null)
+				changePanel(ufp = new UnitFindPage(this, false, pac));
+			else
+				unitAnim(anim);
 		});
 
 		cmbo.addActionListener(x -> changePanel(new ComboEditPage(getThis(), pac)));
@@ -339,15 +331,12 @@ public class UnitManagePage extends Page {
 		});
 
 		addf.addActionListener(arg0 -> {
-			changing = true;
 			AnimCE ac = getSelectedAnim();
-			CustomUnit cu = new CustomUnit(ac);
-			cu.limit = CommonStatic.customFormMinPos(ac.mamodel);
-			frm = new Form(uni, uni.forms.length, "new form", ac, cu);
-			uni.forms = Arrays.copyOf(uni.forms, uni.forms.length + 1);
-			uni.forms[uni.forms.length - 1] = frm;
-			setUnit(uni);
-			changing = false;
+			frm = null;
+			if (ac == null)
+				changePanel(ufp = new UnitFindPage(this, false, pac));
+			else
+				unitAnim(ac);
 		});
 
 		remf.addActionListener(arg0 -> {
@@ -382,6 +371,7 @@ public class UnitManagePage extends Page {
 
 		edit.addActionListener(e -> changePanel(new FormEditPage(getThis(), pac, frm)));
 
+		cdesc.setLnr(g -> Opts.showPackDescPage(getThis(), pac));
 	}
 
 	private void addListeners$3() {
@@ -430,6 +420,50 @@ public class UnitManagePage extends Page {
 		vuni.setLnr((e) -> changePanel(new UnitViewPage(this, pac.getSID())));
 
 		unir.setLnr(() -> new UREditPage(getThis(), pac));
+
+		lbp.addActionListener(j -> {
+			int method = lbp.getSelectedIndex();
+			switch (method) {
+				case 0:
+					if (unsorted)
+						return;
+					Vector<UserPack> vpack2 = new Vector<>(UserProfile.getUserPacks());
+					vpack.clear();
+					vpack.addAll(vpack2); //Dunno a more efficient way to unsort a list
+					break;
+				case 1:
+					vpack.sort(null);
+					break;
+				case 2:
+					vpack.sort(Comparator.comparing(UserPack::getSID));
+					break;
+				case 3:
+					vpack.sort(Comparator.comparing(p -> p.desc.getAuthor()));
+					break;
+				case 4:
+					vpack.sort(Comparator.comparing(p -> p.desc.BCU_VERSION));
+					vpack.sort(Comparator.comparingInt(p -> p.desc.FORK_VERSION));
+					break;
+				case 5:
+					vpack.sort(Comparator.comparingLong(p -> p.desc.getTimestamp("cdate")));
+					break;
+				case 6:
+					vpack.sort(Comparator.comparingLong(p -> p.desc.getTimestamp("edate")));
+					break;
+				case 7:
+					vpack.sort(Comparator.comparingInt(p -> p.enemies.size()));
+					break;
+				case 8:
+					vpack.sort(Comparator.comparingInt(p -> p.units.size()));
+					break;
+				case 9:
+					vpack.sort(Comparator.comparingInt(p -> p.mc.getStageCount()));
+					break;
+			}
+			jlp.setListData(vpack);
+			unsorted = method == 0;
+			jlp.setSelectedValue(pac, true);
+		});
 	}
 
 	private void ini() {
@@ -463,16 +497,56 @@ public class UnitManagePage extends Page {
 		add(reml);
 		add(jtfl);
 		add(cmbo);
+		add(cdesc);
 		add(unir);
 		jlu.setCellRenderer(new UnitLCR());
 		jlf.setCellRenderer(new AnimLCR());
 		jtd.setCellRenderer(new AnimTreeRenderer());
 		SwingUtilities.invokeLater(() -> jtd.setUI(new TreeNodeExpander(jtd)));
+		lbp.setModel(new DefaultComboBoxModel<>(get(MainLocale.PAGE, "psort", 10)));
 		setPack(pac);
 		addListeners();
 		addListeners$1();
 		addListeners$2();
 		addListeners$3();
+	}
+
+	private void unitAnim(AnimU<?> anim) {
+		if (anim == null)
+			return;
+
+		changing = true;
+		if (uni == null) {
+			CustomUnit cu = new CustomUnit(anim);
+			cu.limit = CommonStatic.customFormMinPos(anim.mamodel);
+			Unit u = new Unit(pac.getNextID(Unit.class), anim, cu);
+			pac.units.add(u);
+			jlu.setListData(pac.units.toRawArray());
+			jlu.setSelectedValue(u, true);
+			setUnit(u);
+		} else if (frm == null) {
+			CustomUnit cu = new CustomUnit(anim);
+			cu.limit = CommonStatic.customFormMinPos(anim.mamodel);
+			frm = new Form(uni, uni.forms.length, "new form", anim, cu);
+			uni.forms = Arrays.copyOf(uni.forms, uni.forms.length + 1);
+			uni.forms[uni.forms.length - 1] = frm;
+			setUnit(uni);
+		} else if (frm.anim == null || Opts.conf(get(MainLocale.PAGE, "reasanim"))) {
+			CustomUnit ce = (CustomUnit)frm.du;
+			ce.share = Arrays.copyOf(ce.share, anim.anim.getAtkCount());
+			if (ce.hits.size() < ce.share.length)
+				for (int i = ce.hits.size(); i < ce.share.length; i++) {
+					ce.hits.add(new AtkDataModel[1]);
+					ce.hits.get(i)[0] = new AtkDataModel(ce);
+					ce.share[i] = 1;
+				}
+			while (ce.hits.size() > ce.share.length)
+				ce.hits.remove(ce.hits.size() - 1);
+			ce.limit = CommonStatic.customFormMinPos(anim.mamodel);
+			frm.anim = anim;
+			edit.setToolTipText(null);
+		}
+		changing = false;
 	}
 
 	private void setForm(Form f) {
@@ -485,7 +559,7 @@ public class UnitManagePage extends Page {
 		}
 		boolean b = frm != null && pac.editable;
 		edit.setEnabled(b && frm.du instanceof CustomUnit && frm.anim != null);
-		frea.setEnabled(getSelectedAnim() != null && b);
+		frea.setEnabled(b);
 
 		if(frm != null && frm.anim == null) {
 			edit.setToolTipText(get(MainLocale.PAGE, "corrrea"));
@@ -527,11 +601,12 @@ public class UnitManagePage extends Page {
 			changing = boo;
 		}
 		boolean b = pac != null && pac.editable;
-		addu.setEnabled(b && getSelectedAnim() != null);
+		addu.setEnabled(b);
 		edit.setEnabled(b);
 		addl.setEnabled(b);
 		vuni.setEnabled(pac != null);
 		unir.setEnabled(pac != null);
+		cdesc.setEnabled(pac != null);
 		boolean boo = changing;
 		changing = true;
 		if (pac == null) {
@@ -568,7 +643,7 @@ public class UnitManagePage extends Page {
 		remu.setEnabled(b);
 		rar.setEnabled(b);
 		cbl.setEnabled(b);
-		addf.setEnabled(b && getSelectedAnim() != null);
+		addf.setEnabled(b);
 		maxl.setEditable(b);
 		maxp.setEditable(b);
 		boolean boo = changing;

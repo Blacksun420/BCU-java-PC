@@ -168,7 +168,7 @@ class EREditTable extends AbJTable implements Reorderable {
 					muls.add(new int[]{es.multi,es.mula});
 				}
 			}
-			MainFrame.changePanel(new EnemyInfoPage(page, ENode.getList(eList,(Enemy) e,muls)));
+			MainFrame.changePanel(new EnemyInfoPage(page, ENode.getListE(eList,(Enemy) e,muls)));
 		} else if (e instanceof EneRand && pack != null && !e.getID().pack.equals(pack))
 			MainFrame.changePanel(new EREditPage(page, UserProfile.getUserPack(((EneRand) e).id.pack)));
 	}

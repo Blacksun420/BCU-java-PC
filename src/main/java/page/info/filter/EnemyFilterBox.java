@@ -1,10 +1,11 @@
 package page.info.filter;
 
 import common.pack.PackData;
-import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.lang.MultiLangCont;
 import common.util.lang.ProcLang;
+import common.util.unit.AbEnemy;
+import common.util.unit.EneRand;
 import common.util.unit.Enemy;
 import page.Page;
 import utilpc.UtilPC;
@@ -24,17 +25,20 @@ public class EnemyFilterBox extends EntityFilterBox {
 	protected final AttList abis = new AttList(-1, EABIIND.length);
 	protected final JScrollPane jr = new JScrollPane(rare);
 	protected final JScrollPane jab = new JScrollPane(abis);
+	private final boolean rand;
 
-	protected EnemyFilterBox(Page p) {
+	protected EnemyFilterBox(Page p, boolean rand) {
 		super(p);
 
+		this.rand = rand;
 		ini();
 		confirm();
 	}
 
-	protected EnemyFilterBox(Page p, String pack, SortedPackSet<String> parent) {
-		super(p, pack, parent);
+	protected EnemyFilterBox(Page p, boolean rand, PackData.UserPack pack) {
+		super(p, pack);
 
+		this.rand = rand;
 		ini();
 		confirm();
 	}
@@ -56,22 +60,33 @@ public class EnemyFilterBox extends EntityFilterBox {
 	@Override
 	protected void confirm() {
 		minDiff = 5;
-		List<Enemy> ans = new ArrayList<>();
+		List<AbEnemy> ans = new ArrayList<>();
 		for(PackData p : UserProfile.getAllPacks())
-			if (validatePack(p))
+			if (validatePack(p)) {
 				for (Enemy e : p.enemies.getList())
 					if (validateEnemy(e))
 						ans.add(e);
-
-		for (int i = 0; i < ans.size(); i++) {
-			String ename = MultiLangCont.getStatic().ENAME.getCont(ans.get(i));
-			if (ename == null)
-				ename = ans.get(i).names.toString();
-			if (UtilPC.damerauLevenshteinDistance(ename.toLowerCase(), name.toLowerCase()) > minDiff) {
-				ans.remove(i);
-				i--;
+				if (rand)
+					for(EneRand rand : p.randEnemies.getList()) {
+						int diff = UtilPC.damerauLevenshteinDistance(rand.name.toLowerCase(), name.toLowerCase());
+						if(diff <= minDiff) {
+							ans.add(rand);
+							minDiff = diff;
+						}
+					}
 			}
-		}
+
+		for (int i = 0; i < ans.size(); i++)
+			if (ans.get(i) instanceof Enemy) {
+				Enemy e = (Enemy)ans.get(i);
+				String ename = MultiLangCont.getStatic().ENAME.getCont(e);
+				if (ename == null)
+					ename = e.names.toString();
+				if (UtilPC.damerauLevenshteinDistance(ename.toLowerCase(), name.toLowerCase()) > minDiff)
+					ans.remove(i--);
+			} else if (UtilPC.damerauLevenshteinDistance(((EneRand) ans.get(i)).name.toLowerCase(), name.toLowerCase()) > minDiff)
+				ans.remove(i--);
+
 		getFront().callBack(ans);
 	}
 

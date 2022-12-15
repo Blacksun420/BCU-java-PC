@@ -6,12 +6,16 @@ import common.battle.data.CustomEntity;
 import common.pack.PackData;
 import common.pack.UserProfile;
 import common.system.ENode;
+import common.util.unit.AbEnemy;
 import common.util.unit.Enemy;
 import org.jcodec.common.tools.MathUtil;
 import page.*;
 import page.info.EnemyInfoPage;
 import page.info.filter.EnemyEditBox;
 import utilpc.Interpret;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EnemyEditPage extends EntityEditPage {
 
@@ -70,7 +74,9 @@ public class EnemyEditPage extends EntityEditPage {
 		add(impt);
 		add(vuni);
 
-		stat.setLnr(x -> changePanel(new EnemyInfoPage(this, ENode.getList(UserProfile.getAll(ene.id.pack, Enemy.class), ene))));
+		List<Enemy> m = UserProfile.getAll(ene.id.pack, Enemy.class);
+		ArrayList<AbEnemy> l = new ArrayList<>(m);
+		stat.setLnr(x -> changePanel(new EnemyInfoPage(this, ENode.getListE(l, ene))));
 		subListener(impt, vuni, vene, ene);
 	}
 

@@ -385,8 +385,8 @@ public class BackupPage extends Page {
                 DefaultMutableTreeNode nlp = new DefaultMutableTreeNode("lineup/");
                 nli.add(nlp);
 
-                for (Form[] fs : blu.lu.fs)
-                    for (Form f : fs)
+                for (AbForm[] fs : blu.lu.fs)
+                    for (AbForm f : fs)
                         if (f != null) {
                             DefaultMutableTreeNode nf = new DefaultMutableTreeNode(f.toString());
                             nlp.add(nf);

@@ -10,7 +10,7 @@ import common.util.unit.EneRand;
 import main.MainBCU;
 import main.Opts;
 import page.*;
-import page.info.filter.AbEnemyFindPage;
+import page.info.filter.EnemyFindPage;
 import page.support.AnimLCR;
 import page.support.Importer;
 
@@ -55,7 +55,7 @@ public class EREditPage extends Page {
 
 	private final UserPack pack;
 
-	private AbEnemyFindPage efp;
+	private EnemyFindPage efp;
 
 	private EneRand rand;
 
@@ -134,7 +134,7 @@ public class EREditPage extends Page {
 
 		veif.addActionListener(arg0 -> {
 			if (efp == null)
-				efp = new AbEnemyFindPage(getThis(), pack.desc.id, pack.desc.dependency);
+				efp = new EnemyFindPage(getThis(), true, pack);
 			changePanel(efp);
 		});
 

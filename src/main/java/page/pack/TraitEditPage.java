@@ -4,11 +4,8 @@ import common.CommonStatic;
 import common.pack.Context;
 import common.pack.Source;
 import common.pack.UserProfile;
-import common.util.unit.Form;
-import common.util.unit.Enemy;
-import common.util.unit.Unit;
+import common.util.unit.*;
 import common.pack.PackData.UserPack;
-import common.util.unit.Trait;
 import common.pack.FixIndexList.FixIndexMap;
 import main.MainBCU;
 import main.Opts;
@@ -51,7 +48,7 @@ public class TraitEditPage extends Page {
     private final JL adv = new JL(MainLocale.PAGE, "advtrt");
     private final JTF ctrna = new JTF();
 
-    private final ReorderList<Form> jlf = new ReorderList<>();
+    private final ReorderList<AbForm> jlf = new ReorderList<>();
     private final JScrollPane jspf = new JScrollPane(jlf);
     private final ReorderList<Form> tlf = new ReorderList<>();
     private final JScrollPane tspf = new JScrollPane(tlf);
@@ -76,14 +73,14 @@ public class TraitEditPage extends Page {
     protected void renew() {
         if (ufp != null && ufp.getList() != null) {
             changing = true;
-            ArrayList<Form> list = new ArrayList<>(ufp.getList());
+            ArrayList<AbForm> list = new ArrayList<>(ufp.getList());
             if (t != null)
                 list.removeAll(t.others);
             for (Unit u : packpack.units)
                 for (Form f : u.forms)
                     list.remove(f);
 
-            jlf.setListData(list.toArray(new Form[0]));
+            jlf.setListData(list.toArray(new AbForm[0]));
             jlf.clearSelection();
             if (list.size() > 0)
                 jlf.setSelectedIndex(0);
@@ -194,7 +191,7 @@ public class TraitEditPage extends Page {
         });
 
         addu.addActionListener(arg0 -> {
-            List<Form> formList = jlf.getSelectedValuesList();
+            List<AbForm> formList = jlf.getSelectedValuesList();
             if (formList.size() == 0 || changing || jlct.getValueIsAdjusting())
                 return;
             changing = true;
@@ -208,14 +205,14 @@ public class TraitEditPage extends Page {
             if (formList.size() == 0 ||changing || jlct.getValueIsAdjusting())
                 return;
             changing = true;
-            t.others.removeAll(formList);
+            formList.forEach(t.others::remove);
             updateCT();
             changing = false;
         });
 
         vuif.addActionListener(arg0 -> {
             if (ufp == null)
-                ufp = new UnitFindPage(getThis(), packpack.getSID(), packpack.desc.dependency);
+                ufp = new UnitFindPage(getThis(), false, packpack);
             changePanel(ufp);
         });
     }

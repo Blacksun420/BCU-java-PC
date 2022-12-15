@@ -7,9 +7,7 @@ import common.pack.UserProfile;
 import common.util.lang.MultiLangCont;
 import common.util.lang.ProcLang;
 import common.util.stage.Limit;
-import common.util.unit.Form;
-import common.util.unit.Trait;
-import common.util.unit.Unit;
+import common.util.unit.*;
 import page.JTG;
 import page.MainLocale;
 import page.Page;
@@ -35,20 +33,23 @@ public class UnitFilterBox extends EntityFilterBox {
 	private final JScrollPane jab = new JScrollPane(abis);
 	private final JTG limbtn = new JTG(0, "usable");
 	protected final JTG inccus = new JTG(MainLocale.PAGE, "inccus"); //This button sucks, feel free to remove
+	private final boolean rand;
 
-	public UnitFilterBox(Page p, Limit limit, int price) {
+	public UnitFilterBox(Page p, boolean rand, Limit limit, int price) {
 		super(p);
 		lim = limit;
 		this.price = price;
+		this.rand = rand;
 
 		ini();
 		confirm();
 	}
 
-	public UnitFilterBox(Page p, String pack, SortedPackSet<String> parent) {
-		super(p, pack, parent);
+	public UnitFilterBox(Page p, boolean rand, PackData.UserPack pack) {
+		super(p, pack);
 		lim = null;
 		price = 0;
+		this.rand = rand;
 
 		ini();
 		confirm();
@@ -71,28 +72,37 @@ public class UnitFilterBox extends EntityFilterBox {
 
 	@Override
 	protected void confirm() {
-		List<Form> ans = new ArrayList<>();
+		List<AbForm> ans = new ArrayList<>();
 		minDiff = 5;
 		for(PackData p : UserProfile.getAllPacks()) {
 			if(!inccus.isSelected() && !(p instanceof PackData.DefPack) || !validatePack(p))
 				continue;
-
 			for (Unit u : p.units.getList())
 				if (validateUnit(u))
 					for (Form f : u.forms)
 						if (validateForm(f))
 							ans.add(f);
+			if (rand)
+				for(UniRand rand : p.randUnits.getList()) {
+					int diff = UtilPC.damerauLevenshteinDistance(rand.name.toLowerCase(), name.toLowerCase());
+					if(diff <= minDiff) {
+						ans.add(rand);
+						minDiff = diff;
+					}
+				}
 		}
 
-		for (int i = 0; i < ans.size(); i++) {
-			String fname = MultiLangCont.getStatic().FNAME.getCont(ans.get(i));
-			if (fname == null)
-				fname = ans.get(i).names.toString();
-			if (UtilPC.damerauLevenshteinDistance(fname.toLowerCase(), name.toLowerCase()) > minDiff) {
-				ans.remove(i);
-				i--;
-			}
-		}
+		for (int i = 0; i < ans.size(); i++)
+			if (ans.get(i) instanceof Form) {
+				Form f = (Form) ans.get(i);
+				String fname = MultiLangCont.getStatic().FNAME.getCont(f);
+				if (fname == null)
+					fname = f.names.toString();
+				if (UtilPC.damerauLevenshteinDistance(fname.toLowerCase(), name.toLowerCase()) > minDiff)
+					ans.remove(i--);
+			} else if (UtilPC.damerauLevenshteinDistance(((UniRand) ans.get(i)).name.toLowerCase(), name.toLowerCase()) > minDiff)
+				ans.remove(i--);
+
 		getFront().callBack(ans);
 	}
 

@@ -12,10 +12,7 @@ import common.pack.PackData;
 import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.Data;
-import common.util.unit.EForm;
-import common.util.unit.Form;
-import common.util.unit.Level;
-import common.util.unit.Trait;
+import common.util.unit.*;
 import main.MainBCU;
 import page.*;
 import page.info.filter.EnemyFindPage;
@@ -177,11 +174,11 @@ public class ComparePage extends Page {
         for (int i = 0; i < sele.length; i++) {
             int finalI = i;
             sele[i][0].addActionListener(x -> {
-                changePanel(efp = new EnemyFindPage(getThis()));
+                changePanel(efp = new EnemyFindPage(getThis(), false));
                 s = finalI;
             });
             sele[i][1].addActionListener(x -> {
-                changePanel(ufp = new UnitFindPage(getThis()));
+                changePanel(ufp = new UnitFindPage(getThis(), false));
                 s = finalI;
             });
         }
@@ -505,9 +502,9 @@ public class ComparePage extends Page {
         maskEntityLvl[s].add(0);
 
         if (efp != null && efp.getSelected() != null)
-            ent = efp.getSelected().de;
+            ent = ((Enemy) efp.getSelected()).de;
         else if (ufp != null && ufp.getForm() != null)
-            ent = ufp.getForm().du;
+            ent = ((Form) ufp.getForm()).du;
 
         if (ent instanceof MaskEnemy) {
             int[] data = maskEntities[s] instanceof MaskEnemy

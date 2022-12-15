@@ -10,6 +10,7 @@ import common.system.fake.FakeImage;
 import common.util.Data;
 import common.util.pack.Background;
 import common.util.stage.Music;
+import common.util.unit.AbForm;
 import common.util.unit.Form;
 import common.util.unit.Trait;
 import io.BCMusic;
@@ -154,6 +155,8 @@ public class UtilPC {
 	}
 
 	public static BufferedImage resizeImage(BufferedImage img, int w, int h) {
+		if (img.getWidth() == w && img.getHeight() == h)
+			return img;
 		Image tmp = img.getScaledInstance(w, h, Image.SCALE_SMOOTH);
 		BufferedImage dimg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 
@@ -164,36 +167,40 @@ public class UtilPC {
 		return dimg;
 	}
 
-	public static String[] lvText(Form f, ArrayList<Integer> lvs) {
-		PCoin pc = f.du.getPCoin();
-		if (pc == null)
-			return new String[] { "Lv." + lvs.get(0), "" };
-		else {
-			String[] TraitsHolder = new String[pc.trait.size()];
-			for (int i = 0 ; i < pc.trait.size() ; i++) {
-				Trait trait = pc.trait.get(i);
-				if (trait.BCTrait)
-					TraitsHolder[i] = Interpret.TRAIT[trait.id.id];
-				else
-					TraitsHolder[i] = trait.name;
-			}
-			StringBuilder lab = new StringBuilder();
+	public static String[] lvText(AbForm f, ArrayList<Integer> lvs) {
+		if (f instanceof Form) {
+			PCoin pc = ((Form)f).du.getPCoin();
+			if (pc == null)
+				return new String[]{"Lv." + lvs.get(0), ""};
+			else {
+				String[] TraitsHolder = new String[pc.trait.size()];
+				for (int i = 0; i < pc.trait.size(); i++) {
+					Trait trait = pc.trait.get(i);
+					if (trait.BCTrait)
+						TraitsHolder[i] = Interpret.TRAIT[trait.id.id];
+					else
+						TraitsHolder[i] = trait.name;
+				}
+				StringBuilder lab = new StringBuilder();
 
-			if(pc.trait.size() > 0) {
-				lab.append("[").append(Interpret.getTrait(TraitsHolder, 0)).append("]").append(" ");
-			}
+				if (pc.trait.size() > 0) {
+					lab.append("[").append(Interpret.getTrait(TraitsHolder, 0)).append("]").append(" ");
+				}
 
-			while (lvs.size() <= pc.info.size())
-				lvs.add(pc.max.get(lvs.size() - 1));
-			lab.append(Interpret.PCTX[pc.info.get(0)[0]]);
+				while (lvs.size() <= pc.info.size())
+					lvs.add(pc.max.get(lvs.size() - 1));
+				lab.append(Interpret.PCTX[pc.info.get(0)[0]]);
 
-			StringBuilder str = new StringBuilder("Lv." + lvs.get(0) + ", {");
-			for (int i = 1; i < pc.info.size(); i++) {
-				str.append(lvs.get(i)).append(",");
-				lab.append(", ").append(getPCoinAbilityText(pc, i));
+				StringBuilder str = new StringBuilder("Lv." + lvs.get(0) + ", {");
+				for (int i = 1; i < pc.info.size(); i++) {
+					str.append(lvs.get(i)).append(",");
+					lab.append(", ").append(getPCoinAbilityText(pc, i));
+				}
+				str.append(lvs.get(pc.info.size())).append("}");
+				return new String[]{str.toString(), lab.toString()};
 			}
-			str.append(lvs.get(pc.info.size())).append("}");
-			return new String[] {str.toString(), lab.toString()};
+		} else {
+			return new String[]{"[" + lvs + "]", ""};
 		}
 	}
 

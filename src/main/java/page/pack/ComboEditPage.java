@@ -4,6 +4,7 @@ import common.battle.BasisSet;
 import common.pack.Identifier;
 import common.pack.PackData;
 import common.pack.UserProfile;
+import common.util.unit.AbForm;
 import common.util.unit.Combo;
 import common.util.unit.Form;
 import common.util.unit.Unit;
@@ -78,9 +79,9 @@ public class ComboEditPage extends Page {
         if (ufp != null && ufp.getList() != null) {
             changing = true;
             List<Unit> list = new ArrayList<>();
-            for (Form f : ufp.getList())
-                if (!list.contains(f.unit))
-                    list.add(f.unit);
+            for (AbForm f : ufp.getList())
+                if (!list.contains((Unit)f.unit()))
+                    list.add((Unit)f.unit());
             jlu.setListData(list.toArray(new Unit[0]));
             jlu.clearSelection();
             if (list.size() > 0) {
@@ -157,7 +158,7 @@ public class ComboEditPage extends Page {
 
         vuif.addActionListener(arg0 -> {
             if (ufp == null)
-                ufp = new UnitFindPage(getThis(), pac.getSID(), pac.desc.dependency);
+                ufp = new UnitFindPage(getThis(), false, pac);
             changePanel(ufp);
         });
 

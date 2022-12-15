@@ -2,6 +2,7 @@ package page.basis;
 
 import common.battle.BasisSet;
 import common.util.stage.Limit;
+import common.util.unit.AbForm;
 import common.util.unit.Form;
 import page.JBTN;
 import page.JTF;
@@ -32,7 +33,7 @@ public class UnitFLUPage extends LubCont {
 		super(p);
 
 		lub.setLimit(lim, price);
-		ufb = new UnitFilterBox(this, lim, price);
+		ufb = new UnitFilterBox(this, true, lim, price);
 		ini();
 		resized();
 	}
@@ -41,11 +42,11 @@ public class UnitFLUPage extends LubCont {
 	@SuppressWarnings("unchecked")
 	public void callBack(Object o) {
 		if (o instanceof List)
-			ult.setList((List<Form>) o);
+			ult.setList((List<AbForm>) o);
 		resized();
 	}
 
-	public List<Form> getList() {
+	public List<AbForm> getList() {
 		return ult.list;
 	}
 
@@ -121,7 +122,7 @@ public class UnitFLUPage extends LubCont {
 			int ind = lsm.getAnchorSelectionIndex();
 			if (ind < 0)
 				return;
-			Form f = ult.list.get(ind);
+			AbForm f = ult.list.get(ind);
 			lub.select(f);
 			lsm.clearSelection();
 		});

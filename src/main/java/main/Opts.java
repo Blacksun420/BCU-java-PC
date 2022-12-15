@@ -283,7 +283,7 @@ public class Opts {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 		int w = (int)(MainFrame.F.getRootPane().getWidth() * 0.545);
-		int h = (int)(MainFrame.F.getRootPane().getHeight() * (pack.banner == null && !pack.editable ? 0.225 : 0.71));
+		int h = (int)(MainFrame.F.getRootPane().getHeight() * (pack.banner == null && !pack.editable ? 0.225 : 0.755));
 
 		p.setPreferredSize(new Dimension(w, h));
 		p.setBounds(25, 25, w, h);

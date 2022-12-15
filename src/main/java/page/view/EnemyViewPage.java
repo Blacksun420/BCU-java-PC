@@ -7,6 +7,7 @@ import common.system.ENode;
 import common.util.anim.AnimCE;
 import common.util.anim.AnimD;
 import common.util.anim.EAnimI;
+import common.util.unit.AbEnemy;
 import common.util.unit.Enemy;
 import main.Opts;
 import page.JBTN;
@@ -96,10 +97,10 @@ public class EnemyViewPage extends AbViewPage {
 				return;
 
 			ListModel<Enemy> enes = jlu.getModel();
-			List<Enemy> lis = new ArrayList<>();
+			List<AbEnemy> lis = new ArrayList<>();
 			for (int i = 0;i < enes.getSize(); i++)
 				lis.add(enes.getElementAt(i));
-			ENode n = ENode.getList(lis,ene);
+			ENode n = ENode.getListE(lis, ene);
 
 			changePanel(new EnemyInfoPage(getThis(), n));
 		});
@@ -111,7 +112,7 @@ public class EnemyViewPage extends AbViewPage {
 
 		copy.addActionListener(e -> {
 			{
-				if (jlu.getSelectedValuesList().size() <= 1) {
+				if (jlu.getSelectedValuesList().size() > 1) {
 					Enemy ene = jlu.getSelectedValue();
 
 					if (ene != null) {

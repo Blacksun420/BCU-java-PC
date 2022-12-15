@@ -21,7 +21,7 @@ import common.util.Res;
 import common.util.pack.EffAnim;
 import common.util.pack.bgeffect.BackgroundEffect;
 import common.util.stage.CastleImg;
-import common.util.unit.Form;
+import common.util.unit.AbForm;
 import main.MainBCU;
 import page.MainLocale;
 import page.RetFunc;
@@ -433,8 +433,8 @@ public interface BattleBox {
 
 			for (int i = 0; i < 2; i++) {
 				for(int j = 0; j < 5; j++) {
-					Form f = sb.b.lu.fs[i][j];
-					FakeImage img = f == null ? aux.slot[0].getImg() : f.anim.getUni().getImg();
+					AbForm f = sb.b.lu.fs[i][j];
+					FakeImage img = f == null ? aux.slot[0].getImg() : f.getDeployIcon().getImg();
 
 					iw = (int) (hr * img.getWidth());
 					ih = (int) (hr * img.getHeight());
@@ -491,8 +491,8 @@ public interface BattleBox {
 			int imh;
 
 			for (int i = 0; i < 5; i++) {
-				Form f = sb.b.lu.fs[index][i];
-				FakeImage img = f == null ? aux.slot[0].getImg() : f.anim.getUni().getImg();
+				AbForm f = sb.b.lu.fs[index][i];
+				FakeImage img = f == null ? aux.slot[0].getImg() : f.getDeployIcon().getImg();
 				iw = (int) (hr * img.getWidth());
 				ih = (int) (hr * img.getHeight());
 

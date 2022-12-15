@@ -5,7 +5,7 @@ import common.CommonStatic.BCAuxAssets;
 import common.battle.SBCtrl;
 import common.system.P;
 import common.system.fake.FakeImage;
-import common.util.unit.Form;
+import common.util.unit.AbForm;
 import page.battle.BattleBox.BBPainter;
 import page.battle.BattleBox.OuterBox;
 import utilpc.PP;
@@ -45,8 +45,8 @@ public class BBCtrl extends BBPainter {
 
 			for (int i = 0; i < 2; i++) {
 				for(int j = 0; j < 5; j++) {
-					Form f = sbc.sb.b.lu.fs[i][j];
-					FakeImage img = f == null ? aux.slot[0].getImg() : f.anim.getUni().getImg();
+					AbForm f = sbc.sb.b.lu.fs[i][j];
+					FakeImage img = f == null ? aux.slot[0].getImg() : f.getDeployIcon().getImg();
 					int iw = (int) (hr * img.getWidth());
 					int ih = (int) (hr * img.getHeight());
 					int x = (w - iw * 5) / 2 + iw * j + (int) (term * (j -2));
@@ -59,8 +59,8 @@ public class BBCtrl extends BBPainter {
 			}
 		} else {
 			for (int i = 0; i < 5; i++) {
-				Form f = sbc.sb.b.lu.fs[sbc.sb.frontLineup][i];
-				FakeImage img = f == null ? aux.slot[0].getImg() : f.anim.getUni().getImg();
+				AbForm f = sbc.sb.b.lu.fs[sbc.sb.frontLineup][i];
+				FakeImage img = f == null ? aux.slot[0].getImg() : f.getDeployIcon().getImg();
 				int iw = (int) (hr * img.getWidth());
 				int ih = (int) (hr * img.getHeight());
 				int x = (w - iw * 5) / 2 + iw * i + (int) (term * (i -2) + (sbc.sb.frontLineup == 0 ? 0 : term/2));

@@ -15,6 +15,7 @@ import common.pack.UserProfile;
 import common.util.AnimGroup;
 import common.util.Data;
 import common.util.anim.AnimCE;
+import common.util.anim.AnimU;
 import common.util.stage.MapColc;
 import common.util.stage.Stage;
 import common.util.stage.StageMap;
@@ -28,6 +29,7 @@ import page.anim.AnimGroupTree;
 import page.info.StageViewPage;
 import page.info.edit.EnemyEditPage;
 import page.info.edit.StageEditPage;
+import page.info.filter.EnemyFindPage;
 import page.support.AnimLCR;
 import page.support.AnimTreeRenderer;
 import page.support.RLFIM;
@@ -36,6 +38,8 @@ import page.view.BGViewPage;
 import page.view.CastleViewPage;
 import page.view.EnemyViewPage;
 import page.view.MusicPage;
+import utilpc.Theme;
+import utilpc.UtilPC;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -43,17 +47,44 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.image.BufferedImage;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class PackEditPage extends Page {
 
 	private static final long serialVersionUID = 1L;
 
+	static class PackList extends JList<UserPack> {
+
+		private static final long serialVersionUID = 1L;
+
+		protected PackList(Vector<UserPack> packs) {
+			super(packs);
+			setSelectionBackground(Theme.DARK.NIMBUS_SELECT_BG);
+			setCellRenderer(new DefaultListCellRenderer() {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean s, boolean f) {
+					JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
+					ImageIcon v = UtilPC.getIcon(((UserPack) o).icon);
+					if (v != null)
+						jl.setIcon(new ImageIcon(UtilPC.resizeImage((BufferedImage)((UserPack)o).icon.getImg().bimg(), 40, 40)));
+					else
+						jl.setIcon(null);
+
+					return jl;
+				}
+			});
+		}
+	}
+
 	private final JBTN back = new JBTN(0, "back");
 	private final Vector<UserPack> vpack = new Vector<>(UserProfile.getUserPacks());
-	private final JList<UserPack> jlp = new JList<>(vpack);
+	private final PackList jlp = new PackList(vpack);
 	private final JScrollPane jspp = new JScrollPane(jlp);
 	private final JList<Enemy> jle = new JList<>();
 	private final JScrollPane jspe = new JScrollPane(jle);
@@ -109,6 +140,7 @@ public class PackEditPage extends Page {
 
 	private UserPack pac;
 	private Enemy ene;
+	private EnemyFindPage efp;
 	private StageMap sm;
 	private boolean changing = false, unsorted = true;
 
@@ -123,6 +155,10 @@ public class PackEditPage extends Page {
 
 	@Override
 	protected void renew() {
+		if (efp != null && efp.getSelected() != null)
+			addCE(((Enemy)efp.getSelected()).anim);
+		efp = null;
+
 		setPack(pac);
 	}
 
@@ -130,9 +166,7 @@ public class PackEditPage extends Page {
 	protected void resized(int x, int y) {
 		setBounds(0, 0, x, y);
 		set(back, x, y, 0, 0, 200, 50);
-
 		int w = 50, dw = 150;
-
 		set(lbp, x, y, w, 100, 400, 50);
 		set(jspp, x, y, w, 150, 400, 600);
 		set(addp, x, y, w, 800, 200, 50);
@@ -144,9 +178,7 @@ public class PackEditPage extends Page {
 		set(cdesc, x, y, w, 1050, 400, 50);
 		set(pid, x, y, w, 1100, 400, 50);
 		set(pauth, x, y, w, 1150, 400, 50);
-
 		w += 450;
-
 		set(lbe, x, y, w, 100, 300, 50);
 		set(jspe, x, y, w, 150, 300, 600);
 		set(erea, x, y, w, 750, 300, 50);
@@ -156,21 +188,15 @@ public class PackEditPage extends Page {
 		set(edit, x, y, w, 950, 300, 50);
 		set(vene, x, y, w, 1050, 300, 50);
 		set(ener, x, y, w, 1150, 300, 50);
-
 		w += 300;
-
 		set(lbd, x, y, w, 100, 300, 50);
 		set(jspd, x, y, w, 150, 300, 600);
-
 		w += 50;
-
 		set(vbgr, x, y, w, 850, 250, 50);
 		set(vcas, x, y, w, 950, 250, 50);
 		set(vrcg, x, y, w, 1050, 250, 50);
 		set(vrlr, x, y, w, 1150, 250, 50);
-
 		w += 300;
-
 		set(lbs, x, y, w, 100, 300, 50);
 		set(jsps, x, y, w, 150, 300, 600);
 		set(adds, x, y, w, 800, 150, 50);
@@ -179,9 +205,7 @@ public class PackEditPage extends Page {
 		set(sdiy, x, y, w, 950, 300, 50);
 		set(cunt, x, y, w, 1050, 300, 50);
 		set(vmsc, x, y, w, 1150, 300, 50);
-
 		w += 350;
-
 		set(lbr, x, y, w, 100, 350, 50);
 		set(jspr, x, y, w, 150, 350, 600);
 		set(addr, x, y, w, 800, 175, 50);
@@ -190,9 +214,7 @@ public class PackEditPage extends Page {
 		set(recd, x, y, w, 950, 300, 50);
 		set(tdiy, x, y, w, 1050, 300, 50);
 		set(csol, x, y, w, 1150, 300, 50);
-
 		w += 350;
-
 		set(cbge, x, y, w, 1150, 350, 50);
 		set(lbt, x, y, w, 100, 350, 50);
 		set(jspt, x, y, w, 150, 350, 600);
@@ -241,7 +263,7 @@ public class PackEditPage extends Page {
 			if (changing)
 				return;
 			changing = true;
-			adde.setEnabled(pac != null && getSelectedAnim() != null && pac.editable);
+			adde.setEnabled(pac != null && pac.editable);
 			erea.setEnabled(adde.isEnabled() && jle.getSelectedValue() != null);
 			changing = false;
 		});
@@ -292,7 +314,7 @@ public class PackEditPage extends Page {
 			@Override
 			public void focusLost(FocusEvent fe) {
 				String str = jtfp.getText().trim();
-				if (pac.desc.names == null || pac.desc.names.toString().equals(str))
+				if (pac.desc.names.toString().equals(str))
 					return;
 				pac.desc.names.put(str);
 				jtfp.setText(pac.desc.names.toString());
@@ -355,16 +377,12 @@ public class PackEditPage extends Page {
 		});
 
 		adde.addActionListener(arg0 -> {
-			changing = true;
 			AnimCE anim = getSelectedAnim();
-			CustomEnemy ce = new CustomEnemy(anim);
-			ce.limit = CommonStatic.customEnemyMinPos(anim.mamodel);
-			Enemy e = new Enemy(pac.getNextID(Enemy.class), anim, ce);
-			pac.enemies.add(e);
-			jle.setListData(pac.enemies.toRawArray());
-			jle.setSelectedValue(e, true);
-			setEnemy(e);
-			changing = false;
+			ene = null;
+			if (anim == null)
+				changePanel(efp = new EnemyFindPage(this, false, pac));
+			else
+				addCE(anim);
 		});
 
 		reme.addActionListener(arg0 -> {
@@ -391,40 +409,14 @@ public class PackEditPage extends Page {
 		});
 
 		erea.setLnr(a -> {
-			if(jle.getSelectedValue() == null || !(jle.getSelectedValue().de instanceof CustomEnemy))
+			if(jle.getSelectedValue() == null)
 				return;
 
-			if(Opts.conf(get(MainLocale.PAGE, "reasanim"))) {
-				changing = true;
-
-				Enemy e = jle.getSelectedValue();
-				AnimCE anim = getSelectedAnim();
-
-				CustomEnemy ce = (CustomEnemy)e.de;
-				ce.share = Arrays.copyOf(ce.share, anim.anim.getAtkCount());
-				if (ce.hits.size() < ce.share.length) {
-					for (int i = ce.hits.size(); i < ce.share.length; i++) {
-						ce.hits.add(new AtkDataModel[1]);
-						ce.hits.get(i)[0] = new AtkDataModel(ce);
-						ce.share[i] = 1;
-					}
-				}
-				while (ce.hits.size() > ce.share.length)
-					ce.hits.remove(ce.hits.size() - 1);
-
-				ce.limit = CommonStatic.customEnemyMinPos(anim.mamodel);
-				e.anim = anim;
-
-				edit.setEnabled(pac != null && jle.getSelectedValue() != null && jle.getSelectedValue().anim != null && pac.editable);
-
-				if(e.anim == null) {
-					edit.setToolTipText(get(MainLocale.PAGE, "corrrea"));
-				} else {
-					edit.setToolTipText(null);
-				}
-
-				changing = false;
-			}
+			AnimCE anim = getSelectedAnim();
+			if (anim == null)
+				changePanel(efp = new EnemyFindPage(this, false, pac));
+			else
+				addCE(anim);
 		});
 
 		jtfe.setLnr(e -> {
@@ -605,17 +597,17 @@ public class PackEditPage extends Page {
 					vpack.sort(Comparator.comparing(UserPack::getSID));
 					break;
 				case 3:
-					vpack.sort(Comparator.comparing(p -> p.desc.getN("author")));
+					vpack.sort(Comparator.comparing(p -> p.desc.getAuthor()));
 					break;
 				case 4:
 					vpack.sort(Comparator.comparing(p -> p.desc.BCU_VERSION));
 					vpack.sort(Comparator.comparingInt(p -> p.desc.FORK_VERSION));
 					break;
 				case 5:
-					vpack.sort(Comparator.comparing(p -> p.desc.getN("cdate")));
+					vpack.sort(Comparator.comparingLong(p -> p.desc.getTimestamp("cdate")));
 					break;
 				case 6:
-					vpack.sort(Comparator.comparing(p -> p.desc.getN("edate")));
+					vpack.sort(Comparator.comparingLong(p -> p.desc.getTimestamp("edate")));
 					break;
 				case 7:
 					vpack.sort(Comparator.comparingInt(p -> p.enemies.size()));
@@ -627,9 +619,10 @@ public class PackEditPage extends Page {
 					vpack.sort(Comparator.comparingInt(p -> p.mc.getStageCount()));
 					break;
 			}
+			jlp.setListData(vpack);
 			unsorted = method == 0;
+			jlp.setSelectedValue(pac, true);
 		});
-
 	}
 
 	private void checkAddr() {
@@ -646,6 +639,38 @@ public class PackEditPage extends Page {
 				if (id.equals(pac.getSID()))
 					b = false;
 		addr.setEnabled(b);
+	}
+
+	private void addCE(AnimU<? extends AnimU.ImageKeeper> anim) {
+		if (anim == null)
+			return;
+
+		changing = true;
+		if (ene == null) {
+			CustomEnemy ce = new CustomEnemy(anim);
+			ce.limit = CommonStatic.customEnemyMinPos(anim.mamodel);
+			Enemy e = new Enemy(pac.getNextID(Enemy.class), anim, ce);
+			pac.enemies.add(e);
+			jle.setListData(pac.enemies.toRawArray());
+			jle.setSelectedValue(e, true);
+			setEnemy(e);
+		} else if (ene.anim == null || Opts.conf(get(MainLocale.PAGE, "reasanim"))) {
+			CustomEnemy ce = (CustomEnemy)ene.de;
+			ce.share = Arrays.copyOf(ce.share, anim.anim.getAtkCount());
+			if (ce.hits.size() < ce.share.length)
+				for (int i = ce.hits.size(); i < ce.share.length; i++) {
+					ce.hits.add(new AtkDataModel[1]);
+					ce.hits.get(i)[0] = new AtkDataModel(ce);
+					ce.share[i] = 1;
+				}
+			while (ce.hits.size() > ce.share.length)
+				ce.hits.remove(ce.hits.size() - 1);
+			ce.limit = CommonStatic.customEnemyMinPos(anim.mamodel);
+			ene.anim = anim;
+			edit.setEnabled(pac.editable);
+			edit.setToolTipText(null);
+		}
+		changing = false;
 	}
 
 	private void ini() {
@@ -700,8 +725,7 @@ public class PackEditPage extends Page {
 		jle.setCellRenderer(new AnimLCR());
 		jtd.setCellRenderer(new AnimTreeRenderer());
 		SwingUtilities.invokeLater(() -> jtd.setUI(new TreeNodeExpander(jtd)));
-		String[] sortMethods = get(MainLocale.PAGE, "psort", 10);
-		lbp.setModel(new DefaultComboBoxModel<>(sortMethods));
+		lbp.setModel(new DefaultComboBoxModel<>(get(MainLocale.PAGE, "psort", 10)));
 		setPack(null);
 		addListeners();
 		addListeners$1();
@@ -714,7 +738,7 @@ public class PackEditPage extends Page {
 		ene = e;
 		boolean b = e != null && pac.editable;
 		edit.setEnabled(e != null && e.de instanceof CustomEnemy && e.anim != null);
-		erea.setEnabled(b && getSelectedAnim() != null);
+		erea.setEnabled(b);
 
 		if(e != null && e.anim == null) {
 			edit.setToolTipText(get(MainLocale.PAGE, "corrrea"));
@@ -769,7 +793,7 @@ public class PackEditPage extends Page {
 			}
 
 		jtfp.setEnabled(b);
-		adde.setEnabled(b && getSelectedAnim() != null);
+		adde.setEnabled(b);
 		adds.setEnabled(b);
 		extr.setEnabled(pac != null);
 		vcas.setEnabled(pac != null);
@@ -779,6 +803,7 @@ public class PackEditPage extends Page {
 		recd.setEnabled(pac != null);
 		ener.setEnabled(pac != null);
 		cbge.setEnabled(pac != null);
+		cdesc.setEnabled(pac != null);
 		boolean canUnpack = pac != null && !pac.editable;
 		boolean canExport = pac != null && pac.editable;
 		unpk.setEnabled(canUnpack);
@@ -814,7 +839,7 @@ public class PackEditPage extends Page {
 
 		if(pack != null) {
 			pid.setText("ID : "+pack.desc.id);
-			if(pack.desc.author == null || pack.desc.author.isEmpty()) {
+			if(pack.desc.getAuthor().isEmpty()) {
 				pauth.setText("Author : (None)");
 			} else {
 				pauth.setText("Author : "+pack.desc.author);

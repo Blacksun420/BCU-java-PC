@@ -54,7 +54,7 @@ public class DescPage extends Page {
         descDisplay.setText(pack.desc.info.toString());
         descDisplay.setEnabled(editable);
         add(pauth);
-        pauth.setText(pack.desc.author == null ? "No Author" : "By " + pack.desc.author);
+        pauth.setText(pack.desc.getAuthor().isEmpty() ? "No Author" : "By " + pack.desc.author);
         add(pdate);
         pdate.setText(pack.desc.creationDate == null ? "Unknown Creation Date" : get(MainLocale.PAGE, "cdate") + Interpret.translateDate(pack.desc.creationDate));
         if (!pack.editable) {
@@ -73,8 +73,11 @@ public class DescPage extends Page {
         add(psta);
         psta.setText(get(MainLocale.PAGE, "sttot") + " " + pack.mc.getStageCount());
 
-        if (pack.icon != null || pack.editable) {
+        if (pack.editable) {
             add(setIcn);
+            add(setBnr);
+        }
+        if (pack.icon != null || pack.editable) {
             add(picon);
             if (pack.icon != null)
                 picon.setIcon(new ImageIcon(UtilPC.resizeImage((BufferedImage) pack.icon.getImg().bimg(), 128, 128)));
@@ -82,7 +85,6 @@ public class DescPage extends Page {
                 picon.setIcon(null);
         }
         if (pack.banner != null || pack.editable) {
-            add(setBnr);
             add(pbanner);
             if (pack.banner != null)
                 pbanner.setIcon(new ImageIcon(UtilPC.resizeImage((BufferedImage) pack.banner.getImg().bimg(), 1050, 550)));
@@ -94,24 +96,25 @@ public class DescPage extends Page {
 
     @Override
     protected void resized(int x, int y) {
-        int h = pack.banner == null ? pack.editable ? 50 : 0 : 650;
+        int h = pack.banner == null ? pack.editable ? 50 : 0 : 720;
         set(descPane, x, y, 0, h, 900, 300);
         setComponentZOrder(descPane, 2);
-        if (h != 650) {
+        if (h != 720) {
             set(pbanner, x, y, 0, 0, 0, 0);
-            set(picon, x, y, 500, 0, 182, 182);
+            set(picon, x, y, 740, h, 182, 182);
+            setComponentZOrder(picon, 0);
             set(setIcn, x, y, 100, 0, 300, 50);
             set(setBnr, x, y, 680, 0, 300, 50);
         } else {
-            set(pbanner, x, y, 0, 0, 1300, 650);
+            set(pbanner, x, y, 0, 0, 1300, 720);
             setComponentZOrder(pbanner, 1);
             if (pack.icon == null) {
-                set(setIcn, x, y, 0, 475, 182, 182);
-                set(picon, x, y, 0, 475, 0, 0);
+                set(setIcn, x, y, 0, 545, 182, 182);
+                set(picon, x, y, 0, 545, 0, 0);
                 setComponentZOrder(setIcn, 0);
             } else {
-                set(picon, x, y, 0, 475, 182, 182);
-                set(setIcn, x, y, 0, 475, 0, 0);
+                set(picon, x, y, 0, 545, 182, 182);
+                set(setIcn, x, y, 0, 545, 0, 0);
                 setComponentZOrder(picon, 0);
             }
             set(setBnr, x, y, 680, 0, 0, 0);

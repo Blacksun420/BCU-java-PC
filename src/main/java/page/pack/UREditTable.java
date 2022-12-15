@@ -5,10 +5,7 @@ import common.pack.Identifier;
 import common.pack.PackData;
 import common.pack.UserProfile;
 import common.system.Node;
-import common.util.unit.AbUnit;
-import common.util.unit.Form;
-import common.util.unit.UniRand;
-import common.util.unit.Unit;
+import common.util.unit.*;
 import common.util.unit.rand.UREnt;
 import page.MainFrame;
 import page.MainLocale;
@@ -37,7 +34,7 @@ public class UREditTable extends AbJTable implements Reorderable {
     }
 
     protected static void redefine() {
-        title = Page.get(MainLocale.INFO, "er", 3);
+        title = Page.get(MainLocale.INFO, "ur", 3);
     }
 
     private UniRand rand;
@@ -136,12 +133,10 @@ public class UREditTable extends AbJTable implements Reorderable {
         }
     }
 
-    protected synchronized int addLine(Form form) {
+    protected synchronized int addLine(AbForm form) {
         if (rand == null || form == null)
             return -1;
-        int ind = getSelectedRow();
-        if (ind == -1)
-            ind = rand.list.size();
+        int ind = getSelectedRow() + 1;
         UREnt ur = new UREnt(form);
         rand.list.add(ind, ur);
         return rand.list.size() - 1;
@@ -213,8 +208,8 @@ public class UREditTable extends AbJTable implements Reorderable {
             v[0] = 0;
         if (c == 1) {
             ArrayList<Integer> list = new ArrayList<>();
-            for (int i = 0; i < v.length; i++)
-                list.add(v[i]);
+            for (int j : v)
+                list.add(j);
             ur.lv.setLvs(list);
         } else if (c == 2)
             ur.share = v[0];

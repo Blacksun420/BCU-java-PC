@@ -5,6 +5,7 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import common.battle.BattleField;
 import common.battle.SBCtrl;
+import common.util.unit.AbForm;
 import common.util.unit.Enemy;
 import common.util.unit.Form;
 import jogl.util.GLGraphics;
@@ -19,10 +20,10 @@ public class GLBattleBox extends GLCstd implements BattleBox, GLEventListener {
 
 	public GLBattleBox(OuterBox bip, BattleField bf, int type) {
 		bbp = type == 0 ? new BBPainter(bip, bf, this) : new BBCtrl(bip, (SBCtrl) bf, this);
-		for (Form[] fs : bbp.bf.sb.b.lu.fs)
-			for (Form f : fs)
-				if (f != null)
-					f.anim.check();
+		for (AbForm[] fs : bbp.bf.sb.b.lu.fs)
+			for (AbForm f : fs)
+				if (f instanceof Form)
+					((Form) f).anim.check();
 		for (Enemy e : bbp.bf.sb.st.data.getAllEnemy())
 			e.anim.check();
 	}

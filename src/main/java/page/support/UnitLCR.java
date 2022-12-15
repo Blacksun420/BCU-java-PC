@@ -1,6 +1,7 @@
 package page.support;
 
 import common.system.VImg;
+import common.util.unit.AbForm;
 import common.util.unit.Form;
 import common.util.unit.Unit;
 import utilpc.Theme;
@@ -15,23 +16,23 @@ public class UnitLCR extends DefaultListCellRenderer {
 
 	@Override
 	public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean s, boolean f) {
-		Form form;
+		AbForm form;
 		if (o instanceof Unit)
-			form = ((Unit) o).forms[0];
+			form = ((Unit)o).forms[0];
 		else
-			form = (Form) o;
+			form = (AbForm)o;
 		JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
 		jl.setText(o.toString());
 		jl.setIcon(null);
 		jl.setHorizontalTextPosition(SwingConstants.RIGHT);
 
-		if(form.anim == null) {
+		if(form instanceof Form && ((Form)form).anim == null) {
 			jl.setEnabled(false);
 			jl.setText(o + " (Error - Corrupted)");
 			return jl;
 		}
 
-		VImg v = form.anim.getEdi();
+		VImg v = form.getIcon();
 		if (v == null)
 			return jl;
 		jl.setIcon(UtilPC.getIcon(v));

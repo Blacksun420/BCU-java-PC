@@ -10,6 +10,7 @@ import common.util.stage.Stage;
 import common.util.stage.info.CustomStageInfo;
 import common.util.stage.info.StageInfo;
 import common.util.unit.AbEnemy;
+import common.util.unit.Form;
 import common.util.unit.Level;
 import main.Opts;
 import page.*;
@@ -210,10 +211,8 @@ public class AdvStEditPage extends Page {
 			public void mouseClicked(MouseEvent e) {
 				super.mouseClicked(e);
 				if (e.getButton() == MouseEvent.BUTTON1) {
-					if (ufp == null) {
-						String pac = st.id.pack.substring(0, st.id.pack.indexOf('/'));
-						ufp = new UnitFindPage(getThis(), pac, UserProfile.getUserPack(pac).desc.dependency);
-					}
+					if (ufp == null)
+						ufp = new UnitFindPage(getThis(), false, UserProfile.getUserPack(st.id.pack.substring(0, st.id.pack.indexOf('/'))));
 					changePanel(ufp);
 				} else if (st.info != null && ((CustomStageInfo)st.info).ubase != null)
 					changePanel(new UnitInfoPage(getThis(), ((CustomStageInfo)st.info).ubase.unit, ((CustomStageInfo)st.info).lv.getLvs()));
@@ -363,7 +362,7 @@ public class AdvStEditPage extends Page {
 			CustomStageInfo csi = (CustomStageInfo)st.info;
 
 			if (csi.ubase != ufp.getForm() && (csi.ubase == null || Opts.conf("Replace base " + csi.ubase + " with " + ufp.getForm() + "?"))) {
-				csi.ubase = ufp.getForm();
+				csi.ubase = (Form)ufp.getForm();
 				if (csi.ubase != null)
 					csi.lv = new Level(csi.ubase.getPrefLvs());
 				else {

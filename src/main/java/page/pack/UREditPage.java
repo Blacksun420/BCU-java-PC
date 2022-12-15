@@ -4,6 +4,8 @@ import common.CommonStatic;
 import common.pack.Context;
 import common.pack.PackData.UserPack;
 import common.pack.Source;
+import common.pack.UserProfile;
+import common.util.unit.AbForm;
 import common.util.unit.Form;
 import common.util.unit.UniRand;
 import common.util.unit.Unit;
@@ -53,8 +55,13 @@ public class UREditPage extends Page {
     private final JBTN reicn = new JBTN(MainLocale.PAGE, "remicon");
     private final JBTN aduni = new JBTN(MainLocale.PAGE, "icon");
     private final JBTN reuni = new JBTN(MainLocale.PAGE, "remicon");
+
+    private final JL cost = new JL(MainLocale.INFO, "price");
+    private final JTF jost = new JTF();
+    private final JL cd = new JL(MainLocale.INFO, "cdo");
+    private final JTF jd = new JTF();
     private final JLabel uni = new JLabel();
-    private final JList<Form> jlu = new JList<>();
+    private final JList<AbForm> jlu = new JList<>();
     private final JScrollPane jspe = new JScrollPane(jlu);
     private final JTF name = new JTF();
     private final JTG[] type = new JTG[3];
@@ -68,10 +75,11 @@ public class UREditPage extends Page {
     public UREditPage(Page p, UserPack pac) {
         super(p);
         pack = pac;
-        List<Unit> uni = pac.units.getList();
+        List<Unit> uni = UserProfile.getBCData().units.getRawList();
+        uni.addAll(pac.units.getList());
         ArrayList<Form> forms = new ArrayList<>();
-        for (int i = 0; i < uni.size(); i++)
-            Collections.addAll(forms, uni.get(i).forms);
+        for (Unit unit : uni)
+            Collections.addAll(forms, unit.forms);
         jlu.setListData(forms.toArray(new Form[0]));
         jt = new UREditTable(this, pac);
         jspjt = new JScrollPane(jt);
@@ -110,6 +118,11 @@ public class UREditPage extends Page {
         set(reuni, x, y, 200, 700, 200, 50);
         set(uni, x, y, 225, 550, 150, 150);
 
+        set(jost, x, y, 150, 350, 100, 50);
+        set(cost, x, y, 250, 350, 200, 50);
+        set(jd, x, y, 150, 400, 100, 50);
+        set(cd, x, y, 250, 400, 200, 50);
+
         for (int i = 0; i < 3; i++)
             set(type[i], x, y, 1550 + 250 * i, 250, 200, 50);
         set(addl, x, y, 1800, 350, 200, 50);
@@ -142,7 +155,7 @@ public class UREditPage extends Page {
 
         veif.addActionListener(arg0 -> {
             if (ufp == null)
-                ufp = new UnitFindPage(getThis(), pack.desc.id, pack.desc.dependency);
+                ufp = new UnitFindPage(getThis(), true, pack);
             changePanel(ufp);
         });
 
@@ -202,8 +215,32 @@ public class UREditPage extends Page {
 
         });
 
-        for (int i = 0; i < 3; i++) {
-            int I = i;
+        cost.addFocusListener(new FocusAdapter() {
+
+            @Override
+            public void focusLost(FocusEvent fe) {
+                if (rand == null)
+                    return;
+                rand.price = CommonStatic.parseIntN(cost.getText().trim());
+                setUR(rand);
+            }
+
+        });
+
+        cd.addFocusListener(new FocusAdapter() {
+
+            @Override
+            public void focusLost(FocusEvent fe) {
+                if (rand == null)
+                    return;
+                rand.cooldown = Math.max(60, CommonStatic.parseIntN(cd.getText().trim()));
+                setUR(rand);
+            }
+
+        });
+
+        for (byte i = 0; i < 3; i++) {
+            byte I = i;
             type[i].addActionListener(arg0 -> {
                 if (isAdj() || rand == null)
                     return;
@@ -249,6 +286,10 @@ public class UREditPage extends Page {
         add(aduni);
         add(reuni);
         add(uni);
+        add(cost);
+        add(jost);
+        add(cd);
+        add(jd);
         for (int i = 0; i < 3; i++)
             add(type[i] = new JTG(1, "ert" + i));
         setES();

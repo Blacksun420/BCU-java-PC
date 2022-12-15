@@ -1,6 +1,7 @@
 package page.info;
 
 import common.system.ENode;
+import common.util.unit.Enemy;
 import page.JBTN;
 import page.JTG;
 import page.Page;
@@ -30,7 +31,7 @@ public class EnemyInfoPage extends Page {
 		super(p);
 		e = de;
 
-		info = new EnemyInfoTable(this, de.val, de.mul, de.mula);
+		info = new EnemyInfoTable(this, (Enemy) de.val, de.mul, de.mula);
 		trea = new TreaTable(this);
 		ini();
 		resized();
@@ -70,12 +71,12 @@ public class EnemyInfoPage extends Page {
 			if (getFront() instanceof EnemyViewPage)
 				changePanel(getFront());
 			else
-				changePanel(new EnemyViewPage(getThis(), e.val));
+				changePanel(new EnemyViewPage(getThis(), (Enemy)e.val));
 		});
 
 		next.addActionListener(arg0 -> changePanel(new EnemyInfoPage(getFront(), (ENode) e.next)));
 
-		find.addActionListener(arg0 -> changePanel(new StageFilterPage(getThis(), e.val.findApp())));
+		find.addActionListener(arg0 -> changePanel(new StageFilterPage(getThis(), ((Enemy)e.val).findApp())));
 
 		extr.addActionListener(arg0 -> info.setDisplaySpecial(extr.isSelected()));
 	}

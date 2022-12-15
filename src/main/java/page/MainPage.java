@@ -123,8 +123,8 @@ public class MainPage extends Page {
 		veff.setLnr(() -> new EffectViewPage(this));
 		vcas.setLnr(() -> new CastleViewPage(this));
 		vbgr.setLnr(() -> new BGViewPage(this));
-		veif.setLnr(() -> new EnemyFindPage(this));
-		vuif.setLnr(() -> new UnitFindPage(this));
+		veif.setLnr(() -> new EnemyFindPage(this, true));
+		vuif.setLnr(() -> new UnitFindPage(this, true));
 		bass.setLnr(() -> new BasisPage(this));
 		curr.setLnr(() -> BattleInfoPage.current);
 		pcus.setLnr(() -> new PackEditPage(this));

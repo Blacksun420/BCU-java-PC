@@ -5,6 +5,7 @@ import common.util.stage.MapColc;
 import common.util.stage.SCDef.Line;
 import common.util.stage.Stage;
 import common.util.stage.StageMap;
+import common.util.unit.AbEnemy;
 import common.util.unit.Enemy;
 import page.*;
 import page.info.filter.EnemyFindPage;
@@ -41,8 +42,8 @@ public class StageSearchPage extends StagePage {
     private final JL enemy = new JL(0, "enemy");
     private final JBTN adde = new JBTN(0,"add");
     private final JBTN reme = new JBTN(0,"rem");
-    private final List<Enemy> eList = new ArrayList<>();
-    private final JList<Enemy> enemies = new JList<>();
+    private final List<AbEnemy> eList = new ArrayList<>();
+    private final JList<AbEnemy> enemies = new JList<>();
     private final JScrollPane enes = new JScrollPane(enemies);
     private final JTG eneOrop = new JTG(0,"ops1");
 
@@ -226,14 +227,14 @@ public class StageSearchPage extends StagePage {
 
         adde.addActionListener(l -> {
             if (efp == null)
-                efp = new EnemyFindPage(getThis());
+                efp = new EnemyFindPage(getThis(), true);
             changePanel(efp);
         });
 
         reme.addActionListener(l -> {
-            for (Enemy e : enemies.getSelectedValuesList())
+            for (AbEnemy e : enemies.getSelectedValuesList())
                 eList.remove(e);
-            enemies.setListData(eList.toArray(new Enemy[0]));
+            enemies.setListData(eList.toArray(new AbEnemy[0]));
         });
 
         jlmc.addListSelectionListener(l -> {
@@ -281,7 +282,7 @@ public class StageSearchPage extends StagePage {
     protected void renew() {
         if (efp != null && efp.getSelected() != null && !eList.contains(efp.getSelected())) {
             eList.add(efp.getSelected());
-            enemies.setListData(eList.toArray(new Enemy[0]));
+            enemies.setListData(eList.toArray(new AbEnemy[0]));
         }
     }
 
@@ -364,7 +365,7 @@ public class StageSearchPage extends StagePage {
 
         if (!eneOrop.isSelected())
             for (int i = 0; i < eList.size(); i++) {
-                final Enemy ene = eList.get(i);
+                final AbEnemy ene = eList.get(i);
                 stages.removeIf(st -> !st.contains(ene));
             }
         else if (eList.size() != 0) {

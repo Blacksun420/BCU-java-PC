@@ -12,7 +12,7 @@ import page.JBTN;
 import page.Page;
 import page.battle.BattleSetupPage;
 import page.battle.StRecdPage;
-import page.info.filter.AbEnemyFindPage;
+import page.info.filter.EnemyFindPage;
 import page.support.AnimLCR;
 import page.support.RLFIM;
 
@@ -67,9 +67,9 @@ public class StageEditPage extends Page {
 	private final HeadEditTable info;
 
 	private final MapColc mc;
-	private final String pack;
+	private final UserPack pack;
 
-	private final AbEnemyFindPage efp;
+	private final EnemyFindPage efp;
 
 	private boolean changing = false;
 	private Stage stage;
@@ -77,13 +77,13 @@ public class StageEditPage extends Page {
 	public StageEditPage(Page p, MapColc map, UserPack pac) {
 		super(p);
 		mc = map;
-		pack = pac.desc.id;
+		pack = pac;
 		jt = new StageEditTable(this, pac);
 		jspjt = new JScrollPane(jt);
 		info = new HeadEditTable(this, pac);
 		jlsm.setListData(mc, mc.maps);
-		jle.setListData(UserProfile.getAll(pack, Enemy.class).toArray(new Enemy[0]));
-		efp = new AbEnemyFindPage(getThis(), pac.desc.id, pac.desc.dependency);
+		jle.setListData(UserProfile.getAll(pack.getSID(), Enemy.class).toArray(new Enemy[0]));
+		efp = new EnemyFindPage(getThis(), true, pac);
 		ini();
 	}
 

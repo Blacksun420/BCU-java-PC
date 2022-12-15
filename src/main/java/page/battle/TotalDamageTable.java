@@ -1,13 +1,14 @@
 package page.battle;
 
 import common.battle.StageBasis;
+import common.util.unit.AbForm;
 import common.util.unit.Form;
 import page.MainLocale;
 import page.Page;
 import page.support.SortTable;
 import page.support.UnitTCR;
 
-public class TotalDamageTable extends SortTable<Form> {
+public class TotalDamageTable extends SortTable<AbForm> {
     private static String[] title;
 
     static {
@@ -39,7 +40,7 @@ public class TotalDamageTable extends SortTable<Form> {
     }
 
     @Override
-    protected int compare(Form e0, Form e1, int c) {
+    protected int compare(AbForm e0, AbForm e1, int c) {
         if(c == 0) {
             if(e0 == null && e1 == null)
                 return 0;
@@ -50,14 +51,14 @@ public class TotalDamageTable extends SortTable<Form> {
             if(e1 == null)
                 return 1;
 
-            return e0.uid.compareTo(e1.uid);
+            return e0.getID().compareTo(e1.getID());
         } else {
             return Long.compare((long) get(e0, c), (long) get(e1, c));
         }
     }
 
     @Override
-    protected Object get(Form form, int c) {
+    protected Object get(AbForm form, int c) {
         if(c == 0)
             return form;
         else {
@@ -73,15 +74,15 @@ public class TotalDamageTable extends SortTable<Form> {
         }
     }
 
-    private int[] findForm(Form f) {
+    private int[] findForm(AbForm f) {
         for(int i = 0; i < basis.b.lu.fs.length; i++) {
             for(int j = 0; j < basis.b.lu.fs[i].length; j++) {
-                Form target = basis.b.lu.fs[i][j];
+                AbForm target = basis.b.lu.fs[i][j];
 
                 if(target == null)
                     continue;
 
-                if(target.uid.equals(f.uid)) {
+                if(target.getID().equals(f.getID())) {
                     return new int[] {i, j};
                 }
             }

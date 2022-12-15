@@ -27,8 +27,6 @@ import page.*;
 import page.anim.DIYViewPage;
 import page.info.edit.SwingEditor.EditCtrl;
 import page.info.edit.SwingEditor.IdEditor;
-import page.info.filter.AbEnemyFindPage;
-import page.info.filter.AbUnitFindPage;
 import page.info.filter.EnemyFindPage;
 import page.info.filter.UnitFindPage;
 import page.support.ListJtfPolicy;
@@ -170,17 +168,17 @@ public abstract class EntityEditPage extends Page {
 		SupPage<?> ans;
 
 		if ((ce.getPack() instanceof Enemy && get(jli.getSelectedIndex()).dire != -1)
-				|| (ce.getPack() instanceof Form && get(jli.getSelectedIndex()).dire != 1)) {
+				|| (ce.getPack() instanceof Form && get(jli.getSelectedIndex()).dire == -1)) {
 			if(p != null) {
-				ans = new AbEnemyFindPage(this, pack, p.desc.dependency);
+				ans = new EnemyFindPage(this, true, p);
 			} else {
-				ans = new AbEnemyFindPage(this);
+				ans = new EnemyFindPage(this, true);
 			}
 		} else {
 			if(p != null) {
-				ans = new AbUnitFindPage(this, pack, p.desc.dependency);
+				ans = new UnitFindPage(this, true, p);
 			} else {
-				ans = new AbUnitFindPage(this);
+				ans = new UnitFindPage(this, true);
 			}
 		}
 
@@ -257,13 +255,18 @@ public abstract class EntityEditPage extends Page {
 		if (editable) {
 			add(jcba);
 			Vector<AnimCE> vda = new Vector<>();
-			AnimCE ac = ((AnimCE) ce.getPack().anim);
-			if (ac != null && !ac.inPool())
-				vda.add(ac);
-			vda.addAll(AnimCE.map().values());
-			if (ac == null)
-				ce.getPack().anim = vda.get(0);
+			if (ce.getPack().anim instanceof AnimCE) {
+				AnimCE ac = ((AnimCE) ce.getPack().anim);
+				if (ac != null && !ac.inPool())
+					vda.add(ac);
+				vda.addAll(AnimCE.map().values());
+				if (ac == null)
+					ce.getPack().anim = vda.get(0);
+			} else
+				vda.addAll(AnimCE.map().values());
 			jcba.setModel(new DefaultComboBoxModel<>(vda));
+			if (!(ce.getPack().anim instanceof AnimCE))
+				jcba.setSelectedIndex(-1);
 		}
 		setFocusTraversalPolicy(ljp);
 		setFocusCycleRoot(true);
@@ -301,7 +304,7 @@ public abstract class EntityEditPage extends Page {
 
 		if (efp != null && efp.getSelected() != null
 				&& Opts.conf("do you want to overwrite stats? This operation cannot be undone")) {
-			Enemy e = efp.getSelected();
+			Enemy e = (Enemy) efp.getSelected();
 			ce.importData(e.de);
 			ce.traits.removeIf(t -> {
 				if(t.BCTrait)
@@ -313,7 +316,7 @@ public abstract class EntityEditPage extends Page {
 		}
 		if (ufp != null && ufp.getForm() != null
 				&& Opts.conf("do you want to overwrite stats? This operation cannot be undone")) {
-			Form f = ufp.getForm();
+			Form f = (Form) ufp.getForm();
 			ce.importData(f.du);
 			ce.traits.removeIf(t -> {
 				if(t.BCTrait)
@@ -473,9 +476,9 @@ public abstract class EntityEditPage extends Page {
 	}
 
 	protected void subListener(JBTN e, JBTN u, JBTN a, Object o) {
-		e.setLnr(x -> changePanel(efp = new EnemyFindPage(getThis())));
+		e.setLnr(x -> changePanel(efp = new EnemyFindPage(getThis(), false)));
 
-		u.setLnr(x -> changePanel(ufp = new UnitFindPage(getThis())));
+		u.setLnr(x -> changePanel(ufp = new UnitFindPage(getThis(), false)));
 
 		a.setLnr(x -> {
 			if (editable) {

@@ -7,7 +7,7 @@ import common.battle.entity.Entity;
 import common.util.Data;
 import common.util.stage.Replay;
 import common.util.stage.Stage;
-import common.util.unit.Form;
+import common.util.unit.AbForm;
 import io.BCMusic;
 import main.MainBCU;
 import main.Opts;
@@ -307,10 +307,10 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 				(e.dire == 1 ? les : lus).add(e);
 			}
 
-			List<Form> lf = new ArrayList<>();
+			List<AbForm> lf = new ArrayList<>();
 
-			for (Form[] fs : basis.sb.b.lu.fs) {
-				for(Form f : fs) {
+			for (AbForm[] fs : basis.sb.b.lu.fs) {
+				for(AbForm f : fs) {
 					if(f != null)
 						lf.add(f);
 				}

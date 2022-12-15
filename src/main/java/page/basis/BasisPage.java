@@ -8,9 +8,7 @@ import common.pack.UserProfile;
 import common.system.Node;
 import common.util.pack.NyCastle;
 import common.util.stage.Limit;
-import common.util.unit.Combo;
-import common.util.unit.Form;
-import common.util.unit.Unit;
+import common.util.unit.*;
 import page.JBTN;
 import page.JTF;
 import page.JTG;
@@ -70,7 +68,7 @@ public class BasisPage extends LubCont {
 	private final ComboList jlcn = new ComboList();
 	private final JScrollPane jspcn = new JScrollPane(jlcn);
 	private final LineUpBox lub = new LineUpBox(this);
-	private final JList<Form> ul = new JList<>();
+	private final JList<AbForm> ul = new JList<>();
 	private final JScrollPane jspul = new JScrollPane(ul);
 	private final NyCasBox ncb = new NyCasBox();
 	private final JBTN[] jbcsR = new JBTN[3];
@@ -83,7 +81,7 @@ public class BasisPage extends LubCont {
 
 	private final TreaTable trea = new TreaTable(this);
 	private final JScrollPane jspt = new JScrollPane(trea);
-	private Unit cunit;
+	private AbUnit cunit;
 
 	private String comboName = "";
 
@@ -129,6 +127,16 @@ public class BasisPage extends LubCont {
 			changing = true;
 			setCL(jlcs.getSelectedIndex());
 			changing = false;
+		} else if (o instanceof UniRand) {
+			UniRand ur = (UniRand)o;
+			setLvs(ur);
+			if (cunit != null && ur.compareTo(cunit) == 0)
+				return;
+			changing = true;
+			cunit = ur;
+			outside = true;
+			lub.select(ur);
+			changing = false;
 		}
 	}
 
@@ -163,9 +171,9 @@ public class BasisPage extends LubCont {
 	@Override
 	protected void renew() {
 		if (ufp != null) {
-			List<Form> lf = ufp.getList();
+			List<AbForm> lf = ufp.getList();
 			if (lf != null)
-				ul.setListData(Node.deRep(lf).toArray(new Form[0]));
+				ul.setListData(Node.deRep(lf).toArray(new AbForm[0]));
 		}
 	}
 
@@ -238,15 +246,17 @@ public class BasisPage extends LubCont {
 			public void mousePressed(MouseEvent e) {
 				super.mousePressed(e);
 				changing = true;
-				if (e.getButton() == MouseEvent.BUTTON3) {
+				if (e.getButton() == MouseEvent.BUTTON3 && lub.sf instanceof Form) {
 					int row = ul.locationToIndex(e.getPoint());
 					ul.setSelectedIndex(row);
 					lub.select(ul.getSelectedValue());
-					if (lub.sf != null && lub.sf.du.getPCoin() != null) {
-						lub.setLv(new int[]{lub.sf.unit.getPrefLv(), 0, 0, 0, 0, 0});
+					if (((Form) lub.sf).du.getPCoin() != null) {
+						lub.setLv(new int[]{((Form) lub.sf).unit.getPrefLv(), 0, 0, 0, 0, 0});
 						setLvs(lub.sf);
 					}
 				} else {
+					if (lub.sf != null)
+						setLvs(lub.sf);
 					lub.select(ul.getSelectedValue());
 				}
 				changing = false;
@@ -270,7 +280,7 @@ public class BasisPage extends LubCont {
 
 		lvorb.setLnr(x -> {
 			if (lub.sf != null) {
-				changePanel(new LevelEditPage(this, lu().getLv(lub.sf), lub.sf));
+				changePanel(new LevelEditPage(this, lu().getLv(lub.sf), (Form) lub.sf));
 			}
 		});
 
@@ -504,8 +514,8 @@ public class BasisPage extends LubCont {
 		});
 
 		combo.addActionListener(x -> {
-			if (combo.isSelected() && lub.sf != null) {
-				Unit unit = lub.sf.unit;
+			if (combo.isSelected() && lub.sf instanceof Form) {
+				Unit unit = (Unit)lub.sf.unit();
 				setLvs(unit.forms[unit.forms.length - 1]);
 				cunit = unit;
 				outside = true;
@@ -655,8 +665,8 @@ public class BasisPage extends LubCont {
 						lc.add(c);
 				}
 		}
-		if (cunit != null) {
-			List<Combo> combos = cunit.allCombo();
+		if (cunit instanceof Unit) {
+			List<Combo> combos = ((Unit)cunit).allCombo();
 			lc = lc.stream().filter(combos::contains).collect(Collectors.toList());
 		}
 		jlc.setList(lc);
@@ -674,20 +684,22 @@ public class BasisPage extends LubCont {
 		setCL(cs);
 	}
 
-	private void setLvs(Form f) {
-		lvorb.setEnabled(f != null);
+	private void setLvs(AbForm f) {
+		if (f instanceof Form) {
+			lvorb.setEnabled(((Form) f).orbs != null);
 
-		if (f == null) {
-			lvjtf.setText("");
+			String[] strs = UtilPC.lvText(f, lu().getLv(f).getLvs());
+			lvjtf.setText(strs[0]);
+			pcoin.setText(strs[1]);
+		} else {
+			lvorb.setEnabled(false);
 			pcoin.setText("");
-			return;
+			if (f == null) {
+				lvjtf.setText("");
+			} else {
+				lvjtf.setText(UtilPC.lvText(f, lu().getLv(f).getLvs())[0]);
+			}
 		}
-
-		lvorb.setEnabled(f.orbs != null);
-
-		String[] strs = UtilPC.lvText(f, lu().getLv(f).getLvs());
-		lvjtf.setText(strs[0]);
-		pcoin.setText(strs[1]);
 	}
 
 	private void updateSetC() {

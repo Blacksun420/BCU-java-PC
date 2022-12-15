@@ -1,7 +1,10 @@
 package page.basis;
 
+import common.pack.UserProfile;
+import common.util.unit.Unit;
 import page.Page;
 import page.info.UnitInfoPage;
+import page.pack.UREditPage;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -35,8 +38,10 @@ public abstract class LubCont extends Page {
 		if (e.getSource() == getLub())
 			if (e.getButton() == MouseEvent.BUTTON1)
 				getLub().click(e.getPoint());
+			else if (getLub().sf instanceof Unit)
+				changePanel(new UnitInfoPage(this, (Unit)getLub().sf.unit(), getLub().lu.getLv(getLub().sf).getLvs()));
 			else if (getLub().sf != null)
-				changePanel(new UnitInfoPage(this, getLub().sf.unit, getLub().lu.getLv(getLub().sf).getLvs()));
+				changePanel(new UREditPage(this, UserProfile.getUserPack(getLub().sf.getID().pack)));
 	}
 
 	@Override

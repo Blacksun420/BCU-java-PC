@@ -14,7 +14,7 @@ public abstract class EntityFindPage<R> extends Page {
     private static final long serialVersionUID = 1L;
 
     protected final JBTN back = new JBTN(0, "back");
-    protected final JLabel source = new JLabel("All BC unit icons belong to Spica");
+    protected static final JLabel source = new JLabel("All BC unit icons belong to Spica");
     protected final JTG show = new JTG(0, "showf");
     protected EntityListTable<R> elt;
     protected EntityFilterBox efb;

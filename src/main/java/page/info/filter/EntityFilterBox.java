@@ -2,7 +2,6 @@ package page.info.filter;
 
 import common.pack.FixIndexList;
 import common.pack.PackData;
-import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.unit.Trait;
 import page.JBTN;
@@ -20,9 +19,9 @@ public abstract class EntityFilterBox extends Page {
     private static final long serialVersionUID = 1L;
 
     public String name = ""; //Keeps all data for all filter pages. Consider rare and abis are the only difference between unit and enemy filters, as well as confirm function
-    protected int minDiff = 5;
-    protected final SortedPackSet<String> parents;
-    protected final String pack;
+    protected static int minDiff = 5;
+
+    protected final PackData.UserPack pack;
 
     protected final JBTN[] orop = new JBTN[4];
     protected final byte[] ops = new byte[4];
@@ -34,16 +33,12 @@ public abstract class EntityFilterBox extends Page {
 
     protected EntityFilterBox(Page p) {
         super(p);
-
         pack = null;
-        parents = null;
     }
 
-    protected EntityFilterBox(Page p, String pack, SortedPackSet<String> parent) {
+    protected EntityFilterBox(Page p, PackData.UserPack pack) {
         super(p);
-
         this.pack = pack;
-        parents = parent;
     }
 
     @Override
@@ -65,7 +60,7 @@ public abstract class EntityFilterBox extends Page {
     protected abstract void confirm();
 
     protected boolean validatePack(PackData p) {
-        return p instanceof PackData.DefPack || pack == null || p.getSID().equals(pack) || parents.contains(p.getSID());
+        return p instanceof PackData.DefPack || pack == null || p == pack || pack.desc.dependency.contains(p.getSID());
     }
 
     protected void ini() {
@@ -73,10 +68,14 @@ public abstract class EntityFilterBox extends Page {
         FixIndexList.FixIndexMap<Trait> BCtraits = UserProfile.getBCData().traits;
         for (int i = 0 ; i < (this instanceof UnitFilterBox ? TRAIT_EVA : BCtraits.size() - 1) ; i++)
             trait.list.add(BCtraits.get(i));
-        for (PackData.UserPack pacc : UserProfile.getUserPacks())
-            for (Trait ctra : pacc.traits)
-                if (pack == null || ctra.id.pack.equals(pack) || parents.contains(ctra.id.pack))
-                    trait.list.add(ctra);
+        if (pack == null)
+            for (PackData.UserPack pacc : UserProfile.getUserPacks())
+                pacc.traits.forEach(t -> trait.list.add(t));
+        else {
+            trait.list.addAll(pack.traits.getList());
+            for (String s : pack.desc.dependency)
+                UserProfile.getUserPack(s).traits.forEach(t -> trait.list.add(t));
+        }
         trait.setListData();
 
         atkt.setListData(ATKCONF);

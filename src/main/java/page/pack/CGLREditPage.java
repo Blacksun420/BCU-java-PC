@@ -6,6 +6,7 @@ import common.pack.PackData.UserPack;
 import common.util.Data;
 import common.util.stage.CharaGroup;
 import common.util.stage.LvRestrict;
+import common.util.unit.AbForm;
 import common.util.unit.Form;
 import page.JBTN;
 import page.JTF;
@@ -32,7 +33,7 @@ public class CGLREditPage extends Page {
 	private final JList<CharaGroup> jlsb = new JList<>();
 	private final JList<LvRestrict> jllr = new JList<>();
 	private final ReorderList<Form> jlus = new ReorderList<>();
-	private final ReorderList<Form> jlua = new ReorderList<>();
+	private final ReorderList<AbForm> jlua = new ReorderList<>();
 	private final JScrollPane jspcg = new JScrollPane(jlcg);
 	private final JScrollPane jspsb = new JScrollPane(jlsb);
 	private final JScrollPane jsplr = new JScrollPane(jllr);
@@ -82,8 +83,8 @@ public class CGLREditPage extends Page {
 	protected void renew() {
 		if (ufp != null && ufp.getList() != null) {
 			changing = true;
-			List<Form> list = new ArrayList<>(ufp.getList());
-			jlua.setListData(list.toArray(new Form[0]));
+			List<AbForm> list = new ArrayList<>(ufp.getList());
+			jlua.setListData(list.toArray(new AbForm[0]));
 			jlua.clearSelection();
 			if (list.size() > 0)
 				jlua.setSelectedIndex(0);
@@ -125,7 +126,7 @@ public class CGLREditPage extends Page {
 
 		vuif.addActionListener(arg0 -> {
 			if (ufp == null)
-				ufp = new UnitFindPage(getThis(), pack.getSID(), pack.desc.dependency);
+				ufp = new UnitFindPage(getThis(), false, pack);
 			changePanel(ufp);
 		});
 
@@ -170,7 +171,7 @@ public class CGLREditPage extends Page {
 		});
 
 		addus.addActionListener(arg0 -> {
-			List<Form> u = jlua.getSelectedValuesList();
+			List<AbForm> u = jlua.getSelectedValuesList();
 			if (cg == null || u.size() == 0)
 				return;
 			changing = true;

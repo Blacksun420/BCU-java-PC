@@ -131,7 +131,7 @@ public class StageTable extends AbJTable {
 				else
 					muls.add(new int[]{b[0], b[1]});
 			}
-			MainFrame.changePanel(new EnemyInfoPage(page, ENode.getList(eList, e, muls)));
+			MainFrame.changePanel(new EnemyInfoPage(page, ENode.getListE(eList, e, muls)));
 		} else if(data[r][c] instanceof EneRand) {
 			EneRand e = (EneRand) data[r][c];
 
