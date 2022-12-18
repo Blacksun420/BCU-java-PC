@@ -9,7 +9,7 @@ import common.battle.data.CustomUnit;
 import common.pack.PackData.UserPack;
 import common.pack.Source;
 import common.pack.UserProfile;
-import common.util.anim.AnimCE;
+import common.util.anim.AnimCI;
 import common.util.anim.AnimU;
 import common.util.stage.CharaGroup;
 import common.util.unit.*;
@@ -200,7 +200,7 @@ public class UnitManagePage extends Page {
 		});
 
 		addu.addActionListener(arg0 -> {
-			AnimCE anim = getSelectedAnim();
+			AnimCI anim = getSelectedAnim();
 			uni = null;
 			if (anim == null)
 				changePanel(ufp = new UnitFindPage(this, false, pac));
@@ -308,7 +308,7 @@ public class UnitManagePage extends Page {
 			if(jlf.getSelectedValue() == null)
 				return;
 
-			AnimCE anim = getSelectedAnim();
+			AnimCI anim = getSelectedAnim();
 			if (anim == null)
 				changePanel(ufp = new UnitFindPage(this, false, pac));
 			else
@@ -330,7 +330,7 @@ public class UnitManagePage extends Page {
 		});
 
 		addf.addActionListener(arg0 -> {
-			AnimCE ac = getSelectedAnim();
+			AnimCI ac = getSelectedAnim();
 			frm = null;
 			if (ac == null)
 				changePanel(ufp = new UnitFindPage(this, false, pac));
@@ -635,17 +635,17 @@ public class UnitManagePage extends Page {
 		if (Objects.equals(pack, pac))
 			return;
 		removeMappedAnims(pac);
-		addMappedAnims(pack);
+		addMappedAnims(pack, false);
 	}
-	private void addMappedAnims(UserPack pack) {
-		if (pack != null && (pack.editable || pack.desc.allowAnim)) {
+	private void addMappedAnims(UserPack pack, boolean unedit) {
+		if (pack != null && (pack.editable || (unedit && pack.desc.allowAnim))) {
 			DefaultMutableTreeNode container = new DefaultMutableTreeNode(pack.getSID());
-			for (AnimCE anim : ((Source.Workspace)pack.source).getAnims(Source.BasePath.ANIM))
+			for (AnimCI anim : pack.source.getAnims(Source.BasePath.ANIM))
 				container.add(new DefaultMutableTreeNode(anim));
 			if (container.getChildCount() > 0)
 				agt.addNode(container);
 			for (String s : pack.desc.dependency)
-				addMappedAnims(UserProfile.getUserPack(s));
+				addMappedAnims(UserProfile.getUserPack(s), true);
 		}
 	}
 	private void removeMappedAnims(UserPack pack) {
@@ -692,14 +692,14 @@ public class UnitManagePage extends Page {
 		setForm(frm);
 	}
 
-	private AnimCE getSelectedAnim() {
+	private AnimCI getSelectedAnim() {
 		TreePath path = jtd.getSelectionPath();
 
 		if(path != null && path.getLastPathComponent() instanceof DefaultMutableTreeNode) {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 
-			if (node.getUserObject() instanceof AnimCE)
-				return (AnimCE) node.getUserObject();
+			if (node.getUserObject() instanceof AnimCI)
+				return (AnimCI) node.getUserObject();
 		}
 		return null;
 	}

@@ -5,6 +5,7 @@ import common.pack.Source;
 import common.pack.UserProfile;
 import common.util.AnimGroup;
 import common.util.anim.AnimCE;
+import common.util.anim.AnimCI;
 
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
@@ -62,7 +63,7 @@ public class AnimGroupTree implements TreeExpansionListener {
             for (PackData.UserPack pack : UserProfile.getUserPacks())
                 if (pack.editable) {
                     DefaultMutableTreeNode container = new DefaultMutableTreeNode(pack.getSID());
-                    for (AnimCE anim : ((Source.Workspace)pack.source).getAnims(Source.BasePath.ANIM))
+                    for (AnimCI anim : pack.source.getAnims(Source.BasePath.ANIM))
                         container.add(new DefaultMutableTreeNode(anim));
                     if (container.getChildCount() > 0)
                         addNode(container);

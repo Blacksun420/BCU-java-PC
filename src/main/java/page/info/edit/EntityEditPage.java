@@ -12,6 +12,7 @@ import common.pack.Source;
 import common.pack.UserProfile;
 import common.util.Animable;
 import common.util.anim.AnimCE;
+import common.util.anim.AnimCI;
 import common.util.anim.AnimU;
 import common.util.anim.AnimU.UType;
 import common.util.lang.Editors;
@@ -85,7 +86,7 @@ public abstract class EntityEditPage extends Page {
 	private final JL vpst = new JL();
 	private final JL litv = new JL(MainLocale.INFO, "atkf");
 	private final JL vitv = new JL();
-	private final JComboBox<AnimCE> jcba = new JComboBox<>();
+	private final JComboBox<AnimCI> jcba = new JComboBox<>();
 	private final JComboBox<Soul> jcbs = new JComboBox<>();
 	private final ListJtfPolicy ljp = new ListJtfPolicy();
 	private final AtkEditTable aet;
@@ -242,7 +243,7 @@ public abstract class EntityEditPage extends Page {
 		jcbs.setModel(new DefaultComboBoxModel<>(vec));
 		if (pack.editable) {
 			add(jcba);
-			Vector<AnimCE> vda = new Vector<>();
+			Vector<AnimCI> vda = new Vector<>();
 			if (ce.getPack().anim instanceof AnimCE) {
 				AnimCE ac = ((AnimCE) ce.getPack().anim);
 				if (ac != null && !ac.inPool())
@@ -286,9 +287,9 @@ public abstract class EntityEditPage extends Page {
 		add(jsp);
 	}
 
-	private static void getAnims(Vector<AnimCE> vda, UserPack pac) {
+	private static void getAnims(Vector<AnimCI> vda, UserPack pac) {
 		if (pac.editable || pac.desc.allowAnim)
-			vda.addAll(((Source.Workspace)pac.source).getAnims(Source.BasePath.ANIM));
+			vda.addAll(pac.source.getAnims(Source.BasePath.ANIM));
 		for (String s : pac.desc.dependency)
 			getAnims(vda, UserProfile.getUserPack(s));
 	}

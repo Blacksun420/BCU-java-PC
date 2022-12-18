@@ -14,7 +14,7 @@ import common.pack.Source.ZipSource;
 import common.pack.UserProfile;
 import common.util.AnimGroup;
 import common.util.Data;
-import common.util.anim.AnimCE;
+import common.util.anim.AnimCI;
 import common.util.anim.AnimU;
 import common.util.stage.MapColc;
 import common.util.stage.Stage;
@@ -378,7 +378,7 @@ public class PackEditPage extends Page {
 		});
 
 		adde.addActionListener(arg0 -> {
-			AnimCE anim = getSelectedAnim();
+			AnimCI anim = getSelectedAnim();
 			ene = null;
 			if (anim == null)
 				changePanel(efp = new EnemyFindPage(this, false, pac));
@@ -413,7 +413,7 @@ public class PackEditPage extends Page {
 			if(jle.getSelectedValue() == null)
 				return;
 
-			AnimCE anim = getSelectedAnim();
+			AnimCI anim = getSelectedAnim();
 			if (anim == null)
 				changePanel(efp = new EnemyFindPage(this, false, pac));
 			else
@@ -854,17 +854,17 @@ public class PackEditPage extends Page {
 		if (Objects.equals(pack, pac))
 			return;
 		removeMappedAnims(pac);
-		addMappedAnims(pack);
+		addMappedAnims(pack, false);
 	}
-	private void addMappedAnims(UserPack pack) {
-		if (pack != null && (pack.editable || pack.desc.allowAnim)) {
+	private void addMappedAnims(UserPack pack, boolean unedit) {
+		if (pack != null && (pack.editable || (unedit && pack.desc.allowAnim))) {
 			DefaultMutableTreeNode container = new DefaultMutableTreeNode(pack.getSID());
-			for (AnimCE anim : ((Workspace)pack.source).getAnims(Source.BasePath.ANIM))
+			for (AnimCI anim : pack.source.getAnims(Source.BasePath.ANIM))
 				container.add(new DefaultMutableTreeNode(anim));
 			if (container.getChildCount() > 0)
 				agt.addNode(container);
 			for (String s : pack.desc.dependency)
-				addMappedAnims(UserProfile.getUserPack(s));
+				addMappedAnims(UserProfile.getUserPack(s), true);
 		}
 	}
 	private void removeMappedAnims(UserPack pack) {
@@ -875,14 +875,14 @@ public class PackEditPage extends Page {
 			removeMappedAnims(UserProfile.getUserPack(s));
 	}
 
-	private AnimCE getSelectedAnim() {
+	private AnimCI getSelectedAnim() {
 		TreePath path = jtd.getSelectionPath();
 
 		if(path != null && path.getLastPathComponent() instanceof DefaultMutableTreeNode) {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 
-			if (node.getUserObject() instanceof AnimCE)
-				return (AnimCE) node.getUserObject();
+			if (node.getUserObject() instanceof AnimCI)
+				return (AnimCI) node.getUserObject();
 		}
 		return null;
 	}

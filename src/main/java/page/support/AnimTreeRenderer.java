@@ -3,6 +3,7 @@ package page.support;
 import common.system.VImg;
 import common.util.AnimGroup;
 import common.util.anim.AnimCE;
+import common.util.anim.AnimCI;
 import utilpc.UtilPC;
 
 import javax.swing.*;
@@ -51,12 +52,12 @@ public class AnimTreeRenderer extends DefaultTreeCellRenderer {
             }
         }
 
-        if(!(((DefaultMutableTreeNode) value).getUserObject() instanceof AnimCE))
+        if(!(((DefaultMutableTreeNode) value).getUserObject() instanceof AnimCI))
             return comp;
 
         jl.setIcon(null);
 
-        AnimCE anim = (AnimCE) ((DefaultMutableTreeNode) value).getUserObject();
+        AnimCI anim = (AnimCI) ((DefaultMutableTreeNode) value).getUserObject();
 
         if(anim != null && anim.getEdi() != null) {
             VImg edi = anim.getEdi();
