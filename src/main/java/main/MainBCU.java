@@ -396,7 +396,7 @@ public class MainBCU {
 		public void run() {
 			try {
 				Thread.sleep(MainBCU.autoSaveTime * 60000L);
-				Source.Workspace.autoSave();
+				Source.Workspace.saveWorkspace(true);
 				MainBCU.restartAutoSaveTimer();
 			} catch (InterruptedException ignored) {
 			}

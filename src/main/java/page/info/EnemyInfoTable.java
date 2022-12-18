@@ -31,7 +31,7 @@ public class EnemyInfoTable extends Page {
 	private JL[][] atks;
 	private JLabel[] proc;
 	private final JTF jtf = new JTF();
-	private final JTextArea descr = new JTextArea();
+	private final JTA descr = new JTA();
 	private final JScrollPane desc = new JScrollPane(descr);
 
 	private final JL atkind = new JL();

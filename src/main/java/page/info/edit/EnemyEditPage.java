@@ -33,7 +33,7 @@ public class EnemyEditPage extends EntityEditPage {
 	private final CustomEnemy ce;
 
 	public EnemyEditPage(Page p, Enemy e, PackData.UserPack pack) {
-		super(p, e.id.pack, (CustomEntity) e.de, pack.editable, true);
+		super(p, pack, (CustomEntity) e.de, true);
 		ene = e;
 		ce = (CustomEnemy) ene.de;
 		eeb = new EnemyEditBox(this, pack, ce);
@@ -88,7 +88,7 @@ public class EnemyEditPage extends EntityEditPage {
 		set(eeb, x, y, 50, 650, 600, 500);
 		set(fsr, x, y, 50, 1150, 200, 50);
 
-		if (editable) {
+		if (pack.editable) {
 			set(impt, x, y, 250, 1150, 200, 50);
 			set(vuni, x, y, 450, 1150, 200, 50);
 			set(vene, x, y, 1800, 1100, 200, 50);

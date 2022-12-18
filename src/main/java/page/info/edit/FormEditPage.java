@@ -39,7 +39,7 @@ public class FormEditPage extends EntityEditPage {
 	private int lv;
 
 	public FormEditPage(Page p, UserPack pac, Form f) {
-		super(p, pac.desc.id, (CustomEntity) f.du, pac.editable, false);
+		super(p, pac, (CustomEntity) f.du, false);
 		form = f;
 		cu = (CustomUnit) form.du;
 		lv = f.unit.getPrefLv();
@@ -140,7 +140,7 @@ public class FormEditPage extends EntityEditPage {
 		add(impt);
 		add(vene);
 		add(pcoin);
-		pcoin.setLnr(x -> changePanel(new PCoinEditPage(getThis(),form, editable)));
+		pcoin.setLnr(x -> changePanel(new PCoinEditPage(getThis(),form, pack.editable)));
 
 		subListener(vene, impt, vuni, form.unit);
 
@@ -163,7 +163,7 @@ public class FormEditPage extends EntityEditPage {
 		set(llr, x, y, 1350, 50, 100, 50);
 		set(flr, x, y, 1450, 50, 200, 50);
 		set(ueb, x, y, 50, 650, 600, 500);
-		if (editable) {
+		if (pack.editable) {
 			set(vuni, x, y, 1800, 1100, 200, 50);
 			set(stat, x, y, 2000, 1100, 200, 50);
 		} else {

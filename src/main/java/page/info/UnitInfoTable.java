@@ -32,7 +32,7 @@ public class UnitInfoTable extends Page {
 	private JLabel[] proc;
 	private final JTF jtf = new JTF();
 	private JLabel pcoin;
-	private final JTextArea descr = new JTextArea();
+	private final JTA descr = new JTA();
 	private final JScrollPane desc = new JScrollPane(descr);
 
 	private final JL atkind = new JL();

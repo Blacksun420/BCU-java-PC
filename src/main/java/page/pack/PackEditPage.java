@@ -89,6 +89,7 @@ public class PackEditPage extends Page {
 	private final JList<Enemy> jle = new JList<>();
 	private final JScrollPane jspe = new JScrollPane(jle);
 	private final JTree jtd = new JTree();
+	private final AnimGroupTree agt;
 	private final JScrollPane jspd = new JScrollPane(jtd);
 	private final RLFIM<StageMap> jls = new RLFIM<>(() -> this.changing = true, () -> changing = false, this::finishRemoving, this::setMap, StageMap::new);
 	private final JScrollPane jsps = new JScrollPane(jls);
@@ -147,7 +148,7 @@ public class PackEditPage extends Page {
 	public PackEditPage(Page p) {
 		super(p);
 		AnimGroup.workspaceGroup.renewGroup();
-		AnimGroupTree agt = new AnimGroupTree(jtd, Source.BasePath.ANIM);
+		agt = new AnimGroupTree(jtd, Source.BasePath.ANIM);
 		agt.renewNodes();
 
 		ini();
@@ -780,6 +781,8 @@ public class PackEditPage extends Page {
 	}
 
 	private void setPack(UserPack pack) {
+		checkMapAnims(pack);
+
 		pac = pack;
 		boolean b = pac != null && pac.editable;
 		SortedPackSet<String> deps = pac != null ? parentedList(pac) : null;
@@ -845,6 +848,31 @@ public class PackEditPage extends Page {
 				pauth.setText("Author : "+pack.desc.author);
 			}
 		}
+	}
+
+	private void checkMapAnims(UserPack pack) {
+		if (Objects.equals(pack, pac))
+			return;
+		removeMappedAnims(pac);
+		addMappedAnims(pack);
+	}
+	private void addMappedAnims(UserPack pack) {
+		if (pack != null && (pack.editable || pack.desc.allowAnim)) {
+			DefaultMutableTreeNode container = new DefaultMutableTreeNode(pack.getSID());
+			for (AnimCE anim : ((Workspace)pack.source).getAnims(Source.BasePath.ANIM))
+				container.add(new DefaultMutableTreeNode(anim));
+			if (container.getChildCount() > 0)
+				agt.addNode(container);
+			for (String s : pack.desc.dependency)
+				addMappedAnims(UserProfile.getUserPack(s));
+		}
+	}
+	private void removeMappedAnims(UserPack pack) {
+		if (pack == null)
+			return;
+		agt.removeNode(pack.getSID());
+		for (String s : pack.desc.dependency)
+			removeMappedAnims(UserProfile.getUserPack(s));
 	}
 
 	private AnimCE getSelectedAnim() {

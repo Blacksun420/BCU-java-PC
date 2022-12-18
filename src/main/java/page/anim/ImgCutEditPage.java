@@ -77,39 +77,14 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 		super(p);
 		aep = new EditHead(this, 1);
 		agt = new AnimGroupTree(jta);
-		if (aep.focus == null) {
-			AnimGroup.workspaceGroup.renewGroup();
-			agt.renewNodes();
-		} else {
-			DefaultMutableTreeNode root = new DefaultMutableTreeNode("Animation");
-
-			root.add(new DefaultMutableTreeNode(aep.focus));
-
-			jta.setModel(new DefaultTreeModel(root));
-		}
-
-		ini();
-		resized();
-
+		preIni();
 	}
 
 	public ImgCutEditPage(Page p, EditHead bar) {
 		super(p);
 		aep = bar;
 		agt = new AnimGroupTree(jta);
-		if (aep.focus == null) {
-			AnimGroup.workspaceGroup.renewGroup();
-			agt.renewNodes();
-		} else {
-			DefaultMutableTreeNode root = new DefaultMutableTreeNode("Animation");
-
-			root.add(new DefaultMutableTreeNode(aep.focus));
-
-			jta.setModel(new DefaultTreeModel(root));
-		}
-
-		ini();
-		resized();
+		preIni();
 	}
 
 	@Override
@@ -568,7 +543,19 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 		});
 
 		spri.setLnr(x -> changePanel(sep = new SpriteEditPage(this, (BufferedImage) icet.anim.getNum().bimg())));
+	}
 
+	private void preIni() {
+		if (aep.focus == null) {
+			AnimGroup.workspaceGroup.renewGroup();
+			agt.renewNodes();
+		} else {
+			DefaultMutableTreeNode root = new DefaultMutableTreeNode("Animation");
+			root.add(new DefaultMutableTreeNode(aep.focus));
+			jta.setModel(new DefaultTreeModel(root));
+		}
+		ini();
+		resized();
 	}
 
 	private void ini() {

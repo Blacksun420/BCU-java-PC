@@ -185,15 +185,4 @@ public class EnemyViewPage extends AbViewPage {
 		new AnimCE(rl, eau);
 		changePanel(new ImgCutEditPage(getThis()));
 	}
-
-	private void copyAnim(Enemy ene) {
-		EAnimI ei = ene.anim.getEAnim(ene.anim.types()[0]);
-		if (ei == null || ei.anim() == null)
-			return;
-		AnimD<?, ?> eau = (AnimD<?, ?>) ei.anim();
-		Source.ResourceLocation rl = new Source.ResourceLocation(Source.ResourceLocation.LOCAL, ene.toString(), Source.BasePath.ANIM);
-		Source.Workspace.validate(rl);
-		new AnimCE(rl, eau);
-		changePanel(new ImgCutEditPage(getThis()));
-	}
 }

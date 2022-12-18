@@ -2,7 +2,7 @@ package page.info.edit;
 
 import common.CommonStatic;
 import common.battle.data.AtkDataModel;
-import common.pack.PackData;
+import common.pack.PackData.UserPack;
 import common.pack.UserProfile;
 import common.util.stage.Music;
 import main.MainBCU;
@@ -60,11 +60,11 @@ class AtkEditTable extends Page {
 	protected AtkDataModel adm;
 	protected ProcTable.AtkProcTable apt;
 
-	protected AtkEditTable(Page p, String pack, boolean edit) {
+	protected AtkEditTable(Page p, UserPack pack) {
 		super(p);
-		editable = edit;
+		editable = pack.editable;
 
-		pini(UserProfile.getUserPack(pack));
+		pini(pack);
 		ini();
 	}
 
@@ -137,7 +137,7 @@ class AtkEditTable extends Page {
 		changing = false;
 	}
 
-	private void pini(PackData.UserPack pack) {
+	private void pini(UserPack pack) {
 		atktr.list.addAll(UserProfile.getBCData().traits.getList().subList(TRAIT_RED,TRAIT_EVA));
 		Vector<Music> vs = new Vector<>();
 		vs.add(null);
@@ -146,11 +146,11 @@ class AtkEditTable extends Page {
 		if (pack != null) {
 			atktr.list.addAll(pack.traits.getList());
 			vs.addAll(pack.musics.getList());
-			for (PackData.UserPack pacc : UserProfile.getUserPacks())
-				if (pack.desc.dependency.contains(pacc.desc.id)) {
-					atktr.list.addAll(pacc.traits.getList());
-					vs.addAll(pacc.musics.getList());
-				}
+			for (String dep : pack.desc.dependency) {
+				UserPack pacc = UserProfile.getUserPack(dep);
+				atktr.list.addAll(pacc.traits.getList());
+				vs.addAll(pacc.musics.getList());
+			}
 		}
 		aud.setModel(new DefaultComboBoxModel<>(vs));
 		aud1.setModel(new DefaultComboBoxModel<>(vs));

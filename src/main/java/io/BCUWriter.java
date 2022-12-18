@@ -159,8 +159,7 @@ public class BCUWriter extends DataIO {
 
 	public static void writeData(boolean genBackup) {
 		BasisSet.write();
-		Source.Workspace.saveLocalAnimations();
-		Source.Workspace.saveWorkspace();
+		Source.Workspace.saveWorkspace(false);
 		AnimGroup.writeAnimGroup();
 		writeOptions();
 		if (genBackup && CommonStatic.getConfig().maxBackup != -1)

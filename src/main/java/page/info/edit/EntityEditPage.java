@@ -7,7 +7,8 @@ import common.battle.data.AtkDataModel;
 import common.battle.data.CustomEntity;
 import common.pack.Identifier;
 import common.pack.IndexContainer.Indexable;
-import common.pack.PackData;
+import common.pack.PackData.UserPack;
+import common.pack.Source;
 import common.pack.UserProfile;
 import common.util.Animable;
 import common.util.anim.AnimCE;
@@ -91,7 +92,7 @@ public abstract class EntityEditPage extends Page {
 	private final ProcTable.MainProcTable mpt;
 	private final JScrollPane jspm;
 	private final CustomEntity ce;
-	private final String pack;
+	protected final UserPack pack;
 	private final JTA entDesc = new JTA();
 	private final JScrollPane jsDesc = new JScrollPane(entDesc);
 
@@ -105,7 +106,6 @@ public abstract class EntityEditPage extends Page {
 	private SupPage<? extends Indexable<?, ?>> sup;
 	private IdEditor<?> editor;
 
-	protected final boolean editable;
 	protected final Basis bas = BasisSet.current();
 	private final JComboBox<String> atkS = new JComboBox<>();
 	private final JL jsh = new JL(MainLocale.INFO, "er2");
@@ -113,19 +113,18 @@ public abstract class EntityEditPage extends Page {
 
 	protected final ArrayList<AtkDataModel> extra = new ArrayList<>();
 
-	public EntityEditPage(Page p, String pac, CustomEntity e, boolean edit, boolean isEnemy) {
+	public EntityEditPage(Page p, UserPack pac, CustomEntity e, boolean isEnemy) {
 		super(p);
 		Editors.setEditorSupplier(new EditCtrl(isEnemy, this));
 		pack = pac;
 		ce = e;
-		aet = new AtkEditTable(this, pack, edit);
-		apt = new ProcTable.AtkProcTable(aet, edit, !isEnemy);
+		aet = new AtkEditTable(this, pack);
+		apt = new ProcTable.AtkProcTable(aet, pack.editable, !isEnemy);
 		aet.setProcTable(apt);
 		jsp = new JScrollPane(apt);
-		mpt = new ProcTable.MainProcTable(this, edit, !isEnemy);
+		mpt = new ProcTable.MainProcTable(this, pack.editable, !isEnemy);
 		jspm = new JScrollPane(mpt);
-		editable = edit;
-		if (!editable)
+		if (!pack.editable)
 			jli.setDragEnabled(false);
 
 		String[] atkSS = new String[e.getAtkTypeCount() + 1];
@@ -149,14 +148,14 @@ public abstract class EntityEditPage extends Page {
 
 	public SupPage<Music> getMusicSup(IdEditor<Music> edi) {
 		editor = edi;
-		SupPage<Music> ans = new MusicPage(this, pack);
+		SupPage<Music> ans = new MusicPage(this, pack.getSID());
 		sup = ans;
 		return ans;
 	}
 
 	public SupPage<Background> getBGSup(IdEditor<Background> edi) {
 		editor = edi;
-		SupPage<Background> ans = new BGViewPage(this, pack);
+		SupPage<Background> ans = new BGViewPage(this, pack.getSID());
 		sup = ans;
 		return ans;
 	}
@@ -164,26 +163,15 @@ public abstract class EntityEditPage extends Page {
 	public SupPage<?> getEntitySup(IdEditor<?> edi) {
 		editor = edi;
 
-		PackData.UserPack p = UserProfile.getUserPack(pack);
 		SupPage<?> ans;
-
 		if ((ce.getPack() instanceof Enemy && get(jli.getSelectedIndex()).dire != -1)
 				|| (ce.getPack() instanceof Form && get(jli.getSelectedIndex()).dire == -1)) {
-			if(p != null) {
-				ans = new EnemyFindPage(this, true, p);
-			} else {
-				ans = new EnemyFindPage(this, true);
-			}
+			ans = new EnemyFindPage(this, true, pack);
 		} else {
-			if(p != null) {
-				ans = new UnitFindPage(this, true, p);
-			} else {
-				ans = new UnitFindPage(this, true);
-			}
+			ans = new UnitFindPage(this, true, pack);
 		}
 
 		sup = ans;
-
 		return ans;
 	}
 
@@ -250,9 +238,9 @@ public abstract class EntityEditPage extends Page {
 		add(jsDesc);
 		Vector<Soul> vec = new Vector<>();
 		vec.add(null);
-		vec.addAll(UserProfile.getAll(pack, Soul.class));
+		vec.addAll(UserProfile.getAll(pack.getSID(), Soul.class));
 		jcbs.setModel(new DefaultComboBoxModel<>(vec));
-		if (editable) {
+		if (pack.editable) {
 			add(jcba);
 			Vector<AnimCE> vda = new Vector<>();
 			if (ce.getPack().anim instanceof AnimCE) {
@@ -264,6 +252,7 @@ public abstract class EntityEditPage extends Page {
 					ce.getPack().anim = vda.get(0);
 			} else
 				vda.addAll(AnimCE.map().values());
+			getAnims(vda, pack);
 			jcba.setModel(new DefaultComboBoxModel<>(vda));
 			if (!(ce.getPack().anim instanceof AnimCE))
 				jcba.setSelectedIndex(-1);
@@ -285,23 +274,28 @@ public abstract class EntityEditPage extends Page {
 				"<html>" + "The amount of slots this entity will take of the limit"
 				+ " when spawned</html>");
 
-		add.setEnabled(editable);
-		rem.setEnabled(editable);
-		copy.setEnabled(editable);
-		link.setEnabled(editable);
-		atkn.setEnabled(editable);
-		comm.setEnabled(editable);
-		jcbs.setEnabled(editable);
-		entDesc.setEnabled(editable);
+		add.setEnabled(pack.editable);
+		rem.setEnabled(pack.editable);
+		copy.setEnabled(pack.editable);
+		link.setEnabled(pack.editable);
+		atkn.setEnabled(pack.editable);
+		comm.setEnabled(pack.editable);
+		jcbs.setEnabled(pack.editable);
+		entDesc.setEnabled(pack.editable);
 
 		add(jsp);
+	}
+
+	private static void getAnims(Vector<AnimCE> vda, UserPack pac) {
+		if (pac.editable || pac.desc.allowAnim)
+			vda.addAll(((Source.Workspace)pac.source).getAnims(Source.BasePath.ANIM));
+		for (String s : pac.desc.dependency)
+			getAnims(vda, UserProfile.getUserPack(s));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	protected void renew() {
-		PackData.UserPack p = UserProfile.getUserPack(pack);
-
 		if (efp != null && efp.getSelected() != null
 				&& Opts.conf("do you want to overwrite stats? This operation cannot be undone")) {
 			Enemy e = (Enemy) efp.getSelected();
@@ -310,7 +304,7 @@ public abstract class EntityEditPage extends Page {
 				if(t.BCTrait)
 					return false;
 
-				return p == null || !p.desc.dependency.contains(t.id.pack);
+				return !pack.desc.dependency.contains(t.id.pack);
 			});
 			setData(ce);
 		}
@@ -322,7 +316,7 @@ public abstract class EntityEditPage extends Page {
 				if(t.BCTrait)
 					return false;
 
-				return p == null || !p.desc.dependency.contains(t.id.pack);
+				return !pack.desc.dependency.contains(t.id.pack);
 			});
 			setData(ce);
 		}
@@ -406,7 +400,7 @@ public abstract class EntityEditPage extends Page {
 	}
 
 	protected void set(JTF jtf) {
-		jtf.setEditable(editable);
+		jtf.setEditable(pack.editable);
 		add(jtf);
 		ljp.add(jtf);
 
@@ -446,7 +440,7 @@ public abstract class EntityEditPage extends Page {
 		mpt.setData(ce.rep.proc);
 
 		int ind = jli.getSelectedIndex();
-		josh.setEnabled(editable && !isSp());
+		josh.setEnabled(pack.editable && !isSp());
 		if (isSp()) {
 			extra.clear();
 			for (AtkDataModel[] atks : ce.getSpAtks(true))
@@ -468,7 +462,7 @@ public abstract class EntityEditPage extends Page {
 		jli.setSelectedIndex(ind);
 		Animable<AnimU<?>, UType> ene = ce.getPack();
 
-		if (editable)
+		if (pack.editable)
 			jcba.setSelectedItem(ene.anim);
 
 		jcbs.setSelectedItem(Identifier.get(ce.death));
@@ -481,7 +475,7 @@ public abstract class EntityEditPage extends Page {
 		u.setLnr(x -> changePanel(ufp = new UnitFindPage(getThis(), false)));
 
 		a.setLnr(x -> {
-			if (editable) {
+			if (pack.editable) {
 				AnimCE anim = (AnimCE) jcba.getSelectedItem();
 
 				if(anim != null)
@@ -492,8 +486,8 @@ public abstract class EntityEditPage extends Page {
 				changePanel(new EnemyViewPage(getThis(), (Enemy) o));
 		});
 
-		e.setEnabled(editable);
-		u.setEnabled(editable);
+		e.setEnabled(pack.editable);
+		u.setEnabled(pack.editable);
 	}
 
 	private void addListeners() {
@@ -631,14 +625,11 @@ public abstract class EntityEditPage extends Page {
 		});
 
 		entDesc.setLnr(j -> {
-			String txt = entDesc.getText();
+			String txt = entDesc.assignSplitText(256);
 			if (txt.equals("Description") || txt.isEmpty())
 				ce.getPack().description.remove();
-			else {
-				if (txt.replace("\n", "").length() > 256)
-					txt = txt.substring(0, 256);
+			else
 				ce.getPack().description.put(txt);
-			}
 			setData(ce);
 		});
 
@@ -883,11 +874,11 @@ public abstract class EntityEditPage extends Page {
 
 	private void setA(int ind) {
 		setA(get(ind));
-		boolean b = editable && ind < getSelMask().length;
+		boolean b = pack.editable && ind < getSelMask().length;
 		link.setEnabled(b);
 		copy.setEnabled(b);
 		atkn.setEnabled(b);
-		rem.setEnabled(editable && (isSp() || getSelMask().length > 1 || ind >= getSelMask().length));
+		rem.setEnabled(pack.editable && (isSp() || getSelMask().length > 1 || ind >= getSelMask().length));
 	}
 	private void setA(AtkDataModel adm) {
 		atkn.setText(adm.str);

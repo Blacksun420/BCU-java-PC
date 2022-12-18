@@ -42,6 +42,7 @@ public class UnitManagePage extends Page {
 	private final ReorderList<Form> jlf = new ReorderList<>();
 	private final JScrollPane jspf = new JScrollPane(jlf);
 	private final JTree jtd = new JTree();
+	private final AnimGroupTree agt;
 	private final JScrollPane jspd = new JScrollPane(jtd);
 	private final JList<UnitLevel> jll = new JList<>();
 	private final JScrollPane jspl = new JScrollPane(jll);
@@ -82,9 +83,7 @@ public class UnitManagePage extends Page {
 
 	public UnitManagePage(Page p, UserPack pack) {
 		super(p);
-		AnimGroupTree agt = new AnimGroupTree(jtd, Source.BasePath.ANIM);
-		vpack.sort(null);
-
+		agt = new AnimGroupTree(jtd, Source.BasePath.ANIM);
 		agt.renewNodes();
 
 		pac = pack;
@@ -593,6 +592,7 @@ public class UnitManagePage extends Page {
 	}
 
 	private void setPack(UserPack pack) {
+		checkMapAnims(pack);
 		pac = pack;
 		if (jlp.getSelectedValue() != pack) {
 			boolean boo = changing;
@@ -629,6 +629,31 @@ public class UnitManagePage extends Page {
 			ul = null;
 		setUnit(uni);
 		setLevel(ul);
+	}
+
+	private void checkMapAnims(UserPack pack) {
+		if (Objects.equals(pack, pac))
+			return;
+		removeMappedAnims(pac);
+		addMappedAnims(pack);
+	}
+	private void addMappedAnims(UserPack pack) {
+		if (pack != null && (pack.editable || pack.desc.allowAnim)) {
+			DefaultMutableTreeNode container = new DefaultMutableTreeNode(pack.getSID());
+			for (AnimCE anim : ((Source.Workspace)pack.source).getAnims(Source.BasePath.ANIM))
+				container.add(new DefaultMutableTreeNode(anim));
+			if (container.getChildCount() > 0)
+				agt.addNode(container);
+			for (String s : pack.desc.dependency)
+				addMappedAnims(UserProfile.getUserPack(s));
+		}
+	}
+	private void removeMappedAnims(UserPack pack) {
+		if (pack == null)
+			return;
+		agt.removeNode(pack.getSID());
+		for (String s : pack.desc.dependency)
+			removeMappedAnims(UserProfile.getUserPack(s));
 	}
 
 	private void setUnit(Unit unit) {

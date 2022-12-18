@@ -1,6 +1,8 @@
 package page.anim;
 
+import common.pack.PackData;
 import common.pack.Source;
+import common.pack.UserProfile;
 import common.util.AnimGroup;
 import common.util.anim.AnimCE;
 
@@ -20,14 +22,14 @@ public class AnimGroupTree implements TreeExpansionListener {
     private final HashMap<String, Boolean> groupExpanded = new HashMap<>();
 
     private DefaultMutableTreeNode nodes = new DefaultMutableTreeNode("Animation");
-    private Source.BasePath required = null;
+    private final Source.BasePath required;
 
     public AnimGroupTree(JTree animTree) {
-        this.animTree = animTree;
+        this(animTree, null);
     }
 
     public AnimGroupTree(JTree animTree, Source.BasePath basePath) {
-        this(animTree);
+        this.animTree = animTree;
         required = basePath;
     }
 
@@ -37,28 +39,18 @@ public class AnimGroupTree implements TreeExpansionListener {
         for(String key : AnimGroup.workspaceGroup.groups.keySet()) {
             if(key.equals(""))
                 continue;
-
             DefaultMutableTreeNode container = new DefaultMutableTreeNode(key);
-
             ArrayList<AnimCE> anims = AnimGroup.workspaceGroup.groups.get(key);
-
             if(anims == null)
                 continue;
 
-            for(AnimCE anim : anims) {
-                if (required != null && !anim.id.base.equals(required))
-                    continue;
-                DefaultMutableTreeNode animNode = new DefaultMutableTreeNode(anim);
-
-                container.add(animNode);
-            }
-
+            for(AnimCE anim : anims)
+                if (required == null || anim.id.base.equals(required))
+                    container.add(new DefaultMutableTreeNode(anim));
             nodes.add(container);
         }
-
         ArrayList<AnimCE> baseGroup = AnimGroup.workspaceGroup.groups.get("");
-
-        if(baseGroup != null && !baseGroup.isEmpty()) {
+        if(baseGroup != null && !baseGroup.isEmpty())
             for(AnimCE anim : baseGroup) {
                 if (required != null && !anim.id.base.equals(required))
                     continue;
@@ -66,11 +58,31 @@ public class AnimGroupTree implements TreeExpansionListener {
 
                 nodes.add(animNode);
             }
+        if (required == null) {
+            for (PackData.UserPack pack : UserProfile.getUserPacks())
+                if (pack.editable) {
+                    DefaultMutableTreeNode container = new DefaultMutableTreeNode(pack.getSID());
+                    for (AnimCE anim : ((Source.Workspace)pack.source).getAnims(Source.BasePath.ANIM))
+                        container.add(new DefaultMutableTreeNode(anim));
+                    if (container.getChildCount() > 0)
+                        addNode(container);
+                }
         }
-
         animTree.setModel(new DefaultTreeModel(nodes));
-
         animTree.setRowHeight(0);
+    }
+
+    public void addNode(DefaultMutableTreeNode node) {
+        for (int i = 0; i < nodes.getChildCount(); i++)
+            if (((DefaultMutableTreeNode)nodes.getChildAt(i)).getUserObject().equals(node.getUserObject()))
+                return;
+        nodes.add(node);
+    }
+
+    public void removeNode(String id) {
+        for (int i = 0; i < nodes.getChildCount(); i++)
+            if (((DefaultMutableTreeNode)nodes.getChildAt(i)).getUserObject().equals(id))
+                nodes.remove(i);
     }
 
     public void applyNewNodes() {

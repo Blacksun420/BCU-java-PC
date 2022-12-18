@@ -76,7 +76,7 @@ public class Opts {
 		if(result == JOptionPane.OK_OPTION || result == JOptionPane.NO_OPTION) {
 			if(fatal) {
 				if (!title.contains("heap space")) //Saving while out of heap space is much likelier to corrupt data
-					Source.Workspace.autoSave(); //Autosave if crashing, to preserve data without risking corruption
+					Source.Workspace.saveWorkspace(true); //Autosave if crashing, to preserve data without risking corruption
 				CommonStatic.def.save(false, false, true);
 			}
 			popped = false;
