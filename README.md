@@ -14,7 +14,7 @@
 - ***Units can have more than one of each specific conditional attack (Revenge, Resurrection, etc (Excluding Counter))***
 - Everywhere Door Parameter on stages that lets enemies spawn in any given point of the battlefield (Set by percentage)
 - Remote Shield that reduces damage taken from attacks if the attacker is standing at a specific range from the attacked Entity
-- RandomUnit (Currently only usable for summon)
+- RandomUnit
 - Summon more than one entity in an attack
 - Surge Blocker
 - ***Wave Mitigator (Which is just a merging Wave Immunity and Wave Block into a single proc, with the proc blocker params)***
@@ -26,12 +26,14 @@
 - Row 2 only restriction
 - Unit Bases
 - TBA applied on spawn (Using a negative number)
+- Detailed descriptions for packs
 ### QoL changes
 - A much slicker UI (Thanks to Hect0x1 for it)
 - Can't deploy any more text line when you reach deploy limit
 - Units now actually flip to face the right way when their speed ends up being a negative number
 - Multiple lines are easier to set up in descrpitions, and are no longer limited to 4
-- Manual frame change on Maanim Edit Page, auto-update MaEP slider when increasing anim length
+- Manual frame change on Maanim Edit Page, auto-update MaEP slider when increasing/decreasing anim length
+- - Animations mapped to editable packs can be modified in the editor
 ### Bugs Fixed here that remain unfixed in the original repo
 - Strong Against/Massive Dmg/etc don't work via adv. trait targetting
 - Cursed/Sealed units become unaffected by trait-targetting enemies
