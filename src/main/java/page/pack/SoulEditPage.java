@@ -119,12 +119,11 @@ public class SoulEditPage extends Page {
             if (jls.getSelectedValue() == null || jld.getSelectedValue() == null)
                 return;
 
-            if (Opts.conf(get(MainLocale.PAGE, "reasanim"))) {
+            Soul s = jls.getSelectedValue();
+            if (s.anim == null || (jld.getSelectedValue() != s.anim && Opts.conf(get(MainLocale.PAGE, "reasanim")))) {
                 changing = true;
 
-                Soul s = jls.getSelectedValue();
                 s.anim = jld.getSelectedValue();
-
                 changing = false;
             }
         });

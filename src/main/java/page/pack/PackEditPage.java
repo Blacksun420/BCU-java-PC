@@ -655,7 +655,7 @@ public class PackEditPage extends Page {
 			jle.setListData(pac.enemies.toRawArray());
 			jle.setSelectedValue(e, true);
 			setEnemy(e);
-		} else if (ene.anim == null || Opts.conf(get(MainLocale.PAGE, "reasanim"))) {
+		} else if (ene.anim == null || (ene.anim != anim && Opts.conf(get(MainLocale.PAGE, "reasanim")))) {
 			CustomEnemy ce = (CustomEnemy)ene.de;
 			ce.share = Arrays.copyOf(ce.share, anim.anim.getAtkCount());
 			if (ce.hits.size() < ce.share.length)

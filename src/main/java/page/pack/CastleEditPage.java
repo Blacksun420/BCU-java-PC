@@ -139,10 +139,6 @@ public class CastleEditPage extends Page {
 		BufferedImage bimg = new Importer(str).getImg();
 		if (bimg == null)
 			return;
-		if (bimg.getWidth() != 128 && bimg.getHeight() != 256) {
-			getFile("Wrong img size. Img size: w=128, h=256", vimg);
-			return;
-		}
 
 		if (vimg == null) {
 			CastleImg castle = new CastleImg(cas.getNextID(CastleImg.class), MainBCU.builder.toVImg(bimg));

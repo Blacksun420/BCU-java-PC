@@ -530,7 +530,7 @@ public class UnitManagePage extends Page {
 			uni.forms = Arrays.copyOf(uni.forms, uni.forms.length + 1);
 			uni.forms[uni.forms.length - 1] = frm;
 			setUnit(uni);
-		} else if (frm.anim == null || Opts.conf(get(MainLocale.PAGE, "reasanim"))) {
+		} else if (frm.anim == null || (frm.anim != anim && Opts.conf(get(MainLocale.PAGE, "reasanim")))) {
 			CustomUnit ce = (CustomUnit)frm.du;
 			ce.share = Arrays.copyOf(ce.share, anim.anim.getAtkCount());
 			if (ce.hits.size() < ce.share.length)
