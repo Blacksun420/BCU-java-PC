@@ -48,8 +48,6 @@ public class RecdManagePage extends AbRecdPage {
 		change(true);
 		Replay r = jlr.getSelectedValue();
 		Vector<Replay> replays = new Vector<>(Replay.getMap().values());
-		for (PackData.UserPack pack : UserProfile.getUserPacks())
-			replays.addAll(pack.getReplays());
 		jlr.setListData(replays);
 		jlr.setSelectedValue(r, true);
 		setRecd(r);
