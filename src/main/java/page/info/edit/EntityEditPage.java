@@ -537,8 +537,6 @@ public abstract class EntityEditPage extends Page {
 			if (changing || jli.getValueIsAdjusting())
 				return;
 			changing = true;
-			if (jli.getSelectedIndex() >= getSelMask().length)
-				jli.setSelectedIndex(0);
 			boolean ignore = isSp();
 			if (ignore) {
 				for (AtkDataModel[] atks : ce.getSpAtks(true))
@@ -549,6 +547,8 @@ public abstract class EntityEditPage extends Page {
 				if (ignore && !addSpecial(-1, new AtkDataModel(ce)))
 					atkS.setSelectedIndex(ce.getAtkTypeCount() - 1);
 			}
+			if (jli.getSelectedIndex() >= getSelMask().length)
+				jli.setSelectedIndex(0);
 			setData(ce);
 			changing = false;
 		});
@@ -703,7 +703,10 @@ public abstract class EntityEditPage extends Page {
 
 	private AtkDataModel[] getSelMask() {
 		if (isSp()) {
-			int num = getSel();
+			int num = jli.getSelectedIndex();
+			if (num <= 0)
+				return ce.getSpAtks(false)[0];
+
 			int real = 0;
 			AtkDataModel[][] sps = ce.getSpAtks(true);
 			while (num >= sps[real].length) {
