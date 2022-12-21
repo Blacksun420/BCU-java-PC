@@ -317,7 +317,7 @@ class HeadEditTable extends Page {
 			sta.len = val;
 		}
 		if (jtf == jmax) {
-			if (val <= 0 || val > 50)
+			if (val <= 0 || val > 100)
 				return;
 			sta.max = val;
 		}

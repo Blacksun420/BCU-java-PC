@@ -85,7 +85,7 @@ public class Interpret extends Data {
 	 * treasure max
 	 */
 	private static final int[] TMAX = { 30, 30, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 600, 1500, 100,
-			100, 100, 30, 30, 30, 30, 30, 10, 300, 300, 600, 600, 600, 30, 30, 30, 30, 20, 30, 30, 30 };
+			100, 100, 30, 30, 30, 30, 30, 10, 300, 300, 600, 600, 600, 30, 0, 0, 0, 0, 0, 0, 0 };
 
 	/**
 	 * combo string component
@@ -136,29 +136,26 @@ public class Interpret extends Data {
 				far.add(atk.getLongPoint());
 			}
 
-			if (near.isEmpty()) {
+			if (near.isEmpty())
 				return true;
-			}
 
-			for (int n : near) {
-				if (n != near.get(0)) {
+			for (int n : near)
+				if (n != near.get(0))
 					return false;
-				}
-			}
-
-			for (int f : far) {
-				if (f != far.get(0)) {
+			for (int f : far)
+				if (f != far.get(0))
 					return false;
-				}
-			}
 		} else {
-			for (int i = 1; i < me.getAtkCount(ind); i++) {
+			for (int i = 1; i < me.getAtkCount(ind); i++)
 				if (me.getAtkModel(ind, i).getShortPoint() != me.getAtkModel(ind, 0).getShortPoint() || me.getAtkModel(ind, i).getLongPoint() != me.getAtkModel(ind, 0).getLongPoint())
 					return false;
-			}
 		}
-
 		return true;
+	}
+
+	public static void loadCannonMax() {
+		for (int i = 1; i <= Treasure.curveData.size(); i++)
+			TMAX[29 + i] = Treasure.curveData.get(i).max;
 	}
 
 	public static String comboInfo(Combo c, BasisSet b) {

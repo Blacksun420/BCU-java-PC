@@ -1,5 +1,6 @@
 package page.battle;
 
+import common.pack.Source;
 import common.util.stage.Replay;
 import common.util.stage.Stage;
 import main.MainBCU;
@@ -22,7 +23,7 @@ public class StRecdPage extends AbRecdPage {
 	private final JScrollPane jsp = new JScrollPane(list);
 	private final JBTN addr = new JBTN(0, "add");
 	private final JBTN remr = new JBTN(0, "rem");
-	private final JTF jtf = new JTF();
+	private final JTF rena = new JTF();
 	private final JL stdat = new JL();
 
 	protected final Stage st;
@@ -65,7 +66,7 @@ public class StRecdPage extends AbRecdPage {
 		set(jsp, x, y, 50, 100, 500, 1100);
 		set(addr, x, y, 600, 400, 300, 50);
 		set(remr, x, y, 950, 400, 300, 50);
-		set(jtf, x, y, 600, 500, 300, 50);
+		set(rena, x, y, 600, 500, 300, 50);
 	}
 
 	@Override
@@ -84,8 +85,8 @@ public class StRecdPage extends AbRecdPage {
 	protected void setRecd(Replay r) {
 		super.setRecd(r);
 		remr.setEnabled(editable && r != null);
-		jtf.setEditable(editable && r != null);
-		jtf.setText(r == null ? "" : r.rl.id);
+		rena.setEditable(editable && r != null);
+		rena.setText(r == null ? "" : r.rl.toString());
 	}
 
 	private void addListeners() {
@@ -121,11 +122,18 @@ public class StRecdPage extends AbRecdPage {
 
 		};
 
-		jtf.setLnr(x -> {
-			Replay r = list.getSelectedValue();
-			if (isAdj() || r == null)
+		rena.setLnr(x -> {
+			if (isAdj() || list.getValueIsAdjusting())
 				return;
-			r.rename(MainBCU.validate(jtf.getText(), '-'));
+			Replay r = list.getSelectedValue();
+			String n = rena.getText();
+			if (r == null || r.rl.id.equals(n))
+				return;
+
+			String name = MainBCU.validate(rena.getText().trim(),'-');
+			if (!Replay.getMap().containsKey(name) || st.recd.stream().noneMatch(re -> re.rl.id.equals(name)) || Opts.conf("A replay named " + name + " already exists. Do you wish to overwrite?"))
+				r.rename(name);
+			rena.setText(r.rl.id);
 		});
 
 	}
@@ -134,7 +142,7 @@ public class StRecdPage extends AbRecdPage {
 		add(jsp);
 		add(addr);
 		add(remr);
-		add(jtf);
+		add(rena);
 		add(stdat);
 		stdat.setText(st + "'s replays");
 		setList();

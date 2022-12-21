@@ -5,6 +5,7 @@ import common.pack.PackData;
 import common.pack.UserProfile;
 import common.util.stage.Replay;
 import main.MainBCU;
+import main.Opts;
 import page.JBTN;
 import page.JTF;
 import page.Page;
@@ -75,14 +76,23 @@ public class RecdManagePage extends AbRecdPage {
 			if (isAdj() || jlr.getValueIsAdjusting())
 				return;
 			Replay r = jlr.getSelectedValue();
-			if (r == null)
+			String n = rena.getText();
+			if (r == null || r.rl.id.equals(n))
 				return;
-			r.rename(MainBCU.validate(rena.getText().trim(),'-'));
+			String name = MainBCU.validate(rena.getText().trim(),'-');
+			if (!Replay.getMap().containsKey(name) || Opts.conf("A replay named " + name + " already exists. Do you wish to overwrite?"))
+				r.rename(name);
 			rena.setText(r.rl.id);
 		});
 
 		dele.addActionListener(arg0 -> {
+			if (isAdj() || jlr.getValueIsAdjusting())
+				return;
 			Replay r = jlr.getSelectedValue();
+
+			if (!Opts.conf("Are you sure you want to delete " + r.rl.id + "?"))
+				return;
+
 			File f = CommonStatic.ctx.getWorkspaceFile(r.rl.getPath() + ".replay");
 			if (f.exists() && f.delete()) {
 				Replay.getMap().remove(r.rl.id);
