@@ -65,6 +65,10 @@ public class AnimGroupTree implements TreeExpansionListener {
                     DefaultMutableTreeNode container = new DefaultMutableTreeNode(pack.getSID());
                     for (AnimCI anim : pack.source.getAnims(Source.BasePath.ANIM))
                         container.add(new DefaultMutableTreeNode(anim));
+                    for (AnimCI anim : pack.source.getAnims(Source.BasePath.SOUL))
+                        container.add(new DefaultMutableTreeNode(anim));
+                    for (AnimCI anim : pack.source.getAnims(Source.BasePath.BGEffect))
+                        container.add(new DefaultMutableTreeNode(anim));
                     if (container.getChildCount() > 0)
                         addNode(container);
                 }
