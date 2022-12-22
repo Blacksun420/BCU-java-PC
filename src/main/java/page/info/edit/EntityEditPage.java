@@ -88,6 +88,8 @@ public abstract class EntityEditPage extends Page {
 	private final JL vitv = new JL();
 	private final JComboBox<AnimCI> jcba = new JComboBox<>();
 	private final JComboBox<Soul> jcbs = new JComboBox<>();
+	private final JTG hbbo = new JTG(MainLocale.INFO, "kbbounce");
+	private final JTG bobo = new JTG(MainLocale.INFO, "bossbounce");
 	private final ListJtfPolicy ljp = new ListJtfPolicy();
 	private final AtkEditTable aet;
 	private final ProcTable.MainProcTable mpt;
@@ -133,6 +135,11 @@ public abstract class EntityEditPage extends Page {
 			atkSS[i] = get(MainLocale.PAGE, "atk") + (i + 1);
 		atkSS[atkSS.length - 1] = MainLocale.getLoc(MainLocale.PAGE, "spatk");
 		atkS.setModel(new DefaultComboBoxModel<>(atkSS));
+	}
+
+	@Override
+    public JButton getBackButton() {
+		return back;
 	}
 
 	@Override
@@ -237,6 +244,8 @@ public abstract class EntityEditPage extends Page {
 		add(comm);
 		add(jcbs);
 		add(jsDesc);
+		add(hbbo);
+		add(bobo);
 		Vector<Soul> vec = new Vector<>();
 		vec.add(null);
 		vec.addAll(UserProfile.getAll(pack.getSID(), Soul.class));
@@ -283,6 +292,8 @@ public abstract class EntityEditPage extends Page {
 		comm.setEnabled(pack.editable);
 		jcbs.setEnabled(pack.editable);
 		entDesc.setEnabled(pack.editable);
+		hbbo.setEnabled(pack.editable);
+		bobo.setEnabled(pack.editable);
 
 		add(jsp);
 	}
@@ -384,6 +395,8 @@ public abstract class EntityEditPage extends Page {
 		set(jcba, x, y, 650, 1000, 400, 50);
 		set(lli, x, y, 1800, 1000, 200, 50);
 		set(fli, x, y, 2000, 1000, 200, 50);
+		set(hbbo, x, y, 50, 1200, 200, 50);
+		set(bobo, x, y, 250, 1200, 200, 50);
 
 		set(jcbs, x, y, 1800, 1050, 400, 50);
 		set(jsDesc, x, y, 1050, 1000, 750, 200);
@@ -467,6 +480,8 @@ public abstract class EntityEditPage extends Page {
 			jcba.setSelectedItem(ene.anim);
 
 		jcbs.setSelectedItem(Identifier.get(ce.death));
+		hbbo.setSelected(ce.kbBounce);
+		bobo.setSelected(ce.bossBounce);
 		changing = false;
 	}
 
@@ -634,6 +649,19 @@ public abstract class EntityEditPage extends Page {
 			setData(ce);
 		});
 
+		hbbo.addActionListener(arg0 -> {
+			if (changing)
+				return;
+
+			ce.kbBounce = hbbo.isSelected();
+		});
+
+		bobo.addActionListener(arg0 -> {
+			if (changing)
+				return;
+
+			ce.bossBounce = bobo.isSelected();
+		});
 	}
 
 	private boolean addSpecial(int sel, AtkDataModel adm) {

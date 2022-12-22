@@ -1,8 +1,6 @@
 package page.battle;
 
 import common.CommonStatic;
-import common.pack.PackData;
-import common.pack.UserProfile;
 import common.util.stage.Replay;
 import main.MainBCU;
 import main.Opts;
@@ -28,6 +26,11 @@ public class RecdManagePage extends AbRecdPage {
 		preini();
 		ini();
 		resized();
+	}
+
+	@Override
+    public JButton getBackButton() {
+		return super.getBackButton();
 	}
 
 	@Override

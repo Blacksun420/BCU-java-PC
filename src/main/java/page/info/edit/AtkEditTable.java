@@ -69,6 +69,11 @@ class AtkEditTable extends Page {
 	}
 
 	@Override
+    public JButton getBackButton() {
+		return null;
+	}
+
+	@Override
 	public void callBack(Object o) {
 		getFront().callBack(o);
 	}

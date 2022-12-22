@@ -33,6 +33,11 @@ public class StagePage extends Page {
 	}
 
 	@Override
+    public JButton getBackButton() {
+		return back;
+	}
+
+	@Override
 	protected void mouseClicked(MouseEvent e) {
 		if (e.getSource() == jt)
 			jt.clicked(e.getPoint());

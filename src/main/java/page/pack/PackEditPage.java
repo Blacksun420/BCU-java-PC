@@ -155,6 +155,11 @@ public class PackEditPage extends Page {
 	}
 
 	@Override
+    public JButton getBackButton() {
+		return back;
+	}
+
+	@Override
 	protected void renew() {
 		if (efp != null && efp.getSelected() != null)
 			addCE(((Enemy)efp.getSelected()).anim);

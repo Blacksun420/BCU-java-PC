@@ -49,6 +49,11 @@ public class BGViewPage extends Page implements SupPage<Background> {
 	}
 
 	@Override
+    public JButton getBackButton() {
+		return back;
+	}
+
+	@Override
 	public Background getSelected() {
 		return jlst.getSelectedValue();
 	}

@@ -76,6 +76,11 @@ public abstract class AbViewPage extends Page {
 	}
 
 	@Override
+    public JButton getBackButton() {
+		return back;
+	}
+
+	@Override
 	protected void exit() {
 		Timer.fps = 33;
 	}

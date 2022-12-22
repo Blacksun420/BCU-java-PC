@@ -34,6 +34,11 @@ public class LimitEditPage extends Page {
 	}
 
 	@Override
+    public JButton getBackButton() {
+		return back;
+	}
+
+	@Override
 	public void callBack(Object o) {
 		setLimit(jll.getSelectedValue());
 	}

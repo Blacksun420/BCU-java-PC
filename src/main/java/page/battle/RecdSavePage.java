@@ -8,6 +8,7 @@ import page.JBTN;
 import page.JTF;
 import page.Page;
 
+import javax.swing.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
@@ -28,6 +29,11 @@ public class RecdSavePage extends Page {
 
 		ini();
 		resized();
+	}
+
+	@Override
+    public JButton getBackButton() {
+		return back;
 	}
 
 	@Override

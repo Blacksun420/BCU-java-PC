@@ -16,6 +16,7 @@ import utilpc.Interpret;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.*;
 
 public class EnemyEditPage extends EntityEditPage {
 
@@ -40,6 +41,11 @@ public class EnemyEditPage extends EntityEditPage {
 		ini();
 		setData((CustomEnemy) e.de);
 		resized();
+	}
+
+	@Override
+    public JButton getBackButton() {
+		return super.getBackButton();
 	}
 
 	@Override

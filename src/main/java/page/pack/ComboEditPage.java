@@ -73,6 +73,11 @@ public class ComboEditPage extends Page {
         resized();
     }
 
+    @Override
+    public JButton getBackButton() {
+        return back;
+    }
+
     @SuppressWarnings("UnusedAssignment")
     @Override
     protected void renew() {

@@ -27,6 +27,11 @@ public abstract class EntityFindPage<R> extends Page {
     }
 
     @Override
+    public JButton getBackButton() {
+        return back;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public void callBack(Object o) {
         elt.setList((List<R>) o);

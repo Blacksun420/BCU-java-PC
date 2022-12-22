@@ -92,6 +92,11 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 	}
 
 	@Override
+    public JButton getBackButton() {
+		return back;
+	}
+
+	@Override
 	public void callBack(Object o) {
 		if (o instanceof int[])
 			change((int[]) o, rs -> {

@@ -181,6 +181,8 @@ public abstract class Page extends JPanel implements RetFunc {
 
 	protected abstract void resized(int x, int y);
 
+	public abstract JButton getBackButton();
+
 	public synchronized void timer(int t) {
 		resized();
 	}

@@ -113,6 +113,11 @@ public class UnitInfoTable extends Page {
 		reset();
 	}
 
+	@Override
+    public JButton getBackButton() {
+		return null;
+	}
+
 	protected int getH() {
 		int l = main.length + 1;
 		if (displaySpecial)

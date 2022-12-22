@@ -57,12 +57,19 @@ public class MenuBarHandler {
         JMenu menu = P.getItem(StaticConfig.MENU, "File");
         BAR.add(menu);
 
+        JMenuItem back = P.getItem(StaticConfig.MENU_ITEM, "Go Back");
+        back.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
+        back.addActionListener(e -> {
+            if(MainFrame.getPanel().getBackButton() != null)
+                MainFrame.getPanel().getBackButton().doClick();
+        });
+        fileMenuItemMap.put("Back", back);
+
         JMenuItem save = P.getItem(StaticConfig.MENU_ITEM, "Save All");
         save.setAccelerator(KeyStroke.getKeyStroke('S', KeyEvent.CTRL_DOWN_MASK));
         save.setEnabled(MainBCU.loaded);
         save.addActionListener(e -> UIPlugin.saveData(true));
         menu.add(save);
-
         fileMenuItemMap.put(save.getText(), save);
     }
 

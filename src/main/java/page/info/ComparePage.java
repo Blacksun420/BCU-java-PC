@@ -68,6 +68,11 @@ public class ComparePage extends Page {
         resized();
     }
 
+    @Override
+    public JButton getBackButton() {
+        return back;
+    }
+
     private void ini() {
         add(back);
         add(tlst);

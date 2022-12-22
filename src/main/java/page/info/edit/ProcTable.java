@@ -8,6 +8,7 @@ import page.JTF;
 import page.Page;
 import page.support.ListJtfPolicy;
 
+import javax.swing.*;
 import java.awt.*;
 
 public abstract class ProcTable extends Page {
@@ -25,6 +26,11 @@ public abstract class ProcTable extends Page {
 
 		protected AtkProcTable(Page p, boolean edit, boolean unit) {
 			super(p, INDS, edit, unit);
+		}
+
+		@Override
+        public JButton getBackButton() {
+			return null;
 		}
 
 		@Override
@@ -70,6 +76,11 @@ public abstract class ProcTable extends Page {
 
 		protected MainProcTable(Page p, boolean edit, boolean unit) {
 			super(p, unit ? INDS : EINDS, edit, unit);
+		}
+
+		@Override
+        public JButton getBackButton() {
+			return null;
 		}
 
 		@Override

@@ -91,6 +91,11 @@ public class UnitManagePage extends Page {
 	}
 
 	@Override
+    public JButton getBackButton() {
+		return back;
+	}
+
+	@Override
 	protected void renew() {
 		if (ufp != null && ufp.getForm() != null)
 			unitAnim(((Form)ufp.getForm()).anim);

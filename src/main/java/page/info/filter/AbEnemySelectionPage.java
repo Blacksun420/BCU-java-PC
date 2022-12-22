@@ -7,8 +7,6 @@ import page.Page;
 import page.SupPage;
 import page.info.edit.StageEditTable;
 
-import java.util.List;
-
 public class AbEnemySelectionPage extends EnemyFindPage implements SupPage<AbEnemy> {
 
     private static final long serialVersionUID = 1L;
@@ -28,10 +26,6 @@ public class AbEnemySelectionPage extends EnemyFindPage implements SupPage<AbEne
 
         this.table = table;
         this.index = index;
-    }
-
-    public List<AbEnemy> getList() {
-        return elt.list;
     }
 
     @Override

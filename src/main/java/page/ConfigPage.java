@@ -86,6 +86,11 @@ public class ConfigPage extends Page {
 	}
 
 	@Override
+    public JButton getBackButton() {
+		return back;
+	}
+
+	@Override
 	protected void renew() {
 		jlmin.setText(0, "opamin");
 		jlmax.setText(0, "opamax");

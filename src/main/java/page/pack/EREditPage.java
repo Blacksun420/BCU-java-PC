@@ -75,6 +75,11 @@ public class EREditPage extends Page {
 	}
 
 	@Override
+    public JButton getBackButton() {
+		return back;
+	}
+
+	@Override
 	protected void mouseClicked(MouseEvent e) {
 		int modifier = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 		if (e.getSource() == jt && (e.getModifiers() & modifier) == 0)

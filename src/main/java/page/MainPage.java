@@ -67,6 +67,11 @@ public class MainPage extends Page {
 	}
 
 	@Override
+    public JButton getBackButton() {
+		return null;
+	}
+
+	@Override
 	protected void renew() {
 		Runtime.getRuntime().gc();
 		curr.setEnabled(BattleInfoPage.current != null);

@@ -106,6 +106,11 @@ public class BasisPage extends LubCont {
 	}
 
 	@Override
+    public JButton getBackButton() {
+		return back;
+	}
+
+	@Override
 	public void callBack(Object o) {
 		if (o == null)
 			changeLU();

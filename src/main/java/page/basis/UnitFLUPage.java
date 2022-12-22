@@ -3,7 +3,6 @@ package page.basis;
 import common.battle.BasisSet;
 import common.util.stage.Limit;
 import common.util.unit.AbForm;
-import common.util.unit.Form;
 import page.JBTN;
 import page.JTF;
 import page.JTG;
@@ -48,6 +47,11 @@ public class UnitFLUPage extends LubCont {
 
 	public List<AbForm> getList() {
 		return ult.list;
+	}
+
+	@Override
+    public JButton getBackButton() {
+		return back;
 	}
 
 	@Override

@@ -61,6 +61,11 @@ public abstract class AbRecdPage extends Page {
 	}
 
 	@Override
+    public JButton getBackButton() {
+		return back;
+	}
+
+	@Override
 	protected void renew() {
 		setList();
 		if (editable && svp != null) {

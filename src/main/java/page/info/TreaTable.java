@@ -51,6 +51,11 @@ public class TreaTable extends Page {
 	}
 
 	@Override
+    public JButton getBackButton() {
+		return null;
+	}
+
+	@Override
 	public void callBack(Object o) {
 		if (o == null)
 			reset();

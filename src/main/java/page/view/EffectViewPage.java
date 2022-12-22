@@ -6,7 +6,8 @@ import common.util.anim.AnimI;
 import page.Page;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.Collections;
+import java.util.Vector;
 import java.util.stream.Collectors;
 
 public class EffectViewPage extends AbViewPage {

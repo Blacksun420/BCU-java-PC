@@ -1,6 +1,5 @@
 package page.battle;
 
-import common.pack.Source;
 import common.util.stage.Replay;
 import common.util.stage.Stage;
 import main.MainBCU;
@@ -36,6 +35,11 @@ public class StRecdPage extends AbRecdPage {
 		preini();
 		ini();
 		resized();
+	}
+
+	@Override
+    public JButton getBackButton() {
+		return super.getBackButton();
 	}
 
 	@Override
