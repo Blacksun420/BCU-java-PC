@@ -206,8 +206,8 @@ class MaModelEditTable extends AnimTable<int[]> {
 			if (c == 1 && v < 0)
 				v = 0;
 			if (c == 2)
-				if (v < 0)
-					v = 0;
+				if (v < -1)
+					v = -1;
 				else if (v >= anim.imgcut.n)
 					v = anim.imgcut.n - 1;
 			if (c == 1)

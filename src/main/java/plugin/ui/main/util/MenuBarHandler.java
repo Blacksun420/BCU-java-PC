@@ -63,6 +63,7 @@ public class MenuBarHandler {
             if(MainFrame.getPanel().getBackButton() != null)
                 MainFrame.getPanel().getBackButton().doClick();
         });
+        menu.add(back);
         fileMenuItemMap.put("Back", back);
 
         JMenuItem save = P.getItem(StaticConfig.MENU_ITEM, "Save All");
@@ -70,7 +71,7 @@ public class MenuBarHandler {
         save.setEnabled(MainBCU.loaded);
         save.addActionListener(e -> UIPlugin.saveData(true));
         menu.add(save);
-        fileMenuItemMap.put(save.getText(), save);
+        fileMenuItemMap.put("Save", save);
     }
 
     public static JMenuItem getFileMenu(String key) {
@@ -321,7 +322,7 @@ public class MenuBarHandler {
     }
 
     public static void enableSave() {
-        JMenuItem save_all = getFileMenu("Save All");
+        JMenuItem save_all = getFileMenu("Save");
         if (save_all != null) save_all.setEnabled(true);
     }
 

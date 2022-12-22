@@ -29,7 +29,6 @@ import page.awt.AWTBBB;
 import page.awt.BBBuilder;
 import page.battle.BattleBox;
 import plugin.Plugin;
-import plugin.ui.common.config.StaticConfig;
 import plugin.ui.main.UIPlugin;
 import plugin.ui.main.util.MenuBarHandler;
 import utilpc.UtilPC;
@@ -352,7 +351,7 @@ public class MainBCU {
 		P.doAfterReadingLang();
 		BattleBox.StageNamePainter.read();
 		loaded = true;
-		JMenuItem menu = MenuBarHandler.getFileMenu(UIPlugin.P.getItem(StaticConfig.MENU_ITEM, "Save All"));
+		JMenuItem menu = MenuBarHandler.getFileMenu("Save");
 		if (menu != null)
 			menu.setEnabled(true);
 		afterLoading();

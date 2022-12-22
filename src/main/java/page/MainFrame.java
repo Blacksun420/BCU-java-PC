@@ -104,7 +104,7 @@ public class MainFrame extends JFrame {
 
 			@Override
 			public void windowClosing(WindowEvent arg0) {
-				JMenuItem menu = MenuBarHandler.getFileMenu("Save All");
+				JMenuItem menu = MenuBarHandler.getFileMenu("Save");
 				if (menu != null)
 					menu.setEnabled(false);
 
