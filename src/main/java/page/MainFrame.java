@@ -31,8 +31,7 @@ public class MainFrame extends JFrame {
 	public static void changePanel(Page p) {
 		F.FchangePanel(p);
 
-		JMenuItem back = MenuBarHandler.getFileItem("Go Back");
-
+		JMenuItem back = MenuBarHandler.getFileMenu("Back");
 		if(back != null && p != null) {
 			back.setEnabled(p.getBackButton() != null);
 		}

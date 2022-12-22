@@ -93,6 +93,11 @@ public class BGEffectEditPage extends Page {
         ini();
     }
 
+    @Override
+    public JButton getBackButton() {
+        return back;
+    }
+
     private void addListeners() {
         back.setLnr(x -> changePanel(getFront()));
 

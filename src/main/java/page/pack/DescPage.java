@@ -95,6 +95,11 @@ public class DescPage extends Page {
     }
 
     @Override
+    public JButton getBackButton() {
+        return null;
+    }
+
+    @Override
     protected void resized(int x, int y) {
         int h = pack.banner == null ? pack.editable ? 50 : 0 : 720;
         set(descPane, x, y, 0, h, 900, 300);
