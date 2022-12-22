@@ -44,11 +44,6 @@ public class EnemyFilterBox extends EntityFilterBox {
 	}
 
 	@Override
-	public JButton getBackButton() {
-		return null;
-	}
-
-	@Override
 	public void callBack(Object o) {
 		confirm();
 	}
