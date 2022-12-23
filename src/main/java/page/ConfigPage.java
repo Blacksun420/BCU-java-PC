@@ -60,6 +60,7 @@ public class ConfigPage extends Page {
 	private final JL jlre = new JL(MainLocale.PAGE, "render");
 	private final JL mbac = new JL(MainLocale.PAGE, "maxback");
 	private final JCB jcbac = new JCB(MainLocale.PAGE, "jcbac");
+	private final JCB jcmus = new JCB(MainLocale.PAGE, "updatemus");
 	private final JSlider jsmin = new JSlider(0, 100);
 	private final JSlider jsmax = new JSlider(0, 100);
 	private final JSlider jsbg = new JSlider(0, 100);
@@ -141,7 +142,8 @@ public class ConfigPage extends Page {
 
 		set(jlot, x, y, 350, 900, 300, 50);
 		set(jcbac, x, y, 350, 950, 300, 50);
-		set(jcsnd, x, y, 350, 1000, 300, 50);
+		set(jcmus, x, y, 350, 1000, 300, 50);
+		set(jcsnd, x, y, 350, 1050, 300, 50);
 
 		set(jlfi, x, y, 1225, 100, 200, 50);
 		set(jlti, x, y, 1225, 175, 200, 50);
@@ -259,6 +261,8 @@ public class ConfigPage extends Page {
 				jsba.setValue(Backup.backups.size());
 			}
 		});
+
+		jcmus.addActionListener(arg0 -> cfg().updateOldMusic = jcmus.isSelected());
 
 		jsba.addChangeListener(arg0 -> {
 			if(!jsba.getValueIsAdjusting()) {
@@ -393,9 +397,10 @@ public class ConfigPage extends Page {
 		add(autosave);
 		add(savetime);
 		add(jcbac);
+		add(jcmus);
 		add(shake);
-		excont.setSelected(CommonStatic.getConfig().exContinuation);
-		prlvmd.setText("" + CommonStatic.getConfig().prefLevel);
+		excont.setSelected(cfg().exContinuation);
+		prlvmd.setText("" + cfg().prefLevel);
 		jls.setSelectedIndex(localeIndexOf(cfg().lang));
 		jsmin.setValue(cfg().deadOpa);
 		jsmax.setValue(cfg().fullOpa);
@@ -429,16 +434,17 @@ public class ConfigPage extends Page {
 		jcsnd.setEnabled(BCMusic.play);
 		jcsnd.setSelected(MainBCU.buttonSound);
 		jogl.setSelected(MainBCU.USE_JOGL);
-		jcbac.setSelected(CommonStatic.getConfig().maxBackup != -1);
-		if (CommonStatic.getConfig().maxBackup != -1)
-			jsba.setValue(CommonStatic.getConfig().maxBackup);
+		jcbac.setSelected(cfg().maxBackup != -1);
+		jcmus.setSelected(cfg().updateOldMusic);
+		if (cfg().maxBackup != -1)
+			jsba.setValue(cfg().maxBackup);
 		else
 			jsba.setEnabled(false);
-		jceff.setSelected(CommonStatic.getConfig().drawBGEffect);
-		jcdly.setSelected(CommonStatic.getConfig().buttonDelay);
-		stdis.setSelected(CommonStatic.getConfig().stageName);
+		jceff.setSelected(cfg().drawBGEffect);
+		jcdly.setSelected(cfg().buttonDelay);
+		stdis.setSelected(cfg().stageName);
 
-		shake.setSelected(CommonStatic.getConfig().shake);
+		shake.setSelected(cfg().shake);
 		addListeners();
 	}
 
