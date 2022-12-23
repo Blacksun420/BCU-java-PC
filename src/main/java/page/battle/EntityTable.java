@@ -106,7 +106,7 @@ class EntityTable extends SortTable<Entity> {
 				return t.livingTime == 0 ? 0.0 : Double.parseDouble(df.format(t.damageGiven * 30.0 / t.livingTime));
 		} else {
 			if (c == 0)
-				return t.currentShield > 0 ? t.health + " (+" + t.currentShield + ")" : t.health;
+				return t.status.shield[0] > 0 ? t.health + " (+" + t.status.shield[0] + ")" : t.health;
 			else if (c == 1)
 				return t.data.getPack();
 			else if (c == 2)
