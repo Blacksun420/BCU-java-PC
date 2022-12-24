@@ -112,6 +112,8 @@ class AtkEditTable extends Page {
 
 		fatk.setText("" + (int) (Math.round(adm.atk * lvMul) * mul));
 		fpre.setText("" + MainBCU.convertTime(adm.pre));
+		aud.setSelectedItem(adm.audio == null ? null : adm.audio.get());
+		aud1.setSelectedItem(adm.audio1 == null ? null : adm.audio1.get());
 		fp0.setText("" + adm.ld0);
 		fp1.setText("" + adm.ld1);
 		ftp.setText("" + adm.targ);

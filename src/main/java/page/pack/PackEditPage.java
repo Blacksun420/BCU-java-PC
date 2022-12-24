@@ -70,11 +70,7 @@ public class PackEditPage extends Page {
 				@Override
 				public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean s, boolean f) {
 					JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
-					ImageIcon v = UtilPC.getIcon(((UserPack) o).icon);
-					if (v != null)
-						jl.setIcon(new ImageIcon(UtilPC.resizeImage((BufferedImage)((UserPack)o).icon.getImg().bimg(), 40, 40)));
-					else
-						jl.setIcon(null);
+					jl.setIcon(UtilPC.resizeIcon(((UserPack)o).icon, 40, 40));
 
 					return jl;
 				}

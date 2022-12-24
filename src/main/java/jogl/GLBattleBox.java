@@ -31,7 +31,7 @@ public class GLBattleBox extends GLCstd implements BattleBox, GLEventListener {
 	@Override
 	public void display(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
-		GLGraphics g = new GLGraphics(drawable.getGL().getGL2(), getWidth(), getHeight());
+		GLGraphics g = new GLGraphics(gl, getWidth(), getHeight());
 		bbp.draw(g);
 		g.dispose();
 		gl.glFlush();

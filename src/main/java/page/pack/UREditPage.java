@@ -354,8 +354,7 @@ public class UREditPage extends Page {
         if (bimg == null)
             return;
         if (uni) {
-            if (bimg.getWidth() != 110 || bimg.getHeight() != 85)
-                bimg = resizeImage(bimg, 110, 85);
+            bimg = resizeImage(bimg, 110, 85);
 
             if (rand.deployIcon != null)
                 rand.deployIcon.setImg(MainBCU.builder.build(bimg));
@@ -371,8 +370,7 @@ public class UREditPage extends Page {
                 return;
             }
         } else {
-            if (bimg.getWidth() != 85 || bimg.getHeight() != 32)
-                bimg = resizeImage(bimg, 85, 32);
+            bimg = resizeImage(bimg, 85, 32);
 
             if (rand.icon != null)
                 rand.icon.setImg(MainBCU.builder.build(bimg));

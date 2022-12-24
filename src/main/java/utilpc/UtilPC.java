@@ -147,11 +147,18 @@ public class UtilPC {
 		if (v == null)
 			return null;
 		FakeImage img = v.getImg();
-		if (img == null)
-			return null;
-		if (img.bimg() == null)
+		if (img == null || img.bimg() == null)
 			return null;
 		return new ImageIcon((Image) img.bimg());
+	}
+
+	public static ImageIcon resizeIcon(VImg v, int w, int h) {
+		if (v == null)
+			return null;
+		FakeImage img = v.getImg();
+		if (img == null || img.bimg() == null)
+			return null;
+		return new ImageIcon(resizeImage((BufferedImage)img.bimg(), w, h));
 	}
 
 	public static BufferedImage resizeImage(BufferedImage img, int w, int h) {

@@ -79,17 +79,11 @@ public class DescPage extends Page {
         }
         if (pack.icon != null || pack.editable) {
             add(picon);
-            if (pack.icon != null)
-                picon.setIcon(new ImageIcon(UtilPC.resizeImage((BufferedImage) pack.icon.getImg().bimg(), 128, 128)));
-            else
-                picon.setIcon(null);
+            picon.setIcon(UtilPC.resizeIcon(pack.icon, 128, 128));
         }
         if (pack.banner != null || pack.editable) {
             add(pbanner);
-            if (pack.banner != null)
-                pbanner.setIcon(new ImageIcon(UtilPC.resizeImage((BufferedImage) pack.banner.getImg().bimg(), 1050, 550)));
-            else
-                pbanner.setIcon(null);
+            pbanner.setIcon(UtilPC.resizeIcon(pack.banner, 1050, 550));
         }
         addListeners();
     }
@@ -195,16 +189,13 @@ public class DescPage extends Page {
                 getImage(true, "Icon must have the same width and height");
                 return;
             }
-            if (bimg.getWidth() != 128 || bimg.getHeight() != 128)
-                bimg = resizeImage(bimg, 128, 128);
-
+            bimg = resizeImage(bimg, 128, 128);
             if (pack.icon != null)
                 pack.icon.setImg(MainBCU.builder.build(bimg));
             else
                 pack.icon = MainBCU.builder.toVImg(bimg);
         } else {
-            if (bimg.getWidth() != 1050 || bimg.getHeight() != 550)
-                bimg = resizeImage(bimg, 1050, 550);
+            bimg = resizeImage(bimg, 1050, 550);
             if (pack.banner != null)
                 pack.banner.setImg(MainBCU.builder.build(bimg));
             else
@@ -223,9 +214,7 @@ public class DescPage extends Page {
     }
 
     private void updateIconDisplays() {
-        if (pack.icon != null)
-            picon.setIcon(new ImageIcon(UtilPC.resizeImage((BufferedImage) pack.icon.getImg().bimg(), 128, 128)));
-        if (pack.banner != null)
-            pbanner.setIcon(new ImageIcon(UtilPC.resizeImage((BufferedImage) pack.banner.getImg().bimg(), 1050, 550)));
+        picon.setIcon(UtilPC.resizeIcon(pack.icon, 128, 128));
+        pbanner.setIcon(UtilPC.resizeIcon(pack.banner, 1050, 550));
     }
 }

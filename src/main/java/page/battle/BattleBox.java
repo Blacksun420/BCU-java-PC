@@ -11,7 +11,6 @@ import common.battle.entity.*;
 import common.pack.Identifier;
 import common.system.P;
 import common.system.SymCoord;
-import common.system.VImg;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeImage;
 import common.system.fake.FakeTransform;
@@ -592,11 +591,13 @@ public interface BattleBox {
 
 			if (!(sb.ebase instanceof Entity)) {
 				Identifier<CastleImg> cind = sb.st.castle;
-				VImg cast = Identifier.getOr(cind, CastleImg.class).img;
-				FakeImage bimg = cast.getImg();
-				int bw = (int) (bimg.getWidth() * bf.sb.siz);
-				int bh = (int) (bimg.getHeight() * bf.sb.siz);
-				gra.drawImage(bimg, posx - bw + shake, posy - bh, bw, bh);
+				CastleImg cast = Identifier.getOr(cind, CastleImg.class);
+				FakeImage bimg = cast.img.getImg();
+				double sca = bf.sb.siz * cast.scale / 1000.0;
+				int bw = (int) (bimg.getWidth() * sca);
+				int bh = (int) (bimg.getHeight() * sca);
+				int centr = (int) (cast.center * ratio * sca);
+				gra.drawImage(bimg, posx - bw + shake + centr, posy - bh, bw, bh);
 			} else {
 				if(sb.temp_inten == 0 || (sb.ebase.getAbi() & Data.AB_TIMEI) == 0) {
 					posx = (int) getX(sb.ebase.pos);

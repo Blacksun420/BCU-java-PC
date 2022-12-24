@@ -285,8 +285,7 @@ public class EREditPage extends Page {
 		BufferedImage bimg = new Importer(str).getImg();
 		if (bimg == null)
 			return;
-		if (bimg.getWidth() != 85 || bimg.getHeight() != 32)
-			bimg = resizeImage(bimg, 85, 32);
+		bimg = resizeImage(bimg, 85, 32);
 
 		if (rand.icon != null)
 			rand.icon.setImg(MainBCU.builder.build(bimg));

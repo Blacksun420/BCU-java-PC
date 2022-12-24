@@ -302,8 +302,7 @@ public class TraitEditPage extends Page {
             getFile(get(MainLocale.PAGE, "sqrwrn"));
             return;
         }
-        if (bimg.getWidth() != 41 || bimg.getHeight() != 41)
-            bimg = resizeImage(bimg, 41, 41);
+        bimg = resizeImage(bimg, 41, 41);
 
         if (t.icon != null)
             t.icon.setImg(MainBCU.builder.build(bimg));
