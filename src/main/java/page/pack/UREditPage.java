@@ -1,6 +1,7 @@
 package page.pack;
 
 import common.CommonStatic;
+import common.battle.BasisSet;
 import common.pack.Context;
 import common.pack.PackData.UserPack;
 import common.pack.Source;
@@ -41,6 +42,7 @@ public class UREditPage extends Page {
         UREditTable.redefine();
     }
 
+    public final BasisSet bas = BasisSet.current();
     private final JBTN back = new JBTN(0, "back");
     private final JBTN veif = new JBTN(0, "veif");
     private final UREditTable jt;
@@ -220,25 +222,25 @@ public class UREditPage extends Page {
 
         });
 
-        cost.addFocusListener(new FocusAdapter() {
+        jost.addFocusListener(new FocusAdapter() {
 
             @Override
             public void focusLost(FocusEvent fe) {
                 if (rand == null)
                     return;
-                rand.price = CommonStatic.parseIntN(cost.getText().trim());
+                rand.price = (int) (CommonStatic.parseIntN(jost.getText().trim()) / 1.5);
                 setUR(rand);
             }
 
         });
 
-        cd.addFocusListener(new FocusAdapter() {
+        jd.addFocusListener(new FocusAdapter() {
 
             @Override
             public void focusLost(FocusEvent fe) {
                 if (rand == null)
                     return;
-                rand.cooldown = Math.max(60, CommonStatic.parseIntN(cd.getText().trim()));
+                rand.cooldown = bas.t().getRevRes(CommonStatic.parseIntN(jd.getText().trim()));
                 setUR(rand);
             }
 
@@ -325,6 +327,10 @@ public class UREditPage extends Page {
             int t = st == null ? -1 : st.type;
             for (int i = 0; i < 3; i++)
                 type[i].setSelected(i == t);
+            if (t != -1) {
+                jost.setText("" + st.price * 1.5);
+                jd.setText("" + bas.t().getFinRes(st.cooldown));
+            }
             jspjt.scrollRectToVisible(new Rectangle(0, 0, 1, 1));
         });
         resized();

@@ -20,6 +20,7 @@ public class UnitListTable extends EntityListTable<AbForm> {
 	private static final long serialVersionUID = 1L;
 
 	private static String[] tit;
+	public int cost = 1;
 
 	static {
 		redefine();
@@ -69,7 +70,7 @@ public class UnitListTable extends EntityListTable<AbForm> {
 		if (c == 1)
 			return e0.toString().compareTo(e1.toString());
 
-		if (e0 instanceof UniRand || e1 instanceof UniRand) {
+		if (c != 10 && c != 11 && (e0 instanceof UniRand || e1 instanceof UniRand)) {
 			int s = e0.getID().compareTo(e1.getID());
 			if (s == 0)
 				s = e0 instanceof UniRand ? e1 instanceof UniRand ? 0 : -1 : 1;
@@ -113,9 +114,9 @@ public class UnitListTable extends EntityListTable<AbForm> {
 			else if (c == 10)
 				return b.t().getFinRes(du.getRespawn());
 			else if (c == 11)
-				return e.maxu().getPrice();
+				return (int) (e.maxu().getPrice() * (1 + cost * 0.5));
 			else if (c == 12)
-				return du.getItv(0);
+				return itv;
 			else if (c == 13)
 				return du.getWill() + 1;
 		} else {
@@ -125,6 +126,10 @@ public class UnitListTable extends EntityListTable<AbForm> {
 				return f;
 			else if(c == 2)
 				return "Random Unit";
+			else if (c == 10)
+				return b.t().getFinRes(((UniRand)f).cooldown);
+			else if (c == 11)
+				return (int) (((UniRand)f).price * (1 + cost * 0.5));
 		}
 		return null;
 	}
