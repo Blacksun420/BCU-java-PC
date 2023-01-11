@@ -36,6 +36,7 @@ import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.DecimalFormat;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 
 public interface BattleBox {
@@ -115,7 +116,7 @@ public interface BattleBox {
 
 		private final BCAuxAssets aux = CommonStatic.getBCAssets();
 
-		private final ArrayList<ContAb> efList = new ArrayList<>();
+		private final ArrayDeque<ContAb> efList = new ArrayDeque<>();
 
 		private final SymCoord sym = new SymCoord(null, 0, 0, 0, 0);
 		private final P p = new P(0, 0);
@@ -635,11 +636,8 @@ public interface BattleBox {
 			Res.getBase(sb.ubase, setSym(gra, bf.sb.siz, posx, posy, 1), false);
 		}
 
-		@SuppressWarnings("UseBulkOperation")
 		private void drawEntity(FakeGraphics gra) {
-			for(int i = 0; i < sb.lw.size(); i++) {
-				efList.add(sb.lw.get(i));
-			}
+			efList.addAll(sb.lw);
 
 			int w = box.getWidth();
 			int h = box.getHeight();
@@ -650,18 +648,6 @@ public interface BattleBox {
 
 			CommonStatic.getConfig().battle = true;
 
-			for(int i = 0; i < sb.lea.size(); i++) {
-				EAnimCont eac = sb.lea.get(i);
-				if (!(eac instanceof DoorCont))
-					continue;
-				int dep = eac.layer * DEP;
-
-				gra.setTransform(at);
-				double p = getX(eac.pos);
-				double y = midh - (road_h - dep) * bf.sb.siz;
-				eac.draw(gra, setP(p, y), psiz);
-			}
-
 			for(int i = 0; i < sb.le.size(); i++) {
 				Entity e = sb.le.get(i);
 
@@ -671,14 +657,20 @@ public interface BattleBox {
 				int dep = e.layer * DEP;
 
 				while(efList.size() > 0) {
-					ContAb wc = efList.get(0);
+					ContAb wc = efList.getFirst();
 
 					if(wc.layer + 1 <= e.layer) {
 						drawEff(gra, wc, at, psiz);
-						efList.remove(0);
+						efList.pop();
 					} else
 						break;
 				}
+
+				for (DoorCont d : sb.doors)
+					if (d.ECheck(e)) {
+						gra.setTransform(at);
+						d.draw(gra, setP(getX(d.pos), midh - (road_h - d.layer * DEP) * bf.sb.siz), psiz);
+					}
 
 				gra.setTransform(at);
 
@@ -692,6 +684,18 @@ public interface BattleBox {
 				if(e.anim.corpse == null || e.anim.corpse.type == EffAnim.ZombieEff.BACK) {
 					e.anim.drawEff(gra, setP(p, y), bf.sb.siz);
 				}
+			}
+
+			for (DoorCont d : sb.doors) {
+				if (!d.drawn) {
+					int dep = d.layer * DEP;
+					gra.setTransform(at);
+
+					double p = getX(d.pos);
+					double y = midh - (road_h - dep) * bf.sb.siz;
+					d.draw(gra, setP(p, y), psiz);
+				}
+				d.drawn = false;
 			}
 
 			for(int i = 0; i < sb.le.size(); i++) {
@@ -755,15 +759,12 @@ public interface BattleBox {
 			}
 
 			while(efList.size() > 0) {
-				drawEff(gra, efList.get(0), at, psiz);
-				efList.remove(0);
+				drawEff(gra, efList.getFirst(), at, psiz);
+				efList.pop();
 			}
 
 			for(int i = 0; i < sb.lea.size(); i++) {
 				EAnimCont eac = sb.lea.get(i);
-				if (eac instanceof DoorCont)
-					continue;
-
 				int dep = eac.layer * DEP;
 
 				gra.setTransform(at);
