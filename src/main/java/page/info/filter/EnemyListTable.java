@@ -65,13 +65,12 @@ public class EnemyListTable extends EntityListTable<AbEnemy> {
 
 	@Override
 	protected int compare(AbEnemy e0, AbEnemy e1, int c) {
-		if (c == 1)
-			c--;
 		if (c == 0)
 			return e0.compareTo(e1);
-		if (e0 instanceof EneRand || e1 instanceof EneRand) {
-			return e0 instanceof EneRand ? e1 instanceof EneRand ? 0 : -1 : 1;
-		}
+		if (c == 1)
+			return e0.toString().compareTo(e1.toString());
+		if (e0 instanceof EneRand || e1 instanceof EneRand)
+			return e0 instanceof EneRand ? e1 instanceof EneRand ? compare(e0, e1, 0) : -1 : 1;
 
 		if (c == 8 || c == 11 || c == 13)
 			return Double.compare((double) get(e0, c), (double) get(e1, c));

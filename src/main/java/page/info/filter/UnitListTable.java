@@ -70,12 +70,9 @@ public class UnitListTable extends EntityListTable<AbForm> {
 		if (c == 1)
 			return e0.toString().compareTo(e1.toString());
 
-		if (c != 10 && c != 11 && (e0 instanceof UniRand || e1 instanceof UniRand)) {
-			int s = e0.getID().compareTo(e1.getID());
-			if (s == 0)
-				s = e0 instanceof UniRand ? e1 instanceof UniRand ? 0 : -1 : 1;
-			return s;
-		}
+		if (c != 10 && c != 11 && (e0 instanceof UniRand || e1 instanceof UniRand))
+			return e0 instanceof UniRand ? e1 instanceof UniRand ? compare(e0, e1, 0) : -1 : 1;
+
 		int i0 = (int) get(e0, c);
 		int i1 = (int) get(e1, c);
 		return Integer.compare(i0, i1);
