@@ -17,6 +17,8 @@ import io.BCMusic;
 import io.BCUWriter;
 import page.LoadPage;
 import page.MainLocale;
+import page.MainFrame;
+import plugin.ui.main.util.MenuBarHandler;
 import utilpc.awt.FG2D;
 
 import javax.swing.*;
@@ -159,6 +161,17 @@ public class UtilPC {
 		if (img == null || img.bimg() == null)
 			return null;
 		return new ImageIcon(resizeImage((BufferedImage)img.bimg(), w, h));
+	}
+
+	public static ImageIcon getScaledIcon(VImg v, int w, int h) {
+		ImageIcon i = getIcon(v);
+		if (i == null)
+			return null;
+
+		int pw = MainFrame.F.getRootPane().getWidth();
+		int ph = MainFrame.F.getRootPane().getHeight() - MenuBarHandler.getBar().getHeight();
+		Image img = i.getImage().getScaledInstance(pw * w / 2300, ph * h / 1300, Image.SCALE_SMOOTH);
+		return new ImageIcon(img);
 	}
 
 	public static BufferedImage resizeImage(BufferedImage img, int w, int h) {
