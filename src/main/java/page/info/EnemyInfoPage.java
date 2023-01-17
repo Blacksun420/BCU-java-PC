@@ -60,7 +60,7 @@ public class EnemyInfoPage extends Page {
 		set(jsp, x, y, 50, 100, 1650, 1150);
 		set(trea, x, y, 1700, 100, 400, 1200);
 		int ih = info.getH();
-		cont.setPreferredSize(size(x, y, 1600, ih - 50).toDimension());
+		cont.setPreferredSize(size(x, y, 1600, ih).toDimension());
 		jsp.getVerticalScrollBar().setUnitIncrement(size(x, y, 50));
 		set(info, x, y, 0, 0, 1600, ih);
 		info.resized();
