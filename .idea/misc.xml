@@ -14,6 +14,6 @@
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_14" project-jdk-name="liberica-1.8" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/out/artifacts/BCU_java_PC_jar" />
+    <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>
