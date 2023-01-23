@@ -22,11 +22,10 @@ import io.BCUReader;
 import io.BCUWriter;
 import jogl.GLBBB;
 import jogl.util.GLIB;
+import org.jetbrains.annotations.NotNull;
 import page.LoadPage;
 import page.MainFrame;
 import page.MainPage;
-import org.jetbrains.annotations.NotNull;
-import page.*;
 import page.awt.AWTBBB;
 import page.awt.BBBuilder;
 import page.battle.BattleBox;
@@ -235,14 +234,10 @@ public class MainBCU {
 
 			try {
 				File f = new File(MainBCU.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-
 				File parent = f.getParentFile();
 
-				if(parent != null) {
-					System.out.println(parent.getAbsolutePath());
-
+				if(parent != null)
 					return parent;
-				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
