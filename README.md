@@ -24,16 +24,22 @@
 - Entry animations
 - ***Custom Background Effects***
 - Row 2 only restriction
+- Higher enemy limit cap for custom stages (100)
 - Unit Bases
 - TBA applied on spawn (Using a negative number)
 - Detailed descriptions for packs
+- Rage (Enraged entities' attacks hit both enemies and allies on the attack area)
+- Hypnosis (Entity will turn against its allies)
 ### QoL changes
 - A much slicker UI (Thanks to Hect0x1 for it)
 - Can't deploy any more text line when you reach deploy limit
 - Units now actually flip to face the right way when their speed ends up being a negative number
 - Multiple lines are easier to set up in descrpitions, and are no longer limited to 4
 - Manual frame change on Maanim Edit Page, auto-update MaEP slider when increasing/decreasing anim length
-- - Animations mapped to editable packs can be modified in the editor
+- Animations mapped to editable packs can be modified in the editor
+- Unrestricted Base Image size (128x256 is still recommended though)
+- Packs can have Icons and Banners
+- Enemy descriptions don't get cut
 ### Bugs Fixed here that remain unfixed in the original repo
 - Strong Against/Massive Dmg/etc don't work via adv. trait targetting
 - Cursed/Sealed units become unaffected by trait-targetting enemies
