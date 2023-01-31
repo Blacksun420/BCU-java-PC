@@ -103,7 +103,7 @@ class EntityTable extends SortTable<Entity> {
 			else if(c == 2)
 				return t.damageGiven;
 			else if(c == 3)
-				return t.livingTime == 0 ? 0.0 : Double.parseDouble(df.format(t.damageGiven * 30.0 / t.livingTime));
+				return t.livingTime == 0 ? 0.0 : CommonStatic.parseDoubleN(df.format(t.damageGiven * 30.0 / t.livingTime));
 		} else {
 			if (c == 0)
 				return t.status.shield[0] > 0 ? t.health + " (+" + t.status.shield[0] + ")" : t.health;
