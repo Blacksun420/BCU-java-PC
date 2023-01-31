@@ -220,7 +220,7 @@ public class AdvStEditPage extends Page {
 						ufp = new UnitFindPage(getThis(), false, UserProfile.getUserPack(st.id.pack.substring(0, st.id.pack.indexOf('/'))));
 					changePanel(ufp);
 				} else if (st.info != null && ((CustomStageInfo)st.info).ubase != null)
-					changePanel(new UnitInfoPage(getThis(), ((CustomStageInfo)st.info).ubase.unit, ((CustomStageInfo)st.info).lv.getLvs()));
+					changePanel(new UnitInfoPage(getThis(), ((CustomStageInfo)st.info).ubase.unit, ((CustomStageInfo)st.info).lv));
 			}
 		});
 
@@ -230,8 +230,8 @@ public class AdvStEditPage extends Page {
 			CustomStageInfo csi = (CustomStageInfo)st.info;
 			if (csi.ubase == null)
 				return;
-			csi.lv.setLvs(CommonStatic.parseIntsN(ubaslv.getText()));
-			ubaslv.setText(UtilPC.lvText(csi.ubase, csi.lv.getLvs())[0]);
+			csi.lv.setLvs(Level.lvList(csi.ubase.unit(), CommonStatic.parseIntsN(ubaslv.getText()), null));
+			ubaslv.setText(UtilPC.lvText(csi.ubase, csi.lv)[0]);
 		});
 
 		equal.setLnr(e -> ((CustomStageInfo)st.info).equalizeChances());
@@ -328,7 +328,7 @@ public class AdvStEditPage extends Page {
 		}
 		CustomStageInfo csi = (CustomStageInfo)si;
 		ubaslv.setEnabled(true);
-		String[] lvss = UtilPC.lvText(csi.ubase, csi.lv.getLvs());
+		String[] lvss = UtilPC.lvText(csi.ubase, csi.lv);
 		lves.setText(lvss[1]);
 		ubaslv.setText(lvss[0]);
 		if (csi.ubase.getIcon() != null)
@@ -369,7 +369,7 @@ public class AdvStEditPage extends Page {
 			if (csi.ubase != ufp.getForm() && (csi.ubase == null || Opts.conf("Replace base " + csi.ubase + " with " + ufp.getForm() + "?"))) {
 				csi.ubase = (Form)ufp.getForm();
 				if (csi.ubase != null)
-					csi.lv = new Level(csi.ubase.getPrefLvs());
+					csi.lv = csi.ubase.unit().getPrefLvs();
 				else {
 					csi.lv = null;
 					if (csi.stages.isEmpty()) {

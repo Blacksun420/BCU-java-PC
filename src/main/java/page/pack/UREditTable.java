@@ -194,7 +194,7 @@ public class UREditTable extends AbJTable implements Reorderable {
         if (c == 0)
             return ur.ent;
         else if (c == 1)
-            return ur.ent instanceof Form ? UtilPC.lvText((Form) ur.ent, ur.lv.getLvs())[0] : new String[]{"1"};
+            return ur.ent instanceof Form ? UtilPC.lvText(ur.ent, ur.lv) : new String[]{"1"};
         else if (c == 2)
             return ur.share;
         return null;
@@ -207,10 +207,7 @@ public class UREditTable extends AbJTable implements Reorderable {
         if (v[0] < 0)
             v[0] = 0;
         if (c == 1) {
-            ArrayList<Integer> list = new ArrayList<>();
-            for (int j : v)
-                list.add(j);
-            ur.lv.setLvs(list);
+            ur.lv.setLvs(Level.lvList(ur.ent.unit(), v, null));
         } else if (c == 2)
             ur.share = v[0];
     }
