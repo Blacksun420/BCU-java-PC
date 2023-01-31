@@ -208,11 +208,11 @@ public class BasisPage extends LubCont {
 		set(setc, x, y, 1100, 750, 200, 50);
 		set(jspcn, x, y, 500, 500, 400, 250);
 		set(jspul, x, y, 1300, 150, 300, 600);
-		set(pcoin, x, y, 500, 50, 600, 50);
-		set(lvjtf, x, y, 500, 100, 400, 50);
+		set(pcoin, x, y, 500, 50, 1200, 50);
+		set(lvjtf, x, y, 500, 100, 600, 50);
 		set(form, x, y, 500, 450, 200, 50);
 		set(reset, x, y, 700, 450, 200, 50);
-		set(lvorb, x, y, 900, 100, 200, 50);
+		set(lvorb, x, y, 1100, 100, 200, 50);
 		set(combo, x, y, 900, 450, 200, 50);
 		set(cost, x, y, 1100, 450, 200, 50);
 		for (int i = 0; i < jbcsL.length; i++)
@@ -256,7 +256,7 @@ public class BasisPage extends LubCont {
 					ul.setSelectedIndex(row);
 					lub.select(ul.getSelectedValue());
 					if (((Form) lub.sf).du.getPCoin() != null) {
-						lub.setLv(new int[]{((Form) lub.sf).unit.getPrefLv(), 0, 0, 0, 0, 0});
+						lub.setLv(new Level(((Form)lub.sf).unit.getPreferredLevel(), ((Form)lub.sf).unit.getPreferredPlusLevel(), new int[] { 0, 0, 0, 0, 0 }));
 						setLvs(lub.sf);
 					}
 				} else {
@@ -276,10 +276,13 @@ public class BasisPage extends LubCont {
 		lvjtf.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent arg0) {
-				int[] lv = CommonStatic.parseIntsN(lvjtf.getText());
-				lub.setLv(lv);
-				if (lub.sf != null)
+				if (lub.sf != null) {
+					int[] lv = CommonStatic.parseIntsN(lvjtf.getText());
+
+					lub.setLv(Level.lvList(lub.sf.unit(), lv, null));
+
 					setLvs(lub.sf);
+				}
 			}
 		});
 
@@ -693,7 +696,7 @@ public class BasisPage extends LubCont {
 		if (f instanceof Form) {
 			lvorb.setEnabled(((Form) f).orbs != null);
 
-			String[] strs = UtilPC.lvText(f, lu().getLv(f).getLvs());
+			String[] strs = UtilPC.lvText(f, lu().getLv(f));
 			lvjtf.setText(strs[0]);
 			pcoin.setText(strs[1]);
 		} else {
@@ -702,7 +705,7 @@ public class BasisPage extends LubCont {
 			if (f == null) {
 				lvjtf.setText("");
 			} else {
-				lvjtf.setText(UtilPC.lvText(f, lu().getLv(f).getLvs())[0]);
+				lvjtf.setText(UtilPC.lvText(f, lu().getLv(f))[0]);
 			}
 		}
 	}

@@ -84,7 +84,7 @@ public class UnitListTable extends EntityListTable<AbForm> {
 		if (f instanceof Form) {
 			Form e = (Form) f;
 			MaskUnit du = e.maxu();
-			double mul = e.unit.lv.getMult(e.unit.getPrefLv());
+			double mul = e.unit.lv.getMult(e.unit.getPreferredLevel());
 			double atk = b.t().getAtkMulti();
 			double def = b.t().getDefMulti();
 			int itv = e.anim != null ? du.getItv(0) : -1;
@@ -93,7 +93,7 @@ public class UnitListTable extends EntityListTable<AbForm> {
 			else if (c == 1)
 				return e;
 			else if (c == 2)
-				return e.unit.getPrefLv();
+				return e.unit.getPreferredLevel();
 			else if (c == 3)
 				return (int) (du.getHp() * mul * def);
 			else if (c == 4)

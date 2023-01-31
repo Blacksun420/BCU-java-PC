@@ -10,6 +10,7 @@ import common.system.VImg;
 import common.util.Data;
 import common.util.unit.EForm;
 import common.util.unit.Form;
+import common.util.unit.Level;
 import common.util.unit.Trait;
 import main.MainBCU;
 import page.*;
@@ -20,7 +21,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 public class UnitInfoTable extends Page {
@@ -44,11 +44,11 @@ public class UnitInfoTable extends Page {
 
 	private final BasisSet b;
 	private final Form f;
-	private ArrayList<Integer> multi;
+	private Level multi;
 	private boolean displaySpecial;
 	private int dispAtk = 0;
 
-	protected UnitInfoTable(Page p, Form de, ArrayList<Integer> lvs) {
+	protected UnitInfoTable(Page p, Form de, Level lvs) {
 		super(p);
 		b = BasisSet.current();
 
@@ -64,7 +64,7 @@ public class UnitInfoTable extends Page {
 
 		f = de;
 		displaySpecial = sp;
-		multi = de.getPrefLvs();
+		multi = de.unit.getPrefLvs();
 		atks = new JL[6];
 
 		ini();
@@ -73,10 +73,10 @@ public class UnitInfoTable extends Page {
 	private void resetAtk() {
 		boolean pc = f.du.getPCoin() != null;
 		atkind.setText(get(MainLocale.PAGE, "atk") + " " + dispAtk);
-		MaskUnit du = pc ? f.du.getPCoin().improve(multi) : f.du;
+		MaskUnit du = f.maxu();
 		List<Interpret.ProcDisplay> ls = Interpret.getAbi(du, dispAtk);
-		double mul = f.unit.lv.getMult(multi.get(0));
-		ls.addAll(Interpret.getProc(du, false, new double[]{Math.round(du.getHp() * mul) * b.t().getDefMulti(), multi.get(0)}, dispAtk));
+		double mul = f.unit.lv.getMult(multi.getLv() + multi.getPlusLv());
+		ls.addAll(Interpret.getProc(du, false, new double[]{Math.round(du.getHp() * mul) * b.t().getDefMulti(), multi.getLv() + multi.getPlusLv()}, dispAtk));
 		if (pc)
 			ls.add(new Interpret.ProcDisplay("",null));
 		if (proc != null)
@@ -133,7 +133,7 @@ public class UnitInfoTable extends Page {
 
 	protected void reset() {
 		EForm ef = new EForm(f, multi);
-		double mul = f.unit.lv.getMult(multi.get(0));
+		double mul = f.unit.lv.getMult(multi.getLv() + multi.getPlusLv());
 		double atk = b.t().getAtkMulti();
 		double def = b.t().getDefMulti();
 
@@ -142,6 +142,7 @@ public class UnitInfoTable extends Page {
 		int hp = (int) (Math.round(ef.du.getHp() * mul) * def);
 
 		PCoin pc = f.du.getPCoin();
+
 		if (pc != null) {
 			attack = (int) (attack * pc.getAtkMultiplication(multi));
 			hp = (int) (hp * pc.getHPMultiplication(multi));
@@ -159,6 +160,8 @@ public class UnitInfoTable extends Page {
 		main[1][3].setText(hp + " / " + ef.du.getHb());
 		main[2][3].setText("" + (attack * 30 / ef.du.getItv(dispAtk)));
 		main[2][5].setText("" + (int) (ef.du.getSpeed() * (1 + b.getInc(Data.C_SPE) * 0.01)));
+		main[3][5].setText(MainBCU.convertTime(ef.du.getTBA()));
+
 		int respawn = b.t().getFinRes(ef.du.getRespawn());
 		main[1][5].setText(MainBCU.convertTime(respawn));
 
@@ -181,7 +184,7 @@ public class UnitInfoTable extends Page {
 		atks[1].setText(satk.toString());
 
 		List<Interpret.ProcDisplay> ls = Interpret.getAbi(ef.du, dispAtk);
-		ls.addAll(Interpret.getProc(ef.du, false, new double[]{mul, multi.get(0)}, dispAtk));
+		ls.addAll(Interpret.getProc(ef.du, false, new double[]{mul, multi.getLv() + multi.getPlusLv()}, dispAtk));
 		for (JLabel l : proc) {
 			if (l != pcoin)
 				l.setText("");
@@ -250,7 +253,7 @@ public class UnitInfoTable extends Page {
 
 			@Override
 			public void focusLost(FocusEvent e) {
-				multi = f.regulateLv(CommonStatic.parseIntsN(jtf.getText()), multi);
+				multi = f.regulateLv(Level.lvList(f.unit, CommonStatic.parseIntsN(jtf.getText()), null), multi);
 				String[] strs = UtilPC.lvText(f, multi);
 				jtf.setText(strs[0]);
 				if (pcoin != null)
