@@ -107,7 +107,6 @@ public class UnitInfoTable extends Page {
 			pre.append(MainBCU.convertTime(atkDatum.getPre()));
 			use.append(atkDatum.getDire());
 		}
-		main[2][7].setText(MainBCU.convertTime(f.du.getItv(dispAtk)));
 		main[3][1].setText("" + f.du.isRange(dispAtk));
 		main[3][7].setText(MainBCU.convertTime(f.du.getPost(false, dispAtk)));
 		atks[3].setText(pre.toString());
@@ -160,6 +159,7 @@ public class UnitInfoTable extends Page {
 		main[1][3].setText(hp + " / " + ef.du.getHb());
 		main[2][3].setText("" + (attack * 30 / ef.du.getItv(dispAtk)));
 		main[2][5].setText("" + (int) (ef.du.getSpeed() * (1 + b.getInc(Data.C_SPE) * 0.01)));
+		main[2][7].setText(MainBCU.convertTime(ef.du.getItv(dispAtk)));
 		main[3][5].setText(MainBCU.convertTime(ef.du.getTBA()));
 
 		int respawn = b.t().getFinRes(ef.du.getRespawn());

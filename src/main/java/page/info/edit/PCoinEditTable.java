@@ -75,13 +75,15 @@ class PCoinEditTable extends Page {
     }
 
     //ensures not every single talent is here, to avoid touching unused values, each number corresponds to a PC_CORRES array
-    public static final int[] allPC = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 57, 40, 41, 50, 51, 52, 54, 56, 58, 59, 60};
+    public static final int[] allPC = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 57, 40, 41, 50, 51, 52, 54, 56, 58, 59, 60, 61};
     private final CustomUnit unit;
     private final NPList ctypes = new NPList();
     private final JScrollPane stypes = new JScrollPane(ctypes);
     private final JL pCoin = new JL();
     private final JL jPCLV = new JL(0,"Max Lv");
     private final JTF PCoinLV = new JTF();
+    private final JL jSpLv = new JL(0,"Required Lv");
+    private final JTF superLv = new JTF();
     private final JBTN delet = new JBTN(0,"rem");
     private final PCoinEditPage pcedit;
     private final boolean editable;
@@ -90,7 +92,7 @@ class PCoinEditTable extends Page {
     protected int talent;
 
     private boolean changing;
-    private int cTypesY = 550;
+    private int cTypesY = 600;
 
     protected PCoinEditTable(PCoinEditPage p, CustomUnit u, int ind, boolean edi) {
         super(p);
@@ -113,9 +115,11 @@ class PCoinEditTable extends Page {
         set(delet, x, y, 0, 50, 400, 50);
         set(jPCLV, x, y, 0, 100, 200, 50);
         set(PCoinLV, x, y, 200, 100, 200, 50);
+        set(jSpLv, x, y, 0, 150, 200, 50);
+        set(superLv, x, y, 200, 150, 200, 50);
         for (int i = 0; i < chance.length; i++) {
-            set(chance[i], x, y, 0, 150 + i * 50, 200, 50);
-            set(tchance[i], x, y, 200, 150 + i * 50, 200, 50);
+            set(chance[i], x, y, 0, 200 + i * 50, 200, 50);
+            set(tchance[i], x, y, 200, 200 + i * 50, 200, 50);
         }
         set(stypes, x, y, 0, cTypesY, 400, 1050 - cTypesY);
     }
@@ -125,6 +129,12 @@ class PCoinEditTable extends Page {
             String txt = PCoinLV.getText().trim();
             int v = CommonStatic.parseIntN(txt);
             unit.pcoin.info.get(talent)[1] = MathUtil.clip(v, 1, 10);
+            setData();
+        });
+
+        superLv.setLnr(arg0 -> {
+            int v = CommonStatic.parseIntN(superLv.getText().trim());
+            unit.pcoin.info.get(talent)[13] = MathUtil.clip(v, 0, unit.getPack().unit.max + unit.getPack().unit.maxp);
             setData();
         });
 
@@ -240,6 +250,8 @@ class PCoinEditTable extends Page {
         add(delet);
         add(jPCLV);
         add(pCoin);
+        add(jSpLv);
+        add(superLv);
         add(stypes);
         add(PCoinLV);
         setCTypes(unit.pcoin != null && unit.pcoin.info.size() > talent);
@@ -303,6 +315,7 @@ class PCoinEditTable extends Page {
 
         if (pc) {
             PCoinLV.setText("" + unit.pcoin.info.get(talent)[1]);
+            superLv.setText("" + unit.pcoin.info.get(talent)[13]);
             int tal = unit.pcoin.info.get(talent)[0];
             ListModel<talentData> listModel = ctypes.getModel();
             for (int i = 0; i < listModel.getSize(); i++)
@@ -331,7 +344,7 @@ class PCoinEditTable extends Page {
 
     //Enables or disables text fields, depending on the needed values for the proc
     private void enableSecondaries(int[] pdata) {
-        cTypesY = 550;
+        cTypesY = 600;
         int maxlv = pdata[0] != -1 ? unit.pcoin.info.get(talent)[1] : 0;
         if (pdata[0] == -1 || pdata[0] == Data.PC_AB || pdata[0] == Data.PC_TRAIT || pdata[0] == Data.PC_IMU) {
             for (JTF jtf : tchance)

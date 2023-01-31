@@ -209,7 +209,7 @@ public class UtilPC {
 		for (int i = 0; i < pc.info.size(); i++) {
 			str.append(lv.getTalents()[i]);
 
-			if(pc.info.get(i)[13] == 1) {
+			if(pc.info.get(i)[13] > 0) {
 				str.append("*");
 			}
 
