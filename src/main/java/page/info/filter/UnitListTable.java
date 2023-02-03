@@ -93,7 +93,7 @@ public class UnitListTable extends EntityListTable<AbForm> {
 			else if (c == 1)
 				return e;
 			else if (c == 2)
-				return e.unit.getPreferredLevel();
+				return e.unit.getPreferredLevel() + e.unit.getPreferredPlusLevel();
 			else if (c == 3)
 				return (int) (du.getHp() * mul * def);
 			else if (c == 4)

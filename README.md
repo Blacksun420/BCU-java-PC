@@ -30,6 +30,7 @@
 - Detailed descriptions for packs
 - Rage (Enraged entities' attacks hit both enemies and allies on the attack area)
 - Hypnosis (Entity will turn against its allies)
+- Super Talents for custom units with flexible level setting
 ### QoL changes
 - A much slicker UI (Thanks to Hect0x1 for it)
 - Can't deploy any more text line when you reach deploy limit

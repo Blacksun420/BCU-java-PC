@@ -312,31 +312,19 @@ public abstract class EntityEditPage extends Page {
 				&& Opts.conf("do you want to overwrite stats? This operation cannot be undone")) {
 			Enemy e = (Enemy) efp.getSelected();
 			ce.importData(e.de);
-			ce.traits.removeIf(t -> {
-				if(t.BCTrait)
-					return false;
-
-				return !pack.desc.dependency.contains(t.id.pack);
-			});
+			ce.traits.removeIf(t -> !(t.BCTrait || pack.desc.dependency.contains(t.id.pack) || pack.desc.id.equals(t.id.pack)));
 			setData(ce);
 		}
 		if (ufp != null && ufp.getForm() != null
 				&& Opts.conf("do you want to overwrite stats? This operation cannot be undone")) {
 			Form f = (Form) ufp.getForm();
 			ce.importData(f.du);
-			ce.traits.removeIf(t -> {
-				if(t.BCTrait)
-					return false;
-
-				return !pack.desc.dependency.contains(t.id.pack);
-			});
+			ce.traits.removeIf(t -> !(t.BCTrait || pack.desc.dependency.contains(t.id.pack) || pack.desc.id.equals(t.id.pack)));
 			setData(ce);
 		}
-		if (sup != null && editor != null) {
-			if(sup.getSelected() != null) {
-				Identifier val = sup.getSelected().getID();
-				editor.callback(val);
-			}
+		if (sup != null && editor != null && sup.getSelected() != null) {
+			Identifier val = sup.getSelected().getID();
+			editor.callback(val);
 		}
 		sup = null;
 		editor = null;

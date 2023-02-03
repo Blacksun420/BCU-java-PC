@@ -123,10 +123,7 @@ public class UREditTable extends AbJTable implements Reorderable {
             int[] is = CommonStatic.parseIntsN((String) arg0);
             if (is.length == 0)
                 return;
-            if (is.length == 1)
-                set(r, c, is);
-            else
-                set(r, c, is);
+            set(r, c, is);
         } else {
             int i = arg0 instanceof Integer ? (Integer) arg0 : CommonStatic.parseIntN((String) arg0);
             set(r, c, new int[]{i});
@@ -194,7 +191,7 @@ public class UREditTable extends AbJTable implements Reorderable {
         if (c == 0)
             return ur.ent;
         else if (c == 1)
-            return ur.ent instanceof Form ? UtilPC.lvText(ur.ent, ur.lv) : new String[]{"1"};
+            return ur.ent instanceof Form ? UtilPC.lvText(ur.ent, ur.lv)[0] : "1";
         else if (c == 2)
             return ur.share;
         return null;
@@ -204,12 +201,15 @@ public class UREditTable extends AbJTable implements Reorderable {
         if (rand == null)
             return;
         UREnt ur = rand.list.get(r);
-        if (v[0] < 0)
-            v[0] = 0;
         if (c == 1) {
             ur.lv.setLvs(Level.lvList(ur.ent.unit(), v, null));
-        } else if (c == 2)
+            ur.lv.setLevel(Math.min(ur.lv.getLv(), v[0]));
+            ur.lv.setPlusLevel(Math.min(ur.lv.getPlusLv(), v[1]));
+        } else if (c == 2) {
+            if (v[0] < 0)
+                v[0] = 0;
             ur.share = v[0];
+        }
     }
 
 }
