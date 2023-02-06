@@ -245,6 +245,7 @@ public abstract class EntityEditPage extends Page {
 		add(comm);
 		add(jcbs);
 		add(jlang);
+		jlang.setSelectedIndex(MainLocale.LOC_INDEX[CommonStatic.getConfig().lang]);
 		add(jsDesc);
 		add(hbbo);
 		add(bobo);
@@ -435,7 +436,7 @@ public abstract class EntityEditPage extends Page {
 		else
 			cdps.setText("-");
 
-		String d = data.getPack().getExplanation();
+		String d = data.getPack().description.get(jlang.getSelectedIndex());
 		entDesc.setText(d.isEmpty() ? "Description" : d);
 
 		comm.setSelected(data.common);
@@ -471,7 +472,6 @@ public abstract class EntityEditPage extends Page {
 			jcba.setSelectedItem(ene.anim);
 
 		jcbs.setSelectedItem(Identifier.get(ce.death));
-		jlang.setSelectedItem(CommonStatic.getConfig().lang);
 		hbbo.setSelected(ce.kbBounce);
 		bobo.setSelected(ce.bossBounce);
 		changing = false;
@@ -636,7 +636,7 @@ public abstract class EntityEditPage extends Page {
 
 		entDesc.setLnr(j -> {
 			String txt = entDesc.assignSplitText(256);
-			if (txt.equals("Description") || txt.isEmpty() || txt.equals(ce.getPack().description.toString()))
+			if (txt.equals("Description") || txt.isEmpty() || (MainLocale.LOC_INDEX[jlang.getSelectedIndex()] != CommonStatic.getConfig().lang && txt.equals(ce.getPack().description.toString())))
 				ce.getPack().description.remove(MainLocale.LOC_INDEX[jlang.getSelectedIndex()]);
 			else
 				ce.getPack().description.put(MainLocale.LOC_INDEX[jlang.getSelectedIndex()], txt);
