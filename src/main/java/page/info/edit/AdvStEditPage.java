@@ -208,6 +208,8 @@ public class AdvStEditPage extends Page {
 			if (p > 0 && p <= 100)
 				csi.setTotalChance((byte) p);
 
+			if (jex.getSelectedIndex() != -1)
+				jprob.setText(csi.chances.get(jex.getSelectedIndex()) + "%");
 			jtprob.setText(csi.totalChance + "%");
 		});
 
@@ -310,8 +312,12 @@ public class AdvStEditPage extends Page {
 
 	private void setFollowups(CustomStageInfo si) {
 		remex.setEnabled(si != null);
+		equal.setEnabled(si != null);
 		jex.setEnabled(si != null);
-		jprob.setEnabled(si != null && jex.getSelectedIndex() != -1);
+		if (si == null)
+			jex.clearSelection();
+		jprob.setEnabled(jex.getSelectedIndex() != -1);
+		jprob.setText(jex.getSelectedIndex() != -1 ? si.chances.get(jex.getSelectedIndex()) + "%" : "");
 
 		jtprob.setEnabled(si != null);
 		jtprob.setText(si != null ? si.totalChance + "%" : "");
