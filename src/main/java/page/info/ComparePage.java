@@ -419,7 +419,7 @@ public class ComparePage extends Page {
                 hp = (int) (Math.round(hp * mul) * defLv);
 
                 if (mu.getPCoin() != null)
-                    hp = (int) (hp * mu.getPCoin().getHPMultiplication(multi));
+                    hp = (int) (hp * mu.getPCoin().getStatMultiplication(Data.PC2_HP, multi.getTalents()));
 
                 for (MaskAtk atkDatum : atkData) {
                     if (atkString.length() > 0) {
@@ -429,7 +429,7 @@ public class ComparePage extends Page {
 
                     int a = (int) (Math.round(atkDatum.getAtk() * mul) * atkLv);
                     if (mu.getPCoin() != null)
-                        a = (int) (a * mu.getPCoin().getAtkMultiplication(multi));
+                        a = (int) (a * mu.getPCoin().getStatMultiplication(Data.PC2_ATK, multi.getTalents()));
 
                     atkString.append(a);
                     preString.append(MainBCU.convertTime(atkDatum.getPre()));
