@@ -8,6 +8,7 @@ import common.util.lang.MultiLangCont;
 import common.util.lang.ProcLang;
 import common.util.stage.Limit;
 import common.util.unit.*;
+import common.util.unit.rand.UREnt;
 import page.JTG;
 import page.MainLocale;
 import page.Page;
@@ -85,10 +86,12 @@ public class UnitFilterBox extends EntityFilterBox {
 			if (rand)
 				for(UniRand rand : p.randUnits.getList()) {
 					int diff = UtilPC.damerauLevenshteinDistance(rand.name.toLowerCase(), name.toLowerCase());
-					if(diff <= minDiff) {
-						ans.add(rand);
-						minDiff = diff;
-					}
+					if(diff <= minDiff)
+						for (UREnt en : rand.list)
+							if (ans.contains(en.ent)) {
+								ans.add(rand);
+								minDiff = diff;
+							}
 				}
 		}
 

@@ -73,10 +73,12 @@ public class EnemyFilterBox extends EntityFilterBox {
 				if (rand)
 					for(EneRand rand : p.randEnemies.getList()) {
 						int diff = UtilPC.damerauLevenshteinDistance(rand.name.toLowerCase(), name.toLowerCase());
-						if(diff <= minDiff) {
-							ans.add(rand);
-							minDiff = diff;
-						}
+						if(diff <= minDiff)
+							for (Enemy en : rand.getPossible())
+								if (ans.contains(en)) {
+									ans.add(rand);
+									minDiff = diff;
+								}
 					}
 			}
 
