@@ -469,6 +469,7 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 					for (int i = 0; i < anim.parts[row].n; i++)
 						anim.parts[row].moves[i][0] += add;
 				anim.validate();
+				setJTLs();
 				change(false);
 			}
 			death = false;
@@ -486,12 +487,12 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 				Opts.pop("You must select at least 1 part to trim", "Nothing selected");
 				return;
 			}
-			if (Opts.conf("Trim every keyframe timed " + (trim > 0 ? "after" : "before") + trim + "f for the selected parts?")) {
+			if (Opts.conf("Trim every keyframe timed " + (trim > 0 ? "after " : "before ") + trim + "f for the selected parts?")) {
 				change(true);
 				for (int row : rows) {
 					if (trim > 0) {
 						for (int i = anim.parts[row].n - 1; i >= 0; i--)
-							if (anim.parts[row].moves[i][0] <= trim) {
+							if (anim.parts[row].moves[i][0] <= trim || (i == 0 && anim.parts[row].moves[0][0] > Math.abs(trim))) {
 								anim.parts[row].n = i + 1;
 								break;
 							}
@@ -500,7 +501,7 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 					} else {
 						int v = -1;
 						for (int i = 0; i < anim.parts[row].n; i++)
-							if (anim.parts[row].moves[i][0] >= Math.abs(trim) || i == anim.parts[row].n - 1) {
+							if (anim.parts[row].moves[i][0] >= Math.abs(trim) || (i == anim.parts[row].n - 1 && anim.parts[row].moves[i][0] < Math.abs(trim))) {
 								v = i;
 								break;
 							}
@@ -514,6 +515,7 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 					anim.parts[row].validate();
 				}
 				anim.validate();
+				setJTLs();
 				change(false);
 			}
 			death = false;
@@ -540,6 +542,7 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 						}
 					if (anim.parts[row].n < anim.parts[row].moves.length) //To prevent pointless processing, only copy if there was actually trimming
 						anim.parts[row].moves = Arrays.copyOf(anim.parts[row].moves, anim.parts[row].n);
+					setJTLs();
 				}
 		});
 	}
@@ -596,6 +599,10 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 			row = -1;
 		}
 		setC(row);
+		setJTLs();
+	}
+
+	private void setJTLs() {
 		jtl.setPaintTicks(true);
 		jtl.setPaintLabels(true);
 		jtl.setMinimum(0);
@@ -617,7 +624,6 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 			jtl.setMajorTickSpacing(1000);
 			jtl.setMinorTickSpacing(200);
 		}
-
 	}
 
 	private void setC(int ind) {
