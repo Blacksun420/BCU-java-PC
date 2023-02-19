@@ -416,7 +416,7 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 					pre++;
 				}
 				for (int j = pre + 1; j < movs.length; j++) {
-					if (movs[pre][1] == movs[j][1] && ((j == movs.length - 1 && data[i].ints[2] == 1) || movs[j + 1][1] == movs[j][1] || movs[pre][2] == 1)) {
+					if (movs[pre][1] == movs[j][1] && ((j == movs.length - 1 && data[i].ints[2] == 1) || movs[j + 1][1] == movs[j][1] || (movs[pre][2] == 1 && movs[j][2] == 1))) {
 						movs[j] = null;
 						data[i].n--;
 					} else if (movs[pre][1] == movs[j][1] && movs[j][0] == movs[j + 1][0] - 1) {
@@ -519,31 +519,6 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 				change(false);
 			}
 			death = false;
-		});
-
-		jtrim.setLnr(theJ -> {
-			MaAnim anim = ac.getMaAnim(animID);
-			if (anim == null)
-				return;
-			int trim = CommonStatic.parseIntN(jtrim.getText());
-			if (trim < 0)
-				return;
-			int[] rows = maet.getSelectedRows();
-			if (rows.length == 0) {
-				Opts.pop("You must select at least 1 part to trim", "Nothing selected");
-				return;
-			}
-			if (Opts.conf("Trim every keyframe timed after " + trim + "f for the selected parts?"))
-				for (int row : rows) {
-					for (int i = anim.parts[row].n - 1; i >= 0; i--)
-						if (anim.parts[row].moves[i][0] <= trim) {
-							anim.parts[row].n = i + 1;
-							break;
-						}
-					if (anim.parts[row].n < anim.parts[row].moves.length) //To prevent pointless processing, only copy if there was actually trimming
-						anim.parts[row].moves = Arrays.copyOf(anim.parts[row].moves, anim.parts[row].n);
-					setJTLs();
-				}
 		});
 	}
 
