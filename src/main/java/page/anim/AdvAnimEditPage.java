@@ -416,10 +416,10 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 					pre++;
 				}
 				for (int j = pre + 1; j < movs.length; j++) {
-					if (movs[pre][1] == movs[j][1] && ((j == movs.length - 1 && data[i].ints[2] == 1) || movs[j + 1][1] == movs[j][1] || (movs[pre][2] == 1 && movs[j][2] == 1))) {
+					if (movs[pre][1] == movs[j][1] && ((j == movs.length - 1 && data[i].ints[2] == 1) || (j < movs.length - 1 && movs[j + 1][1] == movs[j][1]) || (movs[pre][2] == 1 && movs[j][2] == 1))) {
 						movs[j] = null;
 						data[i].n--;
-					} else if (movs[pre][1] == movs[j][1] && movs[j][0] == movs[j + 1][0] - 1) {
+					} else if (j < movs.length - 1 && movs[pre][1] == movs[j][1] && movs[j][0] == movs[j + 1][0] - 1) {
 						movs[pre][2] = 1;
 						movs[j] = null;
 						data[i].n--;
@@ -437,7 +437,11 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 					if (unecessarymove(data[i], 0)) {
 						data[i] = null;
 						anim.n--;
-					}
+					} else if (data[i].moves[0][0] == 0 && data[i].ints[2] == -1)
+						data[i].ints[2] = 1;
+				} else if (data[i].moves.length == 0) {
+					data[i] = null;
+					anim.n--;
 				}
 			}
 			anim.parts = new Part[anim.n];
