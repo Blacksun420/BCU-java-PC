@@ -25,7 +25,7 @@ public class JTA extends JEditorPane implements CustomComp {
     @SuppressWarnings("all")
     public String assignSplitText(int lim) {
         String str = getRawText();
-        if (str.length() <= lim)
+        if (lim == -1 || str.length() <= lim)
             return getText();
         String tex = getText();
         if (tex.lastIndexOf('>') == -1 || tex.indexOf('<') > lim)

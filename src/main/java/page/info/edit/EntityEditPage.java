@@ -635,7 +635,7 @@ public abstract class EntityEditPage extends Page {
 		jlang.addActionListener(act -> entDesc.setText(ce.getPack().description.get(MainLocale.LOC_INDEX[jlang.getSelectedIndex()])));
 
 		entDesc.setLnr(j -> {
-			String txt = entDesc.assignSplitText(256);
+			String txt = entDesc.assignSplitText(-1);
 			if (txt.equals("Description") || txt.isEmpty() || (MainLocale.LOC_INDEX[jlang.getSelectedIndex()] != CommonStatic.getConfig().lang && txt.equals(ce.getPack().description.toString())))
 				ce.getPack().description.remove(MainLocale.LOC_INDEX[jlang.getSelectedIndex()]);
 			else

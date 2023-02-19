@@ -23,48 +23,38 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 
 	private static final double res = 0.95;
 
-	private static final String[] mod = new String[] { "0 parent", "1 id", "2 sprite", "3 z-order", "4 pos-x",
-			"5 pos-y", "6 pivot-x", "7 pivot-y", "8 scale", "9 scale-x", "10 scale-y", "11 angle", "12 opacity",
-			"13 horizontal flip", "14 vertical flip", "50 extend" };
-
 	private final JBTN back = new JBTN(0, "back");
 	private final JTree jlm = new JTree();
 	private final JScrollPane jspm = new JScrollPane(jlm);
-	private final JList<String> jlv = new JList<>(mod);
+	private final JList<String> jlv = new JList<>(Page.get(MainLocale.PAGE, "maepm", 17));
 	private final JScrollPane jspv = new JScrollPane(jlv);
 	private final MaAnimEditTable maet = new MaAnimEditTable(this);
 	private final JScrollPane jspma = new JScrollPane(maet);
 	private final PartEditTable mpet = new PartEditTable(this);
 	private final JScrollPane jspmp = new JScrollPane(mpet);
-	private final JTG jtb = new JTG(0, "pause");
-	private final JBTN nex = new JBTN(0, "nextf");
+	private final JTG jtb = new JTG(MainLocale.PAGE, "pause");
+	private final JBTN nex = new JBTN(MainLocale.PAGE, "nextf");
 	private final JSlider jtl = new JSlider();
 	private final AnimBox ab = AnimBox.getInstance();
-	private final JBTN addp = new JBTN(0, "add");
-	private final JBTN remp = new JBTN(0, "rem");
-	private final JBTN addl = new JBTN(0, "addl");
-	private final JBTN reml = new JBTN(0, "reml");
-	private final JBTN same = new JBTN(0, "same");
-	private final JBTN clea = new JBTN(0, "clean");
-	private final JBTN sort = new JBTN(0, "sort");
-	private final JBTN keep = new JBTN(0, "keep");// TODO
-	private final JBTN appl = new JBTN(0, "apply");// TODO
-	private final JBTN show = new JBTN(0, "show");// TODO
-	private final JBTN time = new JBTN(0, "time");// TODO
-	private final JBTN revt = new JBTN(0, "revt");
-	private final JL lkip = new JL();
+	private final JBTN addp = new JBTN(MainLocale.PAGE, "add");
+	private final JBTN remp = new JBTN(MainLocale.PAGE, "rem");
+	private final JBTN addl = new JBTN(MainLocale.PAGE, "addl");
+	private final JBTN reml = new JBTN(MainLocale.PAGE, "reml");
+	private final JBTN revt = new JBTN(MainLocale.PAGE, "revt"); //Reverts a specific animation
+	private final JBTN polish = new JBTN(MainLocale.PAGE, "polish"); //Polshes maanims
+	private final JL addfs = new JL(MainLocale.PAGE, "addfs");
+	private final JTF jstfs = new JTF();
+	private final JL trimfs = new JL(MainLocale.PAGE, "trim");
+	private final JTF jtrim = new JTF();
 	private final JL inft = new JL();
 	private final JL inff = new JL();
 	private final JL infv = new JL();
 	private final JL infm = new JL();
-	private final JTG lmul = new JTG("set speed for selected");
-	private final JTF tmul = new JTF();
 	private final AnimCE ac;
 	private final UType animID;
 	private final MMTree mmt;
 	private Point p = null;
-	private boolean pause, changing;
-	private Part[] keeps;
+	private boolean pause, death;
 
 	public AdvAnimEditPage(Page p, AnimCE anim, UType id) {
 		super(p);
@@ -175,8 +165,8 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 
 		set(addp, x, y, 300, 750, 200, 50);
 		set(remp, x, y, 300, 800, 200, 50);
-		set(lmul, x, y, 300, 650, 200, 50);
-		set(tmul, x, y, 300, 700, 200, 50);
+		set(jtb, x, y, 300, 650, 200, 50);
+		set(nex, x, y, 300, 700, 200, 50);
 		set(jspv, x, y, 300, 850, 200, 450);
 		set(jspma, x, y, 500, 650, 900, 650);
 		set(jspmp, x, y, 1400, 650, 900, 650);
@@ -184,23 +174,18 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 		set((Canvas) ab, x, y, 300, 50, 700, 500);
 		set(addl, x, y, 2100, 550, 200, 50);
 		set(reml, x, y, 2100, 600, 200, 50);
-		set(jtl, x, y, 300, 550, 900, 100);
-		set(jtb, x, y, 1200, 550, 200, 50);
-		set(nex, x, y, 1200, 600, 200, 50);
+		set(jtl, x, y, 300, 550, 700, 100);
 		set(inft, x, y, 1400, 550, 250, 50);
 		set(inff, x, y, 1650, 550, 250, 50);
 		set(infv, x, y, 1400, 600, 250, 50);
 		set(infm, x, y, 1650, 600, 250, 50);
-		// 1300 50 1000 500
-		set(same, x, y, 1300, 50, 200, 50);
-		set(sort, x, y, 1300, 100, 200, 50);
-		set(clea, x, y, 1300, 150, 200, 50);
-		set(time, x, y, 1300, 200, 200, 50);
-		set(revt, x, y, 1300, 250, 200, 50);
-		set(lkip, x, y, 1500, 50, 200, 50);
-		set(keep, x, y, 1500, 100, 200, 50);
-		set(appl, x, y, 1500, 150, 200, 50);
-		set(show, x, y, 1500, 200, 200, 50);
+
+		set(revt, x, y, 1000, 50, 200, 50);
+		set(polish, x, y, 1200, 50, 200, 50);
+		set(addfs, x, y, 1000, 100, 200, 50);
+		set(jstfs, x, y, 1200, 100, 200, 50);
+		set(trimfs, x, y, 1000, 150, 200, 50);
+		set(jtrim, x, y, 1200, 150, 200, 50);
 
 		maet.setRowHeight(size(x, y, 50));
 		mpet.setRowHeight(size(x, y, 50));
@@ -235,164 +220,6 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 
 		jlv.addListSelectionListener(arg0 -> selectTree(true));
 
-	}
-
-	private void addListeners$4() {
-
-		tmul.setLnr(x -> {
-			if (changing)
-				return;
-			changing = true;
-
-			double d = CommonStatic.parseIntN(tmul.getText()) * 0.01;
-			if(d <= 0) {
-				tmul.setText("");
-				changing = false;
-				return;
-			}
-
-			String str = d < 1 ? "Decrease " : "Increase ";
-			if (!Opts.conf(str + "animation speed to " + (d * 100) + "%?")) {
-				changing = false;
-				return;
-			}
-
-			if (lmul.isSelected() && maet.getSelected().length > 0) {
-				for (Part p : maet.getSelected()) {
-					for (int[] line : p.moves)
-						line[0] *= d;
-					p.off *= d;
-					p.validate();
-				}
-			} else
-				for (Part p : maet.ma.parts) {
-					for (int[] line : p.moves)
-						line[0] *= d;
-					p.off *= d;
-					p.validate();
-				}
-			maet.ma.validate();
-			maet.anim.unSave("maanim multiply");
-			changing = false;
-		});
-
-		same.setLnr(x -> change(0, z -> setCs(findRep(mpet.part))));
-
-		sort.setLnr(x -> Arrays.sort(maet.ma.parts));
-
-		clea.setLnr(x -> {
-			for (Part p : maet.getSelected())
-				clean(p);
-		});
-
-		time.setLnr(x -> {
-			int[] times = getTimeLine(maet.getSelected());
-
-			if(times == null)
-				return;
-
-			StringBuilder str = new StringBuilder();
-			for (int i : times)
-				str.append(i == 0 ? "-" : "X");
-			System.out.println(str);// TODO
-		});
-
-		revt.setLnr(x -> {
-			MaAnim anim = ac.getMaAnim(animID);
-			if (anim == null)
-				return;
-			if (Arrays.stream(anim.parts).anyMatch(p -> p.ints[0] == 0 && p.ints[1] == 9)) {
-				Arrays.stream(anim.parts).filter(p -> p.ints[0] == 0 && p.ints[1] == 9).forEach(p -> Arrays.stream(p.moves)
-						.forEach(ints -> ints[1] *= -1));
-			} else {
-				Part[] data = anim.parts;
-				anim.parts = new Part[++anim.n];
-				System.arraycopy(data, 0, anim.parts, 0, data.length);
-				Part newScalePart = new Part();
-				newScalePart.validate();
-				newScalePart.ints[1] = 9;
-				newScalePart.moves = new int[++newScalePart.n][];
-				newScalePart.moves[0] = new int[] { 0, -1000, 0, 0 };
-				newScalePart.validate();
-				anim.parts[anim.n - 1] = newScalePart;
-				anim.validate();
-			}
-			for (int i = 0; i < ac.mamodel.parts.length; i++) {
-				int[] parts = ac.mamodel.parts[i];
-				int partID = i;
-				int angle = parts[10];
-				if (Arrays.stream(anim.parts).anyMatch(p -> p.ints[0] == partID && p.ints[1] == 11)) {
-					Arrays.stream(anim.parts)
-							.filter(p -> p.ints[0] == partID && p.ints[1] == 11)
-							.forEach(p -> Arrays.stream(p.moves).forEach(ints -> {
-								ints[1] += angle * 2;
-								ints[1] *= -1;
-							}));
-				} else if (angle != 0) {
-					Part[] data = anim.parts; // copy parts
-					anim.parts = new Part[++anim.n]; // add slot for new part
-					System.arraycopy(data, 0, anim.parts, 0, data.length); // preserve parts
-					Part newPart = new Part(); // create part
-					newPart.validate(); // validate
-					newPart.ints[0] = partID;
-					newPart.ints[1] = 11; // set type to angle
-					newPart.moves = new int[++newPart.n][]; // add slot for new move
-					newPart.moves[0] = new int[] { 0, angle * -2, 0, 0 }; // set angle to negative ma_model angle
-					newPart.validate(); // validate part
-					anim.parts[anim.n - 1] = newPart; // set part to anim parts
-				}
-				anim.validate(); // validate animation before next ma_model part check
-			}
-			maet.anim.unSave("maanim revert");
-			callBack(null);
-		});
-	}
-
-	private void addListeners$5() {
-
-		keep.setLnr(x -> {
-			keeps = maet.getSelected();
-			lkip.setText("keep " + keeps.length + " item");
-		});
-
-		show.setLnr(x -> change(0, z -> {
-			if (keeps == null || keeps.length == 0)
-				return;
-			List<Integer> ses = new ArrayList<>();
-			for (int i = 0; i < keeps.length; i++) {
-				ses.add(-1);
-				for (int j = 0; j < maet.ma.parts.length; j++)
-					if (keeps[i] == maet.ma.parts[j]) {
-						ses.set(i, j);
-						break;
-					}
-			}
-			setCs(ses);
-		}));
-
-		appl.setLnr(x -> {
-			if (mpet.part == null || keeps == null || keeps.length == 0)
-				return;
-			Part p = mpet.part;
-			if (Opts.conf("applying data of this part to " + keeps.length + " parts?"))
-				for (Part pi : keeps)
-					if (pi != p) {
-						pi.n = p.n;
-						pi.fir = p.fir;
-						pi.off = p.off;
-						pi.max = p.max;
-						pi.ints[2] = p.ints[2];
-						pi.moves = new int[pi.n][];
-						for (int i = 0; i < p.n; i++)
-							pi.moves[i] = p.moves[i].clone();
-						pi.validate();
-					}
-		});
-
-	}
-
-	private void addLnr$Anim() {
-
 		jtb.setLnr(arg0 -> {
 			pause = jtb.isSelected();
 			jtl.setEnabled(pause && ab.getEntity() != null);
@@ -406,11 +233,7 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 			ab.getEntity().setTime(jtl.getValue());
 		});
 
-	}
-
-	private void addLnr$C() {
-		ListSelectionModel lsm = maet.getSelectionModel();
-
+		final ListSelectionModel lsm = maet.getSelectionModel();
 		lsm.addListSelectionListener(e -> {
 			if (isAdj() || lsm.getValueIsAdjusting())
 				return;
@@ -469,15 +292,11 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 			change(false);
 		});
 
-	}
-
-	private void addLnr$D() {
-		ListSelectionModel lsm = mpet.getSelectionModel();
-
-		lsm.addListSelectionListener(e -> {
-			if (isAdj() || lsm.getValueIsAdjusting())
+		final ListSelectionModel lsp = mpet.getSelectionModel();
+		lsp.addListSelectionListener(e -> {
+			if (isAdj() || lsp.getValueIsAdjusting())
 				return;
-			setD(lsm.getLeadSelectionIndex());
+			setD(lsp.getLeadSelectionIndex());
 		});
 
 		addl.addActionListener(arg0 -> {
@@ -491,7 +310,7 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 			callBack(null);
 			maet.anim.unSave("maanim add line");
 			resized();
-			change(p.n - 1, i -> lsm.setSelectionInterval(i, i));
+			change(p.n - 1, i -> lsp.setSelectionInterval(i, i));
 			setD(p.n - 1);
 			int h = mpet.getRowHeight();
 			mpet.scrollRectToVisible(new Rectangle(0, h * (p.n - 1), 1, h));
@@ -518,83 +337,223 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 			int ind = inds[0];
 			if (ind >= p.n)
 				ind--;
-			change(ind, i -> lsm.setSelectionInterval(i, i));
+			change(ind, i -> lsp.setSelectionInterval(i, i));
 			setD(ind);
 		});
 	}
 
-	private void clean(Part p) {
-		if (p.off != 0 || p.ints[2] != 1 || p.n < 4)
-			return;
-		for (int i = 2; i < p.n - 1; i++) {
-			boolean suc = true;
-			for (int j = 0; j < p.n; j++) {
-				boolean mat;
-				int[] i0 = p.moves[j];
-				int[] i1 = p.moves[j % i];
-				mat = i0[1] == i1[1];
-				mat &= i0[2] == i1[2];
-				mat &= i0[3] == i1[3];
-				if (j > 0)
-					mat &= i0[0] - p.moves[j - 1][0] == p.moves[(j - 1) % i + 1][0] - p.moves[(j - 1) % i][0];
-				if (!mat) {
-					suc = false;
-					break;
+	private void addListeners$1() {
+
+		revt.setLnr(x -> {
+			MaAnim anim = ac.getMaAnim(animID);
+			if (anim == null)
+				return;
+			if (Arrays.stream(anim.parts).anyMatch(p -> p.ints[0] == 0 && p.ints[1] == 9)) {
+				Arrays.stream(anim.parts).filter(p -> p.ints[0] == 0 && p.ints[1] == 9).forEach(p -> Arrays.stream(p.moves)
+						.forEach(ints -> ints[1] *= -1));
+			} else {
+				Part[] data = anim.parts;
+				anim.parts = new Part[++anim.n];
+				System.arraycopy(data, 0, anim.parts, 0, data.length);
+				Part newScalePart = new Part();
+				newScalePart.validate();
+				newScalePart.ints[1] = 9;
+				newScalePart.ints[2] = 1;
+				newScalePart.moves = new int[++newScalePart.n][];
+				newScalePart.moves[0] = new int[] { 0, -1000, 0, 0 };
+				newScalePart.validate();
+				anim.parts[anim.n - 1] = newScalePart;
+				anim.validate();
+			}
+			for (int i = 0; i < ac.mamodel.parts.length; i++) {
+				int[] parts = ac.mamodel.parts[i];
+				int partID = i;
+				int angle = parts[10];
+				if (Arrays.stream(anim.parts).anyMatch(p -> p.ints[0] == partID && p.ints[1] == 11)) {
+					Arrays.stream(anim.parts)
+							.filter(p -> p.ints[0] == partID && p.ints[1] == 11)
+							.forEach(p -> Arrays.stream(p.moves).forEach(ints -> {
+								ints[1] += angle * 2;
+								ints[1] *= -1;
+							}));
+				} else if (angle != 0) {
+					Part[] data = anim.parts; // copy parts
+					anim.parts = new Part[++anim.n]; // add slot for new part
+					System.arraycopy(data, 0, anim.parts, 0, data.length); // preserve parts
+					Part newPart = new Part(); // create part
+					newPart.validate(); // validate
+					newPart.ints[0] = partID;
+					newPart.ints[1] = 11; // set type to angle
+					newPart.ints[2] = 1; // Loop once
+					newPart.moves = new int[++newPart.n][]; // add slot for new move
+					newPart.moves[0] = new int[] { 0, angle * -2, 0, 0 }; // set angle to negative ma_model angle
+					newPart.validate(); // validate part
+					anim.parts[anim.n - 1] = newPart; // set part to anim parts
+				}
+				anim.validate(); // validate animation before next ma_model part check
+			}
+			maet.anim.unSave("maanim revert");
+			callBack(null);
+		});
+
+		polish.addActionListener(l -> {
+			MaAnim anim = ac.getMaAnim(animID);
+			if (anim == null)
+				return;
+			change(true);
+			Part[] data = anim.parts;
+			for (int i = 0; i < data.length; i++) {
+				if (data[i].moves.length == 0) {
+					data[i] = null;
+					anim.n--;
+					continue;
+				}
+				int[][] movs = data[i].moves;
+				int pre = 0;
+				while (pre < movs.length && unecessarymove(data[i], pre) && ((pre == movs.length - 1 && data[i].ints[2] == 1) || movs[pre][2] == 1 || movs[pre][1] == movs[pre + 1][1] || movs[pre][0] == movs[pre + 1][0] - 1)) {
+					movs[pre] = null;
+					data[i].n--;
+					pre++;
+				}
+				for (int j = pre + 1; j < movs.length; j++) {
+					if (movs[pre][1] == movs[j][1] && ((j == movs.length - 1 && data[i].ints[2] == 1) || movs[j + 1][1] == movs[j][1] || movs[pre][2] == 1)) {
+						movs[j] = null;
+						data[i].n--;
+					} else if (movs[pre][1] == movs[j][1] && movs[j][0] == movs[j + 1][0] - 1) {
+						movs[pre][2] = 1;
+						movs[j] = null;
+						data[i].n--;
+					} else
+						pre = j;
+				}
+				if (data[i].n < movs.length) {
+					data[i].moves = new int[data[i].n][];
+					pre = 0;
+					for (int[] mov : movs)
+						if (mov != null)
+							data[i].moves[pre++] = mov;
+				}
+				if (data[i].n == 1) {
+					if (unecessarymove(data[i], 0)) {
+						data[i] = null;
+						anim.n--;
+					}
 				}
 			}
-			if (suc) {
-				p.moves = Arrays.copyOf(p.moves, p.n = i + 1);
-				p.ints[2] = -1;
-				p.validate();
+			anim.parts = new Part[anim.n];
+			int ind = 0;
+			for (Part datum : data)
+				if (datum != null)
+					anim.parts[ind++] = datum;
+			anim.validate();
+			maet.anim.unSave("polish anim");
+			callBack(null);
+			change(false);
+		});
+
+		jstfs.setLnr(theJ -> {
+			MaAnim anim = ac.getMaAnim(animID);
+			if (anim == null || death || isAdj())
+				return;
+			death = true;
+			int add = CommonStatic.parseIntN(jstfs.getText());
+			int[] rows = maet.getSelectedRows();
+			if (rows.length == 0) {
+				death = false;
+				Opts.pop("You must select at least 1 part to add", "Nothing selected");
 				return;
 			}
-		}
+			if (add != 0 && Opts.conf((add > 0 ? "Add " : "Substract ") + Math.abs(add) + "f startup time for the selected parts?")) {
+				change(true);
+				for (int row : rows)
+					for (int i = 0; i < anim.parts[row].n; i++)
+						anim.parts[row].moves[i][0] += add;
+				anim.validate();
+				change(false);
+			}
+			death = false;
+		});
+
+		jtrim.setLnr(theJ -> {
+			MaAnim anim = ac.getMaAnim(animID);
+			if (anim == null || isAdj())
+				return;
+			int trim = CommonStatic.parseIntN(jtrim.getText());
+			int[] rows = maet.getSelectedRows();
+			death = true;
+			if (rows.length == 0) {
+				death = false;
+				Opts.pop("You must select at least 1 part to trim", "Nothing selected");
+				return;
+			}
+			if (Opts.conf("Trim every keyframe timed " + (trim > 0 ? "after" : "before") + trim + "f for the selected parts?")) {
+				change(true);
+				for (int row : rows) {
+					if (trim > 0) {
+						for (int i = anim.parts[row].n - 1; i >= 0; i--)
+							if (anim.parts[row].moves[i][0] <= trim) {
+								anim.parts[row].n = i + 1;
+								break;
+							}
+						if (anim.parts[row].n < anim.parts[row].moves.length) //To prevent pointless processing, only copy if there was actually trimming
+							anim.parts[row].moves = Arrays.copyOf(anim.parts[row].moves, anim.parts[row].n);
+					} else {
+						int v = -1;
+						for (int i = 0; i < anim.parts[row].n; i++)
+							if (anim.parts[row].moves[i][0] >= Math.abs(trim) || i == anim.parts[row].n - 1) {
+								v = i;
+								break;
+							}
+						if (v > 0) {
+							int[][] moovs = new int[anim.parts[row].moves.length - v][];
+							System.arraycopy(anim.parts[row].moves, v, moovs, 0, anim.parts[row].moves.length - v);
+							anim.parts[row].moves = moovs;
+							anim.parts[row].n = moovs.length;
+						}
+					}
+					anim.parts[row].validate();
+				}
+				anim.validate();
+				change(false);
+			}
+			death = false;
+		});
+
+		jtrim.setLnr(theJ -> {
+			MaAnim anim = ac.getMaAnim(animID);
+			if (anim == null)
+				return;
+			int trim = CommonStatic.parseIntN(jtrim.getText());
+			if (trim < 0)
+				return;
+			int[] rows = maet.getSelectedRows();
+			if (rows.length == 0) {
+				Opts.pop("You must select at least 1 part to trim", "Nothing selected");
+				return;
+			}
+			if (Opts.conf("Trim every keyframe timed after " + trim + "f for the selected parts?"))
+				for (int row : rows) {
+					for (int i = anim.parts[row].n - 1; i >= 0; i--)
+						if (anim.parts[row].moves[i][0] <= trim) {
+							anim.parts[row].n = i + 1;
+							break;
+						}
+					if (anim.parts[row].n < anim.parts[row].moves.length) //To prevent pointless processing, only copy if there was actually trimming
+						anim.parts[row].moves = Arrays.copyOf(anim.parts[row].moves, anim.parts[row].n);
+				}
+		});
+	}
+
+	private boolean unecessarymove(Part data, int part) {
+		return (data.ints[1] <= 3 && data.moves[part][1] == ac.mamodel.parts[data.ints[0]][data.ints[1]]) ||
+				(data.moves[part][1] == 0 && ((data.ints[1] >= 4 && data.ints[1] <= 7) || data.ints[1] == 11 || data.ints[1] >= 13)) ||
+				(data.moves[part][1] == 1000 && ((data.ints[1] >= 8 && data.ints[1] <= 10) || data.ints[1] == 12 || data.ints[1] >= 50));
 	}
 
 	private void eupdate() {
 		ab.update();
 		if (ab.getEntity() != null)
 			change(0, x -> jtl.setValue(ab.getEntity().ind()));
-	}
-
-	private List<Integer> findRep(Part p) {
-		if (p == null)
-			return null;
-		List<Integer> ans = new ArrayList<>();
-		for (int i = 0; i < maet.ma.n; i++) {
-			Part pi = maet.ma.parts[i];
-			if (p.ints[1] != pi.ints[1])
-				continue;
-			if (p.ints[2] != pi.ints[2])
-				continue;
-			if (p.n != pi.n)
-				continue;
-			boolean pass = true;
-			for (int j = 0; j < p.n; j++)
-				for (int k = 0; k < 4; k++)
-					if (p.moves[j][k] != pi.moves[j][k]) {
-						pass = false;
-						break;
-					}
-			if (pass)
-				ans.add(i);
-		}
-		return ans;
-
-	}
-
-	private int[] getTimeLine(Part[] ps) {
-		int maxs = 0;
-		for (Part p : ps) {
-			maxs = Math.max(maxs, p.max + 1);
-			if (p.off > 0)
-				return null;
-		}
-		int[] ans = new int[maxs];
-		for (Part p : ps)
-			for (int[] m : p.moves)
-				ans[m[0]]++;
-		return ans;
 	}
 
 	private void ini() {
@@ -615,25 +574,16 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 		add(inff);
 		add(infv);
 		add(infm);
-		add(lmul);
-		add(tmul);
-		add(same);
-		add(sort);
-		add(keep);
-		add(clea);
-		add(appl);
-		add(show);
-		add(lkip);
-		add(time);
 		add(revt);
+		add(polish);
+		add(addfs);
+		add(jstfs);
+		add(trimfs);
+		add(jtrim);
 		setA();
 
 		addListeners$0();
-		addLnr$C();
-		addLnr$D();
-		addLnr$Anim();
-		addListeners$4();
-		addListeners$5();
+		addListeners$1();
 	}
 
 	private void setA() {
@@ -675,8 +625,6 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 
 		remp.setEnabled(ind >= 0);
 		addl.setEnabled(ind >= 0);
-		same.setEnabled(ind >= 0);
-		clea.setEnabled(ind >= 0);
 		ab.setSele(p == null ? -1 : p.ints[0]);
 		change(true);
 		mpet.setAnim(maet.anim, maet.ma, p);

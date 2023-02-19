@@ -5,10 +5,7 @@ import common.pack.PackData;
 import common.pack.UserProfile;
 import common.util.anim.*;
 import main.Opts;
-import page.JBTN;
-import page.JTF;
-import page.JTG;
-import page.Page;
+import page.*;
 import page.support.AnimTreeRenderer;
 import page.support.TreeNodeExpander;
 
@@ -29,10 +26,6 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 
 	private static final double res = 0.95;
 
-	private static final String[] mod = new String[] { "0 parent", "1 id", "2 sprite", "3 z-order", "4 pos-x",
-			"5 pos-y", "6 pivot-x", "7 pivot-y", "8 scale", "9 scale-x", "10 scale-y", "11 angle", "12 opacity",
-			"13 horizontal flip", "14 vertical flip", "50 extendX", "52 extendY" };
-
 	private final JBTN back = new JBTN(0, "back");
 	private final JTree jta = new JTree();
 	private final AnimGroupTree agt = new AnimGroupTree(jta);
@@ -43,7 +36,7 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 	private final JScrollPane jspp = new JScrollPane(jlp);
 	private final JList<String> jlm = new JList<>();
 	private final JScrollPane jspm = new JScrollPane(jlm);
-	private final JList<String> jlv = new JList<>(mod);
+	private final JList<String> jlv = new JList<>(Page.get(MainLocale.PAGE, "maepm", 17));
 	private final JScrollPane jspv = new JScrollPane(jlv);
 	private final MaAnimEditTable maet = new MaAnimEditTable(this);
 	private final JScrollPane jspma = new JScrollPane(maet);
@@ -54,16 +47,16 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 	private final JSlider jtl = new JSlider();
 	private final SpriteBox sb = new SpriteBox(this);
 	private final AnimBox ab = AnimBox.getInstance();
-	private final JBTN addp = new JBTN(0, "add");
-	private final JBTN remp = new JBTN(0, "rem");
-	private final JBTN adda = new JBTN(0, "Add Attack");
-	private final JBTN rema = new JBTN(0, "Remove Attack");
-	private final JBTN addl = new JBTN(0, "addl");
-	private final JBTN reml = new JBTN(0, "reml");
-	private final JBTN advs = new JBTN(0, "advs");
-	private final JBTN sort = new JBTN(0, "sort");
-	private final JBTN camres = new JBTN(0, "rescam");
-	private final JBTN zomres = new JBTN(0, "reszom");
+	private final JBTN addp = new JBTN(MainLocale.PAGE, "add");
+	private final JBTN remp = new JBTN(MainLocale.PAGE, "rem");
+	private final JBTN adda = new JBTN(MainLocale.PAGE, "Add Attack");
+	private final JBTN rema = new JBTN(MainLocale.PAGE, "Remove Attack");
+	private final JBTN addl = new JBTN(MainLocale.PAGE, "addl");
+	private final JBTN reml = new JBTN(MainLocale.PAGE, "reml");
+	private final JBTN advs = new JBTN(MainLocale.PAGE, "advs");
+	private final JBTN sort = new JBTN(MainLocale.PAGE, "sort");
+	private final JBTN camres = new JBTN(MainLocale.PAGE, "rescam");
+	private final JBTN zomres = new JBTN(MainLocale.PAGE, "reszom");
 	private final JTF inft = new JTF();
 	private final JLabel inff = new JLabel();
 	private final JLabel infv = new JLabel();
@@ -447,15 +440,15 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 		tmul.setLnr(j -> {
 			if (changing)
 				return;
-			changing = true;
 
 			double d = CommonStatic.parseIntN(tmul.getText()) * 0.01;
 			if(d <= 0) {
 				tmul.setText("");
-				changing = false;
 				return;
 			}
-			String str = d < 1 ? "Decrease " : "Increase ";
+
+			changing = true;
+			String str = d >= 1 ? "Decrease " : "Increase ";
 			if (!Opts.conf(str + "animation speed to " + (d * 100) + "%?")) {
 				changing = false;
 				return;
@@ -475,7 +468,7 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 					p.validate();
 				}
 			maet.ma.validate();
-			maet.anim.unSave("maanim multiply");
+			maet.anim.unSave(str + jlt.getSelectedValue() + " animation speed to " + (d * 100) + "%");
 			changing = false;
 		});
 
