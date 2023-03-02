@@ -174,10 +174,8 @@ public class UnitInfoTable extends Page {
 				satk.append(" / ");
 
 			int a = (int) (Math.round(atkDatum.getAtk() * mul) * b.t().getAtkMulti());
-
-			if (pc != null) {
+			if (pc != null)
 				a = (int) (a * pc.getStatMultiplication(Data.PC2_ATK, multi.getTalents()));
-			}
 
 			satk.append(a);
 		}
