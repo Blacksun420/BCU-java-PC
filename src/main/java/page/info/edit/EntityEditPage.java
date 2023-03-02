@@ -432,7 +432,7 @@ public abstract class EntityEditPage extends Page {
 		fct.setText("" + ce.loop);
 		fwp.setText("" + (ce.will + 1));
 		if (!isSp())
-			cdps.setText("" + (int) (Math.round(getLvAtk() * ce.allAtk(getSel())) * getAtk()) * 30 / ce.getItv(getSel()));
+			cdps.setText("" + (int) ((getLvAtk() * ce.allAtk(getSel())) * getAtk()  * 30 / ce.getItv(getSel())));
 		else
 			cdps.setText("-");
 

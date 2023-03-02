@@ -268,7 +268,7 @@ public class UnitManagePage extends Page {
 					return;
 				int lv = CommonStatic.parseIntN(maxl.getText());
 				if (lv > 0)
-					uni.max = lv;
+					uni.max = Math.min(200 - uni.maxp, lv);;
 				maxl.setText("" + uni.max);
 			}
 
@@ -282,7 +282,7 @@ public class UnitManagePage extends Page {
 					return;
 				int lv = CommonStatic.parseIntN(maxp.getText());
 				if (lv >= 0)
-					uni.maxp = lv;
+					uni.maxp = Math.min(200 - uni.max, lv);
 				maxp.setText("" + uni.maxp);
 			}
 
@@ -412,7 +412,7 @@ public class UnitManagePage extends Page {
 			@Override
 			public void focusLost(FocusEvent fe) {
 				int[] lvs = CommonStatic.parseIntsN(jtfl.getText());
-				for (int i = 0; i < lvs.length; i++)
+				for (int i = 0; i < Math.min(20, lvs.length); i++)
 					if (lvs[i] > 0 && (i == 0 || lvs[i] >= ul.lvs[i - 1]))
 						ul.lvs[i] = lvs[i];
 				jtfl.setText(ul.toString());

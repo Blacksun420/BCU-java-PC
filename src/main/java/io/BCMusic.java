@@ -227,6 +227,11 @@ public class BCMusic extends Data {
 		Music f = Identifier.get(music);
 		if (f != null)
 			setBG(f);
+
+		if (End != null) {
+			End.release();
+			End = null;
+		}
 	}
 
 	public static void preload() {

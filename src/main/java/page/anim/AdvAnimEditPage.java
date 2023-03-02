@@ -473,6 +473,8 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 					for (int i = 0; i < anim.parts[row].n; i++)
 						anim.parts[row].moves[i][0] += add;
 				anim.validate();
+				maet.anim.unSave("Maanim " + (add > 0 ? "Add " : "Substract ") + Math.abs(add) + "f startup time to " + Arrays.toString(rows));
+				callBack(null);
 				setJTLs();
 				change(false);
 			}
@@ -519,6 +521,8 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 					anim.parts[row].validate();
 				}
 				anim.validate();
+				maet.anim.unSave("Maanim trim " + Arrays.toString(rows) + " to " + trim + "f");
+				callBack(null);
 				setJTLs();
 				change(false);
 			}
