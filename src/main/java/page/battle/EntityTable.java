@@ -24,7 +24,7 @@ class EntityTable extends SortTable<Entity> {
 	private final int dir;
 
 	protected EntityTable(int dire, boolean statistics) {
-		super(MainLocale.getLoc(MainLocale.INFO, statistics ? "us" : "u", statistics ? 4 : 3));
+		super(MainLocale.getLoc(MainLocale.INFO, statistics ? "us" : "u", statistics ? 5 : 3));
 
 		dir = dire;
 		this.statistics = statistics;
@@ -53,23 +53,20 @@ class EntityTable extends SortTable<Entity> {
 			else if (c == 1) {
 				Identifier<?> id0 = getID(e0);
 				Identifier<?> id1 = getID(e1);
-
 				if(id0 == null && id1 == null)
 					return 0;
-
 				if(id0 == null)
 					return -1;
-
 				if(id1 == null)
 					return 1;
 
 				return id0.compareTo(id1);
-			} else if(c == 3) {
-				return Double.compare((double) get(e0, c), (double) get(e1, c));
-			}
+			} else if(c == 3)
+				return Double.compare((double) get(e0, 3), (double) get(e1, 3));
+			return Integer.compare((int) get(e0, c), (int) get(e1, c));
 		} else {
 			if (c == 0)
-				return Long.compare(CommonStatic.parseLongN(get(e0,c).toString()),CommonStatic.parseLongN(get(e1,c).toString()));
+				return Long.compare(CommonStatic.parseLongN(get(e0,0).toString()),CommonStatic.parseLongN(get(e1,0).toString()));
 			if (c == 1) {
 				Identifier<?> id0 = getID(e0);
 				Identifier<?> id1 = getID(e1);
@@ -85,12 +82,10 @@ class EntityTable extends SortTable<Entity> {
 
 				return id0.compareTo(id1);
 			} if (c == 3)
-				return Double.compare((double) get(e0, c), (double) get(e1, c));
+				return Double.compare((double) get(e0, 3), (double) get(e1, 3));
 			else
 				return Long.compare((long) get(e0, c), (long) get(e1, c));
 		}
-
-		return 0;
 	}
 
 	@Override
@@ -104,16 +99,14 @@ class EntityTable extends SortTable<Entity> {
 				return t.damageGiven;
 			else if(c == 3)
 				return t.livingTime == 0 ? 0.0 : CommonStatic.parseDoubleN(df.format(t.damageGiven * 30.0 / t.livingTime));
+			return t.livingTime;
 		} else {
 			if (c == 0)
 				return (t.hasBarrier() ? "[" : "") + t.health + (t.status.shield[0] > 0 ? " (+" + t.status.shield[0] + ")" : "") + (t.hasBarrier() ? "]" : "");
 			else if (c == 1)
 				return t.data.getPack();
-			else if (c == 2)
-				return (long) t.getAtk();
+			return (long) t.getAtk();
 		}
-
-		return null;
 	}
 
 	private Identifier<?> getID(Entity e) {
