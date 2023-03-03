@@ -103,41 +103,30 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 	protected void keyPressed(KeyEvent ke) {
 		super.keyPressed(ke);
 
-		if(ke.getSource() == jlt) {
-			if(ke.getKeyCode() == KeyEvent.VK_DELETE) {
+		if(ke.getSource() == jlt)
+			if(ke.getKeyCode() == KeyEvent.VK_DELETE)
 				if(remgroup.isEnabled()) {
 					TreePath[] paths = jlt.getSelectionPaths();
-
 					if(paths == null)
 						return;
-
 					if(Opts.conf(get(MainLocale.PAGE, "remgroupconf"))) {
 						ArrayList<String> groups = new ArrayList<>();
-
 						for(TreePath path : paths) {
 							if(path == null || !(path.getLastPathComponent() instanceof DefaultMutableTreeNode) || !(((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject() instanceof String))
 								return;
-
 							if(((DefaultMutableTreeNode) path.getLastPathComponent()).isRoot())
 								return;
 
 							String groupName = (String) ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
-
 							if(groupName.equals(""))
 								return;
-
 							groups.add(groupName);
 						}
-
-						for(String groupName : groups) {
+						for(String groupName : groups)
 							agt.removeGroup(groupName);
-						}
-
 						remgroup.setEnabled(false);
 					}
 				}
-			}
-		}
 	}
 
 	@Override

@@ -94,7 +94,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		jtb.setSelected((conf & 2) != 0);
 		jtb.setEnabled((conf & 1) == 0);
 		ct.setData(basis.sb.st);
-		utd = new TotalDamageTable(basis.sb);
+		utd = new TotalDamageTable(basis);
 		utdsp = new JScrollPane(utd);
 
 		if (recd.rl != null)
@@ -104,15 +104,16 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		resized();
 	}
 
-	protected BattleInfoPage(Page p, SBRply rpl) {
+	protected BattleInfoPage(BattleInfoPage p, SBRply rpl) {
 		super(p);
 		SBCtrl ctrl = rpl.transform(this);
 		bb = BBBuilder.def.getCtrl(this, ctrl);
 		pause = true;
 		basis = ctrl;
 		ct.setData(basis.sb.st);
-		utd = new TotalDamageTable(rpl.sb);
+		utd = new TotalDamageTable(basis);
 		utdsp = new JScrollPane(utd);
+		jtb.setSelected(DEF_LARGE);
 
 		ini();
 		rply.setText(0, "rply");
@@ -132,7 +133,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		basis = sb;
 		ct.setData(basis.sb.st);
 		jtb.setSelected(DEF_LARGE);
-		utd = new TotalDamageTable(sb.sb);
+		utd = new TotalDamageTable(basis);
 		utdsp = new JScrollPane(utd);
 
 		ini();
@@ -299,33 +300,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 				for (int i = 0; i < Math.pow(2, spe); i++)
 					basis.update();
 
-			ct.update(sb.est);
-
-			List<Entity> le = new ArrayList<>();
-			List<Entity> les = new ArrayList<>();
-			List<Entity> lu = new ArrayList<>();
-			List<Entity> lus = new ArrayList<>();
-
-			for (Entity e : sb.le) {
-				(e.dire == 1 ? le : lu).add(e);
-				(e.dire == 1 ? les : lus).add(e);
-			}
-
-			List<AbForm> lf = new ArrayList<>();
-
-			for (AbForm[] fs : basis.sb.b.lu.fs) {
-				for(AbForm f : fs) {
-					if(f != null)
-						lf.add(f);
-				}
-			}
-
-			et.setList(le);
-			est.setList(les);
-			ut.setList(lu);
-			ust.setList(lus);
-			utd.setList(lf);
-
+			updateTables();
 			BCMusic.flush(spe < 3 && sb.ebase.health > 0 && sb.ubase.health > 0);
 		}
 		if (basis instanceof SBRply && recd.rl != null)
@@ -342,14 +317,14 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		respawn.setText("respawn timer: " + MainBCU.convertTime(sb.respawnTime));
 
 		resized();
-		if (basis.sb.getEBHP() < basis.sb.st.bgh && basis.sb.st.bg1 != null) {
+		if (sb.getEBHP() < sb.st.bgh && sb.st.bg1 != null) {
 			if (!changedBG) {
 				changedBG = true;
-				basis.sb.changeBG(basis.sb.st.bg1);
+				sb.changeBG(sb.st.bg1);
 			}
 		} else if (changedBG) {
 			changedBG = false;
-			basis.sb.changeBG(basis.sb.st.bg);
+			sb.changeBG(sb.st.bg);
 		}
 		if (sb.ebase.health <= 0 || sb.ubase.health <= 0) {
 			BCMusic.EndTheme(sb.ebase.health <= 0);
@@ -361,15 +336,15 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 					return;
 				}
 			}
-		} else if (basis.sb.mus != null) {
-			if (BCMusic.music != basis.sb.mus) {
-				BCMusic.play(basis.sb.mus);
+		} else if (sb.mus != null) {
+			if (BCMusic.music != sb.mus) {
+				BCMusic.play(sb.mus);
 				musicChanged = sb.getEBHP() > sb.st.mush;
 			}
 		} else {
 			if (sb.getEBHP() <= sb.st.mush && BCMusic.music != sb.st.mus1)
-				if(basis.sb.st.mush == 0 || basis.sb.st.mush == 100)
-					BCMusic.play(basis.sb.st.mus1);
+				if(sb.st.mush == 0 || sb.st.mush == 100)
+					BCMusic.play(sb.st.mus1);
 				else {
 					if(!musicChanged && !backClicked) {
 						if(BCMusic.BG != null)
@@ -381,7 +356,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 								if(backClicked)
 									return;
 
-								BCMusic.play(basis.sb.st.mus1);
+								BCMusic.play(sb.st.mus1);
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
@@ -401,7 +376,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 							if(backClicked)
 								return;
 
-							BCMusic.play(basis.sb.st.mus0);
+							BCMusic.play(sb.st.mus0);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
@@ -417,6 +392,30 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		}
 		if(bb.getPainter().dragging)
 			bb.getPainter().dragFrame++;
+	}
+
+	private void updateTables() {
+		ct.update(basis.sb.est);
+		List<Entity> le = new ArrayList<>(basis.sb.le.size() / 2);
+		List<Entity> lu = new ArrayList<>(basis.sb.le.size() / 2);
+
+		for (Entity e : basis.sb.le)
+			(e.dire == 1 ? le : lu).add(e);
+
+		List<AbForm> lf = new ArrayList<>();
+
+		for (AbForm[] fs : basis.sb.b.lu.fs) {
+			for(AbForm f : fs) {
+				if(f != null)
+					lf.add(f);
+			}
+		}
+
+		et.setList(le);
+		est.setList(le);
+		ut.setList(lu);
+		ust.setList(lu);
+		utd.setList(lf);
 	}
 
 	@Override
@@ -480,6 +479,8 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			if (jsl.getValueIsAdjusting() || isAdj() || !(basis instanceof SBRply))
 				return;
 			((SBRply) basis).restoreTo(jsl.getValue());
+			ct.setData(basis.sb.st);
+			updateTables();
 			bb.reset();
 		});
 

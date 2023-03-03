@@ -569,6 +569,12 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 		resized();
 	}
 
+	@Override
+	protected void keyPressed(KeyEvent e) {
+		super.keyPressed(e);
+		aep.hotkey(e);
+	}
+
 	private void ini() {
 		add(aep);
 		add(resz);

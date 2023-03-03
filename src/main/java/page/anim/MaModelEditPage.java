@@ -12,10 +12,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
+import java.awt.event.*;
 import java.util.Arrays;
 
 public class MaModelEditPage extends Page implements AbEditPage {
@@ -325,7 +322,12 @@ public class MaModelEditPage extends Page implements AbEditPage {
 			}
 
 		});
+	}
 
+	@Override
+	protected void keyPressed(KeyEvent e) {
+		super.keyPressed(e);
+		aep.hotkey(e);
 	}
 
 	private void ini() {

@@ -1,6 +1,6 @@
 package page.battle;
 
-import common.battle.StageBasis;
+import common.battle.BattleField;
 import common.util.unit.AbForm;
 import common.util.unit.Form;
 import page.MainLocale;
@@ -16,18 +16,16 @@ public class TotalDamageTable extends SortTable<AbForm> {
     }
 
     public static void redefine() {
-        title = Page.get(MainLocale.INFO, "ut", 3);
+        title = Page.get(MainLocale.INFO, "ut", 4);
     }
 
-    private final StageBasis basis;
+    private final BattleField bf;
 
-    protected TotalDamageTable(StageBasis basis) {
+    protected TotalDamageTable(BattleField bf) {
         super(title);
 
-        this.basis = basis;
-
+        this.bf = bf;
         setDefaultRenderer(Form.class, new UnitTCR(lnk, 0));
-
         sign = -1;
     }
 
@@ -44,17 +42,15 @@ public class TotalDamageTable extends SortTable<AbForm> {
         if(c == 0) {
             if(e0 == null && e1 == null)
                 return 0;
-
             if(e0 == null)
                 return -1;
-
             if(e1 == null)
                 return 1;
 
             return e0.getID().compareTo(e1.getID());
-        } else {
-            return Long.compare((long) get(e0, c), (long) get(e1, c));
-        }
+        } else if (c == 3)
+            return Integer.compare((int) get(e0, 3), (int) get(e1, 3));
+        return Long.compare((long) get(e0, c), (long) get(e1, c));
     }
 
     @Override
@@ -68,16 +64,18 @@ public class TotalDamageTable extends SortTable<AbForm> {
                 return 0L;
 
             if(c == 1)
-                return basis.totalDamageGiven[index[0]][index[1]];
+                return bf.sb.totalDamageGiven[index[0]][index[1]];
+            else if (c == 2)
+                return bf.sb.totalDamageTaken[index[0]][index[1]];
             else
-                return basis.totalDamageTaken[index[0]][index[1]];
+                return bf.sb.totalSpawned[index[0]][index[1]];
         }
     }
 
     private int[] findForm(AbForm f) {
-        for(int i = 0; i < basis.b.lu.fs.length; i++) {
-            for(int j = 0; j < basis.b.lu.fs[i].length; j++) {
-                AbForm target = basis.b.lu.fs[i][j];
+        for(int i = 0; i < bf.sb.b.lu.fs.length; i++) {
+            for(int j = 0; j < bf.sb.b.lu.fs[i].length; j++) {
+                AbForm target = bf.sb.b.lu.fs[i][j];
 
                 if(target == null)
                     continue;

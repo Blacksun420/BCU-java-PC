@@ -14,6 +14,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
@@ -566,6 +567,12 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 			change(0, x -> jtl.setValue(ab.getEntity().ind()));
 			inft.setText(ab.getEntity() != null ? "frame: " + ab.getEntity().ind() : "");
 		}
+	}
+
+	@Override
+	protected void keyPressed(KeyEvent e) {
+		super.keyPressed(e);
+		aep.hotkey(e);
 	}
 
 	private void ini() {

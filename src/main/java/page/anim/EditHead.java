@@ -7,12 +7,14 @@ import page.JBTN;
 import page.Page;
 
 import javax.swing.*;
+import java.awt.event.KeyEvent;
 
 public class EditHead extends Page implements EditLink {
 
 	private static final long serialVersionUID = 1L;
 
 	private final JBTN undo = new JBTN(0, "undo");
+	private final JBTN redo = new JBTN(0, "redo");
 	private final JBTN save = new JBTN(0, "save");
 	private final JBTN view = new JBTN(0, "vdiy");
 	private final JBTN icut = new JBTN(0, "caic");
@@ -55,9 +57,12 @@ public class EditHead extends Page implements EditLink {
 	@Override
 	public void review() {
 		undo.setEnabled(anim != null && anim.history.size() > 1);
+		redo.setEnabled(anim != null && !anim.redo.empty());
 		cur.callBack("review");
-		if (anim != null)
+		if (anim != null) {
 			undo.setToolTipText(anim.getUndo());
+			redo.setToolTipText(anim.getRedo());
+		}
 	}
 
 	public void setAnim(AnimCE da) {
@@ -71,11 +76,12 @@ public class EditHead extends Page implements EditLink {
 
 	@Override
 	protected void resized(int x, int y) {
-		set(undo, x, y, 0, 0, 200, 50);
-		set(save, x, y, 250, 0, 200, 50);
-		set(view, x, y, 550, 0, 200, 50);
-		set(icut, x, y, 800, 0, 200, 50);
-		set(mmdl, x, y, 1050, 0, 200, 50);
+		set(undo, x, y, 0, 0, 135, 50);
+		set(redo, x, y, 140, 0, 135, 50);
+		set(save, x, y, 350, 0, 200, 50);
+		set(view, x, y, 625, 0, 200, 50);
+		set(icut, x, y, 850, 0, 200, 50);
+		set(mmdl, x, y, 1075, 0, 200, 50);
 		set(manm, x, y, 1300, 0, 200, 50);
 	}
 
@@ -141,11 +147,29 @@ public class EditHead extends Page implements EditLink {
 		save.setLnr((e) -> BCUWriter.writeData(false));
 
 		undo.addActionListener(arg0 -> {
-			anim.restore();
+			anim.undo();
 			review();
 			((AbEditPage) cur).setSelection(anim);
 		});
 
+		redo.addActionListener(arg0 -> {
+			anim.redo();
+			review();
+			((AbEditPage) cur).setSelection(anim);
+		});
+	}
+
+	protected void hotkey(KeyEvent e) {
+		if (anim != null && (e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) > 0)
+			if (e.getKeyCode() == KeyEvent.VK_Z && anim.history.size() > 1) {
+				anim.undo();
+				review();
+				((AbEditPage) cur).setSelection(anim);
+			} else if (e.getKeyCode() == KeyEvent.VK_Y && !anim.redo.empty()) {
+				anim.redo();
+				review();
+				((AbEditPage) cur).setSelection(anim);
+			}
 	}
 
 	private void ini() {
@@ -155,6 +179,7 @@ public class EditHead extends Page implements EditLink {
 		add(manm);
 		add(save);
 		add(undo);
+		add(redo);
 		addListeners();
 	}
 
