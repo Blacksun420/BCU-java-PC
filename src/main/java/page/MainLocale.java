@@ -36,8 +36,6 @@ public strictfp class MainLocale {
 			RENS[i] = ResourceBundle.getBundle(RENN[i], Locale.ROOT, new URLClassLoader(new URL[]{MainLocale.class.getClassLoader().getResource(RENN[i]+".properties")}));
 	}
 
-	public static boolean exLang, exTTT;
-
 	public static TTT addTTT(String loc, String page, String text, String cont) {
 		TTT ttt = TMAP.get(loc);
 		if (ttt == null)
@@ -72,7 +70,7 @@ public strictfp class MainLocale {
 				return ans.toString();
 			}
 			try {
-				return exLang ? "[" + loci + key + "]" : RENS[loc].getString(key);
+				return RENS[loc].getString(key);
 			} catch (MissingResourceException e) {
 				return key;
 			}
@@ -101,8 +99,6 @@ public strictfp class MainLocale {
 			ans = TMAP.get(loc).getTTT(page, text);
 		if (ans != null)
 			return ans;
-		if (exTTT)
-			return "[" + page + "_" + text + "]";
 		loc = Lang.LOC_CODE[0];
 		if (TMAP.containsKey(loc))
 			return TMAP.get(loc).getTTT(page, text);

@@ -57,11 +57,6 @@ public class MaAnimEditTable extends AnimTable<Part> {
 	}
 
 	@Override
-	public String getColumnName(int c) {
-		return strs[lnk[c]];
-	}
-
-	@Override
 	public int getRowCount() {
 		if (ma == null)
 			return 0;

@@ -3,6 +3,7 @@ package page.anim;
 import common.CommonStatic;
 import common.util.anim.AnimCE;
 import common.util.anim.MaModel;
+import page.MainLocale;
 import page.Page;
 import page.support.AnimTable;
 import page.support.AnimTableTH;
@@ -18,16 +19,12 @@ class MaModelEditTable extends AnimTable<int[]> {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String[] strs = new String[] { "id", "parent", "img", "z-order", "pos-x", "pos-y", "pivot-x",
-			"pivot-y", "scale-x", "scale-y", "angle", "opacity", "glow", "name" };
-
 	protected AnimCE anim;
 	protected MaModel mm;
-
 	private final Page page;
 
 	protected MaModelEditTable(Page p) {
-		super(strs);
+		super(Page.get(MainLocale.PAGE, "mampm", 11));
 
 		selectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		setTransferHandler(new AnimTableTH<>(this, 1));
@@ -48,19 +45,9 @@ class MaModelEditTable extends AnimTable<int[]> {
 
 	@Override
 	public Class<?> getColumnClass(int c) {
-		if (lnk[c] == 13)
+		if (lnk[c] == 10 || (lnk[c] >= 4 && lnk[c] <= 6))
 			return String.class;
 		return Integer.class;
-	}
-
-	@Override
-	public int getColumnCount() {
-		return strs.length;
-	}
-
-	@Override
-	public String getColumnName(int c) {
-		return strs[lnk[c]];
 	}
 
 	@Override
@@ -85,14 +72,20 @@ class MaModelEditTable extends AnimTable<int[]> {
 
 	@Override
 	public Object getValueAt(int r, int c) {
-		if (mm == null || r < 0 || c < 0 || r >= mm.n || c >= strs.length)
+		if (mm == null || r < 0 || c < 0 || r >= mm.n || c >= getColumnCount())
 			return null;
 		if (lnk[c] == 0)
 			return r;
 		if (lnk[c] == 1)
 			return mm.parts[r][0];
-		if (lnk[c] == 13)
+		if (lnk[c] == 10)
 			return mm.strs0[r];
+		if (lnk[c] >= 4 && lnk[c] <= 6) {
+			int par = c + c - 4;
+			return "(" + mm.parts[r][lnk[par]] + ", " + mm.parts[r][lnk[par + 1]] + ")";
+		}
+		if (lnk[c] >= 7)
+			return mm.parts[r][lnk[c] + 3];
 		return mm.parts[r][lnk[c]];
 	}
 
@@ -196,29 +189,36 @@ class MaModelEditTable extends AnimTable<int[]> {
 
 	@Override
 	public synchronized void setValueAt(Object val, int r, int c) {
-		if (mm == null)
+		if (mm == null || r >= mm.n)
 			return;
 		c = lnk[c];
-		if (c == 13)
+		if (c == 10)
 			mm.strs0[r] = ((String) val).trim();
-		else {
+		else if (c >= 4 && c <= 6) {
+			int[] ints = CommonStatic.parseIntsN((String)val);
+			if (ints.length == 0)
+				return;
+			int par = c + c - 4;
+			mm.parts[r][par] = ints[0];
+			if (ints.length >= 2)
+				mm.parts[r][par + 1] = ints[1];
+		} else {
 			int v = (int) val;
-			if (c == 1 && v < 0)
-				v = 0;
-			if (c == 2)
+			if (c == 1 && (v < -1 || r == 0))
+				v = -1;
+			else if (c == 2)
 				if (v < -1)
 					v = -1;
 				else if (v >= anim.imgcut.n)
 					v = anim.imgcut.n - 1;
 			if (c == 1)
 				c--;
-			if (r >= mm.n)
-				return;
+			else if (c >= 7)
+				c += 3;
 			mm.parts[r][c] = v;
-			mm.parts[0][0] = -1;
+			if (c == 0)
+				mm.check(anim);
 		}
-		if (c == 0)
-			mm.check(anim);
 		anim.unSave("mamodel edit");
 		page.callBack(null);
 	}

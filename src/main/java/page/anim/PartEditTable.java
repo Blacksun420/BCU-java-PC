@@ -56,11 +56,6 @@ class PartEditTable extends AnimTable<int[]> {
 	}
 
 	@Override
-	public String getColumnName(int c) {
-		return strs[lnk[c]];
-	}
-
-	@Override
 	public int getRowCount() {
 		if (part == null)
 			return 0;

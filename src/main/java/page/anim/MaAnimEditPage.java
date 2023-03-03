@@ -37,7 +37,7 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 	private final JScrollPane jspp = new JScrollPane(jlp);
 	private final JList<String> jlm = new JList<>();
 	private final JScrollPane jspm = new JScrollPane(jlm);
-	private final JList<String> jlv = new JList<>(Page.get(MainLocale.PAGE, "maepm", 17));
+	private final JList<String> jlv = new JList<>(get(MainLocale.PAGE, "maepm", 17));
 	private final JScrollPane jspv = new JScrollPane(jlv);
 	private final MaAnimEditTable maet = new MaAnimEditTable(this);
 	private final JScrollPane jspma = new JScrollPane(maet);

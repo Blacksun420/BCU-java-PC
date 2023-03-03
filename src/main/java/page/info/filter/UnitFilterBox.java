@@ -91,6 +91,7 @@ public class UnitFilterBox extends EntityFilterBox {
 							if (ans.contains(en.ent)) {
 								ans.add(rand);
 								minDiff = diff;
+								break;
 							}
 				}
 		}

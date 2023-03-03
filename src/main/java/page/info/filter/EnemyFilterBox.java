@@ -78,6 +78,7 @@ public class EnemyFilterBox extends EntityFilterBox {
 								if (ans.contains(en)) {
 									ans.add(rand);
 									minDiff = diff;
+									break;
 								}
 					}
 			}

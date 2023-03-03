@@ -39,16 +39,6 @@ class ImgCutEditTable extends AbJTable {
 	}
 
 	@Override
-	public int getColumnCount() {
-		return strs.length;
-	}
-
-	@Override
-	public String getColumnName(int c) {
-		return strs[lnk[c]];
-	}
-
-	@Override
 	public int getRowCount() {
 		if (anim == null || anim.imgcut == null)
 			return 0;

@@ -42,7 +42,9 @@ public abstract class AbJTable extends JTable implements TableModel {
 	}
 
 	@Override
-	public abstract String getColumnName(int c);
+	public String getColumnName(int c) {
+		return title[lnk[c]];
+	}
 
 	@Override
 	public abstract int getRowCount();

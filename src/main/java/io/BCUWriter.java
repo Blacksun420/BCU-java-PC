@@ -261,8 +261,6 @@ public class BCUWriter extends DataIO {
 		jo.addProperty("volume_BG", BCMusic.VOL_BG);
 		jo.addProperty("volume_SE", BCMusic.VOL_SE);
 		jo.addProperty("volume_UI",BCMusic.VOL_UI);
-		jo.addProperty("edit_lang", MainLocale.exLang);
-		jo.addProperty("edit_tooltip", MainLocale.exTTT);
 		jo.addProperty("large_screen", BattleInfoPage.DEF_LARGE);
 		jo.addProperty("author", MainBCU.author);
 		jo.addProperty("rowlayout", CommonStatic.getConfig().twoRow);

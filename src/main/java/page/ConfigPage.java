@@ -30,8 +30,6 @@ public class ConfigPage extends Page {
 	private final JCB whit = new JCB(MainLocale.PAGE, "white");
 	private final JCB refe = new JCB(MainLocale.PAGE, "axis");
 	private final JCB jogl = new JCB(MainLocale.PAGE, "JOGL");
-	private final JTG exla = new JTG(MainLocale.PAGE, "exlang");
-	private final JTG extt = new JTG(MainLocale.PAGE, "extip");
 	private final JBTN secs = new JBTN(MainLocale.PAGE, MainBCU.seconds ? "secs" : "frame");
 	private final JCB musc = new JCB(MainLocale.PAGE, "musc");
 	private final JCB jcsnd = new JCB(MainLocale.PAGE, "btnsnd");
@@ -96,7 +94,7 @@ public class ConfigPage extends Page {
 	protected void renew() {
 		jlmin.setText(0, "opamin");
 		jlmax.setText(0, "opamax");
-		for (int i = 0; i < 4; i++) {
+		for (byte i = 0; i < 4; i++) {
 			name[i].setText(0, ImgCore.NAME[i]);
 			vals[i].setText(0, ImgCore.VAL[cfg().ints[i]]);
 		}
@@ -113,12 +111,13 @@ public class ConfigPage extends Page {
 		set(refe, x, y, 50, 250, 300, 50);
 		set(prel, x, y, 50, 300, 300, 50);
 
-		for (int i = 0; i < 4; i++) {
-			set(name[i], x, y, 350, 100 + i * 75, 200, 50);
-			set(left[i], x, y, 575, 100 + i * 75, 75, 50);
-			set(vals[i], x, y, 650, 100 + i * 75, 200, 50);
-			set(right[i], x, y, 850, 100 + i * 75, 75, 50);
-		}
+		if (!MainBCU.USE_JOGL)
+			for (byte i = 0; i < 4; i++) {
+				set(name[i], x, y, 350, 100 + i * 75, 200, 50);
+				set(left[i], x, y, 575, 100 + i * 75, 75, 50);
+				set(vals[i], x, y, 650, 100 + i * 75, 200, 50);
+				set(right[i], x, y, 850, 100 + i * 75, 75, 50);
+			}
 
 		set(jlmin, x, y, 50, 425, 300, 50);
 		set(jsmin, x, y, 350, 425, 750, 75);
@@ -154,7 +153,7 @@ public class ConfigPage extends Page {
 		set(jlly, x, y, 1225, 250, 200, 50);
 		set(row, x, y, 1425, 250, 200, 50);
 		set(jlth, x, y, 1425, 100, 200, 50);
-
+		set(rlla, x, y, 1225, 400, 400, 50);
 		set(preflv, x, y, 1225, 475, 200, 50);
 		set(prlvmd, x, y, 1425, 475, 200, 50);
 		set(autosave, x, y, 1225, 550, 200, 50);
@@ -166,9 +165,6 @@ public class ConfigPage extends Page {
 
 		set(jlla, x, y, 1750, 100, 300, 50);
 		set(jsps, x, y, 1750, 150, 300, 300);
-		set(exla, x, y, 1750, 475, 300, 50);
-		set(extt, x, y, 1750, 550, 300, 50);
-		set(rlla, x, y, 1750, 625, 300, 50);
 	}
 
 	@Override
@@ -194,16 +190,6 @@ public class ConfigPage extends Page {
 
 		prel.addActionListener(arg0 -> MainBCU.preload = prel.isSelected());
 
-		exla.addActionListener(arg0 -> {
-			MainLocale.exLang = exla.isSelected();
-			Page.renewLoc(getThis());
-		});
-
-		extt.addActionListener(arg0 -> {
-			MainLocale.exTTT = extt.isSelected();
-			Page.renewLoc(getThis());
-		});
-
 		rlla.addActionListener(arg0 -> {
 			MultiLangCont.getStatic().clear();
 			BCUReader.readLang();
@@ -222,24 +208,24 @@ public class ConfigPage extends Page {
 				jogl.setSelected(MainBCU.USE_JOGL);
 		});
 
-		for (int i = 0; i < 4; i++) {
-			int I = i;
+		if (!MainBCU.USE_JOGL)
+			for (byte i = 0; i < 4; i++) {
+				byte I = i;
 
-			left[i].addActionListener(arg0 -> {
-				cfg().ints[I]--;
-				vals[I].setText(0, ImgCore.VAL[cfg().ints[I]]);
-				left[I].setEnabled(cfg().ints[I] > 0);
-				right[I].setEnabled(cfg().ints[I] < 2);
-			});
+				left[i].addActionListener(arg0 -> {
+					cfg().ints[I]--;
+					vals[I].setText(0, ImgCore.VAL[cfg().ints[I]]);
+					left[I].setEnabled(cfg().ints[I] > 0);
+					right[I].setEnabled(cfg().ints[I] < 2);
+				});
 
-			right[i].addActionListener(arg0 -> {
-				cfg().ints[I]++;
-				vals[I].setText(0, ImgCore.VAL[cfg().ints[I]]);
-				left[I].setEnabled(cfg().ints[I] > 0);
-				right[I].setEnabled(cfg().ints[I] < 2);
-			});
-
-		}
+				right[i].addActionListener(arg0 -> {
+					cfg().ints[I]++;
+					vals[I].setText(0, ImgCore.VAL[cfg().ints[I]]);
+					left[I].setEnabled(cfg().ints[I] > 0);
+					right[I].setEnabled(cfg().ints[I] < 2);
+				});
+			}
 
 		jsmin.addChangeListener(arg0 -> cfg().deadOpa = jsmin.getValue());
 
@@ -371,8 +357,6 @@ public class ConfigPage extends Page {
 		add(jlot);
 		add(musc);
 		add(rlla);
-		add(exla);
-		add(extt);
 		add(jlbg);
 		add(jlse);
 		add(jlui);
@@ -408,7 +392,7 @@ public class ConfigPage extends Page {
 		jsbg.setValue(BCMusic.VOL_BG);
 		jsse.setValue(BCMusic.VOL_SE);
 		jsui.setValue(BCMusic.VOL_UI);
-		for (int i = 0; i < 4; i++) {
+		for (byte i = 0; i < 4; i++) {
 			left[i] = new JBTN("<");
 			right[i] = new JBTN(">");
 			name[i] = new JL(0, ImgCore.NAME[i]);
@@ -424,8 +408,6 @@ public class ConfigPage extends Page {
 			left[i].setEnabled(cfg().ints[i] > 0);
 			right[i].setEnabled(cfg().ints[i] < 2);
 		}
-		exla.setSelected(MainLocale.exLang);
-		extt.setSelected(MainLocale.exTTT);
 		prel.setSelected(MainBCU.preload);
 		whit.setSelected(ViewBox.Conf.white);
 		refe.setSelected(cfg().ref);
@@ -471,7 +453,7 @@ public class ConfigPage extends Page {
 	}
 
 	private int localeIndexOf(int elem) {
-		for(int i = 0; i < MainLocale.LOC_INDEX.length; i++) {
+		for(byte i = 0; i < MainLocale.LOC_INDEX.length; i++) {
 			if(MainLocale.LOC_INDEX[i] == elem)
 				return i;
 		}

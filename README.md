@@ -31,6 +31,8 @@
 - Rage (Enraged entities' attacks hit both enemies and allies on the attack area)
 - Hypnosis (Entity will turn against its allies)
 - Super Talents for custom units with flexible level setting
+- Target Only surge attackers have their surges restrained to hit the trait they target only
+- Hardcap unit's total max level to 200 (Levels above 200 don't increase stats due to level curve anyway)
 ### QoL changes
 - A much slicker UI (Thanks to Hect0x1 for it)
 - Can't deploy any more text line when you reach deploy limit
@@ -40,17 +42,35 @@
 - Animations mapped to editable packs can be modified in the editor
 - Unrestricted Base Image size (128x256 is still recommended though)
 - Packs can have Icons and Banners
-- Enemy descriptions don't get cut
+- Easier access to multi-language description changing to localize packs faster
+- Display brackets [] on unit's HP to indicate their barrier is active
+- Time Alive on entity statistics, Amount spawned on total unit statistics
+- Redo undone changes
+- Overhaul Advanced Anim Edit page, adding an option to polish, trim, and add/substract keyframes to animations
+- Add X/Y values on Position/Pivot/Scale columns in mamodel editor so they can be edited together
 ### Bugs Fixed here that remain unfixed in the original repo
-- Strong Against/Massive Dmg/etc don't work via adv. trait targetting
 - Cursed/Sealed units become unaffected by trait-targetting enemies
 - Procs from older packs aren't distributed properly on attacks without common proc
+- Enemy descriptions get cut
+- Pasting Mamodel parts breaks parent modification in maanims
+- Actual Z-Order value display actually isn't the actual Z-Order
+- Damage dealt to bases is not added to entity's damage output
+- Typing more than 20 values to a custom level curve crashes BCU
+- Followup stage chance field doesn't get updated when equalizing followup chances
+- Defeat theme doesn't play if losing after using a continue
+- UI Bugs when moving through replays:
+- - Entity data tables don't get updated to reflect the data of the frame the replay was set to
+- - Enemy spawn table doesn't re-add enemies if going back to a frame occurring before they spawned
+- - Total Damage Table bricks itself (also happens when continuing battle from a replay)
 
 ## What does the original BCU repo branch has that this fork doesn't?
 - Annoying pop-up when right-clicking on buttons
 - Button Filter
 - Android Support
+- Name Edit Mode and Tooltip Edit Mode
+- BC-Accurate surge for target only units (aka Backhoe TF)
 
 *Bolded ones imply that implementing these required restructures that make them uncompatible with official BCU branch*
 # *PACKS MADE OR SAVED USING THIS FORK WILL BE INCOMPATIBLE TO USERS USING THE MAIN BCU*
 ## But packs built from the main repo can be converted into this one, so it's a one-way road.
+### Also replays made on this fork will not display correct results on main BCU branch
