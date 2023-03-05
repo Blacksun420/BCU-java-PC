@@ -61,6 +61,10 @@ public abstract class SortTable<T> extends AbJTable {
 
 	public void setList(List<T> l) {
 		list = l;
+		sort();
+	}
+
+	public void sort() {
 		list.sort(new Comp<>(this, sort, sign));
 	}
 

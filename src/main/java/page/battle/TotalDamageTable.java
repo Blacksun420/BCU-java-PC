@@ -1,6 +1,7 @@
 package page.battle;
 
 import common.battle.BattleField;
+import common.battle.entity.Entity;
 import common.util.unit.AbForm;
 import common.util.unit.Form;
 import page.MainLocale;
@@ -67,25 +68,22 @@ public class TotalDamageTable extends SortTable<AbForm> {
                 return bf.sb.totalDamageGiven[index[0]][index[1]];
             else if (c == 2)
                 return bf.sb.totalDamageTaken[index[0]][index[1]];
-            else
+            else if (index[1] != 5)
                 return bf.sb.totalSpawned[index[0]][index[1]];
+            return 0;
         }
     }
 
     private int[] findForm(AbForm f) {
-        for(int i = 0; i < bf.sb.b.lu.fs.length; i++) {
+        for(int i = 0; i < bf.sb.b.lu.fs.length; i++)
             for(int j = 0; j < bf.sb.b.lu.fs[i].length; j++) {
                 AbForm target = bf.sb.b.lu.fs[i][j];
 
-                if(target == null)
-                    continue;
-
-                if(target.getID().equals(f.getID())) {
+                if(target != null && target.getID().equals(f.getID()))
                     return new int[] {i, j};
-                }
             }
-        }
-
+        if (bf.sb.est.getBase() != null && f.getID().equals(bf.sb.est.getBase().getID()))
+            return new int[] {1, 5};
         return null;
     }
 }

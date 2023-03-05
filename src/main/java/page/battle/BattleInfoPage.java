@@ -396,26 +396,15 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 
 	private void updateTables() {
 		ct.update(basis.sb.est);
-		List<Entity> le = new ArrayList<>(basis.sb.le.size() / 2);
-		List<Entity> lu = new ArrayList<>(basis.sb.le.size() / 2);
+		List<Entity> le = new ArrayList<>(basis.sb.st.max / 2);
+		List<Entity> lu = new ArrayList<>(basis.sb.max_num / 2);
 
 		for (Entity e : basis.sb.le)
 			(e.dire == 1 ? le : lu).add(e);
 
-		List<AbForm> lf = new ArrayList<>();
-
-		for (AbForm[] fs : basis.sb.b.lu.fs) {
-			for(AbForm f : fs) {
-				if(f != null)
-					lf.add(f);
-			}
-		}
-
-		et.setList(le);
-		est.setList(le);
-		ut.setList(lu);
-		ust.setList(lu);
-		utd.setList(lf);
+		(estat.isSelected() ? est : et).setList(le);
+		(ustat.isSelected() ? ust : ut).setList(lu);
+		utd.sort();
 	}
 
 	@Override
@@ -430,6 +419,8 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			resized();
 			add((Canvas) bb);
 			DEF_LARGE = jtb.isSelected();
+			if (!DEF_LARGE)
+				updateTables();
 		});
 
 		back.setLnr(x -> {
@@ -487,11 +478,13 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		estat.addActionListener(a -> {
 			eep.setVisible(!estat.isSelected());
 			eesp.setVisible(estat.isSelected());
+			updateTables();
 		});
 
 		ustat.addActionListener(a -> {
 			eup.setVisible(!ustat.isSelected());
 			eusp.setVisible(ustat.isSelected());
+			updateTables();
 		});
 	}
 
@@ -532,6 +525,15 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 				jsl.setEnabled(pause);
 			}
 		}
+		List<AbForm> lf = new ArrayList<>(basis.sb.ubase instanceof Entity ? 11 : 5);
+		for (AbForm[] fs : basis.sb.b.lu.fs)
+			for(AbForm f : fs)
+				if(f != null)
+					lf.add(f);
+		if (basis.sb.est.getBase() != null)
+			lf.add(basis.sb.est.getBase());
+		utd.setList(lf);
+
 		addListeners();
 	}
 
