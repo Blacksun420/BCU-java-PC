@@ -139,7 +139,7 @@ public class UIFontMenu extends JMenu {
         // add font sizes
         addSeparator();
         ArrayList<String> sizes = new ArrayList<>(Arrays.asList(
-                "10", "11", "12", "14", "16", "18", "20", "24", "28"));
+                "10", "11", "12", "14", "16", "18", "20", "24", "28", "32", "36"));
         if (!sizes.contains(currentSize))
             sizes.add(currentSize);
         sizes.sort(String.CASE_INSENSITIVE_ORDER);
@@ -196,10 +196,8 @@ public class UIFontMenu extends JMenu {
     }
 
     public void setFontSizeItemEnable(boolean enable) {
-        for (Component item : getMenuComponents()) {
-            if (item instanceof JCheckBoxMenuItem && Analyser.isInteger(((JCheckBoxMenuItem) item).getText())) {
+        for (Component item : getMenuComponents())
+            if (item instanceof JCheckBoxMenuItem && Analyser.isInteger(((JCheckBoxMenuItem) item).getText()))
                 item.setEnabled(enable);
-            }
-        }
     }
 }

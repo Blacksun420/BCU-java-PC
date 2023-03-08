@@ -234,6 +234,11 @@ public class MenuBarHandler {
         bgResize.addActionListener((e) -> P.setImageResizable(bgResize.isSelected()));
         gifResize.addActionListener((e) -> P.setGifResizable(gifResize.isSelected()));
 
+        //select
+        fontResize.setSelected(UIPlugin.P.isFontResizable());
+        bgResize.setSelected(UIPlugin.P.getOptional("bgResize"));
+        gifResize.setSelected(UIPlugin.P.getOptional("gifResize"));
+
         // add
         option.add(animated);
         option.add(fontResize);

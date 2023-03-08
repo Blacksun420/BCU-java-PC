@@ -38,8 +38,7 @@ public class UIPlugin extends UIHandler implements Plugin {
 
     public static Font getFont() {
         // return getInstance().setFrameFont();
-        return P.getOptional("fontResize") ?
-                P.getFrameFont(): UIManager.getFont("defaultFont");
+        return P.getOptional("fontResize") ? UIManager.getFont("defaultFont") : P.getFrameFont();
     }
 
     @Override

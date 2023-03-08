@@ -318,15 +318,15 @@ public abstract class UIHandler extends SwingComponentHandler {
 
     public void setGifResizable(boolean resize) {
         setResizable("gifResize", resize);
-        GifComponent.gif.resize = resize;
+        if (GifComponent.gif != null)
+            GifComponent.gif.resize = resize;
     }
 
     public void setFontResizable(boolean resize) {
         setResizable("fontResize", resize);
-        if (resize) {
+        if (resize)
             UIFontMenu.getFontMenu().updateFontMenuItems();
-        }
-        UIFontMenu.getFontMenu().setFontSizeItemEnable(!resize);
+        UIFontMenu.getFontMenu().setFontSizeItemEnable(resize);
 
     }
 
