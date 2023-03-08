@@ -187,7 +187,7 @@ public class UnitFilterBox extends EntityFilterBox {
 	private boolean checkTraitComp(SortedPackSet<Trait> targets, Trait t, Form f) {
 		if (targets.contains(t))
 			return true;
-		if (t.BCTrait)
+		if (t.BCTrait())
 			return false;
 		if (t.others.contains(f))
 			return true;

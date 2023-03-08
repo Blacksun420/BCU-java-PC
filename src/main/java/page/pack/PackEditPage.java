@@ -5,6 +5,7 @@ import common.battle.BasisSet;
 import common.battle.data.AtkDataModel;
 import common.battle.data.CustomEnemy;
 import common.io.PackLoader;
+import common.pack.Context;
 import common.pack.Context.ErrType;
 import common.pack.PackData.UserPack;
 import common.pack.SortedPackSet;
@@ -14,6 +15,7 @@ import common.pack.Source.ZipSource;
 import common.pack.UserProfile;
 import common.util.AnimGroup;
 import common.util.Data;
+import common.util.anim.AnimCE;
 import common.util.anim.AnimCI;
 import common.util.anim.AnimU;
 import common.util.stage.MapColc;
@@ -22,6 +24,9 @@ import common.util.stage.StageMap;
 import common.util.stage.info.CustomStageInfo;
 import common.util.unit.EneRand;
 import common.util.unit.Enemy;
+import common.util.unit.Trait;
+import common.util.unit.UnitLevel;
+import common.util.unit.rand.EREnt;
 import main.MainBCU;
 import main.Opts;
 import page.*;
@@ -41,6 +46,7 @@ import page.view.MusicPage;
 import utilpc.Theme;
 import utilpc.UtilPC;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -48,6 +54,8 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.*;
@@ -915,5 +923,95 @@ public class PackEditPage extends Page {
 				pars.add(p.toString());
 		}
 		return pars;
+	}
+
+	public static void merge(UserPack src, UserPack dest) {
+		for (Trait t : src.traits) {
+			Trait nt = new Trait(dest.getNextID(Trait.class), t);
+			if (t.icon != null)
+				try {
+					File file = ((Source.Workspace)dest.source).getTraitIconFile(nt.id);
+					Context.check(file);
+
+					BufferedImage bimg = (BufferedImage) t.icon.getImg().bimg();
+					ImageIO.write(bimg, "PNG", file);
+					t.icon = MainBCU.builder.toVImg(bimg);
+				} catch (IOException e) {
+					CommonStatic.ctx.noticeErr(e, Context.ErrType.WARN, "failed to merge icon for " + t);
+				}
+			dest.traits.add(nt);
+		}
+		for (Enemy e : src.enemies) {
+			CustomEnemy ce;
+			Enemy ne;
+			if (e.anim instanceof AnimCE && ((AnimCE) e.anim).id.pack.equals(src.getSID())) {
+				((Workspace)dest.source).addAnimation((AnimCE) e.anim);
+				Source.ResourceLocation rl = new Source.ResourceLocation(dest.getSID(), e.anim.toString(), Source.BasePath.ANIM);
+				Workspace.validate(rl);
+
+				AnimCE copy = new AnimCE(rl, e.anim);
+				ce = new CustomEnemy(copy);
+				ne = new Enemy(dest.getNextID(Enemy.class), copy, ce);
+			} else {
+				ce = new CustomEnemy(e.anim);
+				ne = new Enemy(dest.getNextID(Enemy.class), e.anim, ce);
+			}
+			ce.importData(e.de);
+			for (int i = 0; i < ce.traits.size(); i++)
+				if (ce.traits.get(i).id.pack.equals(src.getSID())) {
+					Trait t = ce.traits.get(i);
+					ce.traits.remove(i);
+					ce.traits.add(dest.traits.get(dest.traits.size() - src.traits.size() + t.id.id));
+					i--;
+				}
+			if (ce.getProc().SUMMON.id != null && ce.getProc().SUMMON.id.pack.equals(src.getSID()))
+				ce.getProc().SUMMON.id.pack = dest.getSID();
+			if (ce.getProc().THEME.id != null && ce.getProc().THEME.id.pack.equals(src.getSID()))
+				ce.getProc().THEME.id.pack = dest.getSID();
+			if (ce.getProc().THEME.mus != null && ce.getProc().THEME.mus.pack.equals(src.getSID()))
+				ce.getProc().THEME.mus.pack = dest.getSID();
+			for (AtkDataModel atk : ce.getAllAtkModels()) {
+				if (atk.audio != null && atk.audio.pack.equals(src.getSID()))
+					atk.audio.pack = dest.getSID();
+				if (atk.audio1 != null && atk.audio1.pack.equals(src.getSID()))
+					atk.audio1.pack = dest.getSID();
+				for (int i = 0; i < atk.traits.size(); i++)
+					if (atk.traits.get(i).id.pack.equals(src.getSID())) {
+						Trait t = atk.traits.get(i);
+						atk.traits.remove(i);
+						atk.traits.add(dest.traits.get(dest.traits.size() - src.traits.size() + t.id.id));
+						i--;
+					}
+			}
+			if (ce.death != null && ce.death.pack.equals(src.getSID()))
+				ce.death.pack = dest.getSID();
+			dest.enemies.add(ne);
+		}
+		for (EneRand rand : src.randEnemies) {
+			EneRand nr = new EneRand(dest.getNextID(EneRand.class));
+			nr.name = rand.name;
+			nr.type = rand.type;
+			for (EREnt ere : rand.list) {
+				EREnt ne = ere.copy();
+				if (ere.ent != null && Enemy.class.isAssignableFrom(ere.ent.cls) && ere.ent.pack.equals(src.getSID()))
+					ne.ent = dest.enemies.get(dest.enemies.size() - src.enemies.size() + ere.ent.id).getID();
+				nr.list.add(ere);
+			}
+			if (rand.icon != null)
+				try {
+					File file = ((Source.Workspace)dest.source).getRandIconFile("enemyDisplayIcons", nr.id);
+					Context.check(file);
+
+					BufferedImage bimg = (BufferedImage) rand.icon.getImg().bimg();
+					ImageIO.write(bimg, "PNG", file);
+					rand.icon = MainBCU.builder.toVImg(bimg);
+				} catch (IOException e) {
+					CommonStatic.ctx.noticeErr(e, Context.ErrType.WARN, "failed to merge icon for " + rand);
+				}
+			dest.randEnemies.add(nr);
+		}
+		for (UnitLevel ul : src.unitLevels)
+			dest.unitLevels.add(new UnitLevel(dest.getNextID(UnitLevel.class), ul));
+		//TODO - Units, RandomUnit, Souls, BGs, BGEffects, CharaGroups, LvRestrictions, Musics, Combos, Stages
 	}
 }

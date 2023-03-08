@@ -151,7 +151,7 @@ public class UnitInfoTable extends Page {
 		String[] TraitBox = new String[trs.size()];
 		for (int i = 0; i < trs.size(); i++) {
 			Trait trait = ef.du.getTraits().get(i);
-			if (trait.BCTrait)
+			if (trait.BCTrait())
 				TraitBox[i] = Interpret.TRAIT[trait.id.id];
 			else
 				TraitBox[i] = trait.name;

@@ -93,6 +93,11 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 		preIni();
 	}
 
+	public ImgCutEditPage(Page p, AnimCE anim) {
+		this(p);
+		setSelection(anim);
+	}
+
 	@Override
     public JButton getBackButton() {
 		return back;

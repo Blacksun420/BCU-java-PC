@@ -110,7 +110,7 @@ public abstract class UIContext {
     public abstract static class UIChecker {
         private static final String LIB_URL = "https://repo1.maven.org/maven2/com/formdev/";
         private static final String LIB_DIRECTORY = "./BCU_lib/";
-        private static final String JAR_CHECK_URL = "https://raw.githubusercontent.com/hect0x7/bcu-ui/main/check.json";
+        private static final String JAR_CHECK_URL = "https://raw.githubusercontent.com/Blacksun420/bcu-assets/jar/check.json";
         private static final String[] UILibs = {
                 "flatlaf-intellij-themes-2.3.jar", "flatlaf-2.3.jar"
         };
@@ -172,63 +172,45 @@ public abstract class UIContext {
         public static void checkUpdate() {
             LoadPage.prog("checking UI update information");
             // get update json
-            JsonObject json = getUpdateJson();
-
-            if (json == null) {
-                return;
-            }
-
-            UpdateJson uj = JsonUtils.get("release/latest", json, UpdateJson.class);
-
+            UpdateJson uj = getUpdateJson();
             // inquiry
-            if (uj.version.compareTo(UIPlugin.PLUGIN_VERSION) > 0 && uj.forceUpdate) {
+            if (uj != null && uj.version.compareTo(UIPlugin.PLUGIN_VERSION) > 0 && uj.forceUpdate) {
                 String popText = "New BCU file update found: " + uj.getArtifact() +
                         ", do you want to update jar file?\n" + uj.getDescription();
-                boolean updateIt = Opts.conf(popText);
                 // result
-                if (updateIt) {
+                if (Opts.conf(popText))
                     UIDownloader.downloadJar(getDownloader(uj), true);
-                }
             }
-
         }
 
-        private static JsonObject getUpdateJson() {
-            JsonElement json = null;
-
+        private static UpdateJson getUpdateJson() {
             try {
-                json = WebFileIO.read(JAR_CHECK_URL);
+                JsonElement json = WebFileIO.read(JAR_CHECK_URL);
+                if (json != null)
+                    return JsonUtils.get("release/latest", json.getAsJsonObject(), UpdateJson.class);
             } catch (Exception ignored) {
                 UIPlugin.popError("Failed to check update, try again later on a stable WI-FI connection");
             }
-
-            return (JsonObject) json;
+            return null;
         }
 
         public static void askUpdate() {
             // get update json
-            JsonObject json = getUpdateJson();
-
-            if (json == null) {
+            UpdateJson uj = getUpdateJson();
+            if (uj == null)
                 return;
-            }
-
-            UpdateJson uj = JsonUtils.get("release/latest", json, UpdateJson.class);
-
             // inquiry
             if (uj.version.compareTo(UIPlugin.PLUGIN_VERSION) > 0) {
                 String popText = "New BCU Jar file update found: " + uj.getArtifact()
                         + ", do you want to update?" + " Its' " + (uj.forceUpdate ? "necessary.\n" : "unnecessary.\n")
                         + uj.getDescription();
-                boolean updateIt = Opts.conf(popText);
                 // result
-                if (updateIt) {
+                if (Opts.conf(popText)) {
                     UpdateCheck.Downloader d = getDownloader(uj);
                     UIDownloader.downloadJar(d, false, "url: " + uj.url, d.desc);
                 }
-            } else {
+            } else
                 Opts.pop("Your BCU is the latest version.\n" + uj.getDescription(), "RESULT");
-            }
         }
 
         private static UpdateCheck.Downloader getDownloader(UpdateJson updateJson) {

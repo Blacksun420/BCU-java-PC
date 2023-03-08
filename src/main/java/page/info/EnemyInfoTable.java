@@ -101,7 +101,7 @@ public class EnemyInfoTable extends Page {
 			String[] Atraits = new String[atrs.size()];
 			for (int j = 0; j < atrs.size(); j++) {
 				Trait trait = atrs.get(j);
-				if (trait.BCTrait)
+				if (trait.BCTrait())
 					Atraits[j] = Interpret.TRAIT[trait.id.id];
 				else
 					Atraits[j] = trait.name;
@@ -247,7 +247,7 @@ public class EnemyInfoTable extends Page {
 		String[] TraitBox = new String[trs.size()];
 		for (int i = 0; i < trs.size(); i++) {
 			Trait trait = trs.get(i);
-			if (trait.BCTrait)
+			if (trait.BCTrait())
 				TraitBox[i] = Interpret.TRAIT[trait.id.id];
 			else
 				TraitBox[i] = trait.name;

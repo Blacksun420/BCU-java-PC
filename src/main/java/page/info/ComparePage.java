@@ -589,7 +589,7 @@ public class ComparePage extends Page {
             String[] TraitBox = new String[trs.size()];
             for (int t = 0; t < trs.size(); t++) {
                 Trait trait = m.getTraits().get(t);
-                if (trait.BCTrait)
+                if (trait.BCTrait())
                     TraitBox[t] = Interpret.TRAIT[trait.id.id];
                 else
                     TraitBox[t] = trait.name;

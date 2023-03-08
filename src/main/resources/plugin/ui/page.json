@@ -1,7 +1,7 @@
 {
   "java.lang.String": {
     "ui": "UI Config",
-    "ui-tip": "Custom your BCU look",
+    "ui-tip": "Customize BCU's Appearance",
     "reloadUI": "Reload UI",
     "importBTN": "Select Image",
     "importBTN-icon": "Custom Frame Icon",
@@ -12,10 +12,10 @@
     "radio-w": "padding weight",
     "radio-h": "padding height",
     "export-config": "Export Config",
-    "animatedChangeUI": "Animated Change UI",
+    "animatedChangeUI": "Change Animated UI",
     "open-close": "Open/Close UI",
     "setting": "Setting",
-    "image-opaque": "Image Opaque",
+    "image-opaque": "Theme Opacity",
     "favorite-tip-menu": "☆Add Current Theme To Favorites☆",
     "check-update": "Check Update",
     "fontResize": "Font Resizable",
@@ -34,18 +34,15 @@
     "set-default-image": "Do you want to set this image as default BG?",
     "input-nothing": "Don't you want to input something?",
     "translation-too-long": "This translation is too long, is it Ok?",
-    "add success": "Add and save success!",
+    "add success": "Added and saved successfully!",
     "removeUI": "Remove UI",
     "Flat": "Flat",
     "removeSwingTheme": "Rm Swing",
     "tip-removeUI": "Remove Customized Icon, BG and GIF",
-    "tip-popErr-prefix": "The selected file is unfitted:",
-    "tip-import-stageMap1": "Please select a stage map first!",
-    "tip-import-stageMap2": "Please put MapStageDataXXX.csv and StageRNAXXX.csv in raw directory.",
     "tip-favorite-tip-menu": "Right-click or press ctrl+f to add to favorite.",
     "tip-battle-scene-tip-menu": "This setting can make battle scene more like to BC, start a battle to see the effect!\nYou can press number 6-0 on the keyboard to enable/disable some components in battle scene.",
-    "battle-scene-tip-menu": "☆Custom Your Battle Scene☆",
-    "tip-removeSwingTheme": "Remove all Swing And Nimbus Theme, which means you will only see Flat theme menu and use them.",
+    "battle-scene-tip-menu": "☆Customize Battle Scene☆",
+    "tip-removeSwingTheme": "Remove Swing And Nimbus Theme, which means you will only see and use Flat theme menus.",
     "tip-warning-when-change-theme": "Warning: Using Flat theme may result in high CPU usage, is it okay?"
   }
 }

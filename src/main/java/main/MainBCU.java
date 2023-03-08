@@ -300,7 +300,7 @@ public class MainBCU {
 		}
 	}
 
-	public static final int ver = 50202;
+	public static final int ver = 60000;
 	public static final boolean isBeta = false;
 	private static final DecimalFormat df = new DecimalFormat("#.##");
 	public static int autoSaveTime = 0;
@@ -309,7 +309,6 @@ public class MainBCU {
 	public static boolean seconds = false, buttonSound = false;
 	public static String author = "";
 	public static ImageBuilder<BufferedImage> builder;
-	public static boolean announce0510 = false;
 	public static AutoSaveTimer ast;
 
 	public static void restartAutoSaveTimer() {
@@ -356,11 +355,6 @@ public class MainBCU {
 		MainFrame.F.setVisible(true);
 		new Timer().start();
 
-		if (!announce0510 && checkOldFileExisting()) {
-			Opts.popAgreement("Before migrating v5", "<html><p style=\"width:500px\">This BCU version has completely different code structure from previous version (0-4-10-9), so others data will get reformatted. This process cannot be undone, and it may cause error while reformatting. We recommend you to backup your files (user/replays/res folder) before migrating v5. Agree on this text to continue.</p></html>");
-		} else {
-			announce0510 = true;
-		}
 		if (isBeta && !Opts.conf("This is a beta release. Are you sure you want to continue?"))
 			System.exit(0);
 
@@ -402,13 +396,6 @@ public class MainBCU {
 		if (CommonStatic.ctx != null)
 			CommonStatic.ctx.noticeErr(exc, ErrType.FATAL, msg);
 		e.printStackTrace();
-	}
-
-	private static boolean checkOldFileExisting() {
-		File res = new File(CommonStatic.ctx.getBCUFolder(), "./res");
-		File assets = new File(CommonStatic.ctx.getBCUFolder(), "./assets/assets/zip");
-
-		return res.exists() && assets.exists();
 	}
 
 	private static class AutoSaveTimer extends Thread {

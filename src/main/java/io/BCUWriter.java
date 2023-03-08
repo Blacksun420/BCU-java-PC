@@ -41,18 +41,18 @@ public class BCUWriter extends DataIO {
 
 	private static File log, ph;
 	private static WriteStream ps;
+	private static final short MIN_LENGTH = 329;
 
 	public static void logClose(boolean save, boolean genBackup) {
 		writeOptions();
-		if (save && MainBCU.loaded && MainBCU.trueRun) {
+		if (save && MainBCU.loaded && MainBCU.trueRun)
 			writeData(genBackup);
-		}
-		if (ps.writed) {
+
+		if (ps.writed)
 			ps.println("version: " + Data.revVer(MainBCU.ver));
-		}
 		ps.close();
 		ph.deleteOnExit();
-		if (log.length() == 0)
+		if (log.length() <= MIN_LENGTH)
 			log.deleteOnExit();
 	}
 
@@ -266,7 +266,6 @@ public class BCUWriter extends DataIO {
 		jo.addProperty("rowlayout", CommonStatic.getConfig().twoRow);
 		jo.addProperty("backup_file", CommonStatic.getConfig().backupFile == null ? "None" : CommonStatic.getConfig().backupFile);
 		jo.addProperty("buttonSound", MainBCU.buttonSound);
-		jo.addProperty("ann0510", MainBCU.announce0510);
 		jo.addProperty("autosavetime", MainBCU.autoSaveTime);
 		jo.addProperty("drawBGEffect", CommonStatic.getConfig().drawBGEffect);
 		String[] exp = new String[Exporter.curs.length];

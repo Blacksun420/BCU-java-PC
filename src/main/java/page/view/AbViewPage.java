@@ -255,8 +255,8 @@ public abstract class AbViewPage extends Page {
 				rl = new ResourceLocation(ResourceLocation.LOCAL, "new anim", Source.BasePath.ANIM);
 
 			Workspace.validate(rl);
-			new AnimCE(rl, eau);
-			changePanel(new ImgCutEditPage(getThis()));
+			AnimCE ac = new AnimCE(rl, eau);
+			changePanel(new ImgCutEditPage(getThis(), ac));
 		});
 
 		jlt.addListSelectionListener(arg0 -> {
