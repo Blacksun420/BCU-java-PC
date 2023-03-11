@@ -39,10 +39,10 @@ public class EnemyFindPage extends EntityFindPage<AbEnemy> implements SupPage<Ab
 			int[] list = elt.getSelectedRows();
 			for (int i : list) {
 				AbEnemy sel = elt.list.get(i);
-				if (!CommonStatic.getConfig().favoriteEnemies.contains(sel.getID()))
-					CommonStatic.getConfig().favoriteEnemies.add(sel.getID());
+				if (!CommonStatic.getFaves().enemies.contains(sel))
+					CommonStatic.getFaves().enemies.add(sel);
 				else
-					CommonStatic.getConfig().favoriteEnemies.remove(sel.getID());
+					CommonStatic.getFaves().enemies.remove(sel);
 			}
 		});
 	}

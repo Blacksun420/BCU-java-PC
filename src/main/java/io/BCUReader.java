@@ -32,10 +32,8 @@ import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayDeque;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Queue;
 import java.util.stream.Collectors;
 
 public class BCUReader extends DataIO {
@@ -103,6 +101,22 @@ public class BCUReader extends DataIO {
 				CommonStatic.ctx.noticeErr(e, ErrType.WARN, "failed to read config");
 			}
 		}
+	}
+
+	public static void readFaves() {
+		File f = new File(CommonStatic.ctx.getBCUFolder(), "./user/favorites.json");
+		if (f.exists())
+			try (Reader r = new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8)) {
+				JsonElement je = JsonParser.parseReader(r);
+				r.close();
+				CommonStatic.Faves cfg = CommonStatic.getFaves();
+				JsonDecoder.inject(je, CommonStatic.Faves.class, cfg);
+
+				CommonStatic.getFaves().enemies.removeIf(Objects::isNull);
+				CommonStatic.getFaves().units.removeIf(Objects::isNull);
+			} catch (Exception e) {
+				CommonStatic.ctx.noticeErr(e, ErrType.WARN, "failed to read favorites");
+			}
 	}
 
 	public static void readLang() {

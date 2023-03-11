@@ -45,11 +45,11 @@ public class UnitFindPage extends EntityFindPage<AbForm> implements SupPage<AbUn
 		favs.addActionListener(e -> {
 			int[] list = elt.getSelectedRows();
 			for (int i : list) {
-				AbUnit sel = elt.list.get(i).unit();
-				if (!CommonStatic.getConfig().favoriteUnits.contains(sel.getID()))
-					CommonStatic.getConfig().favoriteUnits.add(sel.getID());
+				AbForm sel = elt.list.get(i);
+				if (!CommonStatic.getFaves().units.contains(sel))
+					CommonStatic.getFaves().units.add(sel);
 				else
-					CommonStatic.getConfig().favoriteUnits.remove(sel.getID());
+					CommonStatic.getFaves().units.remove(sel);
 			}
 		});
 	}

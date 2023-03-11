@@ -29,7 +29,7 @@ public class UnitFilterBox extends EntityFilterBox {
 	protected final Limit lim;
 	protected final int price;
 
-	private final JList<String> rare = new JList<>(RARITY);
+	private final JList<String> rare = new JList<>(Page.get(MainLocale.UTIL, "r", 7));
 	private final AttList abis = new AttList(0, 0);
 	private final JScrollPane jr = new JScrollPane(rare);
 	private final JScrollPane jab = new JScrollPane(abis);
@@ -135,11 +135,13 @@ public class UnitFilterBox extends EntityFilterBox {
 	}
 
 	protected boolean validateUnit(Unit u) {
-		return rare.getSelectedIndex() == -1 || (rare.getSelectedIndex() == rare.getModel().getSize() - 1 &&
-				CommonStatic.getConfig().favoriteUnits.contains(u.getID())) || rare.isSelectedIndex(u.rarity);
+		return rare.getSelectedIndex() == -1 || rare.getSelectedIndex() == rare.getModel().getSize() - 1 || rare.isSelectedIndex(u.rarity);
 	}
 
 	protected boolean validateForm(Form f) {
+		if (rare.getSelectedIndex() == rare.getModel().getSize() - 1 && !CommonStatic.getFaves().units.contains(f))
+			return false;
+
 		String fname = MultiLangCont.getStatic().FNAME.getCont(f);
 		if (fname == null)
 			fname = f.names.toString();

@@ -378,11 +378,10 @@ public class MainBCU {
 
 	private static void afterLoading() {
 		// this MenuBarHandler is not page.MenuBarHandler but plugin.ui.main.util.MenuBarHandler
+		BCUReader.readFaves();
 		MenuBarHandler.enableSave();
 		ast = autoSaveTime > 0 ? new AutoSaveTimer() : null;
 		MainFrame.changePanel(new MainPage());
-		CommonStatic.getConfig().favoriteEnemies.removeIf(e -> UserProfile.getUserPack(e.pack) == null);
-		CommonStatic.getConfig().favoriteUnits.removeIf(e -> UserProfile.getUserPack(e.pack) == null);
 	}
 
 	public static String validate(String str, char replace) {

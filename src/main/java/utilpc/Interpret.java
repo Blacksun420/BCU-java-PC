@@ -543,7 +543,7 @@ public class Interpret extends Data {
 			return colab;
 		else if (t == 4)
 			return recurring > 3;
-		return CommonStatic.getConfig().favoriteEnemies.contains(e.getID());
+		return CommonStatic.getFaves().enemies.contains(e);
 	}
 
 	public static boolean isType(MaskEntity de, int type, int ind) {

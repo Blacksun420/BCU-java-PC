@@ -16,7 +16,6 @@ import main.MainBCU;
 import main.Opts;
 import main.Printer;
 import page.MainFrame;
-import page.MainLocale;
 import page.battle.BattleInfoPage;
 import page.support.Exporter;
 import page.support.Importer;
@@ -45,6 +44,7 @@ public class BCUWriter extends DataIO {
 
 	public static void logClose(boolean save, boolean genBackup) {
 		writeOptions();
+		writeFaves();
 		if (save && MainBCU.loaded && MainBCU.trueRun)
 			writeData(genBackup);
 
@@ -162,6 +162,7 @@ public class BCUWriter extends DataIO {
 		Source.Workspace.saveWorkspace(false);
 		AnimGroup.writeAnimGroup();
 		writeOptions();
+		writeFaves();
 		if (genBackup && CommonStatic.getConfig().maxBackup != -1)
 			Backup.createBackup(null, new ArrayList<>(
 					Arrays.asList(
@@ -283,6 +284,16 @@ public class BCUWriter extends DataIO {
 		}
 	}
 
+	private static void writeFaves() {
+		File f = new File(CommonStatic.ctx.getBCUFolder(), "./user/favorites.json");
+		Data.err(() -> Context.check(f));
+		JsonObject jo = JsonEncoder.encode(CommonStatic.getFaves()).getAsJsonObject();
+		try (java.io.Writer w = new OutputStreamWriter(Files.newOutputStream(f.toPath()), StandardCharsets.UTF_8)) {
+			w.write(jo.toString());
+		} catch (Exception e) {
+			CommonStatic.ctx.noticeErr(e, ErrType.ERROR, "failed to write favorites");
+		}
+	}
 }
 
 class WriteStream extends PrintStream {
