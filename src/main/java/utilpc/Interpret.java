@@ -533,7 +533,8 @@ public class Interpret extends Data {
 		List<MapColc> lis = e.findMap();
 		final int recurring;
 		if (e.de instanceof DataEnemy)
-			recurring = e.findApp(DefMapColc.getMap("N")).size() + e.findApp(DefMapColc.getMap("A")).size();
+			recurring = e.findApp(DefMapColc.getMap("N")).size() + e.findApp(DefMapColc.getMap("A")).size()
+					+ e.findApp(DefMapColc.getMap("Q")).size() + e.findApp(DefMapColc.getMap("ND")).size();
 		else
 			recurring = e.findApp(UserProfile.getUserPack(e.id.pack).mc).size();
 		boolean colab = recurring == 0 && (lis.contains(DefMapColc.getMap("C"))
@@ -541,8 +542,8 @@ public class Interpret extends Data {
 		if (t == 2)
 			return colab;
 		else if (t == 4)
-			return recurring > 1;
-		return false;
+			return recurring > 3;
+		return CommonStatic.getConfig().favoriteEnemies.contains(e.getID());
 	}
 
 	public static boolean isType(MaskEntity de, int type, int ind) {
@@ -565,7 +566,7 @@ public class Interpret extends Data {
 	}
 
 	public static void redefine() {
-		ERARE = Page.get(MainLocale.UTIL, "er", 5);
+		ERARE = Page.get(MainLocale.UTIL, "er", 6);
 		RARITY = Page.get(MainLocale.UTIL, "r", 6);
 		TRAIT = Page.get(MainLocale.UTIL, "c", TRAIT_TOT);
 		STAR = Page.get(MainLocale.UTIL, "s", 5);

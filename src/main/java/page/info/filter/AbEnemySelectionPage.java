@@ -37,7 +37,7 @@ public class AbEnemySelectionPage extends EnemyFindPage implements SupPage<AbEne
 
     }
 
-    private void addListeners() {
+    protected void addListeners() {
         back.addActionListener(arg0 -> {
             String content;
 

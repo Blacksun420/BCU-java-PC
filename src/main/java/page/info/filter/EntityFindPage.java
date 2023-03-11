@@ -1,9 +1,6 @@
 package page.info.filter;
 
-import page.JBTN;
-import page.JTF;
-import page.JTG;
-import page.Page;
+import page.*;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
@@ -21,6 +18,7 @@ public abstract class EntityFindPage<R> extends Page {
     protected JScrollPane jsp;
     protected final JTF seatf = new JTF();
     protected final JBTN seabt = new JBTN(0, "search");
+    protected final JBTN favs = new JBTN(MainLocale.PAGE, "addfav");
 
     public EntityFindPage(Page p) {
         super(p);
@@ -72,10 +70,11 @@ public abstract class EntityFindPage<R> extends Page {
             set(jsp, x, y, 50 + mx, 100 + my, 2200 - mx, 1150 - my);
         } else
             set(jsp, x, y, 50, 100, 2200, 1150);
+        set(favs, x, y, 1850, 0, 400, 50);
         elt.setRowHeight(size(x, y, 50));
     }
 
-    private void addListeners() {
+    protected void addListeners() {
         back.addActionListener(arg0 -> changePanel(getFront()));
 
         show.addActionListener(arg0 -> {
@@ -108,6 +107,7 @@ public abstract class EntityFindPage<R> extends Page {
         add(source);
         add(seatf);
         add(seabt);
+        add(favs);
         show.setSelected(true);
         addListeners();
     }

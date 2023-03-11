@@ -1,5 +1,6 @@
 package page.info.filter;
 
+import common.CommonStatic;
 import common.pack.PackData.UserPack;
 import common.util.unit.AbForm;
 import common.util.unit.AbUnit;
@@ -36,6 +37,21 @@ public class UnitFindPage extends EntityFindPage<AbForm> implements SupPage<AbUn
 		if (elt.getSelectedRow() == -1 || elt.getSelectedRow() > elt.list.size() - 1)
 			return null;
 		return elt.list.get(elt.getSelectedRow());
+	}
+
+	@Override
+	protected void addListeners() {
+		super.addListeners();
+		favs.addActionListener(e -> {
+			int[] list = elt.getSelectedRows();
+			for (int i : list) {
+				AbUnit sel = elt.list.get(i).unit();
+				if (!CommonStatic.getConfig().favoriteUnits.contains(sel.getID()))
+					CommonStatic.getConfig().favoriteUnits.add(sel.getID());
+				else
+					CommonStatic.getConfig().favoriteUnits.remove(sel.getID());
+			}
+		});
 	}
 
 	@Override

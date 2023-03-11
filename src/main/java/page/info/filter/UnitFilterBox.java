@@ -1,5 +1,6 @@
 package page.info.filter;
 
+import common.CommonStatic;
 import common.battle.data.MaskUnit;
 import common.pack.PackData;
 import common.pack.SortedPackSet;
@@ -134,7 +135,8 @@ public class UnitFilterBox extends EntityFilterBox {
 	}
 
 	protected boolean validateUnit(Unit u) {
-		return rare.getSelectedIndex() == -1 || rare.isSelectedIndex(u.rarity);
+		return rare.getSelectedIndex() == -1 || (rare.getSelectedIndex() == rare.getModel().getSize() - 1 &&
+				CommonStatic.getConfig().favoriteUnits.contains(u.getID())) || rare.isSelectedIndex(u.rarity);
 	}
 
 	protected boolean validateForm(Form f) {

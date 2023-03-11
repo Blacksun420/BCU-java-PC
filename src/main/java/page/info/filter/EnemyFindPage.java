@@ -1,5 +1,6 @@
 package page.info.filter;
 
+import common.CommonStatic;
 import common.pack.PackData;
 import common.util.unit.AbEnemy;
 import page.Page;
@@ -29,6 +30,21 @@ public class EnemyFindPage extends EntityFindPage<AbEnemy> implements SupPage<Ab
 		efb = new EnemyFilterBox(this, rand, pack);
 		ini();
 		resized();
+	}
+
+	@Override
+	protected void addListeners() {
+		super.addListeners();
+		favs.addActionListener(e -> {
+			int[] list = elt.getSelectedRows();
+			for (int i : list) {
+				AbEnemy sel = elt.list.get(i);
+				if (!CommonStatic.getConfig().favoriteEnemies.contains(sel.getID()))
+					CommonStatic.getConfig().favoriteEnemies.add(sel.getID());
+				else
+					CommonStatic.getConfig().favoriteEnemies.remove(sel.getID());
+			}
+		});
 	}
 
 	@Override

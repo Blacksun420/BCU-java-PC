@@ -182,7 +182,8 @@ public interface BattleBox {
 			}
 			drawBtm(g);
 			drawTop(g);
-			deployWarn(g);
+			if (sb.ebase.health <= 0 || sb.ubase.health <= 0)
+				deployWarn(g);
 		}
 
 		public double getX(double x) {
@@ -312,6 +313,7 @@ public interface BattleBox {
 			corr = hr = Math.min(r, hr);
 			int ih = (int) (hr * left.getHeight());
 			int iw = (int) (hr * left.getWidth());
+			h += (box.getHeight() * 0.02 * bf.endFrames);
 			g.drawImage(left, - BOTTOM_GAP * hr, h - ih, iw, ih);
 			iw = (int) (hr * right.getWidth());
 			ih = (int) (hr * right.getHeight());
@@ -915,9 +917,9 @@ public interface BattleBox {
 
 		private void drawTop(FakeGraphics g) {
 			int w = box.getWidth();
-			SymCoord sym = setSym(g, 1, w-aux.num[0][0].getImg().getHeight()*0.2, aux.num[0][0].getImg().getHeight()*0.2, 1);
+			SymCoord sym = setSym(g, 1, w-aux.num[0][0].getImg().getHeight()*0.2, aux.num[0][0].getImg().getHeight()*0.2-(bf.endFrames * box.getHeight() * 0.01), 1);
 			P p = Res.getMoney(sb.getMoney(), sb.getMaxMoney(), sym);
-			int ih = (int) p.y + (int) (aux.num[0][0].getImg().getHeight()*0.3);
+			int ih = (int) p.y + (int) ((aux.num[0][0].getImg().getHeight()*0.3) - (bf.endFrames * box.getHeight() * 0.01));
 			int n = 0;
 			FakeImage bimg = aux.battle[2][1].getImg();
 			int ow = (int) (aux.num[0][0].getImg().getHeight() * 0.2);
@@ -944,13 +946,13 @@ public interface BattleBox {
 				for (int i = 0; i < Math.abs(page.getSpeed()); i++)
 					g.drawImage(bimg, w - cw * (i + 1 + n) - ow, ih);
 			}
-
 			if (CommonStatic.getConfig().stageName && snam.img != null) {
-				g.drawImage(snam.img, box.getHeight() * 0.005, box.getHeight() * 0.01, snam.img.getWidth() * 1.25, snam.img.getHeight() * 1.125);
+				int m = (int) (bf.endFrames * box.getHeight() * 0.01);
+						g.drawImage(snam.img, box.getHeight() * 0.005, box.getHeight() * 0.01 - m, snam.img.getWidth() * 1.25, snam.img.getHeight() * 1.125);
 				if(bf.sb.st.timeLimit != 0)
-					drawTime(g, snam.img.getHeight() * 0.9);
+					drawTime(g, snam.img.getHeight() * 0.9 - m);
 			} else if(bf.sb.st.timeLimit != 0)
-				drawTime(g, 0);
+				drawTime(g, 0 - (bf.endFrames * box.getHeight() * 0.01));
 		}
 
 		private void drawTime(FakeGraphics g, double nameheight) {

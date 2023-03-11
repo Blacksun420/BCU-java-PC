@@ -355,8 +355,8 @@ public class MainBCU {
 		MainFrame.F.setVisible(true);
 		new Timer().start();
 
-		if (isBeta && !Opts.conf("This is a beta release. Are you sure you want to continue?"))
-			System.exit(0);
+		//if (isBeta && !Opts.conf("This is a beta release. Are you sure you want to continue?"))
+		//	System.exit(0);
 
 		// check Plugin update
 		P.checkUpdate();
@@ -381,6 +381,8 @@ public class MainBCU {
 		MenuBarHandler.enableSave();
 		ast = autoSaveTime > 0 ? new AutoSaveTimer() : null;
 		MainFrame.changePanel(new MainPage());
+		CommonStatic.getConfig().favoriteEnemies.removeIf(e -> UserProfile.getUserPack(e.pack) == null);
+		CommonStatic.getConfig().favoriteUnits.removeIf(e -> UserProfile.getUserPack(e.pack) == null);
 	}
 
 	public static String validate(String str, char replace) {

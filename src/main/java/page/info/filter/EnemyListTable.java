@@ -28,7 +28,7 @@ public class EnemyListTable extends EntityListTable<AbEnemy> {
 
 	public static void redefine() {
 		tit = new String[] { "ID", "", Page.get(MainLocale.INFO, "HP"), Page.get(MainLocale.INFO, "hb"), Page.get(MainLocale.INFO, "atk"), Page.get(MainLocale.INFO, "range"), Page.get(MainLocale.INFO, "atkf"),
-				Page.get(MainLocale.INFO, "speed"), Page.get(MainLocale.INFO, "drop"), Page.get(MainLocale.INFO, "preaa"), "dps", Page.get(MainLocale.INFO, "minpos"), Page.get(MainLocale.INFO, "will"), "hp/dps" };
+				Page.get(MainLocale.INFO, "speed"), Page.get(MainLocale.INFO, "drop"), Page.get(MainLocale.INFO, "preaa"), "dps", Page.get(MainLocale.INFO, "minpos"), Page.get(MainLocale.INFO, "will"), "hp/hb" };
 	}
 
 	private final Basis b = BasisSet.current();
@@ -111,7 +111,7 @@ public class EnemyListTable extends EntityListTable<AbEnemy> {
 			else if (c == 12)
 				return e.de.getWill() + 1;
 			else if (c == 13) {
-				return e.de.allAtk(0) == 0 ? Double.MAX_VALUE : Math.round(1.0 * e.de.getHp() / (e.de.allAtk(0) * 30.0 / e.de.getItv(0)) * 1000000.0)/1000000.0;
+				return Math.round(100.0 * e.de.getHp() / e.de.getHb()) / 100.0; //return e.de.allAtk(0) == 0 ? Double.MAX_VALUE : Math.round(1.0 * e.de.getHp() / (e.de.allAtk(0) * 30.0 / e.de.getItv(0)) * 1000000.0)/1000000.0;
 			}
 		} else {
 			if (c == 0)
