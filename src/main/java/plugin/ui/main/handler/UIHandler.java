@@ -69,9 +69,8 @@ public abstract class UIHandler extends SwingComponentHandler {
 
     public void setFrameUI() {
         Font font = readUIFont();
-        if (font != null) {
+        if (font != null)
             putDefaultFont(font);
-        }
 
         conditionalOnAvailable(config.getString("bgFile"), StaticConfig.KEY_BG, this::setBG);
         conditionalOnAvailable(config.getString("iconFile"), StaticConfig.KEY_ICON, this::setIcon);

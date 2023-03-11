@@ -23,7 +23,7 @@ public interface StaticConfig {
 
     Integer OPAQUE_MIN = 0;
     Integer OPAQUE_MAX = 100;
-    String[] IMAGE_SUFFIX = new String[]{".png", ".jpg"};
+    String[] IMAGE_SUFFIX = new String[]{".png", ".jpg", ".jpeg"};
 
     Integer FONT_MIN_SIZE = 14;
     Font DEFAULT_FONT = new Font("Microsoft YaHei UI", Font.PLAIN, 16);

@@ -4,29 +4,28 @@ import common.CommonStatic;
 import common.battle.BasisSet;
 import common.battle.data.AtkDataModel;
 import common.battle.data.CustomEnemy;
+import common.battle.data.CustomUnit;
 import common.io.PackLoader;
-import common.pack.Context;
+import common.pack.*;
 import common.pack.Context.ErrType;
 import common.pack.PackData.UserPack;
-import common.pack.SortedPackSet;
-import common.pack.Source;
 import common.pack.Source.Workspace;
 import common.pack.Source.ZipSource;
-import common.pack.UserProfile;
 import common.util.AnimGroup;
 import common.util.Data;
 import common.util.anim.AnimCE;
 import common.util.anim.AnimCI;
 import common.util.anim.AnimU;
-import common.util.stage.MapColc;
-import common.util.stage.Stage;
-import common.util.stage.StageMap;
+import common.util.pack.Background;
+import common.util.pack.Soul;
+import common.util.pack.bgeffect.BackgroundEffect;
+import common.util.pack.bgeffect.CustomBGEffect;
+import common.util.pack.bgeffect.MixedBGEffect;
+import common.util.stage.*;
 import common.util.stage.info.CustomStageInfo;
-import common.util.unit.EneRand;
-import common.util.unit.Enemy;
-import common.util.unit.Trait;
-import common.util.unit.UnitLevel;
+import common.util.unit.*;
 import common.util.unit.rand.EREnt;
+import common.util.unit.rand.UREnt;
 import main.MainBCU;
 import main.Opts;
 import page.*;
@@ -55,6 +54,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -129,6 +129,7 @@ public class PackEditPage extends Page {
 	private final JBTN cbge = new JBTN(MainLocale.PAGE, "cbge");
 	private final JTG cmbo = new JTG(MainLocale.PAGE, "usecombo");
 	private final JBTN cdesc = new JBTN(MainLocale.PAGE, "pinfo");
+	private final JBTN merge = new JBTN(MainLocale.PAGE, "merge");
 
 	private final JTF jtfp = new JTF();
 	private final JTF jtfe = new JTF();
@@ -228,6 +229,7 @@ public class PackEditPage extends Page {
 		set(cbge, x, y, w, 1150, 350, 50);
 		set(lbt, x, y, w, 100, 350, 50);
 		set(jspt, x, y, w, 150, 350, 600);
+		set(merge, x, y, w, 800, 350, 50);
 		SwingUtilities.invokeLater(() -> jtd.setUI(new TreeNodeExpander(jtd)));
 	}
 
@@ -633,17 +635,26 @@ public class PackEditPage extends Page {
 			unsorted = method == 0;
 			jlp.setSelectedValue(pac, true);
 		});
+
+		merge.setLnr(m -> {
+			UserPack src = jlt.getSelectedValue();
+			if (Opts.conf("Are you sure you want to merge " + pac + " with " + src + "? This cannot be undone, and there might be conflicts. Backup is recommended"))
+				merge(src, pac);
+			setPack(pac);
+		});
 	}
 
 	private void checkAddr() {
 		if (pac == null) {
 			addr.setEnabled(false);
+			merge.setEnabled(false);
 			return;
 		}
 		UserPack rel = jlt.getSelectedValue();
-		boolean b = pac.editable;
+		boolean b = pac.editable && rel != null && rel != pac;
+
+		merge.setEnabled(b && rel.editable);
 		b &= rel != null && !pac.desc.dependency.contains(rel.getSID());
-		b &= rel != pac;
 		if (b)
 			for (String id : rel.desc.dependency)
 				if (id.equals(pac.getSID()))
@@ -727,6 +738,7 @@ public class PackEditPage extends Page {
 		add(cbge);
 		add(cmbo);
 		add(cdesc);
+		add(merge);
 
 		cmbo.setToolTipText("Decide whether to apply or not this pack's custom CatCombos onto your lineups");
 
@@ -926,6 +938,10 @@ public class PackEditPage extends Page {
 	}
 
 	public static void merge(UserPack src, UserPack dest) {
+		//eqs:
+		//unadded: (dest.x.size + ind)
+		//adding: (dest.x.size - (dest.x.size - src.x.size) + ind)
+		//added: (dest.x.size - src.x.size + ind)
 		for (Trait t : src.traits) {
 			Trait nt = new Trait(dest.getNextID(Trait.class), t);
 			if (t.icon != null)
@@ -935,21 +951,31 @@ public class PackEditPage extends Page {
 
 					BufferedImage bimg = (BufferedImage) t.icon.getImg().bimg();
 					ImageIO.write(bimg, "PNG", file);
-					t.icon = MainBCU.builder.toVImg(bimg);
+					nt.icon = MainBCU.builder.toVImg(bimg);
 				} catch (IOException e) {
 					CommonStatic.ctx.noticeErr(e, Context.ErrType.WARN, "failed to merge icon for " + t);
 				}
 			dest.traits.add(nt);
 		}
+		HashSet<AnimCE> EAnims = new HashSet<>();
+		src.enemies.raw = true;
 		for (Enemy e : src.enemies) {
 			CustomEnemy ce;
 			Enemy ne;
 			if (e.anim instanceof AnimCE && ((AnimCE) e.anim).id.pack.equals(src.getSID())) {
-				((Workspace)dest.source).addAnimation((AnimCE) e.anim);
-				Source.ResourceLocation rl = new Source.ResourceLocation(dest.getSID(), e.anim.toString(), Source.BasePath.ANIM);
-				Workspace.validate(rl);
-
-				AnimCE copy = new AnimCE(rl, e.anim);
+				AnimCE copy = null;
+				for (AnimCE ani : EAnims)
+					if (ani.equals(e.anim)) {
+						copy = ani;
+						break;
+					}
+				if (copy == null) {
+					Source.ResourceLocation rl = new Source.ResourceLocation(dest.getSID(), e.anim.toString(), Source.BasePath.ANIM);
+					Workspace.validate(rl);
+					copy = new AnimCE(rl, e.anim);
+					((Workspace) dest.source).addAnimation(copy);
+					EAnims.add(copy);
+				}
 				ce = new CustomEnemy(copy);
 				ne = new Enemy(dest.getNextID(Enemy.class), copy, ce);
 			} else {
@@ -960,41 +986,53 @@ public class PackEditPage extends Page {
 			for (int i = 0; i < ce.traits.size(); i++)
 				if (ce.traits.get(i).id.pack.equals(src.getSID())) {
 					Trait t = ce.traits.get(i);
-					ce.traits.remove(i);
-					ce.traits.add(dest.traits.get(dest.traits.size() - src.traits.size() + t.id.id));
-					i--;
+					ce.traits.set(i, dest.traits.get(dest.traits.size() - src.traits.size() + t.id.id));
 				}
-			if (ce.getProc().SUMMON.id != null && ce.getProc().SUMMON.id.pack.equals(src.getSID()))
-				ce.getProc().SUMMON.id.pack = dest.getSID();
-			if (ce.getProc().THEME.id != null && ce.getProc().THEME.id.pack.equals(src.getSID()))
-				ce.getProc().THEME.id.pack = dest.getSID();
-			if (ce.getProc().THEME.mus != null && ce.getProc().THEME.mus.pack.equals(src.getSID()))
-				ce.getProc().THEME.mus.pack = dest.getSID();
 			for (AtkDataModel atk : ce.getAllAtkModels()) {
+				if (atk.getProc().SUMMON.id != null && atk.getProc().SUMMON.id.pack.equals(src.getSID())) {
+					if (AbEnemy.class.isAssignableFrom(atk.getProc().SUMMON.id.cls))
+						if (EneRand.class.isAssignableFrom(atk.getProc().SUMMON.id.cls))
+							atk.getProc().SUMMON.id = new Identifier<>(dest.getSID(), EneRand.class, dest.randEnemies.size() - src.randEnemies.size() + atk.getProc().SUMMON.id.id);
+						else
+							atk.getProc().SUMMON.id = new Identifier<>(dest.getSID(), Enemy.class, dest.enemies.size() - src.enemies.size() + atk.getProc().SUMMON.id.id);
+					else if (UniRand.class.isAssignableFrom(atk.getProc().SUMMON.id.cls))
+						atk.getProc().SUMMON.id = new Identifier<>(dest.getSID(), UniRand.class, dest.randUnits.size() + atk.getProc().SUMMON.id.id);
+					else
+						atk.getProc().SUMMON.id = new Identifier<>(dest.getSID(), Unit.class, dest.units.size() - (dest.units.size() - src.units.size()) + atk.getProc().SUMMON.id.id);
+				}
+				if (atk.getProc().THEME.id != null && atk.getProc().THEME.id.pack.equals(src.getSID()))
+					atk.getProc().THEME.id = new Identifier<>(dest.getSID(), Background.class, dest.bgs.size() + atk.getProc().THEME.id.id);
+				if (atk.getProc().THEME.mus != null && atk.getProc().THEME.mus.pack.equals(src.getSID()))
+					atk.getProc().THEME.mus = new Identifier<>(dest.getSID(), Music.class, atk.getProc().THEME.mus.id);
 				if (atk.audio != null && atk.audio.pack.equals(src.getSID()))
-					atk.audio.pack = dest.getSID();
+					atk.audio = new Identifier<>(dest.getSID(), Music.class, atk.audio.id);
 				if (atk.audio1 != null && atk.audio1.pack.equals(src.getSID()))
-					atk.audio1.pack = dest.getSID();
+					atk.audio1 = new Identifier<>(dest.getSID(), Music.class, atk.audio1.id);
 				for (int i = 0; i < atk.traits.size(); i++)
 					if (atk.traits.get(i).id.pack.equals(src.getSID())) {
 						Trait t = atk.traits.get(i);
-						atk.traits.remove(i);
-						atk.traits.add(dest.traits.get(dest.traits.size() - src.traits.size() + t.id.id));
-						i--;
+						atk.traits.set(i, dest.traits.get(dest.traits.size() - src.traits.size() + t.id.id));
 					}
 			}
 			if (ce.death != null && ce.death.pack.equals(src.getSID()))
-				ce.death.pack = dest.getSID();
+				ce.death = new Identifier<>(dest.getSID(), Soul.class, dest.souls.size() + ce.death.id);
+			ne.names.overwrite(e.names);
+			ne.description.overwrite(e.description);
 			dest.enemies.add(ne);
 		}
+		src.enemies.raw = false;
+		src.randEnemies.raw = true;
 		for (EneRand rand : src.randEnemies) {
 			EneRand nr = new EneRand(dest.getNextID(EneRand.class));
 			nr.name = rand.name;
 			nr.type = rand.type;
 			for (EREnt ere : rand.list) {
 				EREnt ne = ere.copy();
-				if (ere.ent != null && Enemy.class.isAssignableFrom(ere.ent.cls) && ere.ent.pack.equals(src.getSID()))
-					ne.ent = dest.enemies.get(dest.enemies.size() - src.enemies.size() + ere.ent.id).getID();
+				if (ere.ent != null && ere.ent.pack.equals(src.getSID()))
+					if (Enemy.class.isAssignableFrom(ere.ent.cls))
+						ne.ent = dest.enemies.get(dest.enemies.size() - src.enemies.size() + ere.ent.id).getID();
+					else
+						ne.ent = new Identifier<>(dest.getSID(), Enemy.class, dest.randEnemies.size() - (dest.randEnemies.size() - src.randEnemies.size()) + ere.ent.id);
 				nr.list.add(ere);
 			}
 			if (rand.icon != null)
@@ -1004,14 +1042,343 @@ public class PackEditPage extends Page {
 
 					BufferedImage bimg = (BufferedImage) rand.icon.getImg().bimg();
 					ImageIO.write(bimg, "PNG", file);
-					rand.icon = MainBCU.builder.toVImg(bimg);
+					nr.icon = MainBCU.builder.toVImg(bimg);
 				} catch (IOException e) {
 					CommonStatic.ctx.noticeErr(e, Context.ErrType.WARN, "failed to merge icon for " + rand);
 				}
 			dest.randEnemies.add(nr);
 		}
+		src.randEnemies.raw = false;
+		src.unitLevels.raw = true;
 		for (UnitLevel ul : src.unitLevels)
 			dest.unitLevels.add(new UnitLevel(dest.getNextID(UnitLevel.class), ul));
-		//TODO - Units, RandomUnit, Souls, BGs, BGEffects, CharaGroups, LvRestrictions, Musics, Combos, Stages
+		src.unitLevels.raw = false;
+		src.units.raw = true;
+		for (Unit u : src.units) {
+			Unit nu = new Unit(dest.getNextID(Unit.class));
+			nu.forms = new Form[u.forms.length];
+			for (Form f : u.forms) {
+				CustomUnit cu;
+				Form nf;
+				if (f.anim instanceof AnimCE && ((AnimCE) f.anim).id.pack.equals(src.getSID())) {
+					AnimCE copy = null;
+					for (AnimCE ani : EAnims)
+						if (ani.equals(f.anim)) {
+							copy = ani;
+							break;
+						}
+					if (copy == null) {
+						Source.ResourceLocation rl = new Source.ResourceLocation(dest.getSID(), f.anim.toString(), Source.BasePath.ANIM);
+						Workspace.validate(rl);
+						copy = new AnimCE(rl, f.anim);
+						((Workspace) dest.source).addAnimation(copy);
+						EAnims.add(copy);
+					}
+					cu = new CustomUnit(copy);
+					nf = new Form(nu, f.fid, f.toString(), copy, cu);
+				} else {
+					cu = new CustomUnit(f.anim);
+					nf = new Form(nu, f.fid, f.toString(), f.anim, cu);
+				}
+				cu.importData(f.du);
+				for (int i = 0; i < cu.traits.size(); i++)
+					if (cu.traits.get(i).id.pack.equals(src.getSID())) {
+						Trait t = cu.traits.get(i);
+						cu.traits.set(i, dest.traits.get(dest.traits.size() - src.traits.size() + t.id.id));
+					}
+				for (AtkDataModel atk : cu.getAllAtkModels()) {
+					if (atk.getProc().SUMMON.id != null && atk.getProc().SUMMON.id.pack.equals(src.getSID())) {
+						if (AbEnemy.class.isAssignableFrom(atk.getProc().SUMMON.id.cls))
+							if (EneRand.class.isAssignableFrom(atk.getProc().SUMMON.id.cls))
+								atk.getProc().SUMMON.id = new Identifier<>(dest.getSID(), EneRand.class, dest.randEnemies.size() - src.randEnemies.size() + atk.getProc().SUMMON.id.id);
+							else
+								atk.getProc().SUMMON.id = new Identifier<>(dest.getSID(), Enemy.class, dest.enemies.size() - src.enemies.size() + atk.getProc().SUMMON.id.id);
+						else if (UniRand.class.isAssignableFrom(atk.getProc().SUMMON.id.cls))
+							atk.getProc().SUMMON.id = new Identifier<>(dest.getSID(), UniRand.class, dest.randUnits.size() + atk.getProc().SUMMON.id.id);
+						else
+							atk.getProc().SUMMON.id = new Identifier<>(dest.getSID(), Unit.class, dest.units.size() - (dest.units.size() - src.units.size()) + atk.getProc().SUMMON.id.id);
+					}
+					if (atk.getProc().THEME.id != null && atk.getProc().THEME.id.pack.equals(src.getSID()))
+						atk.getProc().THEME.id = new Identifier<>(dest.getSID(), Background.class, dest.bgs.size() + atk.getProc().THEME.id.id);
+					if (atk.getProc().THEME.mus != null && atk.getProc().THEME.mus.pack.equals(src.getSID()))
+						atk.getProc().THEME.mus = new Identifier<>(dest.getSID(), Music.class, atk.getProc().THEME.mus.id);
+					if (atk.audio != null && atk.audio.pack.equals(src.getSID()))
+						atk.audio = new Identifier<>(dest.getSID(), Music.class, atk.audio.id);
+					if (atk.audio1 != null && atk.audio1.pack.equals(src.getSID()))
+						atk.audio1 = new Identifier<>(dest.getSID(), Music.class, atk.audio1.id);
+					for (int i = 0; i < atk.traits.size(); i++)
+						if (atk.traits.get(i).id.pack.equals(src.getSID())) {
+							Trait t = atk.traits.get(i);
+							atk.traits.set(i, dest.traits.get(dest.traits.size() - src.traits.size() + t.id.id));
+						}
+				}
+				if (cu.death != null && cu.death.pack.equals(src.getSID()))
+					cu.death = new Identifier<>(dest.getSID(), Soul.class, dest.souls.size() + cu.death.id);
+				nf.names.overwrite(f.names);
+				nf.description.overwrite(f.description);
+
+				nu.forms[f.fid] = nf;
+			}
+			nu.max = u.max;
+			nu.maxp = u.maxp;
+			nu.rarity = u.rarity;
+			if (u.lv.id.pack.equals(src.getSID()))
+				nu.lv = dest.unitLevels.get(dest.unitLevels.size() - src.unitLevels.size() + u.lv.id.id);
+			else
+				nu.lv = u.lv;
+			dest.units.add(nu);
+		}
+		src.units.raw = false;
+		src.randUnits.raw = true;
+		for (UniRand rand : src.randUnits) {
+			UniRand nr = new UniRand(dest.getNextID(UniRand.class));
+			nr.name = rand.name;
+			nr.type = rand.type;
+			for (UREnt ere : rand.list) {
+				UREnt ne = ere.copy();
+				if (ere.ent != null && ere.ent.getID().pack.equals(src.getSID()))
+					if (ere.ent instanceof Form)
+						ne.ent = dest.units.get(dest.units.size() - src.units.size() + ere.ent.getID().id).forms[ere.ent.getFid()];
+					else
+						ne.ent = dest.randUnits.get(dest.randUnits.size() - (dest.randUnits.size() - src.randUnits.size()) + ere.ent.getID().id);
+				nr.list.add(ere);
+			}
+			if (rand.icon != null)
+				try {
+					File file = ((Source.Workspace)dest.source).getRandIconFile("unitDisplayIcons", nr.id);
+					Context.check(file);
+
+					BufferedImage bimg = (BufferedImage) rand.icon.getImg().bimg();
+					ImageIO.write(bimg, "PNG", file);
+					nr.icon = MainBCU.builder.toVImg(bimg);
+				} catch (IOException e) {
+					CommonStatic.ctx.noticeErr(e, Context.ErrType.WARN, "failed to merge icon for " + rand);
+				}
+			if (rand.deployIcon != null)
+				try {
+					File file = ((Source.Workspace)dest.source).getRandIconFile("unitDeployIcons", nr.id);
+					Context.check(file);
+
+					BufferedImage bimg = (BufferedImage) rand.icon.getImg().bimg();
+					ImageIO.write(bimg, "PNG", file);
+					nr.icon = MainBCU.builder.toVImg(bimg);
+				} catch (IOException e) {
+					CommonStatic.ctx.noticeErr(e, Context.ErrType.WARN, "failed to merge deploy icon for " + rand);
+				}
+			dest.randUnits.add(nr);
+		}
+		EAnims.clear();
+		src.randUnits.raw = false;
+		src.souls.raw = true;
+		for (Soul s : src.souls) {
+			AnimCE sanim = null;
+			for (AnimCE ani : EAnims)
+				if (ani.equals(s.anim)) {
+					sanim = ani;
+					break;
+				}
+			if (sanim == null) {
+				Source.ResourceLocation rl = new Source.ResourceLocation(dest.getSID(), s.anim.toString(), Source.BasePath.SOUL);
+				Workspace.validate(rl);
+				sanim = new AnimCE(rl, s.anim);
+				((Workspace) dest.source).addAnimation(sanim);
+				EAnims.add(sanim);
+			}
+			dest.souls.add(new Soul(dest.getNextID(Soul.class), sanim));
+		}
+		src.souls.raw = false;
+		src.bgs.raw = true;
+		for (Background bg : src.bgs) {
+			Background nbg = bg.copy(dest.getNextID(Background.class));
+			if (bg.reference == null)
+				try {
+					File file = ((Source.Workspace)dest.source).getBGFile(nbg.id);
+					Context.check(file);
+
+					BufferedImage bimg = (BufferedImage) bg.img.getImg().bimg();
+					ImageIO.write(bimg, "PNG", file);
+					nbg.img = MainBCU.builder.toVImg(bimg);
+				} catch (IOException e) {
+					CommonStatic.ctx.noticeErr(e, Context.ErrType.WARN, "failed to merge image for " + bg);
+				}
+			else if (bg.reference.pack.equals(src.getSID()))
+				nbg.reference = new Identifier<>(dest.getSID(), Background.class, dest.bgs.size() - (dest.bgs.size() - src.bgs.size()) + bg.reference.id);
+			if (nbg.bgEffect != null && nbg.bgEffect.pack.equals(src.getSID()))
+				nbg.bgEffect = new Identifier<>(dest.getSID(), BackgroundEffect.class, dest.bgEffects.size() + bg.bgEffect.id);
+			dest.bgs.add(nbg);
+		}
+		EAnims.clear();
+		src.bgs.raw = false;
+		src.bgEffects.raw = true;
+		for (BackgroundEffect bge : src.bgEffects) {
+			if (bge instanceof CustomBGEffect) {
+				AnimCE lanim = null;
+				for (AnimCE ani : EAnims)
+					if (ani.equals(((CustomBGEffect)bge).anim)) {
+						lanim = ani;
+						break;
+					}
+				if (lanim == null) {
+					Source.ResourceLocation rl = new Source.ResourceLocation(dest.getSID(), ((CustomBGEffect) bge).anim.toString(), Source.BasePath.BGEffect);
+					Workspace.validate(rl);
+					lanim = new AnimCE(rl, ((CustomBGEffect) bge).anim);
+					((Workspace) dest.source).addAnimation(lanim);
+					EAnims.add(lanim);
+				}
+				CustomBGEffect nbge = new CustomBGEffect(dest.getNextID(BackgroundEffect.class), lanim);
+				nbge.name = bge.getName();
+				nbge.spacer = ((CustomBGEffect)bge).spacer;
+				nbge.fspacer = ((CustomBGEffect)bge).fspacer;
+				dest.bgEffects.add(nbge);
+			} else {
+				MixedBGEffect mbge = new MixedBGEffect(dest.getNextID(BackgroundEffect.class), ((MixedBGEffect)bge).effects);
+				for (int i = 0; i < mbge.effects.size(); i++) {
+					BackgroundEffect bgee = mbge.effects.get(i);
+					if (bgee.getID().pack.equals(src.getSID()) && dest.bgEffects.size() - (dest.bgEffects.size() - src.bgEffects.size()) + bgee.getID().id < dest.bgEffects.size())
+						mbge.effects.set(i, dest.bgEffects.get(dest.bgEffects.size() - (dest.bgEffects.size() - src.bgEffects.size()) + bgee.getID().id));
+				}
+				dest.bgEffects.add(mbge);
+			}
+		}
+		for (int i = dest.bgEffects.size() - src.bgEffects.size(); i < dest.bgEffects.size(); i++) //For effects that remained unchanged due to id issues
+			if (dest.bgEffects.get(i) instanceof MixedBGEffect) {
+				MixedBGEffect mbge = (MixedBGEffect)dest.bgEffects.get(i);
+				for (int j = 0; i < mbge.effects.size(); j++) {
+					BackgroundEffect bgee = mbge.effects.get(j);
+					if (bgee.getID().pack.equals(src.getSID()))
+						mbge.effects.set(j, dest.bgEffects.get(dest.bgEffects.size() - src.bgEffects.size() + bgee.getID().id));
+				}
+			}
+		src.bgEffects.raw = false;
+		src.groups.raw = true;
+		for (CharaGroup cg : src.groups) {
+			CharaGroup ncg = new CharaGroup(dest.getNextID(CharaGroup.class));
+			ncg.name = cg.name;
+			ncg.type = cg.type;
+			for (Form f : cg.fset)
+				if (f.getID().pack.equals(src.getSID()))
+					ncg.fset.add(dest.units.get(dest.units.size() - src.units.size() + f.getID().id).getForms()[f.fid]);
+				else
+					ncg.fset.add(f);
+			dest.groups.add(ncg);
+		}
+		src.groups.raw = false;
+		src.lvrs.raw = true;
+		for (LvRestrict lvrs : src.lvrs) {
+			LvRestrict nlv = new LvRestrict(dest.getNextID(LvRestrict.class), lvrs);
+			nlv.res.clear();
+			for (CharaGroup cg : lvrs.res.keySet())
+				if (cg.id.pack.equals(src.getSID()))
+					nlv.res.put(dest.groups.get(dest.groups.size() - src.groups.size() + cg.id.id), lvrs.res.get(cg));
+				else
+					nlv.res.put(cg, lvrs.res.get(cg));
+			dest.lvrs.add(nlv);
+		}
+		src.lvrs.raw = false;
+		for (Music mus : src.musics) {
+			File file = CommonStatic.ctx.getWorkspaceFile("./" + dest.getSID() + "/musics/" + mus.id.id + ".ogg");
+			try {
+				FileOutputStream w = new FileOutputStream(file);
+				Context.check(file);
+
+				w.write(mus.data.getBytes());
+				w.close();
+			} catch (Exception e) {
+				CommonStatic.ctx.noticeErr(e, ErrType.WARN, "failed to copy " + mus);
+			}
+		}
+		for (Combo c : src.combos) {
+			Combo nc = new Combo(dest.getNextID(Combo.class), c);
+			for (int i = 0; i < c.forms.length; i++)
+				if (c.forms[i].getID().pack.equals(src.getSID()))
+					nc.forms[i] = dest.units.get(dest.units.size() - src.units.size() + c.forms[i].getID().id).getForms()[c.forms[i].fid];
+				else
+					nc.forms[i] = c.forms[i];
+			dest.combos.add(nc);
+		}
+		src.castles.raw = true;
+		for (CastleImg cimg : src.castles) {
+			try {
+				Identifier<CastleImg> cid = dest.getNextID(CastleImg.class);
+				File file = ((Source.Workspace)dest.source).getCasFile(cid);
+				Context.check(file);
+
+				BufferedImage bimg = (BufferedImage) cimg.img.getImg().bimg();
+				ImageIO.write(bimg, "PNG", file);
+				dest.castles.add(new CastleImg(cid, MainBCU.builder.toVImg(bimg)));
+			} catch (IOException e) {
+				CommonStatic.ctx.noticeErr(e, Context.ErrType.WARN, "failed to merge castle img " + cimg);
+			}
+		}
+		src.castles.raw = false;
+		src.mc.maps.raw = true;
+		for (StageMap sm : src.mc.maps) {
+			StageMap nsm = new StageMap(dest.mc.getNextID());
+			nsm.names.overwrite(sm.names);
+			nsm.price = sm.price;
+			nsm.stars = sm.stars.clone();
+			for (Limit l : sm.lim) {
+				Limit nl = l.clone();
+				if (nl.group != null && nl.group.id.pack.equals(src.getSID()))
+					nl.group = dest.groups.get(dest.groups.size() - src.groups.size() + nl.group.id.id);
+				if (nl.lvr != null && nl.lvr.id.pack.equals(src.getSID()))
+					nl.lvr = dest.lvrs.get(dest.lvrs.size() - src.lvrs.size() + nl.group.id.id);
+			}
+			for (Stage s : sm.list) {
+				Stage ss = s.copy(nsm);
+				if (ss.bg != null && ss.bg.pack.equals(src.getSID()))
+					ss.bg = new Identifier<>(dest.getSID(), Background.class, dest.bgs.size() - src.bgs.size() + ss.bg.id);
+				if (ss.bg1 != null && ss.bg1.pack.equals(src.getSID()))
+					ss.bg1 = new Identifier<>(dest.getSID(), Background.class, dest.bgs.size() - src.bgs.size() + ss.bg1.id);
+				if (ss.castle != null && ss.castle.pack.equals(src.getSID()))
+					ss.castle = new Identifier<>(dest.getSID(), CastleImg.class, dest.castles.size() - src.castles.size() + ss.castle.id);
+				if (ss.mus0 != null && ss.mus0.pack.equals(src.getSID()))
+					ss.mus0 = new Identifier<>(dest.getSID(), Music.class, ss.mus0.id);
+				if (ss.mus1 != null && ss.mus1.pack.equals(src.getSID()))
+					ss.mus1 = new Identifier<>(dest.getSID(), Music.class, ss.mus1.id);
+
+				if (ss.lim != null) {
+					if (ss.lim.group != null && ss.lim.group.id.pack.equals(src.getSID()))
+						ss.lim.group = dest.groups.get(dest.groups.size() - src.groups.size() + ss.lim.group.id.id);
+					if (ss.lim.lvr != null && ss.lim.lvr.id.pack.equals(src.getSID()))
+						ss.lim.lvr = dest.lvrs.get(dest.lvrs.size() - src.lvrs.size() + ss.lim.group.id.id);
+				}
+
+				ss.data.smap.clear();
+				for (Identifier<AbEnemy> ene : s.data.smap.keySet())
+					if (ene.pack.equals(src.getSID()))
+						if (EneRand.class.isAssignableFrom(ene.cls))
+							ss.data.smap.put(dest.randEnemies.get(dest.randEnemies.size() - src.randEnemies.size() + ene.id).getID(), s.data.smap.get(ene));
+						else
+							ss.data.smap.put(dest.enemies.get(dest.enemies.size() - src.enemies.size() + ene.id).getID(), s.data.smap.get(ene));
+					else
+						ss.data.smap.put(ene, s.data.smap.get(ene));
+				for (SCDef.Line l : ss.data.datas)
+					if (l.enemy != null && l.enemy.pack.equals(src.getSID()))
+						l.enemy = dest.enemies.get(dest.enemies.size() - src.enemies.size() + l.enemy.id).getID();
+				if (s.info != null) {
+					CustomStageInfo csi = new CustomStageInfo(ss), dcsi = (CustomStageInfo)s.info;
+					csi.totalChance = dcsi.totalChance;
+					csi.chances.addAll(dcsi.chances);
+					csi.stages.addAll(dcsi.stages); //For later change
+					if (dcsi.ubase != null)
+						csi.ubase = dest.units.get(dest.units.size() - src.units.size() + dcsi.ubase.getID().id).forms[dcsi.ubase.fid];
+				}
+				nsm.add(ss);
+			}
+			dest.mc.maps.add(nsm);
+		}
+		for (CustomStageInfo csi : dest.mc.si)
+			for (int i = 0; i < csi.stages.size(); i++)
+				if (csi.stages.get(i).id.pack.startsWith(src.getSID())) {
+					int mid = CommonStatic.parseIntsN(csi.stages.get(i).id.pack)[1];
+					csi.stages.set(i, dest.mc.maps.get(mid).list.get(csi.stages.get(i).id.id));
+				}
+		src.mc.maps.raw = false;
+
+		dest.desc.dependency.addAll(src.desc.dependency);
+		dest.desc.dependency.remove(src.getSID());
+		dest.desc.dependency.remove(dest.getSID());
+		//TODO - Musics(?)
 	}
 }

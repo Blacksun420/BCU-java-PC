@@ -20,6 +20,7 @@ import page.info.filter.UnitFindPage;
 import page.pack.PackEditPage;
 import page.pack.ResourcePage;
 import page.view.*;
+import plugin.ui.main.UIPlugin;
 import plugin.ui.main.page.UIPage;
 
 import javax.swing.*;
@@ -138,7 +139,9 @@ public class MainPage extends Page {
 		caic.setLnr(() -> new ImgCutEditPage(this));
 		camm.setLnr(() -> new MaModelEditPage(this));
 		cama.setLnr(() -> new MaAnimEditPage(this));
-		save.setLnr((e) -> BCUWriter.writeData(false));
+		save.setLnr((e) -> {
+			UIPlugin.P.writeData();
+		});
 		vmsc.setLnr(() -> new MusicPage(this));
 		rply.setLnr(() -> new RecdManagePage(this));
 		allf.setLnr(() -> new ResourcePage(this));

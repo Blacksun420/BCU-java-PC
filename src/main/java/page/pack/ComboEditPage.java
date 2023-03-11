@@ -220,7 +220,7 @@ public class ComboEditPage extends Page {
                 return;
             changing = true;
             Identifier<Combo> id = pac.getNextID(Combo.class);
-            Combo combo = new Combo(id, "new combo", 0, 0, 1, frm);
+            Combo combo = new Combo(id, "new combo", frm);
             pac.combos.add(combo);
             jlc.setList(pac.combos.getRawList());
             jlc.getSelectionModel().setSelectionInterval(0, pac.combos.indexOf(combo));

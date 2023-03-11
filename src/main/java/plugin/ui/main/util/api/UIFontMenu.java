@@ -4,6 +4,8 @@ import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.ui.FlatUIUtils;
 import plugin.ui.common.util.Analyser;
 import plugin.ui.main.UIPlugin;
+import plugin.ui.main.context.BasicConfig;
+import plugin.ui.main.context.UIContext;
 
 import javax.swing.*;
 import javax.swing.text.StyleContext;
@@ -16,6 +18,7 @@ import java.util.Arrays;
 public class UIFontMenu extends JMenu {
     private static UIFontMenu fontMenu;
     private static final UIPlugin P = UIPlugin.P;
+    private static final BasicConfig cfg = UIContext.getBasicConfig();
 
 
     private UIFontMenu() {
@@ -64,6 +67,18 @@ public class UIFontMenu extends JMenu {
         customFontMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         // customFontMenuItem.addActionListener(System.out::println);
         add(customFontMenuItem);
+
+        if (cfg.getString("fontFamily") == null)
+            cfg.set("fontFamily", UIManager.getFont("Label.font").getFamily());
+        if (cfg.getInteger("fontSize") == null)
+            cfg.set("fontSize", 16);
+        UIPlugin.execAnimated(() -> {
+            Font newFont = StyleContext.getDefaultStyleContext().getFont(cfg.getString("fontFamily"), Font.PLAIN, cfg.getInteger("fontSize"));
+            // StyleContext.getFont() may return a UIResource, which would cause loosing user scale factor on Windows
+            newFont = FlatUIUtils.nonUIResource(newFont);
+            P.putDefaultFont(newFont);
+            update();
+        });
     }
 
     private void restoreFont() {
@@ -108,9 +123,10 @@ public class UIFontMenu extends JMenu {
         Arrays.sort(availableFontFamilyNames);
 
         // get current font
-        Font currentFont = UIManager.getFont("Label.font");
+        Font currentFont = UIManager.getFont("defaultFont");
         String currentFamily = currentFont.getFamily();
-        String currentSize = Integer.toString(currentFont.getSize());
+
+        String currentSize = Integer.toString(cfg.getInteger("fontSize"));
 
         // add font families
         addSeparator();
@@ -164,6 +180,7 @@ public class UIFontMenu extends JMenu {
 
     private void fontFamilyChanged(ActionEvent e) {
         String fontFamily = e.getActionCommand();
+        cfg.set("fontFamily", fontFamily);
 
         UIPlugin.execAnimated(() -> {
             Font font = UIManager.getFont("defaultFont");
@@ -176,10 +193,11 @@ public class UIFontMenu extends JMenu {
     }
 
     private void fontSizeChanged(ActionEvent e) {
-        String fontSizeStr = e.getActionCommand();
+        int fontSize = Integer.parseInt(e.getActionCommand());
+        cfg.set("fontSize", fontSize);
 
         Font font = UIManager.getFont("defaultFont");
-        Font newFont = font.deriveFont((float) Integer.parseInt(fontSizeStr));
+        Font newFont = font.deriveFont((float) fontSize);
         UIManager.put("defaultFont", newFont);
 
         update();

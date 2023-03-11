@@ -1,6 +1,7 @@
 package page;
 
 import common.CommonStatic;
+import plugin.ui.main.context.UIContext;
 
 import javax.swing.*;
 
@@ -45,6 +46,7 @@ public class SavePage extends Page {
     private void finishJob() {
         try {
             CommonStatic.def.save(saveOpts[0], saveOpts[1], false);
+            UIContext.writeData();
 
             setVisible(false);
 
