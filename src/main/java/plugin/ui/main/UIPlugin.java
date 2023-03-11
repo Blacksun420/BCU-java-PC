@@ -21,7 +21,7 @@ import static javax.swing.SwingUtilities.updateComponentTreeUI;
 
 public class UIPlugin extends UIHandler implements Plugin {
 
-    public static final String PLUGIN_VERSION = "v0.6.0.0";
+    public static final String PLUGIN_VERSION = "v0.6.0.1";
     public static UIPlugin P;
 
     public static UIPlugin getInstance() {
