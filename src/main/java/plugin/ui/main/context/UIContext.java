@@ -1,7 +1,6 @@
 package plugin.ui.main.context;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import common.CommonStatic;
 import common.io.WebFileIO;
 import common.io.assets.UpdateCheck;
@@ -46,20 +45,16 @@ public abstract class UIContext {
 
     private static <T> T getOrDefault(String path, Class<T> clazz) {
         T target = null;
-        boolean write = true;
         File file = new File(path);
-        if (file.exists()) {
+        if (file.exists())
             // from locale
             try {
                 target = JsonUtils.fromFile(file, clazz);
             } catch (Exception e) {
                 UIPlugin.popError("Invalid file: " + new File(path).getAbsolutePath() + "\n<html><h2>Advice: delete it.\n<html><h3>Reason:" + e);
                 e.printStackTrace();
-                write = false;
             }
-        }
-
-        if (target == null) {
+        if (target == null)
             // from classpath
             try {
                 target = JsonUtils.fromClasspath(path, clazz);
@@ -68,7 +63,6 @@ public abstract class UIContext {
             } catch (Exception e) {
                 throw new UIException("Failed to init " + path + ": " + e);
             }
-        }
 
         return target;
     }

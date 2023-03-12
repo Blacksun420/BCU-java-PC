@@ -91,7 +91,7 @@ public class EnemyInfoTable extends Page {
 			atks[i][2].setText(MainLocale.INFO, "preaa");
 			atks[i][3].setText(MainBCU.convertTime(atkData[i].getPre()));
 			atks[i][4].setText(MainLocale.INFO, "dire");
-			atks[i][5].setText("" + atkData[i].getDire());
+			atks[i][5].setText(atkData[i].getDire() == 1 ? get(MainLocale.PAGE, "unit") : atkData[i].getDire() == -1 ? get(MainLocale.PAGE, "enemy") : "N/A");
 
 			SortedPackSet<Trait> atrs = e.de.getAtkModel(dispAtk, i).getATKTraits();
 			if (atrs.isEmpty())
@@ -115,7 +115,7 @@ public class EnemyInfoTable extends Page {
 			atks[ind][2].setText(MainLocale.INFO, "preaa");
 			atks[ind][3].setText(MainBCU.convertTime(atkList.get(i).pre));
 			atks[ind][4].setText(MainLocale.INFO, "dire");
-			atks[ind][5].setText("" + atkList.get(i).dire);
+			atks[ind][5].setText(atkList.get(i).dire == 1 ? get(MainLocale.INFO, "unit") : atkList.get(i).dire == -1 ? get(MainLocale.INFO, "enemy") : "N/A");
 		}
 		reset();
 	}

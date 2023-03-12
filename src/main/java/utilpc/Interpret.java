@@ -524,7 +524,7 @@ public class Interpret extends Data {
 
 	public static boolean isER(Enemy e, int t) {
 		if (t == 0)
-			return e.inDic;
+			return e.getExplanation().replace("\n","").length() > 0; //e.inDic;
 		else if (t == 1)
 			return e.de.getStar() == 1;
 		else if (t == 3)

@@ -16,13 +16,30 @@ import page.Page;
 import utilpc.UtilPC;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Vector;
 
 import static utilpc.Interpret.*;
 
 public class UnitFilterBox extends EntityFilterBox {
+
+	private static class PackBox extends JComboBox<PackData> {
+		public PackBox() {
+			setRenderer(new DefaultListCellRenderer() {
+				private static final long serialVersionUID = 1L;
+				@Override
+				public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean s, boolean f) {
+					JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
+					if (o == null)
+						jl.setText(Page.get(0, "anypac"));
+					return jl;
+				}
+			});
+		}
+	}
 
 	private static final long serialVersionUID = 1L;
 
@@ -34,7 +51,7 @@ public class UnitFilterBox extends EntityFilterBox {
 	private final JScrollPane jr = new JScrollPane(rare);
 	private final JScrollPane jab = new JScrollPane(abis);
 	private final JTG limbtn = new JTG(0, "usable");
-	protected final JTG inccus = new JTG(MainLocale.PAGE, "inccus"); //This button sucks, feel free to remove
+	protected final PackBox inccus = new PackBox();
 	private final boolean rand;
 
 	public UnitFilterBox(Page p, boolean rand, Limit limit, int price) {
@@ -77,7 +94,7 @@ public class UnitFilterBox extends EntityFilterBox {
 		List<AbForm> ans = new ArrayList<>();
 		minDiff = 5;
 		for(PackData p : UserProfile.getAllPacks()) {
-			if(!inccus.isSelected() && !(p instanceof PackData.DefPack) || !validatePack(p))
+			if(inccus.getSelectedItem() != null && !(p.equals(inccus.getSelectedItem())) || !validatePack(p))
 				continue;
 			for (Unit u : p.units.getList())
 				if (validateUnit(u))
@@ -125,8 +142,23 @@ public class UnitFilterBox extends EntityFilterBox {
 		set(abis);
 		add(jr);
 		add(jab);
-		set(inccus);
-		inccus.setSelected(true);
+		add(inccus);
+		Vector<PackData> pks = new Vector<>(UserProfile.getAllPacks().size() + 1);
+		pks.add(null);
+		if (pack == null) {
+			for (PackData p : UserProfile.getAllPacks())
+				if (p.units.size() > 0 || p.randUnits.size() > 0)
+					pks.add(p);
+		} else {
+			pks.add(UserProfile.getBCData());
+			for (String s : pack.desc.dependency) {
+				PackData p = UserProfile.getUserPack(s);
+				if (p.units.size() > 0 || p.randUnits.size() > 0)
+					pks.add(UserProfile.getUserPack(s));
+			}
+		}
+		inccus.setModel(new DefaultComboBoxModel<>(pks));
+		inccus.addActionListener(l -> confirm());
 
 		if (lim != null) {
 			add(limbtn);
