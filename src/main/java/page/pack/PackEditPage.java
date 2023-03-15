@@ -368,12 +368,10 @@ public class PackEditPage extends Page {
 		});
 
 		cmbo.setLnr(x -> {
-			pac.useCombos = cmbo.isSelected();
-			for (BasisSet b : BasisSet.list()) {
-				for (int i = 0; i < b.lb.size(); i++) {
-					b.lb.get(i).lu.renew();
-				}
-			}
+			CommonStatic.getConfig().packCombos.replace(pac.desc.id, cmbo.isSelected());
+			for (BasisSet b : BasisSet.list())
+				for (int i = 0; i < b.lb.size(); i++)
+					b.lb.get(i).lu.renewCombo();
 		});
 
 	}
@@ -834,7 +832,7 @@ public class PackEditPage extends Page {
 		extr.setEnabled(canExport);
 
 		cmbo.setEnabled(pac != null && pac.combos.size() > 0);
-		cmbo.setSelected(cmbo.isEnabled() && pac.useCombos);
+		cmbo.setSelected(cmbo.isEnabled() && CommonStatic.getConfig().packCombos.get(pac.getSID()));
 		if (b)
 			jtfp.setText(pack.desc.names.toString());
 		if (pac == null) {
@@ -1357,11 +1355,8 @@ public class PackEditPage extends Page {
 					if (l.enemy != null && l.enemy.pack.equals(src.getSID()))
 						l.enemy = dest.enemies.get(dest.enemies.size() - src.enemies.size() + l.enemy.id).getID();
 				if (s.info != null) {
-					CustomStageInfo csi = new CustomStageInfo(ss), dcsi = (CustomStageInfo)s.info;
-					csi.totalChance = dcsi.totalChance;
-					csi.chances.addAll(dcsi.chances);
-					csi.stages.addAll(dcsi.stages); //For later change
-					if (dcsi.ubase != null)
+					CustomStageInfo csi = (CustomStageInfo)ss.info, dcsi = (CustomStageInfo)s.info;
+					if (dcsi.ubase != null && dcsi.ubase.getID().pack.equals(src.getSID()))
 						csi.ubase = dest.units.get(dest.units.size() - src.units.size() + dcsi.ubase.getID().id).forms[dcsi.ubase.fid];
 				}
 				nsm.add(ss);

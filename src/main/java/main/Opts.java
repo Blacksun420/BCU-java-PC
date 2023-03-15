@@ -339,22 +339,6 @@ public class Opts {
 		//Gather EX stages
 		List<Stage> exStages = new ArrayList<>();
 
-		if (s.info instanceof DefStageInfo) {
-			DefStageInfo info = (DefStageInfo)s.info;
-			if (info.exConnection) {
-				StageMap sm = MapColc.DefMapColc.getMap(info.exMapID + 4000);
-
-				if (sm != null) {
-					for (int i = info.exStageIDMin; i <= info.exStageIDMax; i++) {
-						Stage st = sm.list.get(i);
-
-						if (st != null)
-							exStages.add(st);
-					}
-				}
-			}
-		}
-
 		if(s.info.getExStages() != null) {
 			for(Stage st : s.info.getExStages()) {
 				if(st != null)
@@ -412,7 +396,6 @@ public class Opts {
 					} else
 						probs += chances[i];
 				}
-
 			}
 		});
 

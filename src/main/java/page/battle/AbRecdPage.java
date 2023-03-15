@@ -3,6 +3,7 @@ package page.battle;
 import common.CommonStatic;
 import common.battle.BasisSet;
 import common.pack.Identifier;
+import common.pack.UserProfile;
 import common.util.stage.MapColc;
 import common.util.stage.Replay;
 import common.util.stage.Stage;
@@ -75,13 +76,13 @@ public abstract class AbRecdPage extends Page {
 				if (r.st != null) {
 					if (ns != r.st.get() && Opts.conf("are you sure to change stage?")) {
 						r.st = ns.id;
-						r.marked = true;
+						r.mark();
 					}
 				} else {
 					r.st = ns.id;
-					r.marked = true;
+					r.mark();
 				}
-				ista.setText(r.st.toString());
+				ista.setText(UserProfile.getPack(r.st.pack.substring(0, r.st.pack.indexOf('/'))) != null ? r.st.get().toString() : "unavailable (" + r.st.toString() + ")");
 				imap.setText(r.st.getCont().toString());
 			}
 		}
@@ -89,7 +90,7 @@ public abstract class AbRecdPage extends Page {
 			Replay r = getSelection();
 			if (r != null && Opts.conf("are you sure to change lineup?")) {
 				r.lu = BasisSet.current().sele.copy();
-				r.marked = true;
+				r.mark();
 			}
 		}
 		bp = null;
