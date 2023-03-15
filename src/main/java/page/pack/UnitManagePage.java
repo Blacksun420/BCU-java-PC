@@ -3,7 +3,6 @@ package page.pack;
 
 import common.CommonStatic;
 import common.battle.BasisLU;
-import common.battle.BasisSet;
 import common.battle.data.AtkDataModel;
 import common.battle.data.CustomUnit;
 import common.pack.PackData.UserPack;
@@ -230,18 +229,17 @@ public class UnitManagePage extends Page {
 						break;
 					}
 				}
-			for (BasisSet bs : BasisSet.list())
-				for (BasisLU bl : bs.lb)
-					for (int i = 0; i < 10; i++) {
-						if (bl.lu.fs[i / 5][i % 5] == null)
-							break;
-						if (bl.lu.fs[i / 5][i % 5].unit() == uni) {
-							bl.lu.fs[i / 5][i % 5] = null;
-							bl.lu.arrange();
-							bl.lu.renew();
-							break;
-						}
+			for (BasisLU bl : BasisLU.allLus())
+				for (int i = 0; i < 10; i++) {
+					if (bl.lu.fs[i / 5][i % 5] == null)
+						break;
+					if (bl.lu.fs[i / 5][i % 5].unit() == uni) {
+						bl.lu.fs[i / 5][i % 5] = null;
+						bl.lu.arrange();
+						bl.lu.renew();
+						break;
 					}
+				}
 			for (Form f : uni.forms)
 				for (CharaGroup g : pac.groups)
 					g.fset.remove(f);

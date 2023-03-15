@@ -1,7 +1,7 @@
 package page.pack;
 
 import common.CommonStatic;
-import common.battle.BasisSet;
+import common.battle.BasisLU;
 import common.battle.data.AtkDataModel;
 import common.battle.data.CustomEnemy;
 import common.battle.data.CustomUnit;
@@ -369,9 +369,8 @@ public class PackEditPage extends Page {
 
 		cmbo.setLnr(x -> {
 			CommonStatic.getConfig().packCombos.replace(pac.desc.id, cmbo.isSelected());
-			for (BasisSet b : BasisSet.list())
-				for (int i = 0; i < b.lb.size(); i++)
-					b.lb.get(i).lu.renewCombo();
+			for (BasisLU b : BasisLU.allLus())
+				b.lu.renewCombo();
 		});
 
 	}

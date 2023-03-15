@@ -76,11 +76,11 @@ public abstract class AbRecdPage extends Page {
 				if (r.st != null) {
 					if (ns != r.st.get() && Opts.conf("are you sure to change stage?")) {
 						r.st = ns.id;
-						r.mark();
+						r.unsaved = true;
 					}
 				} else {
 					r.st = ns.id;
-					r.mark();
+					r.unsaved = true;
 				}
 				ista.setText(UserProfile.getPack(r.st.pack.substring(0, r.st.pack.indexOf('/'))) != null ? r.st.get().toString() : "unavailable (" + r.st.toString() + ")");
 				imap.setText(r.st.getCont().toString());
@@ -90,7 +90,7 @@ public abstract class AbRecdPage extends Page {
 			Replay r = getSelection();
 			if (r != null && Opts.conf("are you sure to change lineup?")) {
 				r.lu = BasisSet.current().sele.copy();
-				r.mark();
+				r.unsaved = true;
 			}
 		}
 		bp = null;
@@ -178,7 +178,7 @@ public abstract class AbRecdPage extends Page {
 			if (r == null)
 				return;
 			r.seed = CommonStatic.parseLongN(seed.getText());
-			r.marked = true;
+			r.unsaved = true;
 			setRecd(r);
 		});
 
