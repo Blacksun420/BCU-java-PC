@@ -89,6 +89,9 @@ public class CGLREditPage extends Page {
 		if (ufp != null && ufp.getList() != null) {
 			changing = true;
 			List<AbForm> list = new ArrayList<>(ufp.getList());
+			if (cg != null)
+				for (Form f : cg.fset)
+					list.remove(f);
 			jlua.setListData(list.toArray(new AbForm[0]));
 			jlua.clearSelection();
 			if (list.size() > 0)
