@@ -1,5 +1,6 @@
 package page.pack;
 
+import common.CommonStatic;
 import common.battle.BasisSet;
 import common.pack.Identifier;
 import common.pack.PackData;
@@ -222,6 +223,9 @@ public class ComboEditPage extends Page {
             Identifier<Combo> id = pac.getNextID(Combo.class);
             Combo combo = new Combo(id, "new combo", frm);
             pac.combos.add(combo);
+            if (!CommonStatic.getConfig().packCombos.containsKey(pac.getSID()))
+                CommonStatic.getConfig().packCombos.put(pac.getSID(), true);
+
             jlc.setList(pac.combos.getRawList());
             jlc.getSelectionModel().setSelectionInterval(0, pac.combos.indexOf(combo));
             updateC();
@@ -238,6 +242,9 @@ public class ComboEditPage extends Page {
                 sel--;
             jlc.setRowSelectionInterval(sel, sel);
             pac.combos.remove(combo);
+            if (pac.combos.size() == 0)
+                CommonStatic.getConfig().packCombos.remove(pac.getSID());
+
             jlc.setList(pac.combos.getRawList());
             updateC();
             changing = false;

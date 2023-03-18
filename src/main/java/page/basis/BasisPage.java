@@ -677,7 +677,6 @@ public class BasisPage extends LubCont {
 			List<Combo> combos = ((Unit)cunit).allCombo();
 			lc = lc.stream().filter(combos::contains).collect(Collectors.toList());
 		}
-		lc.removeIf(c -> CommonStatic.getConfig().packCombos.containsKey(c.id.pack) && !CommonStatic.getConfig().packCombos.get(c.id.pack));
 		jlc.setList(lc);
 		jlc.getSelectionModel().setSelectionInterval(0, 0);
 		outside = false;

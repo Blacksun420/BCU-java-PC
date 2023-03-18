@@ -579,7 +579,7 @@ public class PackEditPage extends Page {
 				List<String> list = pac.foreignList(rel.getSID());
 				for (String str : list)
 					sb.append(str).append("\n");
-				Opts.pop(sb.toString(), "list of dependency");
+				Opts.pop(sb.toString(), "Contents from " + rel + " used in " + pac);
 			} else {
 				pac.desc.dependency.remove(rel.getSID());
 				updateJlr();
