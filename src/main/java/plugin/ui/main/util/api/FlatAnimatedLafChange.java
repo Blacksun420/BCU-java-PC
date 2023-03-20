@@ -97,6 +97,8 @@ public class FlatAnimatedLafChange
 			// create snapshot layer, which is added to layered pane and paints
 			// snapshot with animated alpha
 			JComponent snapshotLayer = new JComponent() {
+				private static final long serialVersionUID = 1L;
+
 				@Override
 				public void paint( Graphics g ) {
 					if( inShowSnapshot || snapshot.contentsLost() )

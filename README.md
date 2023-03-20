@@ -48,6 +48,11 @@
 - Redo undone changes
 - Overhaul Advanced Anim Edit page, adding an option to polish, trim, and add/substract keyframes to animations
 - Add X/Y values on Position/Pivot/Scale columns in mamodel editor so they can be edited together
+- Add Amount Spawned to Total Damage Table, Time Alive to Entity Statistics Table, and Total Enemy Statistics table (Also improves small screen battle page)
+- Allow the user to register enemies and units as favorites and filter them as such
+- Replace allow custom button with specific pack filter, doing what it does and more
+- (Unstable) Pack-Merging feature
+- Redo, Hotkeys for Undo/Redo (Ctrl+z/Ctrl+y)
 ### Bugs Fixed here that remain unfixed in the original repo
 - Cursed/Sealed units become unaffected by trait-targetting enemies
 - Procs from older packs aren't distributed properly on attacks without common proc
@@ -62,7 +67,10 @@
 - - Entity data tables don't get updated to reflect the data of the frame the replay was set to
 - - Enemy spawn table doesn't re-add enemies if going back to a frame occurring before they spawned
 - - Total Damage Table bricks itself (also happens when continuing battle from a replay)
-
+- Config saves even when it is chosen not to save
+- The value of "Use Pack's Catcombos" is not stored
+- Armor Break damage isn't properly calculated when adding to entity's damage dealt statistic
+- Non-Latin Characters didn't save as intended on replays
 ## What does the original BCU repo branch has that this fork doesn't?
 - Annoying pop-up when right-clicking on buttons
 - Button Filter

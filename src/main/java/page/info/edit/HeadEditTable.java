@@ -168,7 +168,7 @@ class HeadEditTable extends Page {
 		name.setText(st.toString());
 		if (st.trail) {
 			hea.setText(get(MainLocale.INFO, "time"));
-			jhea.setText(st.timeLimit + " min");
+			jhea.setText(st.timeLimit + " secs");
 		} else {
 			hea.setText(get(MainLocale.INFO, "ht00"));
 			jhea.setText("" + st.health);
@@ -249,9 +249,9 @@ class HeadEditTable extends Page {
 		dojo.addActionListener(arg0 -> {
 			sta.trail = dojo.isSelected();
 			if (sta.trail) {
-				sta.timeLimit = 1;
+				sta.timeLimit = 60;
 				hea.setText(get(MainLocale.INFO, "time"));
-				jhea.setText(sta.timeLimit + " min");
+				jhea.setText(sta.timeLimit + " secs");
 			} else {
 				sta.timeLimit = 0;
 				hea.setText(get(MainLocale.INFO, "ht00"));

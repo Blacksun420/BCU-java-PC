@@ -27,6 +27,8 @@ import static utilpc.Interpret.*;
 public class UnitFilterBox extends EntityFilterBox {
 
 	private static class PackBox extends JComboBox<PackData> {
+		private static final long serialVersionUID = 1L;
+
 		public PackBox() {
 			setRenderer(new DefaultListCellRenderer() {
 				private static final long serialVersionUID = 1L;
@@ -134,8 +136,8 @@ public class UnitFilterBox extends EntityFilterBox {
 
 		Collections.addAll(va, SABIS);
 		ProcLang proclang = ProcLang.get();
-		for (int i = 0; i < UPROCIND.length; i++)
-			va.add(proclang.get(UPROCIND[i]).abbr_name);
+		for (int j : UPROCIND)
+			va.add(proclang.get(j).abbr_name);
 		abis.setListData(va);
 		abis.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		set(rare);
@@ -167,11 +169,11 @@ public class UnitFilterBox extends EntityFilterBox {
 	}
 
 	protected boolean validateUnit(Unit u) {
-		return rare.getSelectedIndex() == -1 || rare.getSelectedIndex() == rare.getModel().getSize() - 1 || rare.isSelectedIndex(u.rarity);
+		return rare.getSelectedIndex() == -1 || rare.isSelectedIndex(u.rarity) || (rare.getSelectedIndices().length == 1 && rare.isSelectedIndex(rare.getModel().getSize() - 1));
 	}
 
 	protected boolean validateForm(Form f) {
-		if (rare.getSelectedIndex() == rare.getModel().getSize() - 1 && !CommonStatic.getFaves().units.contains(f))
+		if (rare.isSelectedIndex(rare.getModel().getSize() - 1) && !CommonStatic.getFaves().units.contains(f))
 			return false;
 
 		String fname = MultiLangCont.getStatic().FNAME.getCont(f);

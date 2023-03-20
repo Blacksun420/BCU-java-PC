@@ -4,6 +4,8 @@ import com.google.common.reflect.TypeToken;
 import plugin.ui.common.util.JsonUtils;
 
 public class PageConfig{
+    private static final long serialVersionUID = 1L;
+
     public Config<Class<?>> config;
     private static final PageConfig instance = new PageConfig();
 

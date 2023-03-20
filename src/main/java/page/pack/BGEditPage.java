@@ -24,7 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
 
-@SuppressWarnings({"ResultOfMethodCallIgnored", "ForLoopReplaceableByForEach"})
+@SuppressWarnings({"ResultOfMethodCallIgnored"})
 public class BGEditPage extends Page {
 
 	private static final long serialVersionUID = 1L;
@@ -204,9 +204,9 @@ public class BGEditPage extends Page {
 				bgr.overlay = null;
 				bgr.overlayAlpha = 0;
 
-				for(int i = 0; i < os.length; i++) {
-					os[i].setText(null);
-					os[i].setEnabled(false);
+				for (JTF of : os) {
+					of.setText(null);
+					of.setEnabled(false);
 				}
 			}
 		});

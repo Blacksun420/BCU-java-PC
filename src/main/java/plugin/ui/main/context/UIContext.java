@@ -3,7 +3,9 @@ package plugin.ui.main.context;
 import com.google.gson.JsonElement;
 import common.CommonStatic;
 import common.io.WebFileIO;
+import common.io.assets.AssetLoader;
 import common.io.assets.UpdateCheck;
+import main.MainBCU;
 import main.Opts;
 import page.LoadPage;
 import plugin.ui.common.config.StaticConfig;
@@ -168,13 +170,32 @@ public abstract class UIContext {
             // get update json
             UpdateJson uj = getUpdateJson();
             // inquiry
-            if (uj != null && uj.version.compareTo(UIPlugin.PLUGIN_VERSION) > 0 && uj.forceUpdate) {
+            if (uj != null && uj.getVer() > MainBCU.ver && uj.forkver > AssetLoader.FORK_VER) {
                 String popText = "New BCU file update found: " + uj.getArtifact() +
                         ", do you want to update jar file?\n" + uj.getDescription();
                 // result
                 if (Opts.conf(popText))
                     UIDownloader.downloadJar(getDownloader(uj), true);
             }
+        }
+
+        public static void askUpdate() {
+            // get update json
+            UpdateJson uj = getUpdateJson();
+            if (uj == null)
+                return;
+            // inquiry
+            if (uj.getVer() > MainBCU.ver) {
+                String popText = "New BCU Jar file update found: " + uj.getArtifact()
+                        + ", do you want to update?" + " Its' " + (uj.forkver > AssetLoader.FORK_VER ? "necessary.\n" : "unnecessary.\n")
+                        + uj.getDescription();
+                // result
+                if (Opts.conf(popText)) {
+                    UpdateCheck.Downloader d = getDownloader(uj);
+                    UIDownloader.downloadJar(d, false, "url: " + uj.getURL(), d.desc);
+                }
+            } else
+                Opts.pop("Your BCU is the latest version.\n" + uj.getDescription(), "RESULT");
         }
 
         private static UpdateJson getUpdateJson() {
@@ -188,50 +209,38 @@ public abstract class UIContext {
             return null;
         }
 
-        public static void askUpdate() {
-            // get update json
-            UpdateJson uj = getUpdateJson();
-            if (uj == null)
-                return;
-            // inquiry
-            if (uj.version.compareTo(UIPlugin.PLUGIN_VERSION) > 0) {
-                String popText = "New BCU Jar file update found: " + uj.getArtifact()
-                        + ", do you want to update?" + " Its' " + (uj.forceUpdate ? "necessary.\n" : "unnecessary.\n")
-                        + uj.getDescription();
-                // result
-                if (Opts.conf(popText)) {
-                    UpdateCheck.Downloader d = getDownloader(uj);
-                    UIDownloader.downloadJar(d, false, "url: " + uj.url, d.desc);
-                }
-            } else
-                Opts.pop("Your BCU is the latest version.\n" + uj.getDescription(), "RESULT");
-        }
-
         private static UpdateCheck.Downloader getDownloader(UpdateJson updateJson) {
             String filename = updateJson.getArtifact();
             File target = new File("./" + filename);
             return new UpdateCheck.Downloader(target,
                     new File("./temp.temp"),
                     "Downloading " + filename + "...",
-                    true, updateJson.url);
+                    true, updateJson.getURL());
         }
 
         public static class UpdateJson {
 
-            public String version;
-
-            public Boolean forceUpdate;
-
-            public String url;
-
+            public String ver;
+            public Byte forkver;
             public String info;
 
+            public int getVer() {
+                int[] digs = CommonStatic.parseIntsN(ver);
+                int tott = 0;
+                for (int i = 0; i < Math.min(4, digs.length); i++)
+                    tott += digs[i] * 100000 / Math.pow(100, i);
+                return tott;
+            }
+
             public String getArtifact() {
-                return "BCU-" + version.replace(".", "-").substring(1) + ".jar";
+                return "BCU-" + ver.replace(".", "-").substring(1) + ".jar";
+            }
+            public String getURL() {
+                return "https://github.com/Blacksun420/bcu-assets/raw/master/jar/" + getArtifact();
             }
 
             public String getDescription() {
-                return this.version + " info: \n" + this.info;
+                return this.ver + " info: \n" + this.info;
             }
 
             @Override

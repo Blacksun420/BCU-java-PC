@@ -958,7 +958,7 @@ public interface BattleBox {
 			P p = P.newP(box.getHeight() * 0.01, box.getHeight() * 0.01 + nameheight);
 			double ratio = box.getHeight() * 0.1 / aux.timer[0].getImg().getHeight();
 
-			double timeLeft = bf.sb.st.timeLimit * 60.0 - bf.sb.time / 30.0;
+			double timeLeft = bf.sb.st.timeLimit - bf.sb.time / 30.0;
 
 			int min = (int) timeLeft / 60;
 

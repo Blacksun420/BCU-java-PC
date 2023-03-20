@@ -3,7 +3,6 @@ package page;
 import common.pack.PackData;
 import common.pack.UserProfile;
 import common.util.stage.MapColc;
-import io.BCUWriter;
 import main.MainBCU;
 import main.Opts;
 import page.anim.DIYViewPage;

@@ -10,6 +10,8 @@ import javax.swing.*;
 
 public class UIPage extends Page {
 
+    private static final long serialVersionUID = 1L;
+
     private final static UIPlugin P = UIPlugin.getInstance();
 
     protected final JBTN back = new JBTN(0, "back");

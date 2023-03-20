@@ -286,7 +286,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			set(ucount, x, y, 1650, 50, 450, 50);
 			set(ustat, x, y, 2100, 50, 150, 50);
 			set(respawn, x, y, 50, 800, 600, 50);
-			set(jsl, x, y, 700, 800, 800, 50);
+			set(jsl, x, y, 650, 800, 950, 50);
 			ct.setRowHeight(size(x, y, 50));
 			et.setRowHeight(size(x, y, 50));
 			est.setRowHeight(size(x, y, 50));

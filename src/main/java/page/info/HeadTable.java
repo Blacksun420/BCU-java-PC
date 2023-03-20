@@ -129,7 +129,7 @@ public class HeadTable extends AbJTable {
 		bas2[5] = Page.get(MainLocale.PAGE, String.valueOf(!st.non_con));
 		if(st.timeLimit != 0) {
 			bas2[4] = Page.get(MainLocale.INFO, "time");
-			bas2[5] = st.timeLimit +" min";
+			bas2[5] = st.timeLimit +" secs";
 		}
 		bas[7] = st.mus1;
 		img[0] = infs[4];

@@ -67,11 +67,6 @@ public abstract class JsonMapAdaptHandler {
             return ADAPTER;
         }
 
-        public static DefaultMapAdapter getInstance(Class<?> clazz) {
-            ADAPTER.setClass(clazz);
-            return ADAPTER;
-        }
-
         @Override
         public void write(JsonWriter out, Map<String, Object> map) throws IOException {
             out.beginObject();

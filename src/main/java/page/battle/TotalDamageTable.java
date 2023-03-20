@@ -9,6 +9,7 @@ import page.support.SortTable;
 import page.support.UnitTCR;
 
 public class TotalDamageTable extends SortTable<AbForm> {
+    private static final long serialVersionUID = 1L;
     private static String[] title;
 
     static {

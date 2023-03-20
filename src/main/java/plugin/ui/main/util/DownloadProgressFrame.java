@@ -7,6 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class DownloadProgressFrame extends JFrame {
+
+    private static final long serialVersionUID = 1L;
+
     public JProgressBar progress;
     public BCULabel text_above;
     public BCULabel text_below;

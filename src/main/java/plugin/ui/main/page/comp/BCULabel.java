@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class BCULabel extends JLabel {
+    private static final long serialVersionUID = 1L;
 
     public BCULabel() {
         super();

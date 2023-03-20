@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UIMenuGroup extends JMenu {
+    private static final long serialVersionUID = 1L;
 
     public static final Map<String, UIMenuGroup> GROUP_MAP = new HashMap<>();
 

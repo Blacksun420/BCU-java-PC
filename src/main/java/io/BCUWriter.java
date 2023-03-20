@@ -43,8 +43,6 @@ public class BCUWriter extends DataIO {
 	private static final short MIN_LENGTH = 329;
 
 	public static void logClose(boolean save, boolean genBackup) {
-		writeOptions();
-		writeFaves();
 		if (save && MainBCU.loaded && MainBCU.trueRun)
 			writeData(genBackup);
 

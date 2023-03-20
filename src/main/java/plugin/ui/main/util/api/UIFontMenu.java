@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class UIFontMenu extends JMenu {
+
+    private static final long serialVersionUID = 1L;
+
     private static UIFontMenu fontMenu;
     private static final UIPlugin P = UIPlugin.P;
     private static final BasicConfig cfg = UIContext.getBasicConfig();

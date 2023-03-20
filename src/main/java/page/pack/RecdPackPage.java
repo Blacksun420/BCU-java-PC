@@ -3,7 +3,6 @@ package page.pack;
 import common.pack.PackData.UserPack;
 import common.util.stage.Replay;
 import main.MainBCU;
-import main.Opts;
 import page.JL;
 import page.JTF;
 import page.Page;

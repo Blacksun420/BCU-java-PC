@@ -79,7 +79,6 @@ public class ComboEditPage extends Page {
         return back;
     }
 
-    @SuppressWarnings("UnusedAssignment")
     @Override
     protected void renew() {
         if (ufp != null && ufp.getList() != null) {
@@ -93,10 +92,8 @@ public class ComboEditPage extends Page {
             if (list.size() > 0) {
                 changing = false;
                 jlu.setSelectedIndex(0);
-                changing = true;
             }
             ufp = null;
-            changing = false;
         } else if (pac == null) {
             jlu.setListData(new Unit[0]);
             jlc.clearSelection();
@@ -310,16 +307,13 @@ public class ComboEditPage extends Page {
         jlc.getColumnModel().getColumn(2).setPreferredWidth(size(x, y, 300));
     }
 
-    @SuppressWarnings("UnusedAssignment")
+
     private void setPack(PackData.UserPack pack) {
         pac = pack;
         boolean pre = changing;
-        if (jlp.getSelectedValue() != pack) {
-            changing = true;
-            jlp.setSelectedValue(pac, true);
-            changing = pre;
-        }
         changing = true;
+        if (jlp.getSelectedValue() != pack)
+            jlp.setSelectedValue(pac, true);
         changing = pre;
         renew();
         if (pac == null || !pac.units.contains(uni))
@@ -327,16 +321,12 @@ public class ComboEditPage extends Page {
         setUnit(uni);
     }
 
-    @SuppressWarnings("UnusedAssignment")
     private void setUnit(Unit unit) {
         uni = unit;
         boolean pre = changing;
-        if (jlu.getSelectedValue() != uni) {
-            changing = true;
-            jlu.setSelectedValue(uni, true);
-            changing = pre;
-        }
         changing = true;
+        if (jlu.getSelectedValue() != uni)
+            jlu.setSelectedValue(uni, true);
         if (unit == null)
             jlf.setListData(new Form[0]);
         else

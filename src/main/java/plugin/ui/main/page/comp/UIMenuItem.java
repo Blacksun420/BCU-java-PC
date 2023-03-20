@@ -6,6 +6,7 @@ import plugin.ui.main.UIPlugin;
 import javax.swing.*;
 
 public class UIMenuItem extends JCheckBoxMenuItem {
+    private static final long serialVersionUID = 1L;
     private final Theme theme;
 
     private UIMenuItem(Theme theme) {
