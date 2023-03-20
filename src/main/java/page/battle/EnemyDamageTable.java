@@ -8,6 +8,7 @@ import page.support.EnemyTCR;
 import page.support.SortTable;
 
 public class EnemyDamageTable extends SortTable<Enemy> {
+    private static final long serialVersionUID = 1L;
     private static String[] title;
 
     static {

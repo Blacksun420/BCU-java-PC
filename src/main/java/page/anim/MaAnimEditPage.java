@@ -135,8 +135,8 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 	protected void mouseDragged(MouseEvent e) {
 		if (p == null)
 			return;
-		ab.ori.x += p.x - e.getX();
-		ab.ori.y += p.y - e.getY();
+		AnimBox.ori.x += p.x - e.getX();
+		AnimBox.ori.y += p.y - e.getY();
 		p = e.getPoint();
 	}
 
@@ -283,8 +283,8 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 		back.addActionListener(arg0 -> changePanel(getFront()));
 
 		camres.setLnr(x -> {
-			ab.ori.x = 0;
-			ab.ori.y = 0;
+			AnimBox.ori.x = 0;
+			AnimBox.ori.y = 0;
 		});
 
 		zomres.setLnr(x -> ab.setSiz(0.5));

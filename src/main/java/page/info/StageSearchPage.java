@@ -6,7 +6,6 @@ import common.util.stage.SCDef.Line;
 import common.util.stage.Stage;
 import common.util.stage.StageMap;
 import common.util.unit.AbEnemy;
-import common.util.unit.Enemy;
 import page.*;
 import page.info.filter.EnemyFindPage;
 import page.support.AnimLCR;

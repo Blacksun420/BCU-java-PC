@@ -70,8 +70,7 @@ public class LogPage extends Page {
             files.addAll(Arrays.asList(fs));
             files.removeIf(f -> {
                 try {
-                    format.parse(f.getName());
-                    return !(new Scanner(f).hasNextLine());
+                    return f.length() == 0;
                 } catch (Exception e) {
                     return true;
                 }

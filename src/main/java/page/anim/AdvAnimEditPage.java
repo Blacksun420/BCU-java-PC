@@ -132,8 +132,8 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 	protected void mouseDragged(MouseEvent e) {
 		if (p == null)
 			return;
-		ab.ori.x += p.x - e.getX();
-		ab.ori.y += p.y - e.getY();
+		AnimBox.ori.x += p.x - e.getX();
+		AnimBox.ori.y += p.y - e.getY();
 		p = e.getPoint();
 	}
 
