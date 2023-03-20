@@ -947,10 +947,9 @@ public interface BattleBox {
 					g.drawImage(bimg, w - cw * (i + 1 + n) - ow, ih);
 			}
 			if (CommonStatic.getConfig().stageName && snam.img != null) {
-				int m = (int) (bf.endFrames * box.getHeight() * 0.01);
-						g.drawImage(snam.img, box.getHeight() * 0.005, box.getHeight() * 0.01 - m, snam.img.getWidth() * 1.25, snam.img.getHeight() * 1.125);
+				g.drawImage(snam.img, box.getHeight() * 0.005, box.getHeight() * 0.01, snam.img.getWidth() * 1.25, snam.img.getHeight() * 1.125);
 				if(bf.sb.st.timeLimit != 0)
-					drawTime(g, snam.img.getHeight() * 0.9 - m);
+					drawTime(g, snam.img.getHeight() * 0.9);
 			} else if(bf.sb.st.timeLimit != 0)
 				drawTime(g, 0 - (bf.endFrames * box.getHeight() * 0.01));
 		}
@@ -1368,6 +1367,7 @@ public interface BattleBox {
 
 	default void drag(Point p) {
 		getPainter().drag(p);
+		paint();
 	}
 
 	int getHeight();
@@ -1390,6 +1390,7 @@ public interface BattleBox {
 
 	default void wheeled(Point p, int ind) {
 		getPainter().wheeled(p, ind);
+		paint();
 	}
 
 	void releaseData();

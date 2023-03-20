@@ -36,6 +36,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 	public static void redefine() {
 		ComingTable.redefine();
 		TotalDamageTable.redefine();
+		EnemyDamageTable.redefine();
 	}
 
 	private final JBTN back = new JBTN(MainLocale.PAGE, "back");
@@ -49,12 +50,14 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 	private final EntityTable et = new EntityTable(1, false);
 	private final EntityTable est = new EntityTable(1, true);
 	private final TotalDamageTable utd;
+	private final EnemyDamageTable etd;
 	private final JScrollPane eup = new JScrollPane(ut);
 	private final JScrollPane eusp = new JScrollPane(ust);
 	private final JScrollPane eep = new JScrollPane(et);
 	private final JScrollPane eesp = new JScrollPane(est);
 	private final JScrollPane ctp = new JScrollPane(ct);
 	private final JScrollPane utdsp;
+	private final JScrollPane etdsp;
 	private final JTG ustat = new JTG(MainLocale.INFO, "stat");
 	private final JTG estat = new JTG(MainLocale.INFO, "stat");
 	private final JLabel ebase = new JLabel();
@@ -96,6 +99,8 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		ct.setData(basis.sb.st);
 		utd = new TotalDamageTable(basis);
 		utdsp = new JScrollPane(utd);
+		etd = new EnemyDamageTable(basis);
+		etdsp = new JScrollPane(etd);
 
 		if (recd.rl != null)
 			jsl.setMaximum(((SBRply) basis).size());
@@ -113,6 +118,8 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		ct.setData(basis.sb.st);
 		utd = new TotalDamageTable(basis);
 		utdsp = new JScrollPane(utd);
+		etd = new EnemyDamageTable(basis);
+		etdsp = new JScrollPane(etd);
 		jtb.setSelected(DEF_LARGE);
 
 		ini();
@@ -135,6 +142,8 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		jtb.setSelected(DEF_LARGE);
 		utd = new TotalDamageTable(basis);
 		utdsp = new JScrollPane(utd);
+		etd = new EnemyDamageTable(basis);
+		etdsp = new JScrollPane(etd);
 
 		ini();
 		rply.setText(0, "rply");
@@ -161,10 +170,11 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 	protected synchronized void keyTyped(KeyEvent e) {
 		if (spe > -5 && e.getKeyChar() == ',') {
 			spe--;
+			bb.paint();
 			bb.reset();
-		}
-		if (spe < 5 && e.getKeyChar() == '.') {
+		} else if (spe < 5 && e.getKeyChar() == '.') {
 			spe++;
+			bb.paint();
 			bb.reset();
 		}
 	}
@@ -173,6 +183,8 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 	protected void mouseClicked(MouseEvent e) {
 		if (e.getSource() == bb)
 			bb.click(e.getPoint(), e.getButton());
+		else if (!jtb.isSelected())
+			updateTables();
 	}
 
 	@Override
@@ -245,6 +257,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			set(eup, x, y, 50, 400, 0, 0);
 			set(eusp, x, y, 50, 400, 0, 0);
 			set(utdsp, x, y, 1650, 850, 0, 0);
+			set(etdsp, x, y, 50, 850, 0, 0);
 			set(ecount, x, y, 50, 50, 0, 0);
 			set(estat, x, y, 650, 50, 0, 0);
 			set(ucount, x, y, 50, 350, 0, 0);
@@ -252,34 +265,36 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			set(respawn, x, y, 0, 0, 0, 0);
 			set(jsl, x, y, 0, 0, 0, 0);
 		} else {
-			set(ctp, x, y, 50, 850, 1450, 400);
+			set(ctp, x, y, 675, 850, 950, 400);
 			set(eep, x, y, 50, 100, 600, 700);
 			set(eesp, x, y, 50, 100, 600, 700);
-			set((Canvas) bb, x, y, 700, 300, 800, 500);
-			set(row, x, y , 1300, 200, 200, 50);
-			set(paus, x, y, 700, 200, 200, 50);
-			set(rply, x, y, 900, 200, 200, 50);
-			set(stream, x, y, 900, 200, 400, 50);
-			set(next, x, y, 1100, 200, 200, 50);
+			set((Canvas) bb, x, y, 675, 200, 950, 600);
+			set(row, x, y , 1425, 100, 200, 50);
+			set(paus, x, y, 675, 100, 200, 50);
+			set(rply, x, y, 900, 100, 200, 50);
+			set(stream, x, y, 900, 100, 400, 50);
+			set(next, x, y, 1200, 100, 200, 50);
 			set(eup, x, y, 1650, 100, 600, 700);
 			set(eusp, x, y, 1650, 100, 600, 700);
 			set(utdsp, x, y, 1650, 850, 600, 400);
-			set(ebase, x, y, 700, 250, 400, 50);
-			set(timer, x, y, 1100, 250, 200, 50);
-			set(ubase, x, y, 1300, 250, 200, 50);
+			set(etdsp, x, y, 50, 850, 600, 400);
+			set(ebase, x, y, 675, 150, 400, 50);
+			set(timer, x, y, 1100, 150, 200, 50);
+			set(ubase, x, y, 1300, 150, 200, 50);
 			set(ecount, x, y, 50, 50, 450, 50);
 			set(estat, x, y, 500, 50, 150, 50);
 			set(ucount, x, y, 1650, 50, 450, 50);
 			set(ustat, x, y, 2100, 50, 150, 50);
 			set(respawn, x, y, 50, 800, 600, 50);
 			set(jsl, x, y, 700, 800, 800, 50);
+			ct.setRowHeight(size(x, y, 50));
+			et.setRowHeight(size(x, y, 50));
+			est.setRowHeight(size(x, y, 50));
+			ut.setRowHeight(size(x, y, 50));
+			ust.setRowHeight(size(x, y, 50));
+			utd.setRowHeight(size(x, y, 50));
+			etd.setRowHeight(size(x, y, 50));
 		}
-		ct.setRowHeight(size(x, y, 50));
-		et.setRowHeight(size(x, y, 50));
-		est.setRowHeight(size(x, y, 50));
-		ut.setRowHeight(size(x, y, 50));
-		ust.setRowHeight(size(x, y, 50));
-		utd.setRowHeight(size(x, y, 50));
 	}
 
 	@Override
@@ -300,23 +315,12 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 				for (int i = 0; i < Math.pow(2, spe); i++)
 					basis.update();
 
-			updateTables();
+			if (!jtb.isSelected())
+				updateTables();
+			updateTablesL();
 			BCMusic.flush(spe < 3 && sb.ebase.health > 0 && sb.ubase.health > 0);
 		}
-		if (basis instanceof SBRply && recd.rl != null)
-			change((SBRply) basis, b -> jsl.setValue(b.prog()));
-		bb.paint();
-		AbEntity eba = sb.ebase;
-		long h = eba.health;
-		long mh = eba.maxH;
-		ebase.setText("HP: " + h + "/" + mh + ", " + 10000 * h / mh / 100.0 + "%");
-		ubase.setText("HP: " + sb.ubase.health);
-		timer.setText(sb.time + "f");
-		ecount.setText(sb.entityCount(1) + "/" + sb.st.max);
-		ucount.setText(sb.entityCount(-1) + "/" + sb.max_num);
-		respawn.setText("respawn timer: " + MainBCU.convertTime(sb.respawnTime));
 
-		resized();
 		if (sb.getEBHP() < sb.st.bgh && sb.st.bg1 != null) {
 			if (!changedBG) {
 				changedBG = true;
@@ -395,16 +399,34 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 	}
 
 	private void updateTables() {
-		ct.update(basis.sb.est);
-		List<Entity> le = new ArrayList<>(basis.sb.st.max / 2);
-		List<Entity> lu = new ArrayList<>(basis.sb.max_num / 2);
+		StageBasis sb = basis.sb;
+		ct.update(sb.est);
+		List<Entity> le = new ArrayList<>(sb.st.max / 2);
+		List<Entity> lu = new ArrayList<>(sb.max_num / 2);
 
-		for (Entity e : basis.sb.le)
+		for (Entity e : sb.le)
 			(e.dire == 1 ? le : lu).add(e);
 
 		(estat.isSelected() ? est : et).setList(le);
 		(ustat.isSelected() ? ust : ut).setList(lu);
 		utd.sort();
+		etd.setList(new ArrayList<>(sb.enemyStatistics.keySet()));
+
+		if (basis instanceof SBRply && recd.rl != null)
+			change((SBRply) basis, b -> jsl.setValue(b.prog()));
+		ecount.setText(sb.entityCount(1) + "/" + sb.st.max);
+		ucount.setText(sb.entityCount(-1) + "/" + sb.max_num);
+		respawn.setText("respawn timer: " + MainBCU.convertTime(sb.respawnTime));
+		resized();
+	}
+	private void updateTablesL() {
+		AbEntity eba = basis.sb.ebase;
+		long h = eba.health;
+		long mh = eba.maxH;
+		ebase.setText("HP: " + h + "/" + mh + ", " + 10000 * h / mh / 100.0 + "%");
+		ubase.setText("HP: " + basis.sb.ubase.health);
+		timer.setText(basis.sb.time + "f");
+		bb.paint();
 	}
 
 	@Override
@@ -421,6 +443,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			DEF_LARGE = jtb.isSelected();
 			if (!DEF_LARGE)
 				updateTables();
+			updateTablesL();
 		});
 
 		back.setLnr(x -> {
@@ -472,19 +495,18 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			((SBRply) basis).restoreTo(jsl.getValue());
 			ct.setData(basis.sb.st);
 			updateTables();
+			updateTablesL();
 			bb.reset();
 		});
 
 		estat.addActionListener(a -> {
 			eep.setVisible(!estat.isSelected());
 			eesp.setVisible(estat.isSelected());
-			updateTables();
 		});
 
 		ustat.addActionListener(a -> {
 			eup.setVisible(!ustat.isSelected());
 			eusp.setVisible(ustat.isSelected());
-			updateTables();
 		});
 	}
 
@@ -496,6 +518,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		add(eesp);
 		add(ctp);
 		add(utdsp);
+		add(etdsp);
 		add((Canvas) bb);
 		add(paus);
 		add(next);

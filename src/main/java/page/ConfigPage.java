@@ -33,6 +33,7 @@ public class ConfigPage extends Page {
 	private final JBTN secs = new JBTN(MainLocale.PAGE, MainBCU.seconds ? "secs" : "frame");
 	private final JCB musc = new JCB(MainLocale.PAGE, "musc");
 	private final JCB jcsnd = new JCB(MainLocale.PAGE, "btnsnd");
+	private final JCB jcraw = new JCB(MainLocale.PAGE, "rawdmg");
 	private final JCB jceff = new JCB(MainLocale.PAGE, "bgeff");
 	private final JCB jcdly = new JCB(MainLocale.PAGE, "btdly");
 	private final JCB stdis = new JCB(MainLocale.PAGE, "stdis");
@@ -146,6 +147,7 @@ public class ConfigPage extends Page {
 		set(jcbac, x, y, 650, 950, 300, 50);
 		set(jcmus, x, y, 650, 1000, 300, 50);
 		set(jcsnd, x, y, 650, 1050, 300, 50);
+		set(jcraw, x, y, 650, 1100, 300, 50);
 
 		set(jlfi, x, y, 1225, 100, 200, 50);
 		set(jlti, x, y, 1225, 175, 200, 50);
@@ -306,6 +308,8 @@ public class ConfigPage extends Page {
 				BCMusic.clickSound();
 		});
 
+		jcraw.addActionListener(a -> CommonStatic.getConfig().rawDamage = jcraw.isSelected());
+
 		jcdly.addActionListener(a -> CommonStatic.getConfig().buttonDelay = !CommonStatic.getConfig().buttonDelay);
 
 		stdis.addActionListener(a -> CommonStatic.getConfig().stageName = !CommonStatic.getConfig().stageName);
@@ -371,6 +375,7 @@ public class ConfigPage extends Page {
 		set(jsba);
 		add(mbac);
 		add(jcsnd);
+		add(jcraw);
 		add(jceff);
 		add(jcdly);
 		add(stdis);
@@ -415,6 +420,8 @@ public class ConfigPage extends Page {
 		jsbg.setEnabled(BCMusic.play);
 		jsse.setEnabled(BCMusic.play);
 		jcsnd.setEnabled(BCMusic.play);
+		jcraw.setSelected(CommonStatic.getConfig().rawDamage);
+		jcraw.setToolTipText(get(MainLocale.PAGE, "rawdmgtip"));
 		jcsnd.setSelected(MainBCU.buttonSound);
 		jogl.setSelected(MainBCU.USE_JOGL);
 		jcbac.setSelected(cfg().maxBackup != -1);

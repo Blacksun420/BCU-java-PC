@@ -1,7 +1,6 @@
 package page.battle;
 
 import common.battle.BattleField;
-import common.battle.entity.Entity;
 import common.util.unit.AbForm;
 import common.util.unit.Form;
 import page.MainLocale;
@@ -70,7 +69,7 @@ public class TotalDamageTable extends SortTable<AbForm> {
                 return bf.sb.totalDamageTaken[index[0]][index[1]];
             else if (index[1] != 5)
                 return bf.sb.totalSpawned[index[0]][index[1]];
-            return 0;
+            return -1;
         }
     }
 
