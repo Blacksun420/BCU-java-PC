@@ -185,6 +185,7 @@ public abstract class UIContext {
             if (uj == null)
                 return;
             // inquiry
+            System.out.println(uj.getVer());
             if (uj.getVer() > MainBCU.ver) {
                 String popText = "New BCU Jar file update found: " + uj.getArtifact()
                         + ", do you want to update?" + " Its' " + (uj.forkver > AssetLoader.FORK_VER ? "necessary.\n" : "unnecessary.\n")
@@ -228,7 +229,7 @@ public abstract class UIContext {
                 int[] digs = CommonStatic.parseIntsN(ver);
                 int tott = 0;
                 for (int i = 0; i < Math.min(4, digs.length); i++)
-                    tott += digs[i] * 100000 / Math.pow(100, i);
+                    tott += (digs[i] * 1000000) / Math.pow(100, i);
                 return tott;
             }
 
