@@ -248,7 +248,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			set(row, x, y, 1300, 0, 200, 50);
 			set(ebase, x, y, 240, 0, 600, 50);
 			set(timer, x, y, 1500, 0, 200, 50);
-			set(ubase, x, y, 1740, 0, 200, 50);
+			set(ubase, x, y, 1740, 0, 360, 50);
 			set((Canvas) bb, x, y, 190, 50, 1920, 1200);
 			set(ctp, x, y, 0, 0, 0, 0);
 			set(eep, x, y, 50, 100, 0, 0);

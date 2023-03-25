@@ -182,7 +182,7 @@ public interface BattleBox {
 			}
 			drawBtm(g);
 			drawTop(g);
-			if (sb.ebase.health <= 0 || sb.ubase.health <= 0)
+			if (sb.ebase.health > 0 && sb.ubase.health > 0)
 				deployWarn(g);
 		}
 

@@ -553,8 +553,9 @@ public abstract class EntityEditPage extends Page {
 					}
 				if (ignore && !addSpecial(-1, new AtkDataModel(ce)))
 					atkS.setSelectedIndex(ce.getAtkTypeCount() - 1);
-			}
-			if (jli.getSelectedIndex() >= getSelMask().length)
+				else
+					jli.setSelectedIndex(0);
+			} else if (jli.getSelectedIndex() >= getSelMask().length)
 				jli.setSelectedIndex(0);
 			setData(ce);
 			changing = false;
