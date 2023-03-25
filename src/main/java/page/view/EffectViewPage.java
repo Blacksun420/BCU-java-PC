@@ -54,7 +54,6 @@ public class EffectViewPage extends AbViewPage {
 				return;
 			updateChoice();
 		});
-
 	}
 
 	private void ini() {

@@ -2,7 +2,6 @@ package page.battle;
 
 import common.CommonStatic;
 import common.battle.*;
-import common.battle.entity.AbEntity;
 import common.battle.entity.Entity;
 import common.util.Data;
 import common.util.stage.Replay;
@@ -280,7 +279,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			set(etdsp, x, y, 50, 850, 600, 400);
 			set(ebase, x, y, 675, 150, 400, 50);
 			set(timer, x, y, 1100, 150, 200, 50);
-			set(ubase, x, y, 1300, 150, 200, 50);
+			set(ubase, x, y, 1325, 150, 300, 50);
 			set(ecount, x, y, 50, 50, 450, 50);
 			set(estat, x, y, 500, 50, 150, 50);
 			set(ucount, x, y, 1650, 50, 450, 50);
@@ -420,11 +419,12 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		resized();
 	}
 	private void updateTablesL() {
-		AbEntity eba = basis.sb.ebase;
-		long h = eba.health;
-		long mh = eba.maxH;
+		long h = basis.sb.ebase.health;
+		long mh = basis.sb.ebase.maxH;
 		ebase.setText("HP: " + h + "/" + mh + ", " + 10000 * h / mh / 100.0 + "%");
-		ubase.setText("HP: " + basis.sb.ubase.health);
+		h = basis.sb.ubase.health;
+		mh = basis.sb.ubase.maxH;
+		ubase.setText("HP: " + h + "/" + mh + ", " + 10000 * h / mh / 100.0 + "%");
 		timer.setText(basis.sb.time + "f");
 		bb.paint();
 	}
@@ -496,6 +496,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			ct.setData(basis.sb.st);
 			updateTables();
 			updateTablesL();
+			BCMusic.flush(false);
 			bb.reset();
 		});
 
