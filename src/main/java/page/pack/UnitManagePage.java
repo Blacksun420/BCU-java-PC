@@ -266,7 +266,7 @@ public class UnitManagePage extends Page {
 					return;
 				int lv = CommonStatic.parseIntN(maxl.getText());
 				if (lv > 0)
-					uni.max = Math.min(200 - uni.maxp, lv);;
+					uni.max = Math.min(200 - uni.maxp, lv);
 				maxl.setText("" + uni.max);
 			}
 
