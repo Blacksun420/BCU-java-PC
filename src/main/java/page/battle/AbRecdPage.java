@@ -88,7 +88,7 @@ public abstract class AbRecdPage extends Page {
 		}
 		if (editable && bp != null) {
 			Replay r = getSelection();
-			if (r != null && !r.lu.t().equals(BasisSet.current().sele.t()) && Opts.conf("are you sure to change lineup?")) {
+			if (r != null && !r.lu.equals(BasisSet.current().sele) && Opts.conf("are you sure to change lineup?")) {
 				r.lu = BasisSet.current().sele.copy();
 				r.unsaved = true;
 			}
@@ -147,7 +147,7 @@ public abstract class AbRecdPage extends Page {
 		jlu.setLnr(x -> {
 			Identifier<Stage> st = getSelection().st;
 
-			if (st == null)
+			if (st == null || st.safeGet() == null)
 				changePanel(bp = new BasisPage(getThis()));
 			else
 				changePanel(bp = new BasisPage(getThis(), st.get().getLim(4), st.get().getCont().price));
