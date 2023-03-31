@@ -28,7 +28,6 @@ class EffectList extends JList<BackgroundEffect> {
 
     private static final long serialVersionUID = 1L;
 
-    //editing is used to set whether the page using this is Trait Edit Page or not. May be used to add BC Traits to list at some point
     public EffectList() {
 
         setSelectionBackground(Theme.DARK.NIMBUS_SELECT_BG);
@@ -252,6 +251,8 @@ public class BGEffectEditPage extends Page {
 
             add(addme);
             add(remme);
+            addme.setEnabled(editable && jlme.getSelectedIndex() != -1);
+            remme.setEnabled(editable && jlbe.getSelectedIndex() != -1);
             add(jspme);
             add(jspbe);
             bgena.setText(be.getName());
@@ -267,6 +268,7 @@ public class BGEffectEditPage extends Page {
             add(bgsp);
             bgena.setText(be.getName());
             bgsp.setText("Draw Spacer: " + ((CustomBGEffect)be).spacer);
+            bgsp.setEnabled(editable);
             changebg.setEnabled(editable && jld.getSelectedIndex() != -1);
         }
 

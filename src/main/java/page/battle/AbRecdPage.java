@@ -73,7 +73,7 @@ public abstract class AbRecdPage extends Page {
 			Replay r = getSelection();
 			Stage ns = svp.getStage();
 			if (r != null && ns != null) {
-				if (r.st != null) {
+				if (r.st != null && r.st.safeGet() != null) {
 					if (ns != r.st.get() && Opts.conf("are you sure to change stage?")) {
 						r.st = ns.id;
 						r.unsaved = true;
@@ -88,7 +88,7 @@ public abstract class AbRecdPage extends Page {
 		}
 		if (editable && bp != null) {
 			Replay r = getSelection();
-			if (r != null && Opts.conf("are you sure to change lineup?")) {
+			if (r != null && !r.lu.t().equals(BasisSet.current().sele.t()) && Opts.conf("are you sure to change lineup?")) {
 				r.lu = BasisSet.current().sele.copy();
 				r.unsaved = true;
 			}
@@ -119,7 +119,7 @@ public abstract class AbRecdPage extends Page {
 	protected void setRecd(Replay r) {
 		seed.setEditable(editable && r != null);
 		vsta.setEnabled(r != null);
-		Stage st = r == null || r.st == null ? null : Identifier.getOr(r.st, Stage.class);
+		Stage st = r == null || r.st == null ? null : r.st.safeGet();
 		boolean a = st != null && st.id.toString().equals(r.st.toString());
 		rply.setEnabled(a);
 		recd.setEnabled(a);
@@ -140,7 +140,7 @@ public abstract class AbRecdPage extends Page {
 		back.setLnr(x -> changePanel(getFront()));
 
 		vsta.setLnr(x -> {
-			Stage rStage = getSelection().st == null ? null : getSelection().st.get();
+			Stage rStage = getSelection().st == null ? null : getSelection().st.safeGet();
 			changePanel(svp = new StageViewPage(getThis(), MapColc.values(), rStage));
 		});
 

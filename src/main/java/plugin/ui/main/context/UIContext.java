@@ -5,6 +5,7 @@ import common.CommonStatic;
 import common.io.WebFileIO;
 import common.io.assets.AssetLoader;
 import common.io.assets.UpdateCheck;
+import common.util.Data;
 import main.MainBCU;
 import main.Opts;
 import page.LoadPage;
@@ -170,9 +171,10 @@ public abstract class UIContext {
             // get update json
             UpdateJson uj = getUpdateJson();
             // inquiry
-            if (uj != null && uj.getVer() > MainBCU.ver && uj.forkver > AssetLoader.FORK_VER) {
+            if (uj != null && uj.getVer() > MainBCU.ver) {
                 String popText = "New BCU file update found: " + uj.getArtifact() +
-                        ", do you want to update jar file?\n" + uj.getDescription();
+                        ", do you want to update jar file?\n" + uj.getDescription()
+                        + (uj.prio() ? "(This update increases Core Version" : "");
                 // result
                 if (Opts.conf(popText))
                     UIDownloader.downloadJar(getDownloader(uj), true);
@@ -188,7 +190,7 @@ public abstract class UIContext {
             System.out.println(uj.getVer());
             if (uj.getVer() > MainBCU.ver) {
                 String popText = "New BCU Jar file update found: " + uj.getArtifact()
-                        + ", do you want to update?" + " Its' " + (uj.forkver > AssetLoader.FORK_VER ? "necessary.\n" : "unnecessary.\n")
+                        + ", do you want to update?" + " Its' " + (uj.prio() ? "necessary.\n" : "unnecessary.\n")
                         + uj.getDescription();
                 // result
                 if (Opts.conf(popText)) {
@@ -223,6 +225,7 @@ public abstract class UIContext {
 
             public String ver;
             public Byte forkver;
+            public String CORE_VER;
             public String info;
 
             public int getVer() {
@@ -238,6 +241,10 @@ public abstract class UIContext {
             }
             public String getURL() {
                 return "https://github.com/Blacksun420/bcu-assets/raw/master/jar/" + getArtifact();
+            }
+
+            public boolean prio() {
+                return forkver > AssetLoader.FORK_VER || Data.getVer(CORE_VER) > Data.getVer(AssetLoader.CORE_VER);
             }
 
             public String getDescription() {
