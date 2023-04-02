@@ -88,7 +88,7 @@ public abstract class AbRecdPage extends Page {
 		}
 		if (editable && bp != null) {
 			Replay r = getSelection();
-			if (r != null && !r.lu.equals(BasisSet.current().sele) && Opts.conf("are you sure to change lineup?")) {
+			if (r != null && !r.lu.sameAs(BasisSet.current().sele) && Opts.conf("are you sure to change lineup?")) {
 				r.lu = BasisSet.current().sele.copy();
 				r.unsaved = true;
 			}

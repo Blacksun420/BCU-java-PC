@@ -616,9 +616,9 @@ public class BasisPage extends LubCont {
 
 	private void setB(BasisLU b) {
 		current().sele = b;
-		lub.setLU(b == null ? null : b.lu);
+		lub.setLU(b.lu);
 		brem.setEnabled(current().lb.size() > 1);
-		bjtf.setText(BasisSet.current().sele.name);
+		bjtf.setText(b.name);
 		ncb.set(b.nyc);
 		changeLU();
 		callBack(lub.sf);
@@ -632,8 +632,8 @@ public class BasisPage extends LubCont {
 		jlb.setListData(vb);
 		BasisLU b = bs.sele;
 		jlb.setSelectedValue(b, true);
-		bsjtf.setText(BasisSet.current().name);
-		bsrem.setEnabled(current() != BasisSet.def());
+		bsjtf.setText(bs.name);
+		bsrem.setEnabled(bs != BasisSet.def());
 		setB(b);
 		jlcn.setBasis(bs);
 		trea.callBack(null);
