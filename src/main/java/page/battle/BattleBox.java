@@ -150,7 +150,7 @@ public interface BattleBox {
 			regulate();
 
 			ImgCore.set(g);
-			P rect = setP(box.getWidth(), box.getHeight());
+			P rect = setP(w, h);
 			sb.bg.draw(g, rect, sb.pos, midh, bf.sb.siz, (int) Math.ceil(groundHeight + (CommonStatic.getConfig().twoRow ? (h * 0.75 / 10.0) : 0) - sb.shakeOffset));
 
 			double midY = groundHeight / minSiz;
@@ -186,11 +186,11 @@ public interface BattleBox {
 				deployWarn(g);
 		}
 
-		public double getX(double x) {
+		private double getX(double x) {
 			return (x * ratio + off) * bf.sb.siz + sb.pos;
 		}
 
-		public void calculateSiz(int w, int h) {
+		private void calculateSiz(int w, int h) {
 			minSiz = 0;
 			maxSiz = Double.MAX_VALUE;
 
@@ -211,7 +211,7 @@ public interface BattleBox {
 			return size;
 		}
 
-		public void regulate() {
+		private void regulate() {
 			int w = box.getWidth();
 			int h = box.getHeight();
 
@@ -247,17 +247,14 @@ public interface BattleBox {
 
 			bf.sb.siz *= Math.pow(exp, s);
 
-			if(bf.sb.siz * minH > h) {
+			if(bf.sb.siz * minH > h)
 				bf.sb.siz = maxSiz;
-			}
 
-			if(bf.sb.siz * maxH < h) {
+			if(bf.sb.siz * maxH < h)
 				bf.sb.siz = minSiz;
-			}
 
-			if(bf.sb.siz * maxW < w) {
+			if(bf.sb.siz * maxW < w)
 				bf.sb.siz = w * 1.0 / maxW;
-			}
 		}
 
 		private void clear() {

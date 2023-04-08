@@ -9,10 +9,15 @@ import common.util.pack.Soul;
 import common.util.stage.Music;
 import main.Opts;
 import page.*;
+import page.awt.BBBuilder;
 import page.support.AnimLCR;
 import page.support.SoulLCR;
+import page.view.ViewBox;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -31,7 +36,7 @@ public class SoulEditPage extends Page {
 
     private final JTF jtfs = new JTF();
 
-    private final Vector<PackData.UserPack> vpack = new Vector<>(UserProfile.getUserPacks());
+    private final Vector<PackData.UserPack> vpack = new Vector<>(UserProfile.getUserPacks().stream().filter(p -> p.souls.size() > 0).collect(Collectors.toList()));
     private final JList<PackData.UserPack> jlp = new JList<>(vpack);
     private final JScrollPane jspp = new JScrollPane(jlp);
     private final JList<Soul> jls = new JList<>();
@@ -40,6 +45,7 @@ public class SoulEditPage extends Page {
     private final JList<AnimCE> jld = new JList<>(new Vector<>(AnimCE.map().values().stream().filter(a -> a.id.base.equals(Source.BasePath.SOUL)).collect(Collectors.toList())));
     private final JComboBox<Music> jcbm = new JComboBox<>();
     private final JScrollPane jspd = new JScrollPane(jld);
+    private final ViewBox vb = BBBuilder.def.getViewBox();
 
     private PackData.UserPack pac;
     private Soul soul;
@@ -49,7 +55,7 @@ public class SoulEditPage extends Page {
         super(p);
         vpack.sort(null);
 
-        ini(pack);
+        ini(pack.souls.size() > 0 ? pack : null);
         resized();
     }
 
@@ -61,6 +67,36 @@ public class SoulEditPage extends Page {
     @Override
     protected void renew() {
         setPack(pac);
+    }
+
+    @Override
+    protected void mouseDragged(MouseEvent e) {
+        if (e.getSource() == vb)
+            vb.mouseDragged(e);
+    }
+    @Override
+    protected void mousePressed(MouseEvent e) {
+        if (e.getSource() == vb)
+            vb.mousePressed(e);
+    }
+    @Override
+    protected void mouseReleased(MouseEvent e) {
+        if (e.getSource() == vb)
+            vb.mouseReleased(e);
+    }
+    @Override
+    protected void mouseWheel(MouseEvent e) {
+        if (!(e.getSource() instanceof ViewBox))
+            return;
+        MouseWheelEvent mwe = (MouseWheelEvent) e;
+        double d = mwe.getPreciseWheelRotation();
+        vb.resize(Math.pow(0.95, d));
+    }
+
+    @Override
+    public void timer(int f) {
+        vb.update();
+        vb.paint();
     }
 
     @Override
@@ -87,6 +123,9 @@ public class SoulEditPage extends Page {
 
         set(lbd, x, y, w, 100, 300, 50);
         set(jspd, x, y, w, 150, 300, 600);
+
+        w += 350;
+        set((Canvas)vb, x, y, w, 150, 1000, 600);
     }
 
     private void addListeners() {
@@ -193,6 +232,7 @@ public class SoulEditPage extends Page {
         add(jtfs);
         add(jcbm);
 
+        add((Canvas)vb);
         jls.setCellRenderer(new SoulLCR());
         jld.setCellRenderer(new AnimLCR());
 
@@ -246,6 +286,7 @@ public class SoulEditPage extends Page {
         if (s != null) {
             jtfs.setText(soul.name);
             jcbm.setSelectedItem(Identifier.get(s.audio));
+            vb.setEntity(s.getEAnim(s.anim.types()[0]));
         }
 
         boolean editable = s != null && pac.editable;

@@ -13,15 +13,12 @@ import java.awt.image.BufferedImage;
 import java.util.Queue;
 
 public interface ViewBox {
-
+	double siz = 0.5875;
 	class Conf {
-
 		public static boolean white;
-
 	}
 
 	class Controller {
-
 		public final P ori = new P(0, 0);
 		public double siz = 0.5;
 		protected Point p = null;

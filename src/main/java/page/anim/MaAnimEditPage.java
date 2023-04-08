@@ -638,7 +638,7 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 				return;
 			}
 			int ind = jlt.getSelectedIndex();
-			String[] val = anim.names();
+			String[] val = anim.rawNames();
 			jlt.setListData(val);
 			if (ind >= val.length)
 				ind = val.length - 1;

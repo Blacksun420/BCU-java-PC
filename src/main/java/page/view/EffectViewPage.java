@@ -24,7 +24,7 @@ public class EffectViewPage extends AbViewPage {
 		Collections.addAll(va, CommonStatic.getBCAssets().effas.values());
 		Collections.addAll(va, CommonStatic.getBCAssets().atks);
 		va.addAll(UserProfile.getBCData().souls.getList().stream().map(s -> s.anim).collect(Collectors.toList()));
-		va.addAll(UserProfile.getBCData().demonSouls.getList().stream().map(s -> s.anim).collect(Collectors.toList()));
+		va.addAll(CommonStatic.getBCAssets().demonSouls.stream().map(s -> s.anim).collect(Collectors.toList()));
 		jlu.setListData(va);
 		ini();
 		resized();

@@ -331,7 +331,6 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 		jlt.setDropMode(DropMode.ON_OR_INSERT);
 		remgroup.setEnabled(false);
 		addListeners();
-
 	}
 
 }

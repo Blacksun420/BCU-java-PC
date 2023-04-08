@@ -4,6 +4,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import common.CommonStatic;
+import common.system.P;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeImage;
 import common.system.fake.FakeTransform;
@@ -161,8 +162,8 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 	private Background bg;
 	private BackgroundEffect bgEffect;
 	private boolean bgi;
-	private double r;
-	private int fw, sh, gh;
+	private double ms, y, midY, groundHeight;
+	private int fw, midh;
 
 	protected GLViewBox(Controller c) {
 		exp = new GLVBExporter(this);
@@ -240,39 +241,56 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 
 		this.bg = bg;
 		if (bg != null && bg.bgEffect != null) {
-			int groundHeight = ((BufferedImage) bg.parts[Background.BG].bimg()).getHeight();
-			int skyHeight = bg.top ? ((BufferedImage) bg.parts[Background.TOP].bimg()).getHeight() : 1020 - groundHeight;
-			if(skyHeight < 0)
-				skyHeight = 0;
-			r = getHeight() / (double) (groundHeight + skyHeight + 408);
-			fw = (int) (768 * r);
+			int w = getWidth();
+			int h = getHeight();
 
+			double minSiz = getReulatedSiz(0, w, h);
+			double maxSiz = getReulatedSiz(Double.MAX_VALUE, w, h);
+			groundHeight = (h * 2 / 10.0) * (1 - minSiz/maxSiz);
+
+			int gh = ((BufferedImage) bg.parts[Background.BG].bimg()).getHeight();
+			double sh = bg.top ? ((BufferedImage) bg.parts[Background.TOP].bimg()).getHeight() : 1020 - groundHeight;
+			if(sh < 0)
+				sh = 0;
+			double r = h / (gh + sh + 408);
+			fw = (int) (768 * r);
 			int i = 1;
-			while (fw * i < getWidth()) {
+			while (fw * i <= w)
 				i++;
-			}
 			fw *= i * 4;
 
-			sh = (int) (skyHeight * r);
-			gh = (int) (groundHeight * r);
+			midY = groundHeight / minSiz;
+			midh = h + (int) (groundHeight * (siz - maxSiz) / (maxSiz - minSiz));
+			y = 1530 * siz - midh;
+			ms = h / minSiz;
 
-			if (bg.bgEffect != null)
-				bgEffect = bg.bgEffect.get();
+			bgEffect = bg.bgEffect.get();
 		} else {
 			bgEffect = null;
-			fw = sh = gh = 0;
 		}
 		bgi = false;
+	}
+
+	private double getReulatedSiz(double size, int w, int h) {
+		if (size * 510 > h)
+			size = 1.0 * h / 510;
+		if (size * 1530 < h)
+			size = 1.0 * h / 1530;
+		int maxW = (int) (w * 5 * 0.32 + 200 * 2);
+		if (size * maxW < w)
+			size = 1.0 * w / maxW;
+
+		return size;
 	}
 
 	@Override
 	public void update() {
 		if (bg != null && bgEffect != null) {
 			if(!bgi) {
-				bgEffect.initialize(fw, sh - gh, sh + (gh / 2.0), bg);
+				bgEffect.initialize(fw, ms, midY, bg);
 				bgi = true;
 			}
-			bgEffect.update(fw, sh - gh, sh + (gh / 2.0));
+			bgEffect.update(fw, ms, midY);
 		}
 
 		if (ent != null) {
@@ -290,9 +308,9 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 		int w = getWidth();
 		int h = getHeight();
 		if (bg != null) {
-			bg.draw(g, w, h);
+			bg.draw(g, new P(w, h), 0, midh, siz, (int) groundHeight);
 			if (bgEffect != null) {
-				bgEffect.draw(g, 0, sh, r, (gh / 3), sh + (gh / 2));
+				bgEffect.draw(g, y, siz, midY);
 			} if(bg.overlay != null)
 				g.gradRectAlpha(0, 0, w, h, 0, 0, bg.overlayAlpha, bg.overlay[1], 0, h, bg.overlayAlpha, bg.overlay[0]);
 		}
