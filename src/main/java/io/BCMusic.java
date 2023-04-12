@@ -235,7 +235,7 @@ public class BCMusic extends Data {
 	}
 
 	public static void preload() {
-		for (int i : SE_ALL)
+		for (short i : SE_ALL)
 			BCMusic.CACHE[i] = UserProfile.getBCData().musics.get(i).data.getBytes();
 	}
 

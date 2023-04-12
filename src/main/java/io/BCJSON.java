@@ -10,6 +10,7 @@ import common.util.Data;
 import main.Opts;
 import page.LoadPage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,16 +33,15 @@ public class BCJSON {
 			CommonStatic.def.save(false, false, true);
 		}
 
-		int count = json != null ? json.music : Data.SE_ALL[Data.SE_ALL.length - 1] + 1;
+		int count = json != null ? json.music : getMusicTotal();
 		if (CommonStatic.getConfig().updateOldMusic)
 			musics = CommonStatic.ctx.noticeErr(UpdateCheck.checkMusic(count), ErrType.ERROR, "Failed to check for updates, try again later on a stable WI-FI connection");
 		else
 			musics = UpdateCheck.checkNewMusic(count);
 		ArrayList<String> langList = new ArrayList<>();
-		for (String pcLangCode : PC_LANG_CODES) {
+		for (String pcLangCode : PC_LANG_CODES)
 			for (String pcLangFile : PC_LANG_FILES)
 				langList.add(pcLangCode + "/" + pcLangFile);
-		}
 
 		lang = CommonStatic.ctx.noticeErr(UpdateCheck.checkLang(langList.toArray(new String[0])), ErrType.ERROR, "Failed to check for updates, try again later on a stable WI-FI connection");
 		clearList(libs, true);
@@ -60,6 +60,13 @@ public class BCJSON {
 		while (!Data.err(AssetLoader::merge))
 			if (!Opts.conf("failed to process assets, retry?"))
 				CommonStatic.def.save(false, false, true);
+	}
+
+	private static int getMusicTotal() {
+		File music = CommonStatic.ctx.getAssetFile("./music/");
+		if (music.exists())
+			return music.listFiles().length;
+		return -1;
 	}
 
 	private static boolean clearList(List<Downloader> list, boolean quit) {
