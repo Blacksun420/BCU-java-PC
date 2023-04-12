@@ -81,7 +81,7 @@ public class LineUpBox extends Canvas {
 						Res.getCost((int) ef.getPrice(price), true,
 							new SymCoord(gra, 1, 120 * j, 100 * i + img.getImg().getHeight(), 2));
 					else
-						Res.getLv(lu.getLv(f).getLv() + lu.getLv(f).getPlusLv(),
+						Res.getLv(lu.getLv(f).getTotalLv(),
 							new SymCoord(gra, 1, 120 * j, 100 * i + img.getImg().getHeight(), 2));
 				}
 			}
@@ -97,7 +97,7 @@ public class LineUpBox extends Canvas {
 				Res.getCost((int) ef.getPrice(price), true,
 					new SymCoord(gra, 1, p.x, p.y + uni.getHeight(), 2));
 			else
-				Res.getLv(lu.getLv(sf).getLv() + lu.getLv(sf).getPlusLv(), new SymCoord(gra, 1, p.x, p.y + uni.getHeight(), 2));
+				Res.getLv(lu.getLv(sf).getTotalLv(), new SymCoord(gra, 1, p.x, p.y + uni.getHeight(), 2));
 		}
 		g.drawImage(bimg, 0, 0, getWidth(), getHeight(), null);
 		pt++;

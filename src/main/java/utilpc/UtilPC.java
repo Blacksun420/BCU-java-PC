@@ -26,6 +26,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Arrays;
 
 public class UtilPC {
 
@@ -188,24 +189,27 @@ public class UtilPC {
 	}
 
 	public static String[] lvText(AbForm f, Level lv) {
+		String LVs = "Lv." + lv.getLv() + (f.unit().getMaxPLv() != 0 ? " + " + lv.getPlusLv() : "");
 		if (!(f instanceof Form))
-			return new String[]{"Lv." + lv.getLv() + " + " + lv.getPlusLv(), ""};
+			return new String[]{LVs, ""};
 
 		PCoin pc = ((Form)f).du.getPCoin();
 		if (pc == null)
-			return new String[]{"Lv." + lv.getLv() + " + " + lv.getPlusLv(), ""};
-		String[] TraitsHolder = new String[pc.trait.size()];
-
-		for (int i = 0 ; i < pc.trait.size() ; i++) {
-			Trait trait = pc.trait.get(i);
-			if (trait.BCTrait())
-				TraitsHolder[i] = Interpret.TRAIT[trait.id.id];
-			else
-				TraitsHolder[i] = trait.name;
-		}
+			return new String[]{LVs, ""};
 		StringBuilder lab = new StringBuilder();
-		StringBuilder str = new StringBuilder("Lv." + lv.getLv() + " + " + lv.getPlusLv() + ", {");
+		StringBuilder str = new StringBuilder(LVs + ", {");
 
+		if (pc.trait.size > 0) {
+			String[] TraitsHolder = new String[pc.trait.size()];
+			for (int i = 0 ; i < pc.trait.size() ; i++) {
+				Trait trait = pc.trait.get(i);
+				if (trait.BCTrait())
+					TraitsHolder[i] = Interpret.TRAIT[trait.id.id];
+				else
+					TraitsHolder[i] = trait.name;
+			}
+			lab.append(Arrays.toString(TraitsHolder)).append(" ");
+		}
 		for (int i = 0; i < pc.info.size(); i++) {
 			str.append(lv.getTalents()[i]);
 

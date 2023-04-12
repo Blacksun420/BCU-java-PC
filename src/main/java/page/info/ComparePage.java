@@ -399,7 +399,7 @@ public class ComparePage extends Page {
 
                 abilityPanes[i].setViewportView(abilities[i] = new EntityAbilities(getFront(), mu, multi));
 
-                double mul = f.unit.lv.getMult(multi.getLv() + multi.getPlusLv());
+                double mul = f.unit.lv.getMult(multi.getTotalLv());
                 double atkLv = b.t().getAtkMulti();
                 double defLv = b.t().getDefMulti();
 
