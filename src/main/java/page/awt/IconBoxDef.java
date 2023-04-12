@@ -66,7 +66,7 @@ class IconBoxDef extends ViewBoxDef implements IconBox {
 
 	@Override
 	public void setBlank(boolean selected) {
-		blank = selected;
+		dat.blank = selected;
 	}
 
 	@Override

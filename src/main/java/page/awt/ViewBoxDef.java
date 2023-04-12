@@ -19,11 +19,9 @@ class ViewBoxDef extends Canvas implements ViewBox, ViewBox.VBExporter {
 	private static final long serialVersionUID = 1L;
 
 	protected BufferedImage prev = null;
-	protected boolean blank;
 
-	protected EAnimI ent;
-	protected Background bg;
-	protected Controller ctrl;
+	protected final EKeeper dat = new EKeeper();
+	protected final Controller ctrl;
 	private Queue<BufferedImage> lbimg = null;
 	private Loader loader = null;
 
@@ -40,9 +38,10 @@ class ViewBoxDef extends Canvas implements ViewBox, ViewBox.VBExporter {
 	public void draw(FakeGraphics gra) {
 		int w = getWidth();
 		int h = getHeight();
+		dat.draw(gra, w, h);
 		gra.translate(w / 2.0, h * 3 / 4.0);
-		if (ent != null)
-			ent.draw(gra, ctrl.ori.copy().times(-1), ctrl.siz);
+		if (getEnt() != null)
+			getEnt().draw(gra, ctrl.ori.copy().times(-1), ctrl.siz);
 	}
 
 	@Override
@@ -61,7 +60,7 @@ class ViewBoxDef extends Canvas implements ViewBox, ViewBox.VBExporter {
 
 	@Override
 	public EAnimI getEnt() {
-		return ent;
+		return dat.getEnt();
 	}
 
 	@Override
@@ -76,7 +75,7 @@ class ViewBoxDef extends Canvas implements ViewBox, ViewBox.VBExporter {
 
 	@Override
 	public boolean isBlank() {
-		return blank;
+		return dat.blank;
 	}
 
 	@Override
@@ -91,16 +90,19 @@ class ViewBoxDef extends Canvas implements ViewBox, ViewBox.VBExporter {
 			return;
 		int w = getWidth();
 		int h = getHeight();
-		if (Conf.white) {
-			BufferedImage img = (BufferedImage) createImage(w, h);
-			Graphics2D gra = (Graphics2D) img.getGraphics();
-			gra.setColor(Color.WHITE);
-			gra.fillRect(0, 0, w, h);
-			gra.drawImage(prev, 0, 0, null);
-			g.drawImage(img, 0, 0, null);
-			gra.dispose();
+		if (dat.getBg() == null) {
+			if (Conf.white) {
+				BufferedImage img = (BufferedImage) createImage(w, h);
+				Graphics2D gra = (Graphics2D) img.getGraphics();
+				gra.setColor(Color.WHITE);
+				gra.fillRect(0, 0, w, h);
+				gra.drawImage(prev, 0, 0, null);
+				g.drawImage(img, 0, 0, null);
+				gra.dispose();
+			} else
+				g.drawImage(prev, 0, 0, null);
 		} else
-			g.drawImage(prev, 0, 0, null);
+			draw(new FG2D(g));
 		if (CommonStatic.getConfig().ref) {
 			g.setColor(Color.ORANGE);
 			g.drawString("Time cost: " + Timer.inter + "%", 20, 20);
@@ -112,17 +114,17 @@ class ViewBoxDef extends Canvas implements ViewBox, ViewBox.VBExporter {
 
 	@Override
 	public void setEntity(EAnimI ieAnim) {
-		ent = ieAnim;
+		dat.setEntity(ieAnim);
 	}
 
 	@Override
 	public void setBackground(Background bg) {
-		this.bg = bg;
+		dat.setBackground(bg, getWidth(), getHeight());
 	}
 
 	@Override
 	public Loader start(boolean mp4) {
-		if (ent == null)
+		if (getEnt() == null)
 			return null;
 		lbimg = new ArrayDeque<>();
 		loader = new Loader(lbimg, mp4);
@@ -132,8 +134,7 @@ class ViewBoxDef extends Canvas implements ViewBox, ViewBox.VBExporter {
 
 	@Override
 	public synchronized void update() {
-		if (ent != null)
-			ent.update(true);
+		dat.update();
 	}
 
 	protected synchronized BufferedImage getImage() {
@@ -141,13 +142,13 @@ class ViewBoxDef extends Canvas implements ViewBox, ViewBox.VBExporter {
 		int h = getHeight();
 		BufferedImage img;
 		Graphics2D gra;
-		if (!blank && Conf.white) {
+		if (!dat.blank && Conf.white) {
 			img = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
 			gra = (Graphics2D) img.getGraphics();
 		} else {
 			img = (BufferedImage) createImage(w, h);
 			gra = (Graphics2D) img.getGraphics();
-			if (!blank) {
+			if (!dat.blank) {
 				if(CommonStatic.getConfig().viewerColor != -1) {
 					gra.setColor(new Color(CommonStatic.getConfig().viewerColor));
 					gra.fillRect(0, 0, w, h);

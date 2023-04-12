@@ -4,14 +4,11 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import common.CommonStatic;
-import common.system.P;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeImage;
 import common.system.fake.FakeTransform;
 import common.util.anim.EAnimI;
-import common.util.anim.EAnimU;
 import common.util.pack.Background;
-import common.util.pack.bgeffect.BackgroundEffect;
 import jogl.util.GLGraphics;
 import page.JTG;
 import page.anim.IconBox;
@@ -93,7 +90,7 @@ class GLIconBox extends GLViewBox implements IconBox {
 
 	@Override
 	public void setBlank(boolean selected) {
-		blank = selected;
+		dat.blank = selected;
 	}
 
 	@Override
@@ -155,15 +152,7 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 
 	protected final Controller ctrl;
 	protected final GLVBExporter exp;
-
-	protected boolean blank;
-
-	private EAnimI ent;
-	private Background bg;
-	private BackgroundEffect bgEffect;
-	private boolean bgi;
-	private double ms, y, midY, groundHeight;
-	private int fw, midh;
+	protected final EKeeper dat = new EKeeper();
 
 	protected GLViewBox(Controller c) {
 		exp = new GLVBExporter(this);
@@ -178,8 +167,8 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 		int h = getHeight();
 		GLGraphics g = new GLGraphics(drawable.getGL().getGL2(), w, h);
 
-		if (bg == null)
-			if (!blank) {
+		if (dat.getBg() == null)
+			if (!dat.blank) {
 				if (CommonStatic.getConfig().viewerColor != -1) {
 					int rgb = CommonStatic.getConfig().viewerColor;
 
@@ -211,7 +200,7 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 
 	@Override
 	public EAnimI getEnt() {
-		return ent;
+		return dat.getEnt();
 	}
 
 	@Override
@@ -221,7 +210,7 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 
 	@Override
 	public boolean isBlank() {
-		return blank;
+		return dat.blank;
 	}
 
 	@Override
@@ -231,93 +220,29 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 
 	@Override
 	public void setEntity(EAnimI ieAnim) {
-		ent = ieAnim;
+		dat.setEntity(ieAnim);
 	}
 
 	@Override
 	public void setBackground(Background bg) {
-		if (bgEffect != null)
-			bgEffect.release();
-
-		this.bg = bg;
-		if (bg != null && bg.bgEffect != null) {
-			int w = getWidth();
-			int h = getHeight();
-
-			double minSiz = getReulatedSiz(0, w, h);
-			double maxSiz = getReulatedSiz(Double.MAX_VALUE, w, h);
-			groundHeight = (h * 2 / 10.0) * (1 - minSiz/maxSiz);
-
-			int gh = ((BufferedImage) bg.parts[Background.BG].bimg()).getHeight();
-			double sh = bg.top ? ((BufferedImage) bg.parts[Background.TOP].bimg()).getHeight() : 1020 - groundHeight;
-			if(sh < 0)
-				sh = 0;
-			double r = h / (gh + sh + 408);
-			fw = (int) (768 * r);
-			int i = 1;
-			while (fw * i <= w)
-				i++;
-			fw *= i * 4;
-
-			midY = groundHeight / minSiz;
-			midh = h + (int) (groundHeight * (siz - maxSiz) / (maxSiz - minSiz));
-			y = 1530 * siz - midh;
-			ms = h / minSiz;
-
-			bgEffect = bg.bgEffect.get();
-		} else {
-			bgEffect = null;
-		}
-		bgi = false;
-	}
-
-	private double getReulatedSiz(double size, int w, int h) {
-		if (size * 510 > h)
-			size = 1.0 * h / 510;
-		if (size * 1530 < h)
-			size = 1.0 * h / 1530;
-		int maxW = (int) (w * 5 * 0.32 + 200 * 2);
-		if (size * maxW < w)
-			size = 1.0 * w / maxW;
-
-		return size;
+		dat.setBackground(bg, getWidth(), getHeight());
 	}
 
 	@Override
 	public void update() {
-		if (bg != null && bgEffect != null) {
-			if(!bgi) {
-				bgEffect.initialize(fw, ms, midY, bg);
-				bgi = true;
-			}
-			bgEffect.update(fw, ms, midY);
-		}
-
-		if (ent != null) {
-			if (ent instanceof EAnimU) {
-				EAnimU e = (EAnimU) ent;
-				ent.update(e.type.rotate());
-			} else {
-				ent.update(true);
-			}
+		dat.update();
+		if (dat.getEnt() != null)
 			exp.update();
-		}
 	}
 
 	protected void draw(FakeGraphics g) {
 		int w = getWidth();
 		int h = getHeight();
-		if (bg != null) {
-			bg.draw(g, new P(w, h), 0, midh, siz, (int) groundHeight);
-			if (bgEffect != null) {
-				bgEffect.draw(g, y, siz, midY);
-			} if(bg.overlay != null)
-				g.gradRectAlpha(0, 0, w, h, 0, 0, bg.overlayAlpha, bg.overlay[1], 0, h, bg.overlayAlpha, bg.overlay[0]);
-		}
+		dat.draw(g, w, h);
 		g.translate(w / 2.0, h * 3 / 4.0);
 		g.setColor(FakeGraphics.BLACK);
-		if (ent != null)
-			ent.draw(g, ctrl.ori.copy().times(-1), ctrl.siz);
+		if (dat.getEnt() != null)
+			dat.getEnt().draw(g, ctrl.ori.copy().times(-1), ctrl.siz);
 	}
 
 	@Override
@@ -336,8 +261,8 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 
 		gra.translate(w / 2.0, h * 3 / 4.0);
 		gra.setColor(Color.BLACK);
-		if (ent != null)
-			ent.draw(new FG2D(gra), ctrl.ori.copy().times(-1), ctrl.siz);
+		if (dat.getEnt() != null)
+			dat.getEnt().draw(new FG2D(gra), ctrl.ori.copy().times(-1), ctrl.siz);
 		gra.dispose();
 		return img;
 	}
