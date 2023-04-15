@@ -74,8 +74,8 @@ class PCoinEditTable extends Page {
         }
     }
 
-    //ensures not every single talent is here, to avoid touching unused values, each number corresponds to a PC_CORRES array
-    public static final int[] allPC = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 57, 40, 41, 50, 51, 52, 54, 56, 58, 59, 60, 61};
+    //Current max talent count
+    public static final byte PC_TOT = 50;
     private final CustomUnit unit;
     private final NPList ctypes = new NPList();
     private final JScrollPane stypes = new JScrollPane(ctypes);
@@ -133,8 +133,10 @@ class PCoinEditTable extends Page {
         });
 
         superLv.setLnr(arg0 -> {
-            int v = CommonStatic.parseIntN(superLv.getText().trim());
-            unit.pcoin.info.get(talent)[13] = MathUtil.clip(v, 0, unit.getPack().unit.max + unit.getPack().unit.maxp);
+            int v = Math.min(CommonStatic.parseIntN(superLv.getText().trim()), unit.getPack().unit.max + unit.getPack().unit.maxp);
+            if (v == 0 || v < -1)
+                v = -1;
+            unit.pcoin.info.get(talent)[13] = v;
             setData();
         });
 
@@ -192,18 +194,15 @@ class PCoinEditTable extends Page {
                 changing = true;
                 String txt = tchance[finalI - 2].getText().trim();
                 int[] v = CommonStatic.parseIntsN(txt);
-
+                int[] vals = Data.PC_CORRES[unit.pcoin.info.get(talent)[0]];
 
                 if (v.length == 0) {
                     tchance[finalI - 2].setText("" + unit.pcoin.info.get(talent)[finalI]);
                     changing = false;
                     return;
                 }
-
                 int ind = finalI % 2 == 0 ? 1 : -1;
                 int w = v.length > 1 ? v[1] : unit.pcoin.info.get(talent)[finalI + ind];
-
-                int[] vals = Data.PC_CORRES[unit.pcoin.info.get(talent)[0]];
 
                 if (vals[0] == Data.PC_BASE) {
                     if (vals[1] == Data.PC2_COST) {
@@ -265,8 +264,10 @@ class PCoinEditTable extends Page {
     protected void setCTypes(boolean coin) {
         ArrayList<talentData> available = new ArrayList<>();
         if (coin) {
-            for (int i : allPC) {
+            for (int i = 0; i < Data.PC_CORRES.length; i++) {
                 int[] type = Data.PC_CORRES[i];
+                if (type[0] == -1 || type[0] == Data.PC_IMU)
+                    continue;
                 talentData dat = new talentData(Interpret.PCTX[i], i);
                 if (available.contains(dat))
                     break;
@@ -396,44 +397,18 @@ class PCoinEditTable extends Page {
             pCoin.setText(lang.full_name);
             pCoin.setIcon(UtilPC.getIcon(1, pdata[1]));
 
-            chance[0].setVisible(true);
-            chance[1].setVisible(true);
-            tchance[0].setVisible(true);
-            tchance[1].setVisible(true);
-            chance[0].setText(lang.get(langText[0]).getNameValue() + "(Lv1)");
-            chance[1].setText(lang.get(langText[0]).getNameValue() + "(Lv" + maxlv + ")");
-
-            boolean Field4 = langText.length >= 4;
-            cTypesY -= Field4 ? 0 : 100;
-            chance[6].setVisible(Field4);
-            chance[7].setVisible(Field4);
-            tchance[6].setVisible(Field4);
-            tchance[7].setVisible(Field4);
-            if (Field4) {
-                chance[6].setText(lang.get(langText[3]).getNameValue() + "(Lv1)");
-                chance[7].setText(lang.get(langText[3]).getNameValue() + "(Lv" + maxlv + ")");
-            }
-
-            boolean Field3 = langText.length >= 3;
-            cTypesY -= Field3 ? 0 : 100;
-            chance[4].setVisible(Field3);
-            chance[5].setVisible(Field3);
-            tchance[4].setVisible(Field3);
-            tchance[5].setVisible(Field3);
-            if (Field3) {
-                chance[4].setText(lang.get(langText[2]).getNameValue() + "(Lv1)");
-                chance[5].setText(lang.get(langText[2]).getNameValue() + "(Lv" + maxlv + ")");
-            }
-
-            boolean Field2 = langText.length >= 2;
-            cTypesY -= Field2 ? 0 : 100;
-            chance[2].setVisible(Field2);
-            chance[3].setVisible(Field2);
-            tchance[2].setVisible(Field2);
-            tchance[3].setVisible(Field2);
-            if (Field2) {
-                chance[2].setText(lang.get(langText[1]).getNameValue() + "(Lv1)");
-                chance[3].setText(lang.get(langText[1]).getNameValue() + "(Lv" + maxlv + ")");
+            int offset = pdata.length >= 3 ? pdata[2] : 0;
+            for (int i = 0; i < 4; i++) {
+                boolean Field = langText.length > i + offset;
+                chance[i * 2].setVisible(Field);
+                chance[i * 2 + 1].setVisible(Field);
+                tchance[i * 2].setVisible(Field);
+                tchance[i * 2 + 1].setVisible(Field);
+                if (Field) {
+                    chance[i * 2].setText(lang.get(langText[i + offset]).getNameValue() + "(Lv1)");
+                    chance[i * 2 + 1].setText(lang.get(langText[i + offset]).getNameValue() + "(Lv" + maxlv + ")");
+                } else
+                    cTypesY -= 100;
             }
         }
         for (int i = 0; i < tchance.length; i++) {

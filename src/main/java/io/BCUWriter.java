@@ -54,6 +54,11 @@ public class BCUWriter extends DataIO {
 			log.deleteOnExit();
 	}
 
+	private static void exit() {
+		logClose(false, false);
+		System.exit(0);
+	}
+
 	public static void logPrepare() {
 		String str = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 		log = new File(CommonStatic.ctx.getBCUFolder(), "./logs/" + str + ".log");
@@ -83,13 +88,13 @@ public class BCUWriter extends DataIO {
 		} catch (IOException e) {
 			e.printStackTrace();
 			Opts.pop(Opts.SECTY);
-			System.exit(0);
+			exit();
 		}
 		try {
 			if (ph.exists() && MainBCU.WRITE) {
 				if (!Opts.conf("<html>" + "Another BCU is running in this folder or last BCU doesn't close properly. "
 						+ "<br> Are you sure to run? It might damage your save.</html>")) {
-					System.exit(0);
+					exit();
 				}
 			} else if(!ph.exists()) {
 				boolean res = ph.createNewFile();

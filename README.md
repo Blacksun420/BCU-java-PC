@@ -33,6 +33,7 @@
 - Super Talents for custom units with flexible level setting
 - Target Only surge attackers have their surges restrained to hit the trait they target only
 - Hardcap unit's total max level to 200 (Levels above 200 don't increase stats due to level curve anyway)
+- Allow more of the BC-Restricted elements to be used for custom entities
 ### QoL changes
 - A much slicker UI (Thanks to Hect0x1 for it)
 - Can't deploy any more text line when you reach deploy limit
@@ -53,6 +54,7 @@
 - Replace allow custom button with specific pack filter, doing what it does and more
 - (Unstable) Pack-Merging feature
 - Redo, Hotkeys for Undo/Redo (Ctrl+z/Ctrl+y)
+- Don't display + level for units whose max + level is 0 when adjusting level
 ### Bugs Fixed here that remain unfixed in the original repo
 - Cursed/Sealed units become unaffected by trait-targetting enemies
 - Procs from older packs aren't distributed properly on attacks without common proc
@@ -62,6 +64,7 @@
 - Damage dealt to bases is not added to entity's damage output
 - Typing more than 20 values to a custom level curve crashes BCU
 - Followup stage chance field doesn't get updated when equalizing followup chances
+- Replays with deleted pack stage crash BCU
 - Defeat theme doesn't play if losing after using a continue
 - UI Bugs when moving through replays:
 - - Entity data tables don't get updated to reflect the data of the frame the replay was set to
@@ -71,6 +74,8 @@
 - The value of "Use Pack's Catcombos" is not stored
 - Armor Break damage isn't properly calculated when adding to entity's damage dealt statistic
 - Non-Latin Characters didn't save as intended on replays
+- BCU crashes when entering without an internet connection with the update old music toggle off
+- Attack frame fill in show axis stays on for less than a frame, and vanishes even when the battle is paused
 ## What does the original BCU repo branch has that this fork doesn't?
 - Annoying pop-up when right-clicking on buttons
 - Button Filter
