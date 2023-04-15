@@ -398,7 +398,19 @@ public class ComparePage extends Page {
                         main[0][index].setText(hp + "");
                 } else
                     main[0][index].setText(hp + "");
-                main[4][index].setText((int) (m.allAtk(0) * mula * 30.0 / m.getItv(0)) + "");
+
+                if (traits.size() > 0 && (m.getAbi() & checkAttack) > 0) {
+                    int DPS = (int)(m.allAtk(0) * mula * 30.0 / m.getItv(0));
+                    int effectiveDPS = DPS;
+                    if ((m.getAbi() & Data.AB_MASSIVES) > 0)
+                        effectiveDPS *= 5;
+                    if ((m.getAbi() & Data.AB_MASSIVE) > 0)
+                        effectiveDPS *= 3;
+                    if ((m.getAbi() & Data.AB_GOOD) > 0)
+                        effectiveDPS *= 1.5;
+                    main[4][index].setText(DPS + (effectiveDPS > DPS ? " (" + effectiveDPS + ")" : ""));
+                } else
+                    main[4][index].setText((int) (m.allAtk(0) * mula * 30.0 / m.getItv(0)) + "");
 
                 enem[0][index].setText(Math.floor(enemy.getDrop() * b.t().getDropMulti()) / 100 + "");
 
