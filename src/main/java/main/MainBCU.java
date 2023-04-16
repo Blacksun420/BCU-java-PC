@@ -301,7 +301,6 @@ public class MainBCU {
 	}
 
 	public static final int ver = 60005;
-	public static final boolean isBeta = false;
 	private static final DecimalFormat df = new DecimalFormat("#.##");
 	public static int autoSaveTime = 0;
 	public static final boolean WRITE = !new File("./.idea").exists();
