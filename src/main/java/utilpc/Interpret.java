@@ -609,7 +609,7 @@ public class Interpret extends Data {
 		ABIS = Page.get(MainLocale.UTIL, "a", ABI_TOT);
 		SABIS = Page.get(MainLocale.UTIL, "sa", ABI_TOT);
 		ATKCONF = Page.get(MainLocale.UTIL, "aa", ATK_TOT);
-		TREA = Page.get(MainLocale.UTIL, "t", 51);
+		TREA = Page.get(MainLocale.UTIL, "t", TIND.length);
 		COMF = Page.get(MainLocale.UTIL, "na", 6);
 		COMN = Page.get(MainLocale.UTIL, "nb", 25);
 		TCTX = Page.get(MainLocale.UTIL, "tc", 6);
