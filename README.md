@@ -53,6 +53,7 @@
 - Redo, Hotkeys for Undo/Redo (Ctrl+z/Ctrl+y)
 - Don't display + level for units whose max + level is 0 when adjusting level
 - NAND/NOR operations in find pages
+- Logs without any error message or anything helpful for debugging are automatically removed
 ### Bugs Fixed here that remain unfixed in the original repo
 - Cursed/Sealed units become unaffected by trait-targetting enemies
 - Procs from older packs aren't distributed properly on attacks without common proc
