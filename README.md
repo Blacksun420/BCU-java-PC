@@ -4,22 +4,20 @@
 ### Mechanics
 - Money Steal ability for enemies (Used by giving the enemy "2x money" proc)
 - Strong Against/Massive Damage/Resist and their insane counterparts now usable for enemies
-- Settable Traits for attacks to target entities independently from the attacker's traits
-- Custom Soul Animations
-- Minimum Respawn Time for units
+- Settable Traits for attacks to target entities independently from the attacker's traits (This replaces Consider/Ignore traits toggle, doing it's purpose with more flexibility)
+- Minimum Respawn Time for units on stages
 - AI Ability
-- Weakening/Strengthening Aura
+- Weakening/Strengthening Aura that affects all enemies/units in a given range
 - Descriptions, Icons, and Banners for packs
 - ***Multiple Attack Animations for one entity***
 - ***Units can have more than one of each specific conditional attack (Revenge, Resurrection, etc (Excluding Counter))***
 - Everywhere Door Parameter on stages that lets enemies spawn in any given point of the battlefield (Set by percentage)
 - Remote Shield that reduces damage taken from attacks if the attacker is standing at a specific range from the attacked Entity
 - RandomUnit
-- Summon more than one entity in an attack
-- Surge Blocker
-- ***Wave Mitigator (Which is just a merging Wave Immunity and Wave Block into a single proc, with the proc blocker params)***
+- Summon can now summon more than one entity in an attack, and prices from the summoner can be passed to summoned entities
+- Surge Blocker/Mitigator
+- ***Wave Mitigator (Which is just merging Wave Immunity and Wave Block into a single proc, with the proc blocker params)***
 - Restrictions can now only restrict a specific form rather than all forms
-- NAND/NOR operations in find pages
 - Custom SFX for attacks
 - Entry animations
 - ***Custom Background Effects***
@@ -27,13 +25,12 @@
 - Higher enemy limit cap for custom stages (100)
 - Unit Bases
 - TBA applied on spawn (Using a negative number)
-- Detailed descriptions for packs
 - Rage (Enraged entities' attacks hit both enemies and allies on the attack area)
 - Hypnosis (Entity will turn against its allies)
 - Super Talents for custom units with flexible level setting
 - Target Only surge attackers have their surges restrained to hit the trait they target only
 - Hardcap unit's total max level to 200 (Levels above 200 don't increase stats due to level curve anyway)
-- Allow more of the BC-Restricted elements to be used for custom entities
+- Increases flexibility of Dojo timer, allowing you to also set how many seconds should a trial last
 ### QoL changes
 - A much slicker UI (Thanks to Hect0x1 for it)
 - Can't deploy any more text line when you reach deploy limit
@@ -55,6 +52,7 @@
 - (Unstable) Pack-Merging feature
 - Redo, Hotkeys for Undo/Redo (Ctrl+z/Ctrl+y)
 - Don't display + level for units whose max + level is 0 when adjusting level
+- NAND/NOR operations in find pages
 ### Bugs Fixed here that remain unfixed in the original repo
 - Cursed/Sealed units become unaffected by trait-targetting enemies
 - Procs from older packs aren't distributed properly on attacks without common proc
