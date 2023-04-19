@@ -169,8 +169,9 @@ public class MainBCU {
 		}
 
 		@Override
-		public void loadProg(String str) {
-			LoadPage.prog(str);
+		public void loadProg(double d, String str) {
+			LoadPage.prog(d);
+			LoadPage.packProg(str);
 		}
 
 		private boolean noNeedToShow(ErrType t) {

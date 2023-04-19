@@ -81,9 +81,8 @@ public class UtilPC {
 			return MainLocale.getLoc(m, s);
 		}
 
-		public void loadProgress(double d, String s) {
-			LoadPage.prog(d);
-			LoadPage.packProg(s);
+		public String[] lvText(AbForm f, Level lv) {
+			return UtilPC.lvText(f, lv);
 		}
 	}
 
