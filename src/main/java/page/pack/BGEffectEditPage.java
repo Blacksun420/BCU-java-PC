@@ -70,6 +70,7 @@ public class BGEffectEditPage extends Page {
 
     private final JBTN changebg = new JBTN(MainLocale.PAGE, "change");
     private final JTF bgsp = new JTF();
+    private final JTF fgsp = new JTF();
     private final JList<AnimCE> jld = new JList<>(new Vector<>(AnimCE.map().values().stream().filter(a -> a.id.base.equals(Source.BasePath.BGEffect)).collect(Collectors.toList())));
     private final JScrollPane jspd = new JScrollPane(jld);
 
@@ -180,8 +181,18 @@ public class BGEffectEditPage extends Page {
             if (changing || a < 0)
                 return;
             changing = true;
-            ((CustomBGEffect)bge).spacer = a;
-            bgsp.setText("Draw Spacer: " + ((CustomBGEffect)bge).spacer);
+            ((CustomBGEffect)bge).spacer = a * 2;
+            bgsp.setText("Draw Spacer: " + ((CustomBGEffect)bge).spacer / 2);
+            changing = false;
+        });
+
+        fgsp.setLnr(c -> {
+            int a = CommonStatic.parseIntN(fgsp.getText());
+            if (changing || a < 0)
+                return;
+            changing = true;
+            ((CustomBGEffect)bge).fspacer = a * 2;
+            fgsp.setText("Foreground Spacer: " + ((CustomBGEffect)bge).fspacer / 2);
             changing = false;
         });
     }
@@ -204,6 +215,7 @@ public class BGEffectEditPage extends Page {
             set(jspd, x, y, 450, 100, 300, 800);
             set(changebg, x, y, 450, 900, 300, 50);
             set(bgsp, x, y, 450, 1000, 300, 50);
+            set(fgsp, x, y, 450, 1050, 300, 50);
         } else {
             set(jspd, x, y, 450, 100, 300, 800);
             set(jspme, x, y, 850, 100, 300, 800);
@@ -234,6 +246,7 @@ public class BGEffectEditPage extends Page {
         if (be == null) {
             remove(changebg);
             remove(bgsp);
+            remove(fgsp);
             remove(addme);
             remove(remme);
             remove(jspbe);
@@ -248,6 +261,7 @@ public class BGEffectEditPage extends Page {
             remove(jspd);
             remove(changebg);
             remove(bgsp);
+            remove(fgsp);
 
             add(addme);
             add(remme);
@@ -266,9 +280,12 @@ public class BGEffectEditPage extends Page {
             add(jspd);
             add(changebg);
             add(bgsp);
+            add(fgsp);
             bgena.setText(be.getName());
-            bgsp.setText("Draw Spacer: " + ((CustomBGEffect)be).spacer);
+            bgsp.setText("Draw Spacer: " + ((CustomBGEffect)be).spacer / 2);
+            fgsp.setText("Foreground Spacer: " + ((CustomBGEffect)be).fspacer / 2);
             bgsp.setEnabled(editable);
+            fgsp.setEnabled(editable);
             changebg.setEnabled(editable && jld.getSelectedIndex() != -1);
         }
 
