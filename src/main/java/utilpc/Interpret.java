@@ -595,7 +595,7 @@ public class Interpret extends Data {
 		else if (type == 4)
 			return de.isOmni();
 		else if (type == 5)
-			return de.getTBA() + atks[0].getPre() < de.getItv(ind) / 2;
+			return de.getTBA() + (de.getAnimLen(ind) - de.getPost(false, ind)) < de.getPost(false, ind);
 		else if (type >= 6 && type <= 11)
 			return de.getSpAtks(type - 6).length != 0;
 		return false;

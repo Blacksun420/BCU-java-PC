@@ -26,4 +26,4 @@ Class-Path: . BCU_lib/annotations-13.0.jar BCU_lib/checker-compat-qual-2.5.5.jar
  -20230227.jar BCU_lib/jsr305-3.0.2.jar BCU_lib/kotlin-stdlib-1.4.0.jar BCU_lib/kotlin-stdlib-common-
  1.4.0.jar BCU_lib/kotlin-stdlib-jdk7-1.4.0.jar BCU_lib/kotlin-stdlib-jdk8-1.4.0.jar BCU_lib/listenab
  lefuture-9999.0-empty-to-avoid-conflict-with-guava.jar BCU_lib/servlet-api-2.5-20081211.jar BCU_lib/
- tritonus-share-0.3.7.4.jar BCU_lib/vorbisspi-1.0.3.3.jar
+ tritonus-share-0.3.7.4.jar BCU_lib/vorbisspi-1.0.3.3.jar BCU_lib/flatlaf-2.3.jar BCU_lib/flatlaf-intellij-themes-2.3.jar

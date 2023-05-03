@@ -101,8 +101,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		etd = new EnemyDamageTable(basis);
 		etdsp = new JScrollPane(etd);
 
-		if (recd.rl != null)
-			jsl.setMaximum(((SBRply) basis).size());
+		jsl.setMaximum(((SBRply) basis).size());
 		ini();
 		rply.setText(0, recd.rl == null ? "save" : "start");
 		resized();
@@ -412,7 +411,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		utd.sort();
 		etd.setList(new ArrayList<>(sb.enemyStatistics.keySet()));
 
-		if (basis instanceof SBRply && recd.rl != null)
+		if (basis instanceof SBRply)
 			change((SBRply) basis, b -> jsl.setValue(b.prog()));
 		ecount.setText(sb.entityCount(1) + "/" + sb.st.max);
 		ucount.setText(sb.entityCount(-1) + "/" + sb.max_num);
@@ -465,9 +464,10 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 
 		rply.setLnr(x -> {
 			backClicked = true;
-			if (basis instanceof SBCtrl)
-				changePanel(new BattleInfoPage(getThis(), ((SBCtrl) basis).getData(), 0));
-			if (basis instanceof SBRply)
+			if (basis instanceof SBCtrl) {
+				Replay r = ((SBCtrl) basis).getData();
+				changePanel(new BattleInfoPage(getThis(), r.rl == null ? r : r.clone(), 0));
+			} if (basis instanceof SBRply)
 				if (recd.rl == null)
 					changePanel(new RecdSavePage(getThis(), recd));
 				else
@@ -545,7 +545,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			add(stream);
 		else {
 			add(rply);
-			if (recd != null && recd.rl != null) {
+			if (recd != null && basis instanceof SBRply) {
 				add(jsl);
 				jsl.setEnabled(pause);
 			}

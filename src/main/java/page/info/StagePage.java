@@ -49,7 +49,7 @@ public class StagePage extends Page {
 	protected void resized(int x, int y) {
 		setBounds(0, 0, x, y);
 		set(back, x, y, 0, 0, 200, 50);
-		set(jspinfo, x, y, 800, 50, 1400, 300);
+		set(jspinfo, x, y, 800, 50, 1400, 350);
 		set(jspjt, x, y, 800, 400, 1400, 800);
 		jt.setRowHeight(size(x, y, 50));
 		info.setRowHeight(size(x, y, 50));

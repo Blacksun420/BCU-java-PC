@@ -59,8 +59,8 @@ public class StageViewPage extends StagePage {
 		set(cpst, x, y, 450, 1200, 300, 50);
 		set(dgen, x, y, 600, 0, 200, 50);
 		set(strt, x, y, 400, 0, 200, 50);
-		set(recd, x, y, 1850, 350, 200, 50);
-		set(info, x, y, 1600, 350, 200, 50);
+		set(recd, x, y, 1850, 0, 200, 50);
+		set(info, x, y, 1600, 0, 200, 50);
 		set(search, x, y, 200, 0, 200, 50);
 	}
 
