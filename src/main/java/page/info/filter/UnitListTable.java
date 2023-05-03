@@ -5,6 +5,7 @@ import common.battle.BasisSet;
 import common.battle.data.MaskUnit;
 import common.pack.UserProfile;
 import common.system.Node;
+import common.util.Data;
 import common.util.unit.*;
 import page.MainFrame;
 import page.MainLocale;
@@ -85,8 +86,8 @@ public class UnitListTable extends EntityListTable<AbForm> {
 			Form e = (Form) f;
 			MaskUnit du = e.maxu();
 			double mul = e.unit.lv.getMult(e.unit.getPreferredLevel() + e.unit.getPreferredPlusLevel());
-			double atk = b.t().getAtkMulti();
-			double def = b.t().getDefMulti();
+			double atk = b.t().getAtkMulti() * (e.du.getPCoin() != null ? e.du.getPCoin().getStatMultiplication(Data.PC2_ATK, e.du.getPCoin().max) : 1);
+			double def = b.t().getDefMulti() * (e.du.getPCoin() != null ? e.du.getPCoin().getStatMultiplication(Data.PC2_HP, e.du.getPCoin().max) : 1);
 			int itv = e.anim != null ? du.getItv(0) : -1;
 			if (c == 0)
 				return e.uid + "-" + e.fid;
@@ -111,7 +112,7 @@ public class UnitListTable extends EntityListTable<AbForm> {
 			else if (c == 10)
 				return b.t().getFinRes(du.getRespawn());
 			else if (c == 11)
-				return (int) (e.maxu().getPrice() * (1 + cost * 0.5));
+				return (int) (du.getPrice() * (1 + cost * 0.5));
 			else if (c == 12)
 				return itv;
 			else if (c == 13)

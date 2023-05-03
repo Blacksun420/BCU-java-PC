@@ -174,7 +174,7 @@ public abstract class UIContext {
             if (uj != null && uj.getVer() > MainBCU.ver) {
                 String popText = "New BCU file update found: " + uj.getArtifact() +
                         ", do you want to update jar file?\n" + uj.getDescription()
-                        + (uj.prio() ? "(This update increases Core Version" : "");
+                        + (uj.prio() ? "(This update increases Core Version)" : "");
                 // result
                 if (Opts.conf(popText))
                     UIDownloader.downloadJar(getDownloader(uj), true);

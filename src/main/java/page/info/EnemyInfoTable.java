@@ -87,7 +87,7 @@ public class EnemyInfoTable extends Page {
 
 		MaskAtk[] atkData = e.de.getAtks(dispAtk);
 		for (int i = 0; i < atkData.length; i++) {
-			atks[i][0].setText(MainLocale.INFO, "atk");
+			atks[i][0].setText(get(MainLocale.INFO, "atk") + (atkData[i].getName().toLowerCase().startsWith("combo") ? " [combo]" : ""));
 			atks[i][2].setText(MainLocale.INFO, "preaa");
 			atks[i][3].setText(MainBCU.convertTime(atkData[i].getPre()));
 			atks[i][4].setText(MainLocale.INFO, "dire");
@@ -111,11 +111,11 @@ public class EnemyInfoTable extends Page {
 		}
 		for (int i = 0; i < atkList.size(); i++) {
 			int ind = i + atkData.length;
-			atks[ind][0].setText(MainLocale.INFO, "atk [" + atkList.get(i).str + "]");
+			atks[ind][0].setText(get(MainLocale.INFO, "atk") + " [" + atkList.get(i).str + "]");
 			atks[ind][2].setText(MainLocale.INFO, "preaa");
 			atks[ind][3].setText(MainBCU.convertTime(atkList.get(i).pre));
 			atks[ind][4].setText(MainLocale.INFO, "dire");
-			atks[ind][5].setText(atkList.get(i).dire == 1 ? get(MainLocale.INFO, "unit") : atkList.get(i).dire == -1 ? get(MainLocale.INFO, "enemy") : "N/A");
+			atks[ind][5].setText(atkList.get(i).dire == 1 ? get(MainLocale.PAGE, "unit") : atkList.get(i).dire == -1 ? get(MainLocale.PAGE, "enemy") : "N/A");
 		}
 		reset();
 	}
