@@ -9,12 +9,30 @@ import page.MainLocale;
 import page.Page;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Vector;
 
 import static utilpc.Interpret.ATKCONF;
 import static utilpc.Interpret.TRAIT_EVA;
 
 public abstract class EntityFilterBox extends Page {
+
+    protected static class PackBox extends JComboBox<PackData> {
+        private static final long serialVersionUID = 1L;
+
+        public PackBox() {
+            setRenderer(new DefaultListCellRenderer() {
+                private static final long serialVersionUID = 1L;
+                @Override
+                public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean s, boolean f) {
+                    JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
+                    if (o == null)
+                        jl.setText(Page.get(0, "anypac"));
+                    return jl;
+                }
+            });
+        }
+    }
 
     private static final long serialVersionUID = 1L;
 
@@ -30,15 +48,19 @@ public abstract class EntityFilterBox extends Page {
     protected final AttList atkt = new AttList(2, 0);
     protected final JScrollPane jt = new JScrollPane(trait);
     protected final JScrollPane jat = new JScrollPane(atkt);
+    protected final PackBox pks = new PackBox();
+    protected final boolean rand;
 
-    protected EntityFilterBox(Page p) {
+    protected EntityFilterBox(Page p, boolean rand) {
         super(p);
         pack = null;
+        this.rand = rand;
     }
 
-    protected EntityFilterBox(Page p, PackData.UserPack pack) {
+    protected EntityFilterBox(Page p, PackData.UserPack pack, boolean rand) {
         super(p);
         this.pack = pack;
+        this.rand = rand;
     }
 
     @Override
@@ -91,6 +113,8 @@ public abstract class EntityFilterBox extends Page {
         set(atkt);
         add(jt);
         add(jat);
+        add(pks);
+        pks.addActionListener(l -> confirm());
     }
 
     private void opBtnListeners() {

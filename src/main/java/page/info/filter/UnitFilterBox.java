@@ -16,7 +16,6 @@ import page.Page;
 import utilpc.UtilPC;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,23 +24,6 @@ import java.util.Vector;
 import static utilpc.Interpret.*;
 
 public class UnitFilterBox extends EntityFilterBox {
-
-	private static class PackBox extends JComboBox<PackData> {
-		private static final long serialVersionUID = 1L;
-
-		public PackBox() {
-			setRenderer(new DefaultListCellRenderer() {
-				private static final long serialVersionUID = 1L;
-				@Override
-				public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean s, boolean f) {
-					JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
-					if (o == null)
-						jl.setText(Page.get(0, "anypac"));
-					return jl;
-				}
-			});
-		}
-	}
 
 	private static final long serialVersionUID = 1L;
 
@@ -53,24 +35,20 @@ public class UnitFilterBox extends EntityFilterBox {
 	private final JScrollPane jr = new JScrollPane(rare);
 	private final JScrollPane jab = new JScrollPane(abis);
 	private final JTG limbtn = new JTG(0, "usable");
-	protected final PackBox inccus = new PackBox();
-	private final boolean rand;
 
 	public UnitFilterBox(Page p, boolean rand, Limit limit, int price) {
-		super(p);
+		super(p, rand);
 		lim = limit;
 		this.price = price;
-		this.rand = rand;
 
 		ini();
 		confirm();
 	}
 
 	public UnitFilterBox(Page p, boolean rand, PackData.UserPack pack) {
-		super(p, pack);
+		super(p, pack, rand);
 		lim = null;
 		price = 0;
-		this.rand = rand;
 
 		ini();
 		confirm();
@@ -86,7 +64,7 @@ public class UnitFilterBox extends EntityFilterBox {
 		super.resized(x, y);
 
 		set(limbtn, x, y, 0, 300, 200, 50);
-		set(inccus, x, y, 0, 0, 200, 50);
+		set(pks, x, y, 0, 0, 200, 50);
 		set(jr, x, y, 0, 50, 200, 250);
 		set(jab, x, y, 250, 50, 200, 1100);
 	}
@@ -96,7 +74,7 @@ public class UnitFilterBox extends EntityFilterBox {
 		List<AbForm> ans = new ArrayList<>();
 		minDiff = 5;
 		for(PackData p : UserProfile.getAllPacks()) {
-			if(inccus.getSelectedItem() != null && !(p.equals(inccus.getSelectedItem())) || !validatePack(p))
+			if(pks.getSelectedItem() != null && !(p.equals(pks.getSelectedItem())) || !validatePack(p))
 				continue;
 			for (Unit u : p.units.getList())
 				if (validateUnit(u))
@@ -144,23 +122,21 @@ public class UnitFilterBox extends EntityFilterBox {
 		set(abis);
 		add(jr);
 		add(jab);
-		add(inccus);
-		Vector<PackData> pks = new Vector<>(UserProfile.getAllPacks().size() + 1);
-		pks.add(null);
+		Vector<PackData> pkv = new Vector<>(UserProfile.getAllPacks().size() + 1);
+		pkv.add(null);
 		if (pack == null) {
 			for (PackData p : UserProfile.getAllPacks())
-				if (p.units.size() > 0 || p.randUnits.size() > 0)
-					pks.add(p);
+				if (p.units.size() > 0 || (rand && p.randUnits.size() > 0))
+					pkv.add(p);
 		} else {
-			pks.add(UserProfile.getBCData());
+			pkv.add(UserProfile.getBCData());
 			for (String s : pack.desc.dependency) {
 				PackData p = UserProfile.getUserPack(s);
-				if (p.units.size() > 0 || p.randUnits.size() > 0)
-					pks.add(UserProfile.getUserPack(s));
+				if (p.units.size() > 0 || (rand && p.randUnits.size() > 0))
+					pkv.add(UserProfile.getUserPack(s));
 			}
 		}
-		inccus.setModel(new DefaultComboBoxModel<>(pks));
-		inccus.addActionListener(l -> confirm());
+		pks.setModel(new DefaultComboBoxModel<>(pkv));
 
 		if (lim != null) {
 			add(limbtn);

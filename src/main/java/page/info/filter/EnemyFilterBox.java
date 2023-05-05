@@ -14,6 +14,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 
 import static utilpc.Interpret.*;
 
@@ -25,20 +26,17 @@ public class EnemyFilterBox extends EntityFilterBox {
 	protected final AttList abis = new AttList(-1, EABIIND.length);
 	protected final JScrollPane jr = new JScrollPane(rare);
 	protected final JScrollPane jab = new JScrollPane(abis);
-	private final boolean rand;
 
 	protected EnemyFilterBox(Page p, boolean rand) {
-		super(p);
+		super(p, rand);
 
-		this.rand = rand;
 		ini();
 		confirm();
 	}
 
 	protected EnemyFilterBox(Page p, boolean rand, PackData.UserPack pack) {
-		super(p, pack);
+		super(p, pack, rand);
 
-		this.rand = rand;
 		ini();
 		confirm();
 	}
@@ -57,7 +55,8 @@ public class EnemyFilterBox extends EntityFilterBox {
 		super.resized(x, y);
 		set(orop[3], x, y, 0, 0, 200, 50);
 
-		set(jr, x, y, 0, 50, 200, 250);
+		set(pks, x, y, 0, 50, 200, 50);
+		set(jr, x, y, 0, 100, 200, 200);
 		set(jab, x, y, 250, 50, 200, 1100);
 	}
 
@@ -66,7 +65,7 @@ public class EnemyFilterBox extends EntityFilterBox {
 		minDiff = 5;
 		List<AbEnemy> ans = new ArrayList<>();
 		for(PackData p : UserProfile.getAllPacks())
-			if (validatePack(p)) {
+			if (pks.getSelectedItem() == null || processOperator(3, p.equals(pks.getSelectedItem())) && validatePack(p)) {
 				for (Enemy e : p.enemies.getList())
 					if (validateEnemy(e))
 						ans.add(e);
@@ -95,22 +94,6 @@ public class EnemyFilterBox extends EntityFilterBox {
 				ans.remove(i--);
 
 		getFront().callBack(ans);
-	}
-
-	@Override
-	protected boolean validatePack(PackData p) {
-		if (!super.validatePack(p))
-			return false;
-		if (rare.getSelectedIndices().length > 0)
-			if (p instanceof PackData.DefPack) {
-				if (rare.isSelectedIndex(3))
-					return !processOperator(3, rare.isSelectedIndex(3));
-				return true;
-			} else {
-				if (!processOperator(3, rare.isSelectedIndex(3)))
-					return processOperator(3, rare.isSelectedIndex(1)) || processOperator(3, rare.isSelectedIndex(4));
-			}
-		return true;
 	}
 
 	protected boolean validateEnemy(Enemy e) {
@@ -177,5 +160,20 @@ public class EnemyFilterBox extends EntityFilterBox {
 		set(abis);
 		add(jr);
 		add(jab);
+		Vector<PackData> pkv = new Vector<>(UserProfile.getAllPacks().size() + 1);
+		pkv.add(null);
+		if (pack == null) {
+			for (PackData p : UserProfile.getAllPacks())
+				if (p.enemies.size() > 0 || (rand && p.randEnemies.size() > 0))
+					pkv.add(p);
+		} else {
+			pkv.add(UserProfile.getBCData());
+			for (String s : pack.desc.dependency) {
+				PackData p = UserProfile.getUserPack(s);
+				if (p.enemies.size() > 0 || (rand && p.randEnemies.size() > 0))
+					pkv.add(UserProfile.getUserPack(s));
+			}
+		}
+		pks.setModel(new DefaultComboBoxModel<>(pkv));
 	}
 }

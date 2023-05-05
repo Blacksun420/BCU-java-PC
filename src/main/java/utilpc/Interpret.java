@@ -5,7 +5,6 @@ import common.battle.BasisLU;
 import common.battle.BasisSet;
 import common.battle.Treasure;
 import common.battle.data.*;
-import common.pack.Identifier;
 import common.pack.UserProfile;
 import common.util.Data;
 import common.util.Data.Proc.ProcItem;
@@ -25,10 +24,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
 
 public class Interpret extends Data {
 
@@ -563,23 +560,20 @@ public class Interpret extends Data {
 			return e.getExplanation().replace("\n","").length() > 0; //e.inDic;
 		else if (t == 1)
 			return e.de.getStar() == 1;
-		else if (t == 3)
-			return !e.id.pack.equals(Identifier.DEF);
-
-		List<MapColc> lis = e.findMap();
-		final int recurring;
-		if (e.de instanceof DataEnemy)
-			recurring = e.findApp(DefMapColc.getMap("N")).size() + e.findApp(DefMapColc.getMap("A")).size()
-					+ e.findApp(DefMapColc.getMap("Q")).size() + e.findApp(DefMapColc.getMap("ND")).size();
-		else
-			recurring = e.findApp(UserProfile.getUserPack(e.id.pack).mc).size();
-		boolean colab = recurring == 0 && (lis.contains(DefMapColc.getMap("C"))
-				|| lis.contains(DefMapColc.getMap("R")) || lis.contains(DefMapColc.getMap("CH")) || lis.contains(DefMapColc.getMap("CA")));
-		if (t == 2)
-			return colab;
 		else if (t == 4)
-			return recurring > 3;
-		return CommonStatic.getFaves().enemies.contains(e);
+			return CommonStatic.getFaves().enemies.contains(e);
+
+		if (e.de instanceof DataEnemy) {
+			Map<MapColc.DefMapColc, Integer> lis = e.findMap();
+			final int recurring = lis.getOrDefault(DefMapColc.getMap("N"), 0) + lis.getOrDefault(DefMapColc.getMap("A"), 0)
+					+ lis.getOrDefault(DefMapColc.getMap("Q"), 0) + lis.getOrDefault(DefMapColc.getMap("ND"), 0);
+			if (t == 3)
+				return recurring > 3;
+			return recurring == 0 && (lis.containsKey(DefMapColc.getMap("C")) || lis.containsKey(DefMapColc.getMap("R")) || lis.containsKey(DefMapColc.getMap("CH"))
+					|| lis.containsKey(DefMapColc.getMap("CA")));
+		} else if (t == 3)
+			return e.findApp(UserProfile.getUserPack(e.id.pack).mc).size() > 3;
+		return false;
 	}
 
 	public static boolean isType(MaskEntity de, int type, int ind) {
@@ -602,7 +596,7 @@ public class Interpret extends Data {
 	}
 
 	public static void redefine() {
-		ERARE = Page.get(MainLocale.UTIL, "er", 6);
+		ERARE = Page.get(MainLocale.UTIL, "er", 5);
 		RARITY = Page.get(MainLocale.UTIL, "r", 6);
 		TRAIT = Page.get(MainLocale.UTIL, "c", TRAIT_TOT);
 		STAR = Page.get(MainLocale.UTIL, "s", 5);
@@ -853,16 +847,14 @@ public class Interpret extends Data {
 	public static String translateDate(String date) {
 		StringBuilder ans = new StringBuilder();
 		int[] times = CommonStatic.parseIntsN(date);
-		switch (CommonStatic.getConfig().lang) {
-			case 3: //Japanese
-				ans.append(times[0]).append('月').append(times[1]).append('日').append(times[2]).append("年、")
-						.append(times[3] >= 12 ? "午後" : "午前").append((times[3] - 1) % 12 + 1).append('時');
-				break;
-			default: //English, also used for placeholder
-				String[] ms = new String[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-				ans.append(ms[times[0] - 1]).append(' ').append(getNumberExtension(times[1])).append(",").append(times[2]).append(" at ")
-						.append((times[3] - 1) % 12 + 1).append(times[3] >= 12 ? "PM" : "AM");
-				break;
+		//English, also used for placeholder
+		if (CommonStatic.getConfig().lang == 3) { //Japanese
+			ans.append(times[0]).append('月').append(times[1]).append('日').append(times[2]).append("年、")
+					.append(times[3] >= 12 ? "午後" : "午前").append((times[3] - 1) % 12 + 1).append('時');
+		} else {
+			String[] ms = new String[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+			ans.append(ms[times[0] - 1]).append(' ').append(getNumberExtension(times[1])).append(",").append(times[2]).append(" at ")
+					.append((times[3] - 1) % 12 + 1).append(times[3] >= 12 ? "PM" : "AM");
 		}
 		return ans.toString();
 	}

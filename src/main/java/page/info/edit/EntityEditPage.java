@@ -228,7 +228,7 @@ public abstract class EntityEditPage extends Page {
 		add(atkS);
 		if (ce.getAtkTypeCount() > 1) {
 			add(jsh);
-			add(josh);
+			set(josh);
 		}
 		add(aet);
 		add(jspm);
@@ -446,7 +446,6 @@ public abstract class EntityEditPage extends Page {
 		mpt.setData(ce.rep.proc);
 
 		int ind = jli.getSelectedIndex();
-		josh.setEnabled(pack.editable && !isSp());
 		if (isSp()) {
 			extra.clear();
 			for (AtkDataModel[] atks : ce.getSpAtks(true))
