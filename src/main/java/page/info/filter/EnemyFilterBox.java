@@ -26,6 +26,7 @@ public class EnemyFilterBox extends EntityFilterBox {
 	protected final AttList abis = new AttList(-1, EABIIND.length);
 	protected final JScrollPane jr = new JScrollPane(rare);
 	protected final JScrollPane jab = new JScrollPane(abis);
+	private boolean multipacks;
 
 	protected EnemyFilterBox(Page p, boolean rand) {
 		super(p, rand);
@@ -55,8 +56,13 @@ public class EnemyFilterBox extends EntityFilterBox {
 		super.resized(x, y);
 		set(orop[3], x, y, 0, 0, 200, 50);
 
-		set(pks, x, y, 0, 50, 200, 50);
-		set(jr, x, y, 0, 100, 200, 200);
+		if (multipacks) {
+			set(pks, x, y, 0, 50, 200, 50);
+			set(jr, x, y, 0, 100, 200, 200);
+		} else {
+			set(pks, x, y, 0, 50, 200, 0);
+			set(jr, x, y, 0, 50, 200, 250);
+		}
 		set(jab, x, y, 250, 50, 200, 1100);
 	}
 
@@ -65,7 +71,7 @@ public class EnemyFilterBox extends EntityFilterBox {
 		minDiff = 5;
 		List<AbEnemy> ans = new ArrayList<>();
 		for(PackData p : UserProfile.getAllPacks())
-			if (pks.getSelectedItem() == null || processOperator(3, p.equals(pks.getSelectedItem())) && validatePack(p)) {
+			if ((pks.getSelectedItem() == null || processOperator(3, p.equals(pks.getSelectedItem()))) && validatePack(p)) {
 				for (Enemy e : p.enemies.getList())
 					if (validateEnemy(e))
 						ans.add(e);
@@ -168,12 +174,16 @@ public class EnemyFilterBox extends EntityFilterBox {
 					pkv.add(p);
 		} else {
 			pkv.add(UserProfile.getBCData());
+			if (pack.enemies.size() > 0 || (rand && pack.randEnemies.size() > 0))
+				pkv.add(pack);
+
 			for (String s : pack.desc.dependency) {
 				PackData p = UserProfile.getUserPack(s);
 				if (p.enemies.size() > 0 || (rand && p.randEnemies.size() > 0))
 					pkv.add(UserProfile.getUserPack(s));
 			}
 		}
+		multipacks = pkv.size() > 2;
 		pks.setModel(new DefaultComboBoxModel<>(pkv));
 	}
 }
