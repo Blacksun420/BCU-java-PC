@@ -42,6 +42,7 @@
     "tip-favorite-tip-menu": "Right-click or press ctrl+f to add to favorite.",
     "tip-battle-scene-tip-menu": "This setting can make battle scene more like to BC, start a battle to see the effect!\nYou can press number 6-0 on the keyboard to enable/disable some components in battle scene.",
     "battle-scene-tip-menu": "☆Customize Battle Scene☆",
+    "bcu-setting-menu": "BCU Settings",
     "tip-removeSwingTheme": "Remove Swing And Nimbus Theme, which means you will only see and use Flat theme menus.",
     "tip-warning-when-change-theme": "Warning: Using Flat theme may result in high CPU usage, is it okay?"
   }

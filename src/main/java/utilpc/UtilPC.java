@@ -77,7 +77,7 @@ public class UtilPC {
 			BCMusic.play(mus);
 		}
 
-		public String getBtnName(int m, String s) {
+		public String getUILang(int m, String s) {
 			return MainLocale.getLoc(m, s);
 		}
 

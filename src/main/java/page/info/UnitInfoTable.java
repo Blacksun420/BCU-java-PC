@@ -87,7 +87,7 @@ public class UnitInfoTable extends Page {
 			Interpret.ProcDisplay display = ls.get(i);
 			add(proc[i] = new JLabel(display.toString()));
 			proc[i].setBorder(BorderFactory.createEtchedBorder());
-			proc[i].setIcon(display.getIcon());
+			proc[i].setIcon(display.icon);
 		}
 		if (pc) {
 			pcoin = proc[ls.size() - 1];
@@ -191,7 +191,7 @@ public class UnitInfoTable extends Page {
 		for (int i = 0; i < ls.size(); i++) {
 			Interpret.ProcDisplay display = ls.get(i);
 			proc[i].setText(display.toString());
-			proc[i].setIcon(display.getIcon());
+			proc[i].setIcon(display.icon);
 		}
 		updateTooltips();
 	}

@@ -1,5 +1,6 @@
 package plugin.ui.main.util;
 
+import io.BCMusic;
 import main.MainBCU;
 import page.MainFrame;
 import plugin.ui.common.config.StaticConfig;
@@ -301,6 +302,15 @@ public class MenuBarHandler {
 
         /*----------------------*/
         JMenu battle_scene = P.getItem(StaticConfig.MENU, "battle-scene");
+
+        /**/
+        JMenu BCUSettings = P.getItem(StaticConfig.MENU, "bcu-setting-menu");
+        JMenu playMusic = P.getItem(StaticConfig.CHECK_BOX_MENU_ITEM, "bcu-setting-mus");
+        System.out.println(BCMusic.play); //Test
+        playMusic.setSelected(BCMusic.play);
+
+        battle_scene.add(BCUSettings);
+        BCUSettings.add(playMusic);
 
         /**/
         JMenu radio_w = P.getItem(StaticConfig.MENU, "radio-w");

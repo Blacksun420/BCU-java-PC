@@ -4,8 +4,10 @@ import common.CommonStatic;
 import common.battle.BasisSet;
 import common.battle.data.AtkDataModel;
 import common.battle.data.MaskAtk;
+import common.pack.Identifier;
 import common.pack.SortedPackSet;
 import common.pack.UserProfile;
+import common.system.ENode;
 import common.util.Data;
 import common.util.unit.Enemy;
 import common.util.unit.Trait;
@@ -18,6 +20,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +49,7 @@ public class EnemyInfoTable extends Page {
 	private int dispAtk = 0;
 	private final ArrayList<AtkDataModel> atkList = new ArrayList<>();
 
-	protected EnemyInfoTable(Page p, Enemy de, int mul, int mula) {
+	protected EnemyInfoTable(EnemyInfoPage p, Enemy de, int mul, int mula) {
 		super(p);
 		b = BasisSet.current();
 
@@ -81,7 +85,17 @@ public class EnemyInfoTable extends Page {
 			Interpret.ProcDisplay disp = ls.get(i);
 			add(proc[i] = new JLabel(disp.toString()));
 			proc[i].setBorder(BorderFactory.createEtchedBorder());
-			proc[i].setIcon(disp.getIcon());
+			proc[i].setIcon(disp.icon);
+
+			int II = i;
+			proc[i].addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					super.mouseClicked(e);
+					if (e.getSource() == proc[II])
+						panelClicked(disp.item);
+				}
+			});
 		}
 		main[3][7].setText(MainBCU.convertTime(e.de.getPost(false, dispAtk)));
 
@@ -139,6 +153,16 @@ public class EnemyInfoTable extends Page {
 			Interpret.ProcDisplay disp = ls.get(i);
 			proc[i].setText(disp.toString());
 			updateTooltips();
+
+			int II = i;
+			proc[i].addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					super.mouseClicked(e);
+					if (e.getSource() == proc[II])
+						panelClicked(disp.item);
+				}
+			});
 		}
 		int itv = e.de.getItv(dispAtk);
 		main[2][7].setText(MainBCU.convertTime(itv));
@@ -373,6 +397,13 @@ public class EnemyInfoTable extends Page {
 			sb.append(str);
 			jl.setToolTipText("<html>" + sb + "</html>");
 		}
+	}
+
+	private void panelClicked(Data.Proc.ProcItem item) {
+		if (item instanceof Data.Proc.SUMMON && (((Data.Proc.SUMMON)item).id == null || Enemy.class.isAssignableFrom(((Data.Proc.SUMMON)item).id.cls))) {
+			Data.Proc.SUMMON su = (Data.Proc.SUMMON)item;
+			changePanel(new EnemyInfoPage(getFront(), new ENode(Identifier.getOr(su.id, Enemy.class), su.type.fix_buff ? new int[]{su.mult, su.mult} : new int[]{(int)((su.mult / 100.0) * multi), (int)((su.mult / 100.0) * mulatk)})));
+		} //Check theme later idk
 	}
 
 	public void setDisplaySpecial(boolean displaySpecial) {

@@ -52,7 +52,7 @@ public class EntityAbilities extends Page {
             add(proc[i] = new JLabel(disp.toString()));
 
             proc[i].setBorder(BorderFactory.createEtchedBorder());
-            proc[i].setIcon(disp.getIcon());
+            proc[i].setIcon(disp.icon);
             Interpret.setUnderline(proc[i]);
         }
 
