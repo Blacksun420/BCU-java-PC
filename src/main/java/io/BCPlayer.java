@@ -58,15 +58,15 @@ public class BCPlayer implements LineListener {
 			playing = false;
 			stop();
 
-			if (ind >= 0 && ind != 8 && ind != 9 && ind != 20 && ind != 21 && ind != 22) {
+			if (ind >= 0 && ind != 8 && ind != 9 && ind != 20 && ind != 21 && ind != 22)
 				synchronized (BCMusic.class) {
 					ArrayDeque<BCPlayer> players = BCMusic.sounds.get(ind);
 
-					if (players != null) {
+					if (players != null)
 						players.push(this);
-					}
 				}
-			}
+			else if (ind == -1)
+				BCMusic.customSounds.remove(this);
 		}
 	}
 

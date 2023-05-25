@@ -304,15 +304,6 @@ public class MenuBarHandler {
         JMenu battle_scene = P.getItem(StaticConfig.MENU, "battle-scene");
 
         /**/
-        JMenu BCUSettings = P.getItem(StaticConfig.MENU, "bcu-setting-menu");
-        JMenu playMusic = P.getItem(StaticConfig.CHECK_BOX_MENU_ITEM, "bcu-setting-mus");
-        System.out.println(BCMusic.play); //Test
-        playMusic.setSelected(BCMusic.play);
-
-        battle_scene.add(BCUSettings);
-        BCUSettings.add(playMusic);
-
-        /**/
         JMenu radio_w = P.getItem(StaticConfig.MENU, "radio-w");
         JMenu radio_h = P.getItem(StaticConfig.MENU, "radio-h");
         JSlider jsw = createSlider();

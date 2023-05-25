@@ -1,26 +1,30 @@
 package page.info.edit;
 
 import common.CommonStatic;
+import common.pack.Identifier;
 import common.pack.PackData.UserPack;
 import common.pack.UserProfile;
-import common.util.stage.MapColc;
-import common.util.stage.SCDef;
-import common.util.stage.SCGroup;
-import common.util.stage.Stage;
+import common.system.ENode;
+import common.util.stage.*;
 import common.util.stage.info.CustomStageInfo;
 import common.util.stage.info.StageInfo;
 import common.util.unit.AbEnemy;
+import common.util.unit.Enemy;
 import common.util.unit.Form;
 import common.util.unit.Level;
 import main.Opts;
 import page.*;
+import page.info.EnemyInfoPage;
 import page.info.StageViewPage;
 import page.info.UnitInfoPage;
+import page.info.filter.EnemyFindPage;
 import page.info.filter.UnitFindPage;
 import page.support.AnimLCR;
+import utilpc.Theme;
 import utilpc.UtilPC;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -30,6 +34,27 @@ import java.util.List;
 public class AdvStEditPage extends Page {
 
 	private static final long serialVersionUID = 1L;
+	private static class LineList extends JList<SCDef.Line> {
+		public LineList() {
+			setSelectionBackground(Theme.DARK.NIMBUS_SELECT_BG);
+
+			setCellRenderer(new DefaultListCellRenderer() {
+				private static final long serialVersionUID = 1L;
+				@Override
+				public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean s, boolean f) {
+					JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
+					SCDef.Line li = (SCDef.Line)o;
+					AbEnemy ee = Identifier.getOr(li.enemy, AbEnemy.class);
+					if (ee.getIcon() != null) {
+						jl.setIcon(UtilPC.getIcon(ee.getIcon()));
+					}
+					jl.setText(ee.toString());
+
+					return jl;
+				}
+			});
+		}
+	}
 
 	private final JBTN back = new JBTN(0, "back");
 	private final JTF sdef = new JTF();
@@ -62,9 +87,25 @@ public class AdvStEditPage extends Page {
 
 	private StageViewPage svp;
 	private UnitFindPage ufp;
+	private EnemyFindPage efp;
 
 	private final Stage st;
 	private final SCDef data;
+
+	private final LineList jlines = new LineList();
+	private final JScrollPane jsines = new JScrollPane(jlines);
+	private final JBTN revback = new JBTN(MainLocale.PAGE, "prev");
+	private final JBTN revNext = new JBTN(MainLocale.PAGE, "next");
+	private final JBTN remrev = new JBTN(MainLocale.PAGE, "rem");
+	private final JL revEne = new JL();
+	private final JL revBGM = new JL();
+	private final JL revSoul = new JL();
+	private final JL revMults = new JL(MainLocale.INFO, "t2");
+	private final JTF jtMults = new JTF();
+	private final JBTN addrev = new JBTN(MainLocale.PAGE, "add");
+	private final JBTN bossType = new JBTN(MainLocale.PAGE, "b0");
+	private Revival rev;
+	private boolean addEne = false;
 
 	protected AdvStEditPage(Page p, Stage stage) {
 		super(p);
@@ -86,27 +127,42 @@ public class AdvStEditPage extends Page {
 		setBounds(0, 0, x, y);
 		set(back, x, y, 0, 0, 200, 50);
 		set(groups, x, y, 50, 100, 300, 50);
-		set(jsps, x, y, 50, 150, 300, 750);
-		set(addg, x, y, 50, 900, 150, 50);
-		set(remg, x, y, 200, 900, 150, 50);
-		set(smax, x, y, 50, 950, 300, 50);
+		set(jsps, x, y, 50, 150, 300, 700);
+		set(addg, x, y, 50, 850, 150, 50);
+		set(remg, x, y, 200, 850, 150, 50);
+		set(smax, x, y, 50, 900, 300, 50);
+
 		set(jspe, x, y, 400, 100, 300, 800);
 		set(sdef, x, y, 400, 900, 300, 50);
 		set(jspt, x, y, 750, 150, 400, 800);
 		set(addt, x, y, 750, 100, 200, 50);
 		set(remt, x, y, 950, 100, 200, 50);
+
 		set(exSt, x, y, 1200, 100, 300, 50);
-		set(jsex, x, y, 1200, 200, 300, 650);
+		set(jsex, x, y, 1200, 200, 300, 600);
 		set(addex, x, y, 1200, 150, 150, 50);
 		set(remex, x, y, 1350, 150, 150, 50);
-		set(jlprob, x, y, 1200, 850, 150, 50);
-		set(jprob, x, y, 1350, 850, 150, 50);
-		set(jltprob, x, y, 1200, 900, 150, 50);
-		set(jtprob, x, y, 1350, 900, 150, 50);
-		set(equal, x, y, 1200, 950, 300, 50);
+		set(jlprob, x, y, 1200, 800, 150, 50);
+		set(jprob, x, y, 1350, 800, 150, 50);
+		set(jltprob, x, y, 1200, 850, 150, 50);
+		set(jtprob, x, y, 1350, 850, 150, 50);
+		set(equal, x, y, 1200, 900, 300, 50);
+
 		set(jubas, x, y, 1200, 1050, 300, 50);
 		set(lves, x, y, 1200, 1100, 300, 50);
 		set(ubaslv, x, y, 1200, 1150, 300, 50);
+
+		set(jsines, x, y, 1600, 100, 300, 800);
+		set(addrev, x, y, 1600, 900, 150, 50);
+		set(remrev, x, y, 1750, 900, 150, 50);
+		set(bossType, x, y, 1600, 950, 300, 50);
+		set(revback, x, y, 1600, 1000, 150, 50);
+		set(revNext, x, y, 1750, 1000, 150, 50);
+		set(revEne, x, y, 1600, 1050, 300, 50);
+		set(revBGM, x, y, 1600, 1100, 150, 50);
+		set(revSoul, x, y, 1750, 1100, 150, 50);
+		set(revMults, x, y, 1600, 1150, 100, 50);
+		set(jtMults, x, y, 1700, 1150, 200, 50);
 		sget.setRowHeight(size(x, y, 50));
 	}
 
@@ -243,6 +299,62 @@ public class AdvStEditPage extends Page {
 		addt.setLnr(e -> sget.addLine(jle.getSelectedValue()));
 
 		remt.setLnr(e -> sget.remLine());
+
+		jlines.addListSelectionListener(l -> {
+			SCDef.Line li = jlines.getSelectedValue();
+			if (li == null)
+				setRevival(null);
+			else
+				setRevival(li.rev);
+		});
+
+		addrev.addActionListener(l -> {
+			if (efp == null)
+				efp = new EnemyFindPage(getThis(), true, UserProfile.getUserPack(st.id.pack.substring(0, st.id.pack.indexOf('/'))));
+			changePanel(efp);
+		});
+
+		remrev.addActionListener(l -> {
+			if (rev.par == null) {
+				jlines.getSelectedValue().rev = null;
+				setRevival(null);
+			} else {
+				rev.par.rev = null;
+				setRevival(rev.par);
+			}
+		});
+
+		bossType.addActionListener(l -> {
+			rev.boss = (byte)((rev.boss + 1) % 3);
+			bossType.setText("b" + rev.boss);
+		});
+
+		revback.addActionListener(l -> setRevival(rev.par));
+		revNext.addActionListener(l -> setRevival(rev.rev));
+
+		revEne.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				super.mouseClicked(e);
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					addEne = true;
+					if (efp == null)
+						efp = new EnemyFindPage(getThis(), true, UserProfile.getUserPack(st.id.pack.substring(0, st.id.pack.indexOf('/'))));
+					changePanel(efp);
+				} else if (rev.enemy != null && rev.enemy.get() instanceof Enemy)
+					changePanel(new EnemyInfoPage(getThis(), new ENode((Enemy)rev.enemy.get(), new int[]{rev.mhp, rev.matk})));
+			}
+		});
+
+		jtMults.addActionListener(l -> {
+			int[] mags = CommonStatic.parseIntsN(jtMults.getText());
+			if (mags.length >= 2) {
+				rev.mhp = mags[0];
+				rev.matk = mags[1];
+			} else if (mags.length == 1)
+				rev.mhp = rev.matk = mags[0];
+			jtMults.setText(rev.mhp + "% / " + rev.matk + "%");
+		});
 	}
 
 	private void ini() {
@@ -278,6 +390,18 @@ public class AdvStEditPage extends Page {
 		jle.setListData(aes);
 		sdef.setText("default: " + data.sdef);
 
+		add(jsines);
+		add(revback);
+		add(addrev);
+		add(remrev);
+		add(revback);
+		add(revNext);
+		add(revEne);
+		add(bossType);
+		add(revMults);
+		add(jtMults);
+		jlines.setListData(data.getSimple());
+
 		if (st.info != null) {
 			jex.setListData(st.info.getExStages());
 			setFollowups((CustomStageInfo)st.info);
@@ -287,6 +411,7 @@ public class AdvStEditPage extends Page {
 		addListeners$0();
 		addListeners$1();
 		setUBase(st.info);
+		setRevival(null);
 	}
 
 	private void setListG() {
@@ -342,6 +467,40 @@ public class AdvStEditPage extends Page {
 		jubas.setText(csi.ubase.toString());
 	}
 
+	public void setRevival(Revival r) {
+		rev = r;
+		revback.setEnabled(r != null && r.par != null);
+		revNext.setEnabled(r != null && r.rev != null);
+		bossType.setEnabled(r != null);
+		addrev.setEnabled(r != null || jlines.getSelectedValue() != null);
+		remrev.setEnabled(r != null);
+		revEne.setEnabled(r != null);
+		revBGM.setEnabled(r != null);
+		revSoul.setEnabled(r != null);
+		jtMults.setEnabled(r != null);
+
+		if (r != null) {
+			AbEnemy ene = r.enemy.get();
+			revEne.setIcon(UtilPC.getIcon(ene.getIcon()));
+			revEne.setText(ene.toString());
+
+			revBGM.setText("BGM: " + r.bgm);
+			revSoul.setText("Soul: " + r.soul);
+
+			jtMults.setText(r.mhp + "% / " + r.matk + "%");
+			bossType.setText("b" + rev.boss);
+		} else {
+			revEne.setIcon(null);
+			revEne.setText("N/A");
+
+			revBGM.setText("N/A");
+			revSoul.setText("N/A");
+
+			jtMults.setText("N/A");
+			bossType.setText("catsex");
+		}
+	}
+
 	@Override
 	public void renew() {
 		if (svp != null && svp.getSelectedStages().size() > 0) {
@@ -351,7 +510,7 @@ public class AdvStEditPage extends Page {
 			List<Stage> stages = svp.getSelectedStages();
 			for (int i = 0; i < stages.size(); i++)
 				if (csi.stages.contains(stages.get(i))) {
-					Opts.pop("Already added EX stage", stages.get(i).toString() + "already exists in the EX stages list");
+					Opts.pop("Already added EX stage", stages.get(i).toString() + " already exists in the EX stages list");
 					stages.remove(i);
 					i--;
 				} else {
@@ -362,6 +521,22 @@ public class AdvStEditPage extends Page {
 			jex.setListData(st.info.getExStages());
 			setFollowups(csi);
 			svp = null;
+		}
+		if (efp != null && efp.getSelected() != null) {
+			if (addEne) {
+				AbEnemy ene = efp.getSelected();
+				rev.enemy = ene.getID();
+				revEne.setIcon(UtilPC.getIcon(ene.getIcon()));
+				revEne.setText(ene.toString());
+				addEne = false;
+			} else if (rev == null) {
+				SCDef.Line li = jlines.getSelectedValue();
+				li.rev = new Revival(efp.getSelected().getID());
+				setRevival(li.rev);
+			} else {
+				rev.rev = new Revival(rev, efp.getSelected().getID());
+				setRevival(rev.rev);
+			}
 		}
 		if (ufp != null) {
 			if (st.info == null)
@@ -384,6 +559,7 @@ public class AdvStEditPage extends Page {
 				}
 				setUBase(csi);
 			}
+			efp = null;
 			ufp = null;
 		}
 	}

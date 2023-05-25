@@ -157,15 +157,13 @@ public class BCUReader extends DataIO {
 												} else if (id.startsWith("S")) {
 													String realID = id.replace("S", "");
 
-													if (CommonStatic.isInteger(realID)) {
+													if (CommonStatic.isInteger(realID))
 														MultiLangCont.getStatic().RWSTNAME.put(ni, Integer.parseInt(realID), str[1]);
-													}
 												} else if (id.startsWith("I")) {
 													String realID = id.replace("I", "");
 
-													if (CommonStatic.isInteger(realID)) {
+													if (CommonStatic.isInteger(realID))
 														MultiLangCont.getStatic().RWSVNAME.put(ni, Integer.parseInt(realID), str[1]);
-													}
 												}
 											}
 										}

@@ -33,11 +33,13 @@ public class BCMusic extends Data {
 
 	private static boolean h, h1, bh;
 
-	protected static Map<Integer, ArrayDeque<BCPlayer>> sounds = new HashMap<>();
-	protected static ArrayDeque<BCPlayer> customSounds = new ArrayDeque<>();
+	protected static final HashMap<Integer, ArrayDeque<BCPlayer>> sounds = new HashMap<>();
+	protected static final ArrayDeque<BCPlayer> customSounds = new ArrayDeque<>();
+	protected static final HashMap<Music, Clip> csecalls = new HashMap<>();
 
 	@SuppressWarnings("UnusedAssignment")
 	public static void clear() {
+		csecalls.clear();
 		for (BCPlayer sound : customSounds)
 			sound.release();
 		customSounds.clear();
@@ -220,6 +222,11 @@ public class BCMusic extends Data {
 					e.printStackTrace();
 				}
 		secall = new boolean[TOT];
+
+		for (Map.Entry<Music, Clip> mus : csecalls.entrySet()) {
+			loadSound(-1, mus.getValue());
+			csecalls.remove(mus.getKey());
+		}
 	}
 
 	public static synchronized void play(Identifier<Music> mus) {
@@ -277,16 +284,17 @@ public class BCMusic extends Data {
 
 		try {
 			Music m = Identifier.get(mus);
-			if (m == null)
+			if (m == null || csecalls.containsKey(m))
 				return;
+
 			if (CACHE_CUSTOM.containsKey(mus)) {
-				loadSound(-1, CACHE_CUSTOM.get(mus));
+				csecalls.put(m, openFile(CACHE_CUSTOM.get(mus)));
 			} else {
 				Clip c = openFile(m);
 				if (c.getMicrosecondLength() < 10_000_000L)
-					loadSound(-1, CACHE_CUSTOM.put(mus, m.data.getBytes()));
+					csecalls.put(m, openFile(CACHE_CUSTOM.put(mus, m.data.getBytes())));
 				else
-					loadSound(-1, c); // TODO stop audio if battle is exited after
+					csecalls.put(m, c); // TODO stop audio if battle is exited after
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

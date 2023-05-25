@@ -36,9 +36,9 @@ public class TraitList extends JList<Trait> {
                     if (!editing)
                         jl.setText(trait.name);
                     if (trait.icon != null)
-                        jl.setIcon(new ImageIcon((BufferedImage)trait.icon.getImg().bimg()));
+                        jl.setIcon(UtilPC.getIcon(trait.icon));
                     else
-                        jl.setIcon(new ImageIcon((BufferedImage) CommonStatic.getBCAssets().dummyTrait.getImg().bimg()));
+                        jl.setIcon(UtilPC.getIcon(CommonStatic.getBCAssets().dummyTrait));
                 }
                 return jl;
             }

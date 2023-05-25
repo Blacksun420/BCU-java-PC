@@ -306,7 +306,7 @@ public class Interpret extends Data {
 	}
 
 	public static List<ProcDisplay> getProc(MaskEntity du, boolean isEnemy, double[] magnification, int atkind) {
-		Formatter.Context ctx = new Formatter.Context(isEnemy, MainBCU.seconds, magnification);
+		Formatter.Context ctx = new Formatter.Context(isEnemy, MainBCU.seconds, magnification, du.getTraits());
 
 		ArrayList<ProcDisplay> l = new ArrayList<>();
 
@@ -809,9 +809,8 @@ public class Interpret extends Data {
 				for(int i = 0; i < inds.size(); i++) {
 					builder.append(inds.get(i));
 
-					if(i < inds.size() -1) {
+					if(i < inds.size() -1)
 						builder.append(", ");
-					}
 				}
 
 				return builder.append(" 次攻擊]").toString();
@@ -819,9 +818,8 @@ public class Interpret extends Data {
 				for(int i = 0; i < inds.size(); i++) {
 					builder.append(inds.get(i));
 
-					if(i < inds.size() - 1) {
+					if(i < inds.size() - 1)
 						builder.append(", ");
-					}
 				}
 
 				return builder.append(" 번째 공격]").toString();
@@ -829,9 +827,8 @@ public class Interpret extends Data {
 				for(int i = 0; i < inds.size(); i++) {
 					builder.append(inds.get(i));
 
-					if(i < inds.size() - 1) {
+					if(i < inds.size() - 1)
 						builder.append(", ");
-					}
 				}
 
 				return builder.append(" 回目の攻撃]").toString();
@@ -839,9 +836,8 @@ public class Interpret extends Data {
 				for (int i = 0; i < inds.size(); i++) {
 					builder.append(getNumberExtension(inds.get(i)));
 
-					if (i < inds.size() - 1) {
+					if (i < inds.size() - 1)
 						builder.append(", ");
-					}
 				}
 
 				return builder.append(" Attack]").toString();
