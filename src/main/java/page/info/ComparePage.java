@@ -909,6 +909,8 @@ public class ComparePage extends Page {
 
         int posX = 250;
         int unselected = ((int) Arrays.stream(boxes).filter(b -> !b.isSelected()).count());
+        if (!boxes[main.length + unit.length + enem.length].isSelected())
+            unselected++;
         int height = 200 + unselected * 50;
 
         for (int i = 0; i < abilityPanes.length; i++) {
