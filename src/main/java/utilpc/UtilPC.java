@@ -212,9 +212,8 @@ public class UtilPC {
 		for (int i = 0; i < pc.info.size(); i++) {
 			str.append(lv.getTalents()[i]);
 
-			if(pc.info.get(i)[13] > 0) {
+			if(pc.getReqLv(i) > 0)
 				str.append("*");
-			}
 
 			lab.append(getPCoinAbilityText(pc, i));
 
@@ -233,6 +232,8 @@ public class UtilPC {
 		if(index < 0 || index >= pc.info.size())
 			return null;
 
+		if (pc.info.get(index)[0] < 0)
+			return Interpret.CCTX[Math.abs(pc.info.get(index)[0])];
 		return Interpret.PCTX[pc.info.get(index)[0]];
 	}
 

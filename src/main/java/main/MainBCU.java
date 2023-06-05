@@ -175,10 +175,7 @@ public class MainBCU {
 		}
 
 		private boolean noNeedToShow(ErrType t) {
-			if(t == ErrType.DEBUG)
-				return true;
-			else
-				return !(t == ErrType.CORRUPT || t == ErrType.ERROR || t == ErrType.FATAL || t == ErrType.WARN || !MainBCU.WRITE);
+			return t == ErrType.DEBUG || !(t == ErrType.CORRUPT || t == ErrType.ERROR || t == ErrType.FATAL || t == ErrType.WARN || !MainBCU.WRITE);
 		}
 
 		@Override
@@ -301,7 +298,7 @@ public class MainBCU {
 		}
 	}
 
-	public static final int ver = 60009;
+	public static final int ver = 60010;
 	private static final DecimalFormat df = new DecimalFormat("#.##");
 	public static int autoSaveTime = 0;
 	public static final boolean WRITE = !new File("./.idea").exists();

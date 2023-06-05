@@ -3,6 +3,7 @@ package page.info.edit;
 
 import common.battle.data.CustomUnit;
 import common.battle.data.PCoin;
+import common.util.Data;
 import common.util.unit.Form;
 import page.JBTN;
 import page.Page;
@@ -66,33 +67,20 @@ public class PCoinEditPage extends Page {
                 uni.pcoin = new PCoin(uni);
 
             int slot = uni.pcoin.info.size();
-
-            uni.pcoin.info.add(new int[]{ slot + 1, 10, 0, 0, 0, 0, 0, 0, 0, 0, slot + 1, 8, 1, -1 });
+            uni.pcoin.info.add(getCoinParams(slot + 1));
 
             uni.pcoin.max = new int[uni.pcoin.info.size()];
-
-            for(int i = 0; i < uni.pcoin.info.size() -1; i++) {
+            for(int i = 0; i < uni.pcoin.info.size() -1; i++)
                 uni.pcoin.max[i] = uni.pcoin.info.get(i)[1];
-            }
-
-            uni.pcoin.max[uni.pcoin.info.size() - 1] = 10;
 
             pCoinEdits.add(new PCoinEditTable(this, uni, slot, editable));
             cont.add(pCoinEdits.get(slot));
-
-            for (int i = 0; i < slot; i++)
-                if (uni.pcoin.info.get(i)[0] == slot + 1) {
-                    PCoinEditTable pc = pCoinEdits.get(i);
-
-                    pc.setData();
-                    pc.randomize();
-                }
 
             setCoinTypes();
         });
 
         //PCoin Structure:
-        //[0] = ability identifier, [1] = max lv, [2,4,6,8] = min lv values, [3,5,7,9] = max lv values, [10,11,12] = ???
+        //[0] = ability identifier, [1] = max lv, [2,4,6,8] = min lv values, [3,5,7,9] = max lv values, [10]TextID, [11]LvID, [12]NameID, [13]Limit ([10~12] are useless)
 
         remP.addActionListener(arg0 -> {
             uni.pcoin = null;
@@ -103,6 +91,27 @@ public class PCoinEditPage extends Page {
 
             setCoinTypes();
         });
+    }
+
+    private int[] getCoinParams(int slot) {
+        for (int i = 0; i < pCoinEdits.size(); i++)
+            if (uni.pcoin.info.get(i)[0] == slot) {
+                slot = pCoinEdits.get(i).randomize();
+                break;
+            }
+        int[] talent = Data.get_CORRES(slot);
+        if (talent[0] == Data.PC_AB || talent[0] == Data.PC_TRAIT)
+            return new int[]{slot, 1, 0}; //[0],[1],[13]
+        else if (talent[0] == Data.PC_BASE)
+            return new int[]{slot, 1, 2, 20, 0}; //[0],[1],[2],[3],[13]
+
+        int params = uni.getProc().getArr(talent[1]).getDeclaredFields().length * 2;
+        if (talent.length >= 3)
+            params -= talent[2] * 2;
+        int[] nps = new int[params + 3];
+        nps[0] = slot;
+        nps[1] = 10;
+        return nps;
     }
 
     protected void setCoinTypes() {

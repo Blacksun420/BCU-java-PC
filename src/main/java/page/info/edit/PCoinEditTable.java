@@ -49,7 +49,7 @@ class PCoinEditTable extends Page {
                 public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean s, boolean f) {
                     JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
                     talentData td = (talentData)o;
-                    int[] val = Data.PC_CORRES[td.getValue()];
+                    int[] val = Data.get_CORRES(td.getValue());
                     switch (val[0]) {
                         case Data.PC_AB:
                             for (int i = 0; i < Data.ABI_TOT; i++)
@@ -134,9 +134,10 @@ class PCoinEditTable extends Page {
 
         superLv.setLnr(arg0 -> {
             int v = Math.min(CommonStatic.parseIntN(superLv.getText().trim()), unit.getPack().unit.max + unit.getPack().unit.maxp);
-            if (v == 0 || v < -1)
-                v = -1;
-            unit.pcoin.info.get(talent)[13] = v;
+            if (v < 0)
+                v = 0;
+            int[] tal = unit.pcoin.info.get(talent);
+            tal[tal.length - 1] = v;
             setData();
         });
 
@@ -167,7 +168,7 @@ class PCoinEditTable extends Page {
             unit.pcoin.info.get(talent)[0] = np.getValue();
             unit.pcoin.info.get(talent)[10] = np.getValue();
 
-            int[] vals = Data.PC_CORRES[np.getValue()];
+            int[] vals = Data.get_CORRES(np.getValue());
             if (vals[0] == Data.PC_P) {
                 int low = unit.getProc().getArr(vals[1]).get(0) == 0 ? 1 : 0;
                 unit.pcoin.info.get(talent)[2] = Math.max(low, unit.pcoin.info.get(talent)[4]);
@@ -194,7 +195,7 @@ class PCoinEditTable extends Page {
                 changing = true;
                 String txt = tchance[finalI - 2].getText().trim();
                 int[] v = CommonStatic.parseIntsN(txt);
-                int[] vals = Data.PC_CORRES[unit.pcoin.info.get(talent)[0]];
+                int[] vals = Data.get_CORRES(unit.pcoin.info.get(talent)[0]);
 
                 if (v.length == 0) {
                     tchance[finalI - 2].setText("" + unit.pcoin.info.get(talent)[finalI]);
@@ -266,7 +267,7 @@ class PCoinEditTable extends Page {
         if (coin) {
             for (int i = 0; i < Data.PC_CORRES.length; i++) {
                 int[] type = Data.PC_CORRES[i];
-                if (type[0] == -1 || type[0] == Data.PC_IMU)
+                if (type[0] == -1 || type[0] == Data.PC_IMU || type[0] == 5)
                     continue;
                 talentData dat = new talentData(Interpret.PCTX[i], i);
                 if (available.contains(dat))
@@ -286,9 +287,31 @@ class PCoinEditTable extends Page {
                     add = (unit.abi & type[1]) == 0;
                 if (type[0] == Data.PC_TRAIT)
                     add = !(unit.getTraits().contains(UserProfile.getBCData().traits.get(type[1])));
-                if (add && unused) {
+                if (add && unused)
                     available.add(dat);
-                }
+            }
+            for (int i = 0; i < Data.PC_CUSTOM.length; i++) {
+                int[] type = Data.PC_CUSTOM[i];
+                if (type[0] == -1)
+                    continue;
+                talentData dat = new talentData(Interpret.CCTX[i], -i);
+                if (available.contains(dat))
+                    break;
+                // Verify if another talent is using this value
+                boolean unused = true;
+                for (int j = 0; j < unit.pcoin.info.size(); j++)
+                    if (j != talent && unit.pcoin.info.get(j)[0] == -i) {
+                        unused = false;
+                        break;
+                    }
+
+                boolean add = type[0] == Data.PC_BASE;
+                if (type[0] == Data.PC_P)
+                    add = unit.getProc().getArr(type[1]).get("prob") != null && unit.getProc().getArr(type[1]).get(0) < 100;
+                if (type[0] == Data.PC_AB)
+                    add = (unit.abi & type[1]) == 0;
+                if (add && unused)
+                    available.add(dat);
             }
             talentData[] td = new talentData[available.size()];
             for (int i = 0; i < td.length; i++)
@@ -299,24 +322,22 @@ class PCoinEditTable extends Page {
             ctypes.setListData(new talentData[0]);
     }
 
-    protected void randomize() {
+    protected int randomize() {
         ListModel<talentData> listModel = ctypes.getModel();
-        int dat = listModel.getElementAt((int)(Math.random() * listModel.getSize())).getValue();
-        unit.pcoin.info.get(talent)[0] = dat;
-        unit.pcoin.info.get(talent)[10] = dat;
+        return listModel.getElementAt((int)(Math.random() * listModel.getSize())).getValue();
     }
 
     protected void setData() {
         changing = true;
         boolean pc = unit.pcoin != null && unit.pcoin.info.size() > talent;
-        int[] type = pc ? Data.PC_CORRES[unit.pcoin.info.get(talent)[0]] : new int[]{-1, 0};
+        int[] type = pc ? Data.get_CORRES(unit.pcoin.info.get(talent)[0]) : new int[]{-1, 0};
         PCoinLV.setEnabled(pc && editable && (type[0] == Data.PC_P || type[0] == Data.PC_BASE));
         if (!PCoinLV.isEnabled() && pc && editable)
             unit.pcoin.info.get(talent)[1] = 1;
 
         if (pc) {
             PCoinLV.setText("" + unit.pcoin.info.get(talent)[1]);
-            superLv.setText("" + unit.pcoin.info.get(talent)[13]);
+            superLv.setText("" + unit.pcoin.getReqLv(talent));
             int tal = unit.pcoin.info.get(talent)[0];
             ListModel<talentData> listModel = ctypes.getModel();
             for (int i = 0; i < listModel.getSize(); i++)
@@ -380,7 +401,10 @@ class PCoinEditTable extends Page {
                 tchance[i].setVisible(i < 2);
             }
             cTypesY -= 300;
-            String text = ctypes.getSelectedValue().toString() + (pdata[1] <= Data.PC2_SPEED || pdata[1] == Data.PC2_HB ? "+ " : "") + (pdata[1] <= Data.PC2_ATK ? "%" : "");
+            String text = ctypes.getSelectedValue().toString()
+                    + (pdata[1] <= Data.PC2_SPEED || pdata[1] == Data.PC2_HB || pdata[1] == Data.PC2_RNG ? "+ " : "")
+                    + (pdata[1] == Data.PC2_TBA ? "- " : "")
+                    + (pdata[1] <= Data.PC2_ATK || pdata[1] == Data.PC2_TBA ? "%" : "");
             chance[0].setText(text + " (Lv1)");
             chance[1].setText(text + " (Lv" + maxlv + ")");
             pCoin.setText(text);
