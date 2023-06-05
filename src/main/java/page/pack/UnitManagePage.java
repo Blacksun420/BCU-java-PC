@@ -411,10 +411,9 @@ public class UnitManagePage extends Page {
 			public void focusLost(FocusEvent fe) {
 				int[] lvs = CommonStatic.parseIntsN(jtfl.getText());
 				for (int i = 0; i < Math.min(20, lvs.length); i++)
-					if (lvs[i] > 0 && (i == 0 || lvs[i] >= ul.lvs[i - 1]))
+					if (lvs[i] > 0)
 						ul.lvs[i] = lvs[i];
 				jtfl.setText(ul.toString());
-
 			}
 
 		});

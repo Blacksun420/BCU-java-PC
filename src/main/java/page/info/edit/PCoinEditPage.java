@@ -149,7 +149,7 @@ public class PCoinEditPage extends Page {
             uni.pcoin.update();
         for (PCoinEditTable pct : pCoinEdits)
             pct.setData();
-        addP.setEnabled(editable && (uni.pcoin == null || uni.pcoin.info.size() < PCoinEditTable.PC_TOT));
+        addP.setEnabled(editable && (uni.pcoin == null || uni.pcoin.info.size() < Data.PC_CORRES.length + Data.PC_CUSTOM.length));
         remP.setEnabled(editable && uni.pcoin != null);
     }
 }

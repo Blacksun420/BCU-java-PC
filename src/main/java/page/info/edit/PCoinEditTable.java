@@ -14,6 +14,7 @@ import utilpc.UtilPC;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 class PCoinEditTable extends Page {
 
@@ -74,8 +75,6 @@ class PCoinEditTable extends Page {
         }
     }
 
-    //Current max talent count
-    public static final byte PC_TOT = 50;
     private final CustomUnit unit;
     private final NPList ctypes = new NPList();
     private final JScrollPane stypes = new JScrollPane(ctypes);
@@ -147,9 +146,8 @@ class PCoinEditTable extends Page {
             unit.pcoin.info.remove(talent);
             unit.pcoin.max = new int[unit.pcoin.info.size()];
 
-            for (int i = 0; i < unit.pcoin.info.size(); i++) {
+            for (int i = 0; i < unit.pcoin.info.size(); i++)
                 unit.pcoin.max[i] = unit.pcoin.info.get(i)[1];
-            }
 
             pcedit.removed(talent);
             changing = false;
@@ -168,20 +166,30 @@ class PCoinEditTable extends Page {
             unit.pcoin.info.get(talent)[0] = np.getValue();
 
             int[] vals = Data.get_CORRES(np.getValue());
+            int[] old = unit.pcoin.info.get(talent);
+            int[] neww;
+
             if (vals[0] == Data.PC_P) {
+                int tots = unit.getProc().getArr(vals[1]).getDeclaredFields().length;
+                neww = Arrays.copyOf(old, 3 + (tots - (vals.length >= 3 ? vals[2] : 0)) * 2);
+
                 int low = unit.getProc().getArr(vals[1]).get(0) == 0 ? 1 : 0;
-                unit.pcoin.info.get(talent)[2] = Math.max(low, unit.pcoin.info.get(talent)[4]);
-                unit.pcoin.info.get(talent)[3] = Math.max(low, unit.pcoin.info.get(talent)[5]);
-                if (!(vals[1] == Data.P_SATK || vals[1] == Data.P_VOLC || vals[1] == Data.P_CRIT)) {
+                neww[2] = Math.max(low, neww[2]);
+                neww[3] = Math.max(low, neww[3]);
+                if (tots >= 2 && !(vals[1] == Data.P_SATK || vals[1] == Data.P_VOLC || vals[1] == Data.P_CRIT)) {
                     int min = unit.getProc().getArr(vals[1]).get(1) == 0 ? 1 : 0;
-                    unit.pcoin.info.get(talent)[4] = Math.max(min, unit.pcoin.info.get(talent)[4]);
-                    unit.pcoin.info.get(talent)[5] = Math.max(min, unit.pcoin.info.get(talent)[5]);
+                    neww[4] = Math.max(min, neww[4]);
+                    neww[5] = Math.max(min, neww[5]);
                 }
                 if (vals[1] == Data.P_VOLC) {
-                    unit.pcoin.info.get(talent)[8] = Math.max(1, unit.pcoin.info.get(talent)[8] / Data.VOLC_ITV) * Data.VOLC_ITV;
-                    unit.pcoin.info.get(talent)[9] = Math.max(1, unit.pcoin.info.get(talent)[9] / Data.VOLC_ITV) * Data.VOLC_ITV;
+                    neww[8] = Math.max(1, neww[8] / Data.VOLC_ITV) * Data.VOLC_ITV;
+                    neww[9] = Math.max(1, neww[9] / Data.VOLC_ITV) * Data.VOLC_ITV;
                 }
-            }
+            } else
+                neww = Arrays.copyOf(old, vals[0] == Data.PC_BASE ? 5 : 3);
+
+            neww[neww.length - 1] = old[old.length - 1];
+            unit.pcoin.info.set(talent, neww);
             pcedit.setCoinTypes();
             changing = false;
         });
