@@ -20,6 +20,7 @@ import page.info.UnitInfoPage;
 import page.info.filter.EnemyFindPage;
 import page.info.filter.UnitFindPage;
 import page.support.AnimLCR;
+import page.view.MusicPage;
 import utilpc.Theme;
 import utilpc.UtilPC;
 
@@ -88,6 +89,7 @@ public class AdvStEditPage extends Page {
 	private StageViewPage svp;
 	private UnitFindPage ufp;
 	private EnemyFindPage efp;
+	private MusicPage musp;
 
 	private final Stage st;
 	private final SCDef data;
@@ -346,6 +348,21 @@ public class AdvStEditPage extends Page {
 			}
 		});
 
+		revBGM.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				super.mouseClicked(e);
+
+				if (musp == null) {
+					if (rev.bgm == null)
+						musp = new MusicPage(getThis(), st.id.pack.substring(0, st.id.pack.indexOf('/')));
+					else
+						musp = new MusicPage(getThis(), rev.bgm);
+				}
+				changePanel(musp);
+			}
+		});
+
 		jtMults.addActionListener(l -> {
 			int[] mags = CommonStatic.parseIntsN(jtMults.getText());
 			if (mags.length >= 2) {
@@ -397,6 +414,7 @@ public class AdvStEditPage extends Page {
 		add(revback);
 		add(revNext);
 		add(revEne);
+		add(revBGM);
 		add(bossType);
 		add(revMults);
 		add(jtMults);
@@ -522,6 +540,10 @@ public class AdvStEditPage extends Page {
 			setFollowups(csi);
 			svp = null;
 		}
+		if (musp != null) {
+			rev.bgm = musp.getSelectedID();
+			musp = null;
+		}
 		if (efp != null && efp.getSelected() != null) {
 			if (addEne) {
 				AbEnemy ene = efp.getSelected();
@@ -537,6 +559,7 @@ public class AdvStEditPage extends Page {
 				rev.rev = new Revival(rev, efp.getSelected().getID());
 				setRevival(rev.rev);
 			}
+			efp = null;
 		}
 		if (ufp != null) {
 			if (st.info == null)
@@ -553,13 +576,11 @@ public class AdvStEditPage extends Page {
 					csi.lv = csi.ubase.unit().getPrefLvs();
 				else {
 					csi.lv = null;
-					if (csi.stages.isEmpty()) {
+					if (csi.stages.isEmpty())
 						csi.destroy();
-					}
 				}
 				setUBase(csi);
 			}
-			efp = null;
 			ufp = null;
 		}
 	}

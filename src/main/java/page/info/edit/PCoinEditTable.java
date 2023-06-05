@@ -166,7 +166,6 @@ class PCoinEditTable extends Page {
                 return;
             }
             unit.pcoin.info.get(talent)[0] = np.getValue();
-            unit.pcoin.info.get(talent)[10] = np.getValue();
 
             int[] vals = Data.get_CORRES(np.getValue());
             if (vals[0] == Data.PC_P) {
@@ -346,7 +345,7 @@ class PCoinEditTable extends Page {
                     break;
                 }
             enableSecondaries(type);
-            for (int i = 0; i < tchance.length; i++)
+            for (int i = 0; i < getMax(); i++)
                 if (i >= 2 || !(type[0] == Data.PC_BASE && type[1] == Data.PC2_COST))
                     tchance[i].setText("" + unit.pcoin.info.get(talent)[2 + i]);
                 else
@@ -441,13 +440,15 @@ class PCoinEditTable extends Page {
             tchance[i].setEnabled(editable && (i % 2 == 0 || maxlv != 1));
         }
         if (pdata[0] != -1 && editable) {
-            for (int i = 0; i < tchance.length; i++)
-                if (!tchance[i].isVisible())
-                    unit.pcoin.info.get(talent)[2 + i] = 0;
-                else if (!tchance[i].isEnabled())
+            for (int i = 0; i < getMax(); i++)
+                if (!tchance[i].isEnabled())
                     unit.pcoin.info.get(talent)[2 + i] = unit.pcoin.info.get(talent)[1 + i];
                 else
                     unit.pcoin.info.get(talent)[2 + i] = Math.max(0, unit.pcoin.info.get(talent)[2 + i]);
         }
+    }
+
+    private int getMax() {
+        return Math.min(unit.pcoin.info.get(talent).length - 2, tchance.length);
     }
 }
