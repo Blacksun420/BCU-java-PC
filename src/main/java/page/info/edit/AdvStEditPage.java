@@ -338,6 +338,9 @@ public class AdvStEditPage extends Page {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				super.mouseClicked(e);
+				if (rev == null && jlines.getSelectedValue() == null)
+					return;
+
 				if (e.getButton() == MouseEvent.BUTTON1) {
 					addEne = true;
 					if (efp == null)
@@ -352,6 +355,8 @@ public class AdvStEditPage extends Page {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				super.mouseClicked(e);
+				if (rev == null)
+					return;
 
 				if (musp == null) {
 					if (rev.bgm == null)
@@ -545,7 +550,7 @@ public class AdvStEditPage extends Page {
 			musp = null;
 		}
 		if (efp != null && efp.getSelected() != null) {
-			if (addEne) {
+			if (addEne && rev != null) {
 				AbEnemy ene = efp.getSelected();
 				rev.enemy = ene.getID();
 				revEne.setIcon(UtilPC.getIcon(ene.getIcon()));

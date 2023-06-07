@@ -210,7 +210,10 @@ public class UtilPC {
 			lab.append(Arrays.toString(TraitsHolder)).append(" ");
 		}
 		for (int i = 0; i < pc.info.size(); i++) {
-			str.append(lv.getTalents()[i]);
+			if (lv.getTalents().length > i)
+				str.append(lv.getTalents()[i]);
+			else
+				str.append(0);
 
 			if(pc.getReqLv(i) > 0)
 				str.append("*");
