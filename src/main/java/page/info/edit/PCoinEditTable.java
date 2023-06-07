@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 class PCoinEditTable extends Page {
-
     private static final long serialVersionUID = 1L;
 
     private static class talentData {

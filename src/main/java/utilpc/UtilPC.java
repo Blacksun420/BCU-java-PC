@@ -142,7 +142,7 @@ public class UtilPC {
 		id %= 100;
 		if (CommonStatic.getBCAssets().icon[type][id] == null)
 			return null;
-		return getIcon(CommonStatic.getBCAssets().icon[type][id]);
+		return resizeIcon(CommonStatic.getBCAssets().icon[type][id], 41, 41);
 	}
 
 	public static ImageIcon getIcon(VImg v) {

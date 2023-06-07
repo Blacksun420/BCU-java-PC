@@ -29,7 +29,6 @@ public class AttList extends JList<String> {
 					v = ind < SABIS.length ? UtilPC.getIcon(0, ind) : UtilPC.getIcon(1, UPROCIND[ind - SABIS.length]);
 				} else
 					v = UtilPC.getIcon(type, ind);
-				jl.setIcon(v);
 				return jl;
 			}
 		});

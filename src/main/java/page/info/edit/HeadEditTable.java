@@ -42,11 +42,11 @@ class HeadEditTable extends Page {
 	private final JTG con = new JTG(MainLocale.INFO, "ht03");
 	private final JTF[] star = new JTF[4];
 	private final JTF jmax = new JTF();
-	private final JL minres = new JL(MainLocale.INFO, "minspawn");
-	private final JL uminres = new JL(MainLocale.INFO, "uminspawn");
+	private final JL res = new JL(MainLocale.INFO, "minspawn");
+	private final JL ures = new JL(MainLocale.INFO, "uminspawn");
 	private final JL cost = new JL(MainLocale.INFO, "chcos");
-	private final JTF minrest = new JTF();
-	private final JTF uminrest = new JTF();
+	private final JTF jres = new JTF();
+	private final JTF jures = new JTF();
 	private final JTF cos = new JTF();
 	private final JTG dojo = new JTG(MainLocale.PAGE,"dojo");
 	private final LimitTable lt;
@@ -111,13 +111,13 @@ class HeadEditTable extends Page {
 			}
 		}
 
-		minrest.setEnabled(sta != null);
-		uminrest.setEnabled(sta != null);
+		jres.setEnabled(sta != null);
+		jures.setEnabled(sta != null);
 
 
 		if (sta != null) {
-			minrest.setText(generateMinRespawn(sta.minSpawn, sta.maxSpawn));
-			uminrest.setText(generateMinRespawn(sta.minUSpawn, sta.maxUSpawn));
+			jres.setText(generateMinRespawn(sta.minSpawn, sta.maxSpawn));
+			jures.setText(generateMinRespawn(sta.minUSpawn, sta.maxUSpawn));
 		}
 
 		bvp = null;
@@ -142,7 +142,7 @@ class HeadEditTable extends Page {
 		set(con, x, y, w * 6, 50, w, 50);
 		set(dojo, x, y, w * 7, 50, w, 50);
 		set(bg, x, y, 0, 100, w, 50);
-		set(jbg, x, y, w, 100, w, 50);
+		set(jbg, x, y, w, 100, w, 50); // line 2
 		set(jbgh, x, y, w * 2, 100, w, 50);
 		set(jbg1, x, y, w * 3, 100, w, 50);
 		set(cas, x, y, w * 4, 100, w, 50);
@@ -151,10 +151,10 @@ class HeadEditTable extends Page {
 		set(jm0, x, y, w, 150, w, 50);
 		set(jmh, x, y, w * 2, 150, w, 50);
 		set(jm1, x, y, w * 3, 150, w, 50);
-		set(minres, x, y, w * 4, 150, w, 50);
-		set(minrest, x, y, w * 5, 150, w, 50);
-		set(uminres, x, y, w * 6, 150, w, 50);
-		set(uminrest, x, y, w * 7, 150, w, 50);
+		set(res, x, y, w * 4, 150, w, 50);
+		set(jres, x, y, w * 5, 150, w, 50);
+		set(ures, x, y, w * 6, 150, w, 50);
+		set(jures, x, y, w * 7, 150, w, 50);
 		set(lt, x, y, 0, 200, 1400, 100);
 		lt.componentResized(x, y);
 	}
@@ -195,10 +195,10 @@ class HeadEditTable extends Page {
 		lt.setLimit(lim);
 		change(false);
 
-		minrest.setEnabled(true);
-		minrest.setText(generateMinRespawn(st.minSpawn, st.maxSpawn));
-		uminrest.setEnabled(true);
-		uminrest.setText(generateMinRespawn(sta.minUSpawn, sta.maxUSpawn));
+		jres.setEnabled(true);
+		jres.setText(generateMinRespawn(st.minSpawn, st.maxSpawn));
+		jures.setEnabled(true);
+		jures.setText(generateMinRespawn(sta.minUSpawn, sta.maxUSpawn));
 	}
 
 	private void abler(boolean b) {
@@ -282,10 +282,10 @@ class HeadEditTable extends Page {
 		set(jmh);
 		set(jm1);
 		add(lt);
-		set(minres);
-		set(minrest);
-		set(uminres);
-		set(uminrest);
+		set(res);
+		set(jres);
+		set(ures);
+		set(jures);
 		set(cost);
 		set(cos);
 		con.setSelected(true);
@@ -357,7 +357,7 @@ class HeadEditTable extends Page {
 		if (jtf == jmh)
 			sta.mush = val;
 
-		if (jtf == minrest) {
+		if (jtf == jres) {
 			try {
 				int[] vals = CommonStatic.parseIntsN(jtf.getText());
 
@@ -378,12 +378,12 @@ class HeadEditTable extends Page {
 					}
 				}
 
-				minrest.setText(generateMinRespawn(sta.minSpawn, sta.maxSpawn));
+				jres.setText(generateMinRespawn(sta.minSpawn, sta.maxSpawn));
 			} catch (Exception ignored) {
 			}
 		}
 
-		if (jtf == uminrest) {
+		if (jtf == jures) {
 			try {
 				int[] vals = CommonStatic.parseIntsN(jtf.getText());
 				if (vals.length == 1) {
@@ -400,12 +400,13 @@ class HeadEditTable extends Page {
 						sta.maxUSpawn = Math.max(vals[0], vals[1]);
 					}
 				}
-				uminrest.setText(generateMinRespawn(sta.minUSpawn, sta.maxUSpawn));
+				jures.setText(generateMinRespawn(sta.minUSpawn, sta.maxUSpawn));
 			} catch (Exception ignored) {
 			}
 		}
 
-		if (jtf == jbg) {
+		if (jtf == jbg || jtf == jbg1) {
+			boolean mainbg = jtf == jbg;
 			String[] result = CommonStatic.getPackContentID(str);
 			if (result[0].isEmpty())
 				return;
@@ -415,8 +416,13 @@ class HeadEditTable extends Page {
 				Background b = UserProfile.getBCData().bgs.get(CommonStatic.safeParseInt(result[0]));
 				if (b == null)
 					return;
-				jbg.setText(b.toString());
-				sta.bg = b.getID();
+				if (mainbg) {
+					jbg.setText(b.toString());
+					sta.bg = b.getID();
+				} else {
+					jbg1.setText(b.toString());
+					sta.bg1 = b.getID();
+				}
 				return;
 			}
 			String p = result[0];
@@ -430,37 +436,13 @@ class HeadEditTable extends Page {
 			if (bg == null)
 				return;
 
-			jbg.setText(bg.toString());
-			sta.bg = bg.getID();
-		}
-
-		if (jtf == jbg1) {
-			String[] result = CommonStatic.getPackContentID(str);
-			if (result[0].isEmpty())
-				return;
-			if (result[1].isEmpty()) {
-				if (!CommonStatic.isInteger(result[0]))
-					return;
-				Background b = UserProfile.getBCData().bgs.get(CommonStatic.safeParseInt(result[0]));
-				if (b == null)
-					return;
-				jbg1.setText(b.toString());
-				sta.bg = b.getID();
-				return;
+			if (mainbg) {
+				jbg.setText(bg.toString());
+				sta.bg = bg.getID();
+			} else {
+				jbg1.setText(bg.toString());
+				sta.bg1 = bg.getID();
 			}
-			String p = result[0];
-			String i = result[1];
-			if (CommonStatic.isInteger(p))
-				p = Data.hex(CommonStatic.parseIntN(p));
-			PackData pack = PackData.getPack(p);
-			if (pack == null)
-				return;
-			Background bg = pack.bgs.get(CommonStatic.safeParseInt(i));
-			if (bg == null)
-				return;
-
-			jbg1.setText(bg.toString());
-			sta.bg = bg.getID();
 		}
 
 		if (jtf == jcas) {
@@ -495,11 +477,17 @@ class HeadEditTable extends Page {
 			sta.castle = castle.getID();
 		}
 
-		if (jtf == jm0) {
+		if (jtf == jm0 || jtf == jm1) {
+			boolean mainmus = jtf == jm0;
 			String[] result = CommonStatic.getPackContentID(str);
 			if (result[0].isEmpty()) {
-				jm0.setText("null");
-				sta.mus0 = null;
+				if (mainmus) {
+					jm0.setText("null");
+					sta.mus0 = null;
+				} else {
+					jm1.setText("null");
+					sta.mus1 = null;
+				}
 				return;
 			}
 			if (result[1].isEmpty()) {
@@ -508,8 +496,13 @@ class HeadEditTable extends Page {
 				Music m = UserProfile.getBCData().musics.get(CommonStatic.safeParseInt(result[0]));
 				if (m == null)
 					return;
-				jm0.setText(m.toString());
-				sta.mus0 = m.getID();
+				if (mainmus) {
+					jm0.setText(m.toString());
+					sta.mus0 = m.getID();
+				} else {
+					jm1.setText(m.toString());
+					sta.mus1 = m.getID();
+				}
 				return;
 			}
 			String p = result[0];
@@ -518,51 +511,26 @@ class HeadEditTable extends Page {
 				p = Data.hex(CommonStatic.safeParseInt(p));
 			PackData pack = PackData.getPack(p);
 			if (pack == null) {
-				jm0.setText("null");
-				sta.mus0 = null;
+				if (mainmus) {
+					jm0.setText("null");
+					sta.mus0 = null;
+				} else {
+					jm1.setText("null");
+					sta.mus1 = null;
+				}
 				return;
 			}
 			Music music = pack.musics.get(CommonStatic.safeParseInt(i));
 			if (music == null)
 				return;
 
-			jm0.setText(str);
-			sta.mus0 = music.getID();
-		}
-
-		if (jtf == jm1) {
-			String[] result = CommonStatic.getPackContentID(str);
-			if (result[0].isEmpty()) {
-				jm1.setText("null");
-				sta.mus1 = null;
-				return;
+			if (mainmus) {
+				jm0.setText(str);
+				sta.mus0 = music.getID();
+			} else {
+				jm1.setText(str);
+				sta.mus1 = music.getID();
 			}
-			if (result[1].isEmpty()) {
-				if (!CommonStatic.isInteger(result[0]))
-					return;
-				Music m = UserProfile.getBCData().musics.get(CommonStatic.safeParseInt(result[0]));
-				if (m == null)
-					return;
-				jm1.setText(m.toString());
-				sta.mus1 = m.getID();
-				return;
-			}
-			String p = result[0];
-			String i = result[1];
-			if (CommonStatic.isInteger(p))
-				p = Data.hex(CommonStatic.safeParseInt(p));
-			PackData pack = PackData.getPack(p);
-			if (pack == null) {
-				jm1.setText("null");
-				sta.mus1 = null;
-				return;
-			}
-			Music music = pack.musics.get(CommonStatic.safeParseInt(i));
-			if (music == null)
-				return;
-
-			jm1.setText(str);
-			sta.mus1 = music.getID();
 		}
 
 		if (jtf == cos) {

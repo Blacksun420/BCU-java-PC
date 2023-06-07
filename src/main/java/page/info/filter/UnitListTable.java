@@ -48,6 +48,8 @@ public class UnitListTable extends EntityListTable<AbForm> {
 			return;
 		AbForm e = list.get(r);
 		if (e instanceof Form) {
+			if (((Form)e).anim == null)
+				return;
 			Node<Unit> n = Node.getList(UserProfile.getAll((((Form) e).unit.id.pack), Unit.class), ((Form) e).unit);
 			MainFrame.changePanel(new UnitInfoPage(page, n));
 		} else if (e instanceof UniRand)

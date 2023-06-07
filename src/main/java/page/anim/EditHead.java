@@ -86,17 +86,15 @@ public class EditHead extends Page implements EditLink {
 	}
 
 	private void addListeners() {
-		EditHead thi = this;
-
 		view.addActionListener(arg0 -> {
 			if (val == 0)
 				return;
 			changing = true;
-			cur.remove(thi);
+			cur.remove(EditHead.this);
 			if (p0 == null)
-				p0 = new DIYViewPage(getFront(), thi);
+				p0 = new DIYViewPage(getFront(), EditHead.this);
 			changePanel(cur = p0);
-			cur.add(thi);
+			cur.add(EditHead.this);
 			((AbEditPage) cur).setSelection(anim);
 			val = 0;
 			changing = false;
@@ -106,11 +104,11 @@ public class EditHead extends Page implements EditLink {
 			if (val == 1)
 				return;
 			changing = true;
-			cur.remove(thi);
+			cur.remove(EditHead.this);
 			if (p1 == null)
-				p1 = new ImgCutEditPage(getFront(), thi);
+				p1 = new ImgCutEditPage(getFront(), EditHead.this);
 			changePanel(cur = p1);
-			cur.add(thi);
+			cur.add(EditHead.this);
 			((AbEditPage) cur).setSelection(anim);
 			val = 1;
 			changing = false;
@@ -120,11 +118,11 @@ public class EditHead extends Page implements EditLink {
 			if (val == 2)
 				return;
 			changing = true;
-			cur.remove(thi);
+			cur.remove(EditHead.this);
 			if (p2 == null)
-				p2 = new MaModelEditPage(getFront(), thi);
+				p2 = new MaModelEditPage(getFront(), EditHead.this);
 			changePanel(cur = p2);
-			cur.add(thi);
+			cur.add(EditHead.this);
 			((AbEditPage) cur).setSelection(anim);
 			val = 2;
 			changing = false;
@@ -134,12 +132,13 @@ public class EditHead extends Page implements EditLink {
 			if (val == 3)
 				return;
 			changing = true;
-			cur.remove(thi);
+			cur.remove(EditHead.this);
 			if (p3 == null)
-				p3 = new MaAnimEditPage(getFront(), thi);
-			changePanel(cur = p3);
-			cur.add(thi);
+				p3 = new MaAnimEditPage(getFront(), EditHead.this);
+			cur = p3;
+			cur.add(EditHead.this);
 			((AbEditPage) cur).setSelection(anim);
+			changePanel(cur);
 			val = 3;
 			changing = false;
 		});
