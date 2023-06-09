@@ -245,12 +245,12 @@ public class ComparePage extends Page {
             height -= 50;
 
         int tw = getTableWidth();
-        set(jsp, x, y, 250, 50, 25 + 3 * width, posY + height - 50);
+        set(jsp, x, y, 250, 50, 1825, posY + height - 50);
         for (int i = 0; i < tables.size(); i++) {
             set(tables.get(i), x, y, i * tw, 0, tw, posY + height - 50);
             tables.get(i).resized();
         }
-        cont.setPreferredSize(size(x, y, tables.size() * width, posY + height - 50).toDimension());
+        cont.setPreferredSize(size(x, y, tables.size() * tw, posY + height - 50).toDimension());
         jsp.getHorizontalScrollBar().setUnitIncrement(size(x, y, 50));
         jsp.revalidate();
 
