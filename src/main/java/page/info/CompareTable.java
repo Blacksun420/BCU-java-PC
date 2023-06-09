@@ -12,6 +12,7 @@ import common.pack.UserProfile;
 import common.system.VImg;
 import common.util.Data;
 import common.util.unit.*;
+import common.util.unit.Character;
 import main.MainBCU;
 import page.*;
 import utilpc.Interpret;
@@ -40,7 +41,7 @@ public class CompareTable extends Page {
     private final JBTN[] swap = new JBTN[2];
 
     private final ComparePage par;
-    protected MaskEntity maskEntities;
+    private Character maskEntities;
     private LevelInterface maskEntityLvl;
     private boolean resize = true;
 
@@ -97,7 +98,7 @@ public class CompareTable extends Page {
         for (byte i = 0; i < 2 ; i++) {
             byte FI = i;
             swap[i].addActionListener(x -> {
-                Form oldf = (Form) maskEntities.getPack();
+                Form oldf = (Form) maskEntities;
                 int fid = oldf.fid;
                 Form f = oldf.uid.get().getForms()[(FI == 1 ? fid + 1 : fid - 1) % oldf.unit.forms.length];
 
@@ -107,7 +108,7 @@ public class CompareTable extends Page {
                 String[] strs = UtilPC.lvText(f, (Level) maskEntityLvl);
                 level.setText(strs[0]);
 
-                maskEntities = f.du;
+                maskEntities = f;
                 reset();
             });
         }
@@ -117,7 +118,7 @@ public class CompareTable extends Page {
             public void focusLost(FocusEvent e) {
                 int[] data = CommonStatic.parseIntsN(level.getText().trim().replace("%", ""));
 
-                if (maskEntities instanceof MaskEnemy) {
+                if (maskEntities instanceof Enemy) {
                     if (data.length == 1) {
                         if (data[0] > 0)
                             ((Magnification) maskEntityLvl).hp = ((Magnification) maskEntityLvl).atk = data[0];
@@ -129,7 +130,7 @@ public class CompareTable extends Page {
                     }
                     level.setText(CommonStatic.toArrayFormat(((Magnification) maskEntityLvl).hp, ((Magnification) maskEntityLvl).atk) + "%");
                 } else {
-                    Form f = ((MaskUnit) maskEntities).getPack();
+                    Form f = (Form) maskEntities;
                     maskEntityLvl = f.regulateLv(Level.lvList(f.unit, data, null), (Level) maskEntityLvl);
                     String[] strs = UtilPC.lvText(f, (Level) maskEntityLvl);
                     level.setText(strs[0]);
@@ -140,323 +141,218 @@ public class CompareTable extends Page {
     }
 
     protected void reset() {
-            if (maskEntities == null) {
-                abilityPanes.setViewportView(null);
-                abilityPanes.setEnabled(false);
+        if (maskEntities == null) {
+            abilityPanes.setViewportView(null);
+            abilityPanes.setEnabled(false);
 
-                names.setIcon(null);
-                names.setText("-");
+            names.setIcon(null);
+            names.setText("-");
 
-                level.setEnabled(false);
-                level.setText("-");
+            level.setEnabled(false);
+            level.setText("-");
 
-                for (JBTN btn : swap)
-                    btn.setEnabled(false);
-                for (JL jls : main)
-                    jls.setText("-");
-                for (JL jls : unit)
-                    jls.setText("-");
-                enem.setText("-");
-                seco.setText("-");
+            for (JBTN btn : swap)
+                btn.setEnabled(false);
+            for (JL jls : main)
+                jls.setText("-");
+            for (JL jls : unit)
+                jls.setText("-");
+            enem.setText("-");
+            seco.setText("-");
 
+            for (JL ev : evol) {
+                ev.setText("-");
+                ev.setIcon(null);
+                ev.setToolTipText(null);
+            }
+            return;
+        }
+        boolean state = level.isEnabled();
+        MaskEntity me = maskEntities.getMask();
+        boolean isEnemy = maskEntities instanceof Enemy;
+        int hp = me.getHp();
+        int atk = 0, eatk = 0;
+        double mul, mula = 1;
+
+        MaskAtk[] atkData = maskEntities.getMask().getAtks(0);
+        StringBuilder atkString = new StringBuilder();
+        StringBuilder preString = new StringBuilder();
+        List<Trait> DefTraits = UserProfile.getBCData().traits.getList();
+        SortedPackSet<Trait> traits = new SortedPackSet<>(trs), spTraits = new SortedPackSet<>();
+        traits.retainAll(me.getTraits());
+
+        if (isEnemy) {
+            MaskEnemy enemy = (MaskEnemy)me;
+            if (!state)
+                maskEntityLvl = new Magnification(100, 100);
+            hp *= (((Magnification) maskEntityLvl).hp * enemy.multi(b)) / 100.0;
+            mul = (((Magnification) maskEntityLvl).atk * enemy.multi(b)) / 100.0;
+            enem.setText(Math.floor(enemy.getDrop() * b.t().getDropMulti()) / 100 + "");
+            for (JL jls : unit)
+                jls.setText("-");
+            for (JL jls : evol) {
+                jls.setText("-");
+                jls.setIcon(null);
+                jls.setToolTipText(null);
+            }
+            for (JBTN btn : swap)
+                btn.setEnabled(false);
+        } else {
+            Level multi = (Level)(state ? maskEntityLvl : (maskEntityLvl = ((MaskUnit) me).getPack().unit.getPrefLvs()));
+            MaskUnit mu = (((MaskUnit) me).getPCoin() != null) ? ((MaskUnit) me).getPCoin().improve(multi.getTalents()) : (MaskUnit) me;
+            me = mu;
+            Form f = (Form)maskEntities;
+
+            abilityPanes.setViewportView(abilities = new EntityAbilities(getFront(), mu, multi));
+            mul = f.unit.lv.getMult(multi.getTotalLv());
+            mula = b.t().getAtkMulti();
+            hp = (int)(Math.round(hp * mul) * b.t().getDefMulti());
+            if (mu.getPCoin() != null)
+                hp = (int) (hp * mu.getPCoin().getStatMultiplication(Data.PC2_HP, multi.getTalents()));
+            spTraits = new SortedPackSet<>(UserProfile.getBCData().traits.getList().subList(Data.TRAIT_EVA, Data.TRAIT_BEAST + 1));
+            spTraits.retainAll(traits);
+
+            EForm ef = new EForm(f, multi);
+            unit[0].setText(MainBCU.convertTime(b.t().getFinRes(mu.getRespawn())));
+            unit[1].setText(ef.getPrice(1) + "");
+            if (f.hasEvolveCost()) {
+                int[][] evo = f.unit.info.evo;
+                int count = 0;
+                for (int j = 0; j < evo.length; j++) {
+                    int id = evo[j][0];
+                    if (id == 0)
+                        break;
+                    JL up = evol[j];
+                    VImg img = CommonStatic.getBCAssets().gatyaitem.get(id);
+                    up.setIcon(img != null ? UtilPC.getScaledIcon(img, 50, 50) : null);
+                    up.setText(evo[j][1] + " " + get(MainLocale.UTIL, "cf" + id + "s"));
+                    up.setToolTipText(evo[j][1] + " " + get(MainLocale.UTIL, "cf" + id));
+                    count++;
+                }
+                JL xp = evol[count];
+                xp.setIcon(UtilPC.getScaledIcon(CommonStatic.getBCAssets().XP, 50, 30));
+                xp.setText(f.unit.info.xp + "");
+                xp.setToolTipText(f.unit.info.xp + " XP");
+                for (int j = count + 1; j < 6; j++) {
+                    evol[j].setText("-");
+                    evol[j].setIcon(null);
+                    evol[j].setToolTipText(null);
+                }
+            } else
                 for (JL ev : evol) {
                     ev.setText("-");
                     ev.setIcon(null);
                     ev.setToolTipText(null);
                 }
-                return;
+            enem.setText("-");
+        }
+        abilityPanes.setViewportView(abilities = new EntityAbilities(getFront(), me, maskEntityLvl));
+        int checkHealth = (Data.AB_GOOD | Data.AB_RESIST | Data.AB_RESISTS);
+        int checkAttack = (Data.AB_GOOD | Data.AB_MASSIVE | Data.AB_MASSIVES);
+
+        for (MaskAtk atkDatum : atkData) {
+            if (atkString.length() > 0) {
+                atkString.append(" / ");
+                preString.append(" / ");
             }
-            boolean state = level.isEnabled();
-            int hp = maskEntities.getHp();
-            int atk = 0;
+            int att = (int)(Math.round(atkDatum.getAtk() * mul) * mula);
+            if (!isEnemy && ((MaskUnit)me).getPCoin() != null)
+                att = (int) (att * ((MaskUnit)me).getPCoin().getStatMultiplication(Data.PC2_ATK, ((Level)maskEntityLvl).getTalents()));
+            atkString.append(att);
+            preString.append(MainBCU.convertTime(atkDatum.getPre()));
 
-            MaskAtk[] atkData = maskEntities.getAtks(0);
-            StringBuilder atkString = new StringBuilder();
-            StringBuilder preString = new StringBuilder();
-            SortedPackSet<Trait> traits = new SortedPackSet<>(trs);
-
-            if (maskEntities instanceof MaskEnemy) {
-                MaskEnemy enemy = (MaskEnemy) maskEntities;
-                if (!state)
-                    maskEntityLvl = new Magnification(100, 100);
-
-                LevelInterface multi = maskEntityLvl;
-                if(!(multi instanceof Magnification))
-                    return;
-                double mul = (((Magnification) multi).hp * enemy.multi(b)) / 100.0;
-                double mula = (((Magnification) multi).atk * enemy.multi(b)) / 100.0;
-
-                abilityPanes.setViewportView(abilities = new EntityAbilities(getFront(), enemy, multi));
-                int checkHealth = (Data.AB_GOOD | Data.AB_RESIST | Data.AB_RESISTS);
-                int checkAttack = (Data.AB_GOOD | Data.AB_MASSIVE | Data.AB_MASSIVES);
-
-                for (MaskAtk atkDatum : atkData) {
-                    if (atkString.length() > 0) {
-                        atkString.append(" / ");
-                        preString.append(" / ");
-                    }
-                    int att = (int)Math.round(atkDatum.getAtk() * mula);
-                    atkString.append(att);
-                    preString.append(MainBCU.convertTime(atkDatum.getPre()));
-                    traits.retainAll(enemy.getTraits());
-
-                    if (traits.size() > 0 && (enemy.getAbi() & checkAttack) > 0) {
-                        int effectiveDMG = att;
-                        if ((enemy.getAbi() & Data.AB_MASSIVES) > 0)
-                            effectiveDMG *= 5;
-                        if ((enemy.getAbi() & Data.AB_MASSIVE) > 0)
-                            effectiveDMG *= 3;
-                        if ((enemy.getAbi() & Data.AB_GOOD) > 0)
-                            effectiveDMG *= 1.5;
-
-                        if (effectiveDMG > att)
-                            atkString.append(" (").append(effectiveDMG).append(")");
-                    }
-                }
-                hp *= mul;
-                if (traits.size() > 0 && (enemy.getAbi() & checkHealth) > 0) {
-                    int effectiveHP = hp;
-                    if ((enemy.getAbi() & Data.AB_RESISTS) > 0)
-                        effectiveHP *= 6;
-                    if ((enemy.getAbi() & Data.AB_RESIST) > 0)
-                        effectiveHP *= 4;
-                    if ((enemy.getAbi() & Data.AB_GOOD) > 0)
-                        effectiveHP *= 2;
-
-                    if (effectiveHP > hp)
-                        main[0].setText(hp + " (" + effectiveHP + ")");
-                    else
-                        main[0].setText(hp + "");
-                } else
-                    main[0].setText(hp + "");
-
-                if (traits.size() > 0 && (enemy.getAbi() & checkAttack) > 0) {
-                    int DPS = (int)(enemy.allAtk(0) * mula * 30.0 / enemy.getItv(0));
-                    int effectiveDPS = DPS;
-                    if ((enemy.getAbi() & Data.AB_MASSIVES) > 0)
-                        effectiveDPS *= 5;
-                    if ((enemy.getAbi() & Data.AB_MASSIVE) > 0)
-                        effectiveDPS *= 3;
-                    if ((enemy.getAbi() & Data.AB_GOOD) > 0)
-                        effectiveDPS *= 1.5;
-                    main[4].setText(DPS + (effectiveDPS > DPS ? " (" + effectiveDPS + ")" : ""));
-                } else
-                    main[4].setText((int) (enemy.allAtk(0) * mula * 30.0 / enemy.getItv(0)) + "");
-                enem.setText(Math.floor(enemy.getDrop() * b.t().getDropMulti()) / 100 + "");
-
-                for (JL jls : unit)
-                    jls.setText("-");
-                for (JL jls : evol) {
-                    jls.setText("-");
-                    jls.setIcon(null);
-                    jls.setToolTipText(null);
-                }
-                for (JBTN btn : swap)
-                    btn.setEnabled(false);
-            } else if (maskEntities instanceof MaskUnit) {
-                Level multi = (Level) (state ? maskEntityLvl : (maskEntityLvl = ((MaskUnit) maskEntities).getPack().unit.getPrefLvs()));
-                MaskUnit mu;
-                if (((MaskUnit) maskEntities).getPCoin() != null) {
-                    mu = ((MaskUnit) maskEntities).getPCoin().improve(multi.getTalents());
-                    maskEntities = mu;
-                } else
-                    mu = (MaskUnit) maskEntities;
-                Form f = mu.getPack();
-                EForm ef = new EForm(f, multi);
-
-                abilityPanes.setViewportView(abilities = new EntityAbilities(getFront(), mu, multi));
-                double mul = f.unit.lv.getMult(multi.getTotalLv());
-                double atkLv = b.t().getAtkMulti();
-                double defLv = b.t().getDefMulti();
-
-                traits.retainAll(mu.getTraits());
-                List<Trait> trait = UserProfile.getBCData().traits.getList();
-                SortedPackSet<Trait> spTraits = new SortedPackSet<>(UserProfile.getBCData().traits.getList()
-                        .subList(Data.TRAIT_EVA, Data.TRAIT_BEAST + 1));
-                spTraits.retainAll(traits);
-                boolean overlap = traits.size() > 0;
-
-                int checkHealth = (Data.AB_GOOD | Data.AB_RESIST | Data.AB_RESISTS);
-                int checkAttack = (Data.AB_GOOD | Data.AB_MASSIVE | Data.AB_MASSIVES);
-                hp = (int) (Math.round(hp * mul) * defLv);
-                if (mu.getPCoin() != null)
-                    hp = (int) (hp * mu.getPCoin().getStatMultiplication(Data.PC2_HP, multi.getTalents()));
-
-                for (MaskAtk atkDatum : atkData) {
-                    if (atkString.length() > 0) {
-                        atkString.append(" / ");
-                        preString.append(" / ");
-                    }
-                    int a = (int) (Math.round(atkDatum.getAtk() * mul) * atkLv);
-                    if (mu.getPCoin() != null)
-                        a = (int) (a * mu.getPCoin().getStatMultiplication(Data.PC2_ATK, multi.getTalents()));
-
-                    atkString.append(a);
-                    preString.append(MainBCU.convertTime(atkDatum.getPre()));
-                    atk += a;
-
-                    int effectiveDMG = a;
-                    if (overlap && (mu.getAbi() & checkAttack) > 0) {
-                        if ((mu.getAbi() & Data.AB_MASSIVES) > 0)
-                            effectiveDMG *= b.t().getMASSIVESATK(traits);
-                        if ((mu.getAbi() & Data.AB_MASSIVE) > 0)
-                            effectiveDMG *= b.t().getMASSIVEATK(traits);
-                        if ((mu.getAbi() & Data.AB_GOOD) > 0)
-                            effectiveDMG *= b.t().getGOODATK(traits);
-                    }
-                    if (spTraits.contains(trait.get(Data.TRAIT_WITCH)) && (mu.getAbi() & Data.AB_WKILL) > 0)
-                        effectiveDMG *= b.t().getWKAtk();
-                    if (spTraits.contains(trait.get(Data.TRAIT_EVA)) && (mu.getAbi() & Data.AB_EKILL) > 0)
-                        effectiveDMG *= b.t().getEKAtk();
-                    if (spTraits.contains(trait.get(Data.TRAIT_BARON)) && (mu.getAbi() & Data.AB_BAKILL) > 0)
-                        effectiveDMG *= 1.6;
-                    if (spTraits.contains(trait.get(Data.TRAIT_BEAST)) && mu.getProc().BSTHUNT.type.active)
-                        effectiveDMG *= 2.5;
-
-                    if (effectiveDMG > a)
-                        atkString.append(" (").append(effectiveDMG).append(")");
-                }
-                int respawn = b.t().getFinRes(mu.getRespawn());
-                unit[0].setText(MainBCU.convertTime(respawn));
-
-                double price = ef.getPrice(1);
-                unit[1].setText(price + "");
-
-                if (f.hasEvolveCost()) {
-                    int[][] evo = f.unit.info.evo;
-                    int count = 0;
-
-                    for (int j = 0; j < evo.length; j++) {
-                        int id = evo[j][0];
-                        if (id == 0)
-                            break;
-
-                        JL up = evol[j];
-                        VImg img = CommonStatic.getBCAssets().gatyaitem.get(id);
-
-                        up.setIcon(img != null ? UtilPC.getScaledIcon(img, 50, 50) : null);
-                        up.setText(evo[j][1] + " " + get(MainLocale.UTIL, "cf" + id + "s"));
-                        up.setToolTipText(evo[j][1] + " " + get(MainLocale.UTIL, "cf" + id));
-                        count++;
-                    }
-                    JL xp = evol[count];
-
-                    xp.setIcon(UtilPC.getScaledIcon(CommonStatic.getBCAssets().XP, 50, 30));
-                    xp.setText(f.unit.info.xp + "");
-                    xp.setToolTipText(f.unit.info.xp + " XP");
-
-                    for (int j = count + 1; j < 6; j++) {
-                        evol[j].setText("-");
-                        evol[j].setIcon(null);
-                        evol[j].setToolTipText(null);
-                    }
-                } else {
-                    for (JL ev : evol) {
-                        ev.setText("-");
-                        ev.setIcon(null);
-                        ev.setToolTipText(null);
-                    }
-                }
-                enem.setText("-");
-
-                int effectiveHP = hp;
-                if (overlap && (mu.getAbi() & checkHealth) > 0) {
-                    if ((mu.getAbi() & Data.AB_RESISTS) > 0)
-                        effectiveHP /= b.t().getRESISTSDEF(traits);
-                    if ((mu.getAbi() & Data.AB_RESIST) > 0)
-                        effectiveHP /= b.t().getRESISTDEF(traits, traits, null, multi.clone());
-                    if ((mu.getAbi() & Data.AB_GOOD) > 0)
-                        effectiveHP /= b.t().getGOODDEF(traits, traits, null, multi.clone());
-                }
-                if (spTraits.contains(trait.get(Data.TRAIT_WITCH)) && (mu.getAbi() & Data.AB_WKILL) > 0)
-                    effectiveHP /= b.t().getWKDef();
-                if (spTraits.contains(trait.get(Data.TRAIT_EVA)) && (mu.getAbi() & Data.AB_EKILL) > 0)
-                    effectiveHP /= b.t().getEKDef();
-                if (spTraits.contains(trait.get(Data.TRAIT_BARON)) && (mu.getAbi() & Data.AB_BAKILL) > 0)
-                    effectiveHP /= 0.7;
-                if (spTraits.contains(trait.get(Data.TRAIT_BEAST)) && mu.getProc().BSTHUNT.type.active)
-                    effectiveHP /= 0.6;
-                if (effectiveHP > hp)
-                    main[0].setText(hp + " (" + effectiveHP + ")");
-                else
-                    main[0].setText(hp + "");
-
-                int effectiveDMG = atk;
-                if (overlap && (mu.getAbi() & checkAttack) > 0) {
-                    if ((mu.getAbi() & Data.AB_MASSIVES) > 0)
-                        effectiveDMG *= b.t().getMASSIVESATK(traits);
-                    if ((mu.getAbi() & Data.AB_MASSIVE) > 0)
-                        effectiveDMG *= b.t().getMASSIVEATK(traits);
-                    if ((mu.getAbi() & Data.AB_GOOD) > 0)
-                        effectiveDMG *= b.t().getGOODATK(traits);
-                }
-                if (spTraits.contains(trait.get(Data.TRAIT_WITCH)) && (mu.getAbi() & Data.AB_WKILL) > 0)
-                    effectiveDMG *= b.t().getWKAtk();
-                if (spTraits.contains(trait.get(Data.TRAIT_EVA)) && (mu.getAbi() & Data.AB_EKILL) > 0)
-                    effectiveDMG *= b.t().getEKAtk();
-                if (spTraits.contains(trait.get(Data.TRAIT_BARON)) && (mu.getAbi() & Data.AB_BAKILL) > 0)
-                    effectiveDMG *= 1.6;
-                if (spTraits.contains(trait.get(Data.TRAIT_BEAST)) && mu.getProc().BSTHUNT.type.active)
-                    effectiveDMG *= 2.5;
-
-                if (effectiveDMG > atk)
-                    main[4].setText((int) (atk * 30.0 / mu.getItv(0))
-                            + " (" + (int) (effectiveDMG * 30.0 / mu.getItv(0)) + ")");
-                else
-                    main[4].setText((int) (atk * 30.0 / mu.getItv(0)) + "");
-
-                for (JBTN btn : swap)
-                    btn.setEnabled(true);
+            int effectiveDMG = att;
+            if (traits.size() > 0 && (me.getAbi() & checkAttack) > 0) {
+                if ((me.getAbi() & Data.AB_MASSIVES) > 0)
+                    effectiveDMG *= isEnemy ? 5 : b.t().getMASSIVESATK(traits);
+                if ((me.getAbi() & Data.AB_MASSIVE) > 0)
+                    effectiveDMG *= isEnemy ? 3 : b.t().getMASSIVEATK(traits);
+                if ((me.getAbi() & Data.AB_GOOD) > 0)
+                    effectiveDMG *= isEnemy ? 1.5 : b.t().getGOODATK(traits);
             }
+            if (spTraits.contains(DefTraits.get(Data.TRAIT_WITCH)) && (me.getAbi() & Data.AB_WKILL) > 0)
+                effectiveDMG *= b.t().getWKAtk();
+            if (spTraits.contains(DefTraits.get(Data.TRAIT_EVA)) && (me.getAbi() & Data.AB_EKILL) > 0)
+                effectiveDMG *= b.t().getEKAtk();
+            if (spTraits.contains(DefTraits.get(Data.TRAIT_BARON)) && (me.getAbi() & Data.AB_BAKILL) > 0)
+                effectiveDMG *= 1.6;
+            if (spTraits.contains(DefTraits.get(Data.TRAIT_BEAST)) && me.getProc().BSTHUNT.type.active)
+                effectiveDMG *= 2.5;
+            if (effectiveDMG > att)
+                atkString.append(" (").append(effectiveDMG).append(")");
+            atk += att;
+            eatk += effectiveDMG;
+        }
+        int effectiveHP = hp;
+        if (traits.size() > 0 && (me.getAbi() & checkHealth) > 0) {
+            if ((me.getAbi() & Data.AB_RESISTS) > 0)
+                effectiveHP *= isEnemy ? 6 : b.t().getRESISTSDEF(traits);
+            if ((me.getAbi() & Data.AB_RESIST) > 0)
+                effectiveHP *= isEnemy ? 4 : b.t().getRESISTDEF(traits, traits, null, (Level)maskEntityLvl);
+            if ((me.getAbi() & Data.AB_GOOD) > 0)
+                effectiveHP *= isEnemy ? 2 : b.t().getGOODDEF(traits, traits, null, (Level)maskEntityLvl);
+        }
+        if (spTraits.contains(DefTraits.get(Data.TRAIT_WITCH)) && (me.getAbi() & Data.AB_WKILL) > 0)
+            effectiveHP /= b.t().getWKDef();
+        if (spTraits.contains(DefTraits.get(Data.TRAIT_EVA)) && (me.getAbi() & Data.AB_EKILL) > 0)
+            effectiveHP /= b.t().getEKDef();
+        if (spTraits.contains(DefTraits.get(Data.TRAIT_BARON)) && (me.getAbi() & Data.AB_BAKILL) > 0)
+            effectiveHP /= 0.7;
+        if (spTraits.contains(DefTraits.get(Data.TRAIT_BEAST)) && me.getProc().BSTHUNT.type.active)
+            effectiveHP /= 0.6;
 
-            abilityPanes.setEnabled(true);
-            level.setEnabled(true);
+        if (effectiveHP > hp)
+            main[0].setText(hp + " (" + effectiveHP + ")");
+        else
+            main[0].setText(hp + "");
 
-            names.setIcon(UtilPC.getIcon(maskEntities.getPack().anim.getEdi()));
-            names.setText(maskEntities.getPack().toString());
+        int DPS = (int)(atk * 30.0 / me.getItv(0));
+        int effectiveDPS = (int)(eatk * 30.0 / me.getItv(0));
+        main[4].setText(DPS + (effectiveDPS > DPS ? " (" + effectiveDPS + ")" : ""));
 
-            main[1].setText(maskEntities.getHb() + "");
-            main[2].setText(maskEntities.getRange() + "");
-            main[3].setText(atkString.toString());
-            main[5].setText(preString.toString());
-            main[6].setText(MainBCU.convertTime(maskEntities.getPost(false, 0)));
-            main[7].setText(MainBCU.convertTime(maskEntities.getItv(0)));
-            main[8].setText(MainBCU.convertTime(maskEntities.getTBA()));
+        abilityPanes.setEnabled(true);
+        level.setEnabled(true);
+        names.setIcon(UtilPC.getIcon(maskEntities.getIcon()));
+        names.setText(maskEntities.toString());
 
-            main[9].setText(maskEntities.getSpeed() + "");
+        main[1].setText(me.getHb() + "");
+        main[2].setText(me.getRange() + "");
+        main[3].setText(atkString.toString());
+        main[5].setText(preString.toString());
+        main[6].setText(MainBCU.convertTime(me.getPost(false, 0)));
+        main[7].setText(MainBCU.convertTime(me.getItv(0)));
+        main[8].setText(MainBCU.convertTime(me.getTBA()));
+        main[9].setText(me.getSpeed() + "");
 
-            SortedPackSet<Trait> trs = maskEntities.getTraits();
-            String[] TraitBox = new String[trs.size()];
-            for (int t = 0; t < trs.size(); t++) {
-                Trait trait = maskEntities.getTraits().get(t);
-                if (trait.BCTrait())
-                    TraitBox[t] = Interpret.TRAIT[trait.id.id];
-                else
-                    TraitBox[t] = trait.name;
-            }
-
-            seco.setText(Interpret.getTrait(TraitBox, maskEntities instanceof MaskEnemy ? ((MaskEnemy) maskEntities).getStar() : 0));
+        SortedPackSet<Trait> trs = me.getTraits();
+        String[] TraitBox = new String[trs.size()];
+        for (int t = 0; t < trs.size(); t++) {
+            Trait trait = trs.get(t);
+            if (trait.BCTrait())
+                TraitBox[t] = Interpret.TRAIT[trait.id.id];
+            else
+                TraitBox[t] = trait.name;
+        }
+        seco.setText(Interpret.getTrait(TraitBox, maskEntities instanceof MaskEnemy ? ((MaskEnemy) maskEntities).getStar() : 0));
 
         requireResize();
     }
 
     protected void renewEnemy(Enemy ene) {
-        maskEntities = ene.de;
+        maskEntities = ene;
         if (!(maskEntityLvl instanceof Magnification))
             maskEntityLvl = new Magnification(100, 100);
         level.setText(CommonStatic.toArrayFormat(((Magnification) maskEntityLvl).hp, ((Magnification) maskEntityLvl).atk) + "%");
     }
 
     protected void renewUnit(Form f) {
-        maskEntities = f.du;
+        maskEntities = f;
         if (!(maskEntityLvl instanceof Level)) {
             Level lvs = f.unit.getPrefLvs();
             maskEntityLvl = lvs.clone();
-        } else {
+        } else
             maskEntityLvl = f.regulateLv(Level.lvList(f.unit, CommonStatic.parseIntsN(level.getText()), null), (Level)maskEntityLvl);
-        }
         level.setText(UtilPC.lvText(f, (Level) maskEntityLvl)[0]);
-        reset();
     }
 
     private void addStatLabels() {

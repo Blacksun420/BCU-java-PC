@@ -233,8 +233,8 @@ public class ComparePage extends Page {
         posY = resizeArr(main, x, y, 250, 0);
         posY = resizeArr(unit, x, y, posY, main.length);
         posY += resizeJL(enem, x, y, posY, main.length + unit.length);
-        posY += resizeJL(evol, x, y, posY, main.length + unit.length) * 2;
-        posY += resizeJL(seco, x, y, posY, main.length + unit.length);
+        posY += resizeJL(evol, x, y, posY, main.length + unit.length + 1) * 2;
+        posY += resizeJL(seco, x, y, posY, main.length + unit.length + 2);
 
         int unselected = ((int) Arrays.stream(boxes).filter(b -> !b.isSelected()).count());
         if (!boxes[main.length + unit.length + 1].isSelected())
