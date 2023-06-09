@@ -16,9 +16,8 @@ import common.util.unit.Level;
 import common.util.unit.Trait;
 import io.BCMusic;
 import io.BCUWriter;
-import page.LoadPage;
-import page.MainLocale;
 import page.MainFrame;
+import page.MainLocale;
 import plugin.ui.main.util.MenuBarHandler;
 import utilpc.awt.FG2D;
 
@@ -142,7 +141,7 @@ public class UtilPC {
 		id %= 100;
 		if (CommonStatic.getBCAssets().icon[type][id] == null)
 			return null;
-		return resizeIcon(CommonStatic.getBCAssets().icon[type][id], 41, 41);
+		return resizeIcon(CommonStatic.getBCAssets().icon[type][id], 40, 40);
 	}
 
 	public static ImageIcon getIcon(VImg v) {

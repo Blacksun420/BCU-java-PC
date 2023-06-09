@@ -1,17 +1,16 @@
 package page.anim;
 
 import common.CommonStatic;
-import common.util.anim.AnimCE;
-import common.util.anim.ImgCut;
-import common.util.anim.MaAnim;
-import common.util.anim.Part;
 import common.pack.PackData.UserPack;
 import common.pack.Source;
 import common.pack.Source.ResourceLocation;
 import common.pack.Source.Workspace;
 import common.pack.UserProfile;
-import common.system.fake.FakeImage.Marker;
 import common.util.AnimGroup;
+import common.util.anim.AnimCE;
+import common.util.anim.ImgCut;
+import common.util.anim.MaAnim;
+import common.util.anim.Part;
 import common.util.unit.Enemy;
 import main.MainBCU;
 import main.Opts;
@@ -25,7 +24,6 @@ import page.support.Importer;
 import page.support.TreeNodeExpander;
 import utilpc.Algorithm;
 import utilpc.Algorithm.SRResult;
-import utilpc.ReColor;
 import utilpc.UtilPC;
 
 import javax.swing.*;
@@ -53,8 +51,6 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 	private final JBTN addl = new JBTN(0, "addl");
 	private final JBTN reml = new JBTN(0, "reml");
 	private final JBTN relo = new JBTN(0, "relo");
-	private final JBTN save = new JBTN(0, "saveimg");
-	private final JBTN swcl = new JBTN(0, "swcl");
 	private final JBTN impt = new JBTN(0, "import");
 	private final JBTN expt = new JBTN(0, "export");
 	private final JBTN ico = new JBTN(0, "icon");
@@ -67,10 +63,6 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 	private final JTree jta = new JTree();
 	private final AnimGroupTree agt;
 	private final JScrollPane jspu = new JScrollPane(jta);
-	private final JList<String> jlf = new JList<>(ReColor.strs);
-	private final JScrollPane jspf = new JScrollPane(jlf);
-	private final JList<String> jlt = new JList<>(ReColor.strf);
-	private final JScrollPane jspt = new JScrollPane(jlt);
 	private final ImgCutEditTable icet = new ImgCutEditTable();
 	private final JScrollPane jspic = new JScrollPane(icet);
 	private final SpriteBox sb = new SpriteBox(this);
@@ -180,29 +172,25 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 		set(aep, x, y, 800, 0, 1750, 50);
 		set(back, x, y, 0, 0, 200, 50);
 		set(relo, x, y, 250, 0, 200, 50);
-		set(jspu, x, y, 0, 50, 300, 500);
-		set(add, x, y, 350, 200, 200, 50);
-		set(rem, x, y, 600, 200, 200, 50);
-		set(impt, x, y, 350, 250, 200, 50);
-		set(expt, x, y, 600, 250, 200, 50);
-		set(resz, x, y, 350, 300, 200, 50);
-		set(loca, x, y, 600, 300, 200, 50);
-		set(merg, x, y, 350, 350, 200, 50);
-		set(spri, x, y, 600, 350, 200, 50);
-		set(jtf, x, y, 350, 100, 200, 50);
-		set(copy, x, y, 600, 100, 200, 50);
-		set(addl, x, y, 350, 500, 200, 50);
-		set(reml, x, y, 600, 500, 200, 50);
+		set(jspu, x, y, 50, 100, 300, 450);
+		set(add, x, y, 400, 200, 200, 50);
+		set(rem, x, y, 650, 200, 200, 50);
+		set(impt, x, y, 400, 250, 200, 50);
+		set(expt, x, y, 650, 250, 200, 50);
+		set(resz, x, y, 400, 300, 200, 50);
+		set(loca, x, y, 650, 300, 200, 50);
+		set(merg, x, y, 400, 350, 200, 50);
+		set(spri, x, y, 650, 350, 200, 50);
+		set(jtf, x, y, 400, 100, 200, 50);
+		set(copy, x, y, 650, 100, 200, 50);
+		set(addl, x, y, 400, 500, 200, 50);
+		set(reml, x, y, 650, 500, 200, 50);
 		set(jspic, x, y, 50, 600, 800, 650);
 		set(sb, x, y, 900, 100, 1400, 900);
-		set(jspf, x, y, 900, 1050, 200, 200);
-		set(jspt, x, y, 1150, 1050, 200, 200);
-		set(swcl, x, y, 1400, 1050, 200, 50);
-		set(save, x, y, 1400, 1150, 200, 50);
-		set(ico, x, y, 1650, 1050, 200, 50);
-		set(icon, x, y, 1650, 1100, 400, 100);
-		set(uni, x, y, 1900, 1000, 200, 200); // one day... the ui will be better... another day...
-		set(white, x, y, 2100, 1050, 200, 50);
+		set(ico, x, y, 900, 1050, 200, 50);
+		set(icon, x, y, 1150, 1050, 200, 50);
+		set(uni, x, y, 925, 1100, 200, 200); // one day... the ui will be better... another day...
+		set(white, x, y, 1500, 1050, 200, 50);
 		SwingUtilities.invokeLater(() -> jta.setUI(new TreeNodeExpander(jta)));
 		aep.componentResized(x, y);
 		icet.setRowHeight(size(x, y, 50));
@@ -378,8 +366,6 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 			icet.anim.ICedited();
 		});
 
-		save.addActionListener(arg0 -> icet.anim.saveImg());
-
 		ico.addActionListener(arg0 -> {
 			BufferedImage bimg = new Importer("select icon image").getImg();
 			if (bimg == null)
@@ -483,29 +469,6 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 			changing = false;
 		});
 
-		swcl.addActionListener(arg0 -> {
-			int ind = sb.sele;
-			int[] data = null;
-			if (ind >= 0) {
-				ImgCut ic = icet.anim.imgcut;
-				data = ic.cuts[ind];
-			}
-			ReColor.transcolor((BufferedImage) icet.anim.getNum().bimg(), data, jlf.getSelectedIndex(),
-					jlt.getSelectedIndex());
-			icet.anim.getNum().mark(Marker.RECOLORED);
-			icet.anim.ICedited();
-		});
-
-		jlf.addListSelectionListener(arg0 -> {
-			if (jlf.getSelectedIndex() == -1)
-				jlf.setSelectedIndex(0);
-		});
-
-		jlt.addListSelectionListener(arg0 -> {
-			if (jlt.getSelectedIndex() == -1)
-				jlt.setSelectedIndex(0);
-		});
-
 		resz.setLnr(x -> {
 			double d = CommonStatic.parseIntN(resz.getText()) * 0.01;
 			if (Opts.conf("do you want to resize sprite to " + d + "%?")) {
@@ -598,8 +561,6 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 		add(resz);
 		add(back);
 		add(relo);
-		add(save);
-		add(swcl);
 		add(jspu);
 		add(jspic);
 		add(add);
@@ -609,8 +570,6 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 		add(reml);
 		add(jtf);
 		add(sb);
-		add(jspf);
-		add(jspt);
 		add(impt);
 		add(expt);
 		add(icon);
@@ -623,12 +582,9 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 		add.setEnabled(aep.focus == null);
 		jtf.setEnabled(aep.focus == null);
 		relo.setEnabled(aep.focus == null);
-		swcl.setEnabled(aep.focus == null);
 		jta.setCellRenderer(new AnimTreeRenderer());
 		SwingUtilities.invokeLater(() -> jta.setUI(new TreeNodeExpander(jta)));
 		setA(null);
-		jlf.setSelectedIndex(0);
-		jlt.setSelectedIndex(1);
 		addListeners$0();
 		addListeners$1();
 	}
@@ -641,8 +597,6 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 		changing = true;
 		aep.setAnim(anim);
 		addl.setEnabled(anim != null);
-		swcl.setEnabled(anim != null);
-		save.setEnabled(anim != null);
 		resz.setEditable(anim != null);
 		icet.setCut(anim);
 		sb.setAnim(anim);

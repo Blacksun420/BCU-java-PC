@@ -14,55 +14,85 @@ import common.util.Data;
 import common.util.unit.*;
 import main.MainBCU;
 import page.*;
-import page.info.filter.EnemyFindPage;
-import page.info.filter.UnitFindPage;
 import utilpc.Interpret;
 import utilpc.UtilPC;
 
 import javax.swing.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.util.Arrays;
 import java.util.List;
 
 public class CompareTable extends Page {
     private static final long serialVersionUID = 1L;
 
-    private final JL names = new JL();
-    private final JTF level = new JTF();
+    private final JL names = new JL("-");
+    private final JTF level = new JTF("-");
     private EntityAbilities abilities;
     private final JScrollPane abilityPanes = new JScrollPane();
 
     private final JL[] main = new JL[10]; // stats on both
-    private final JL seco = new JL(); // stats after others
+    private final JL seco = new JL("-"); // stats after others
     private final JL[] unit = new JL[2]; // stats on unit
-    private final JL enem = new JL(); // stats on enemy
+    private final JL enem = new JL("-"); // stats on enemy
     private final JL[] evol = new JL[6]; // evolve slots
 
     private final JBTN[] sele = new JBTN[2];
     private final JBTN[] swap = new JBTN[2];
 
-    private MaskEntity maskEntities;
+    private final ComparePage par;
+    protected MaskEntity maskEntities;
     private LevelInterface maskEntityLvl;
     private boolean resize = true;
 
-    private boolean[] seles;
-    private SortedPackSet<Trait> traits;
+    protected final boolean[] seles = new boolean[main.length + unit.length + 4];
+    private SortedPackSet<Trait> trs = new SortedPackSet<>();
+    private final int ind;
 
     private final BasisLU b = BasisSet.current().sele;
 
+    public CompareTable(ComparePage p, int ind, int sellen) {
+        super(p);
+        par = p;
+        this.ind = ind;
+        for (int i = 0; i < sellen; i++)
+            seles[i] = true;
+
+        ini();
+    }
+
+    @Override
+    public JButton getBackButton() {
+        return null;
+    }
+
+    private void ini() {
+        add(sele[0] = new JBTN(0, "veif"));
+        add(sele[1] = new JBTN(0, "vuif"));
+
+        JBTN left = new JBTN(0, "<");
+        left.setEnabled(false);
+        add(swap[0] = left);
+        JBTN right = new JBTN(0, ">");
+        right.setEnabled(false);
+        add(swap[1] = right);
+
+        add(names);
+        add(level);
+        level.setEnabled(false);
+        add(abilityPanes);
+        abilityPanes.setEnabled(false);
+
+        addStatLabels();
+        addListeners();
+    }
+
+    public void setTraits(List<Trait> traits) {
+        trs = new SortedPackSet<>(traits);
+    }
+
     private void addListeners() {
-        for (int i = 0; i < sele.length; i++) {
-            int finalI = i;
-            sele[0].addActionListener(x -> {
-                changePanel(efp = new EnemyFindPage(getThis(), false));
-                s = finalI;
-            });
-            sele[1].addActionListener(x -> {
-                changePanel(ufp = new UnitFindPage(getThis(), false));
-                s = finalI;
-            });
-        }
+        sele[0].addActionListener(x -> par.getEnemy(ind));
+        sele[1].addActionListener(x -> par.getUnit(ind));
 
         for (byte i = 0; i < 2 ; i++) {
             byte FI = i;
@@ -109,7 +139,7 @@ public class CompareTable extends Page {
         });
     }
 
-    private void reset() {
+    protected void reset() {
             if (maskEntities == null) {
                 abilityPanes.setViewportView(null);
                 abilityPanes.setEnabled(false);
@@ -143,6 +173,8 @@ public class CompareTable extends Page {
             MaskAtk[] atkData = maskEntities.getAtks(0);
             StringBuilder atkString = new StringBuilder();
             StringBuilder preString = new StringBuilder();
+            SortedPackSet<Trait> traits = new SortedPackSet<>(trs);
+
             if (maskEntities instanceof MaskEnemy) {
                 MaskEnemy enemy = (MaskEnemy) maskEntities;
                 if (!state)
@@ -166,6 +198,7 @@ public class CompareTable extends Page {
                     int att = (int)Math.round(atkDatum.getAtk() * mula);
                     atkString.append(att);
                     preString.append(MainBCU.convertTime(atkDatum.getPre()));
+                    traits.retainAll(enemy.getTraits());
 
                     if (traits.size() > 0 && (enemy.getAbi() & checkAttack) > 0) {
                         int effectiveDMG = att;
@@ -236,6 +269,7 @@ public class CompareTable extends Page {
                 double atkLv = b.t().getAtkMulti();
                 double defLv = b.t().getDefMulti();
 
+                traits.retainAll(mu.getTraits());
                 List<Trait> trait = UserProfile.getBCData().traits.getList();
                 SortedPackSet<Trait> spTraits = new SortedPackSet<>(UserProfile.getBCData().traits.getList()
                         .subList(Data.TRAIT_EVA, Data.TRAIT_BEAST + 1));
@@ -406,130 +440,116 @@ public class CompareTable extends Page {
         requireResize();
     }
 
+    protected void renewEnemy(Enemy ene) {
+        maskEntities = ene.de;
+        if (!(maskEntityLvl instanceof Magnification))
+            maskEntityLvl = new Magnification(100, 100);
+        level.setText(CommonStatic.toArrayFormat(((Magnification) maskEntityLvl).hp, ((Magnification) maskEntityLvl).atk) + "%");
+    }
+
+    protected void renewUnit(Form f) {
+        maskEntities = f.du;
+        if (!(maskEntityLvl instanceof Level)) {
+            Level lvs = f.unit.getPrefLvs();
+            maskEntityLvl = lvs.clone();
+        } else {
+            maskEntityLvl = f.regulateLv(Level.lvList(f.unit, CommonStatic.parseIntsN(level.getText()), null), (Level)maskEntityLvl);
+        }
+        level.setText(UtilPC.lvText(f, (Level) maskEntityLvl)[0]);
+        reset();
+    }
+
+    private void addStatLabels() {
+        for (int i = 0; i < main.length; i++) {
+            main[i] = new JL("-");
+            Interpret.setUnderline(main[i]);
+            add(main[i]);
+        }
+        for (int i = 0; i < unit.length; i++) {
+            unit[i] = new JL("-");
+            Interpret.setUnderline(unit[i]);
+            add(unit[i]);
+        }
+        Interpret.setUnderline(enem);
+        add(enem);
+        Interpret.setUnderline(seco);
+        add(seco);
+        for (int i = 0; i < evol.length; i++) {
+            evol[i] = new JL("-");
+            Interpret.setUnderline(evol[i]);
+            add(evol[i]);
+        }
+    }
+
     @Override
     protected void resized(int x, int y) {
-        int width = 600 - 250;
-        int p = (width * 3 / 4);
-        set(sele[0], x, y, p, 50, 200, 50);
-        set(sele[1], x, y, p, 100, 200, 50);
-        set(swap[0], x, y, p - 100, 100, 100, 50);
-        set(swap[1], x, y, p + 200, 100, 100, 50);
-        set(names, x, y, 250, 200, width, 50);
-        set(level, x, y, 250, 150, width, 50);
-        int posY = 250;
+        int width = par.getTableWidth();
+        int p = width / 3;
+        set(sele[0], x, y, p, 0, 200, 50);
+        set(sele[1], x, y, p, 50, 200, 50);
+        set(swap[0], x, y, p - 100, 50, 100, 50);
+        set(swap[1], x, y, p + 200, 50, 100, 50);
+        set(names, x, y, 0, 150, width, 50);
+        set(level, x, y, 0, 100, width, 50);
+        int posY = 200;
 
         for (int i = 0; i < main.length; i++) {
             if (!seles[i]) {
                 set(main[i], x, y, 0, 0, 0, 0);
                 continue;
             }
-
-            set(main[i], x, y, 250, posY, width, 50);
+            set(main[i], x, y, 0, posY, width, 50);
             posY += 50;
         }
-
         for (int i = 0; i < unit.length; i++) {
-            JL[] d = unit[i];
             if (!seles[i + main.length]) {
-                for (JL ex : d)
-                    set(ex, x, y, 0, 0, 0, 0);
+                set(unit[i], x, y, 0, 0, 0, 0);
                 continue;
             }
-            int posX = 50;
-            for (int j = 0; j < d.length; j++) {
-                set(d[j], x, y, posX, posY, j == 0 ? 200 : width, 50);
-                if (j == 0)
-                    posX += 200;
-                else
-                    posX += width;
-            }
+            set(unit[i], x, y, 0, posY, width, 50);
             posY += 50;
         }
-
-        for (int i = 0; i < enem.length; i++) {
-            JL[] d = enem[i];
-            if (!seles[i + main.length + unit.length]) {
-                for (JL ex : d)
-                    set(ex, x, y, 0, 0, 0, 0);
-                continue;
-            }
-            int posX = 50;
-            for (int j = 0; j < d.length; j++) {
-                set(d[j], x, y, posX, posY, j == 0 ? 200 : width, 50);
-                if (j == 0)
-                    posX += 200;
-                else
-                    posX += width;
-            }
+        if (!seles[main.length + unit.length])
+            set(enem, x, y, 0, 0, 0, 0);
+        else {
+            set(enem, x, y, 0, posY, width, 50);
             posY += 50;
         }
-
         for (int i = 0; i < evol.length; i++) {
-            JL[] d = evol[i];
-            if (!boxes[i + main.length + unit.length + enem.length].isSelected()) {
-                for (JL jl : d)
-                    set(jl, x, y, 0, 0, 0, 0);
+            if (!seles[main.length + unit.length + 1]) {
+                set(evol[i], x, y, 0, 0, 0, 0);
                 continue;
             }
-            int posX = 250;
-            set(d[0], x, y, 50, posY, 200, 50);
-            for (int j = 1; j < evol[i].length; j++) {
-                JL jl = evol[i][j];
-                int l = j - 1;
-                int localPosX = posX + (l % 3 * 200) + (l / 6 * 600);
-                int localPosY = posY + (l / 3 % 2 * 50);
-                set(jl, x, y, localPosX, localPosY, width / 3, 50);
-            }
-            posY += 100;
+            JL jl = evol[i];
+            int localPosX = (i % 3 * p) + (i / 6 * width);
+            set(jl, x, y, localPosX, posY, width / 3, 50);
+            if ((i + 1) % 3 == 0)
+                posY += 50;
         }
-
-        for (int i = 0; i < seco.length; i++) {
-            JL[] d = seco[i];
-            if (!boxes[i + main.length + unit.length + enem.length + evol.length].isSelected()) {
-                for (JL ex : d)
-                    set(ex, x, y, 0, 0, 0, 0);
-                continue;
-            }
-            int posX = 50;
-            for (int j = 0; j < d.length; j++) {
-                set(d[j], x, y, posX, posY, j == 0 ? 200 : width, 50);
-                if (j == 0)
-                    posX += 200;
-                else
-                    posX += width;
-            }
+        if (!seles[main.length + unit.length + 2])
+            set(seco, x, y, 0, 0, 0, 0);
+        else {
+            set(seco, x, y, 0, posY, width, 50);
             posY += 50;
         }
 
-        int posX = 250;
-        int unselected = ((int) Arrays.stream(boxes).filter(b -> !b.isSelected()).count());
-        if (!boxes[main.length + unit.length + enem.length].isSelected())
-            unselected++;
+        int unselected = !seles[main.length + unit.length + 1] ? 1 : 0;
+        for (boolean s : seles)
+            if (!s)
+                unselected++;
         int height = 200 + unselected * 50;
 
-        for (int i = 0; i < abilityPanes.length; i++) {
-            JScrollPane pane = abilityPanes[i];
-            if (!boxes[boxes.length - 1].isSelected()) {
-                set(pane, x, y, 0, 0, 0, 0);
-                continue;
+        if (!seles[seles.length - 1])
+            set(abilityPanes, x, y, 0, 0, 0, 0);
+        else {
+            if (resize && abilities != null) {
+                abilities.setPreferredSize(size(x, y, abilities.getPWidth(), abilities.getPHeight()).toDimension());
+                abilityPanes.getHorizontalScrollBar().setUnitIncrement(size(x, y, 20));
+                abilityPanes.getVerticalScrollBar().setUnitIncrement(size(x, y, 50));
+                abilityPanes.revalidate();
             }
-
-            if (resize) {
-                EntityAbilities e = abilities[i];
-                if (e != null) {
-                    e.setPreferredSize(size(x, y, e.getPWidth(), e.getPHeight()).toDimension());
-                    pane.getHorizontalScrollBar().setUnitIncrement(size(x, y, 20));
-                    pane.getVerticalScrollBar().setUnitIncrement(size(x, y, 50));
-                    pane.revalidate();
-                }
-            }
-
-            set(pane, x, y, posX + i * 600, posY, width, height);
+            set(abilityPanes, x, y, 0, posY, width, height);
         }
-
-        set(tlst, x, y, 50, posY, 200, height);
-        if (resize)
-            tlst.revalidate();
 
         resize = false;
     }
