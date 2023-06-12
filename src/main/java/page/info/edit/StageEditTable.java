@@ -357,7 +357,7 @@ public class StageEditTable extends AbJTable implements Reorderable {
 		if (data == null)
 			return null;
 		if (c == 0)
-			return data.boss == 1 ? "Boss" : data.boss == 2 ? "Boss (Shake)" : "";
+			return data.boss >= 1 ? MainLocale.getLoc(MainLocale.INFO,"b" + data.boss) : "";
 		else if (c == 1)
 			return Identifier.get(data.enemy);
 		else if (c == 2)

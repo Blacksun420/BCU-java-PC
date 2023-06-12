@@ -117,7 +117,7 @@ class ComingTable extends AbJTable {
 			int ind = info.length - i - 1;
 			link[i] = ind;
 			data[link[i]][1] = Identifier.getOr(info[i].enemy, AbEnemy.class);
-			data[link[i]][0] = info[i].boss == 1 ? "boss" : "";
+			data[link[i]][0] = info[i].boss >= 1 ? MainLocale.getLoc(MainLocale.INFO, "b" + info[i].boss) : "";
 			data[link[i]][2] = CommonStatic.toArrayFormat(info[i].multiple, info[i].mult_atk);
 			data[link[i]][3] = info[i].number == 0 ? Page.get(MainLocale.UTIL, "inf") : info[i].number;
 			if (info[i].castle_0 >= info[i].castle_1)

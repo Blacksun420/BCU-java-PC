@@ -563,6 +563,7 @@ public abstract class EntityEditPage extends Page {
 		add.setLnr(e -> {
 			if (isSp()) {
 				addSpecial(-1, new AtkDataModel(ce));
+					setData(ce);
 			} else {
 				changing = true;
 				int n = ce.hits.get(getSel()).length;
@@ -664,7 +665,6 @@ public abstract class EntityEditPage extends Page {
 				"Revenge", "Resurrection", "Counterattack", "Burrow", "Resurface", "Revival", "Entry");
 		if (selection == -1)
 			return false;
-		changing = true;
 		switch (selection) {
 			case 0:
 				ce.revs = Arrays.copyOf(ce.revs, ce.revs.length + 1);
@@ -862,10 +862,32 @@ public abstract class EntityEditPage extends Page {
 					if (rematk.str.contains(sps[i][0].str)) {
 						for (int j = 0; j < sps[i].length; j++)
 							if (sps[i][j] == rematk) {
+								if (sps[i].length == 1)
+									sps[i] = new AtkDataModel[0];
 								for (int k = j; k < sps[i].length - 1; k++) {
 									sps[i][k] = sps[i][k + 1];
 									sps[i][k].str = sps[i][k].str.substring(0, sps[i][k].str.length() - 1) + (k == 0 ? "" : " " + k);
 									sps[i] = Arrays.copyOf(sps[i], sps[i].length - 1);
+								}
+								switch (i) {
+									case 0:
+										ce.revs = sps[i];
+										break;
+									case 1:
+										ce.ress = sps[i];
+										break;
+									case 2:
+										ce.burs = sps[i];
+										break;
+									case 3:
+										ce.resus = sps[i];
+										break;
+									case 4:
+										ce.revis = sps[i];
+										break;
+									case 5:
+										ce.entrs = sps[i];
+										break;
 								}
 								break;
 							}

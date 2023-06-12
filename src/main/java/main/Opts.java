@@ -3,9 +3,7 @@ package main;
 import common.CommonStatic;
 import common.pack.PackData;
 import common.pack.Source;
-import common.util.stage.MapColc;
 import common.util.stage.Stage;
-import common.util.stage.StageMap;
 import common.util.stage.info.DefStageInfo;
 import page.*;
 import page.battle.BattleInfoPage;
@@ -65,15 +63,14 @@ public class Opts {
 	}
 
 	public static void errOnce(String text, String title, boolean fatal) {
-		if(popped)
+		if(popped && !fatal)
 			return;
 
 		popped = true;
-
 		int opt = JOptionPane.DEFAULT_OPTION;
 		int result = JOptionPane.showOptionDialog(null, text, title, opt, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
-		if(result == JOptionPane.OK_OPTION || result == JOptionPane.NO_OPTION) {
+		if(result == JOptionPane.OK_OPTION) {
 			if(fatal) {
 				if (!title.contains("heap space")) //Saving while out of heap space is much likelier to corrupt data
 					Source.Workspace.saveWorkspace(true); //Autosave if crashing, to preserve data without risking corruption

@@ -85,7 +85,7 @@ class PCoinEditTable extends Page {
     private final JBTN delet = new JBTN(0,"rem");
     private final PCoinEditPage pcedit;
     private final boolean editable;
-    private final JL[] chance = new JL[8];
+    private final JL[] chance = new JL[8]; //TODO: Restructure to allow custom talents
     private final JTF[] tchance = new JTF[8];
     protected int talent;
 
@@ -180,7 +180,7 @@ class PCoinEditTable extends Page {
                     neww[4] = Math.max(min, neww[4]);
                     neww[5] = Math.max(min, neww[5]);
                 }
-                if (vals[1] == Data.P_VOLC) {
+                if (vals[1] == Data.P_VOLC || vals[1] == Data.P_MINIVOLC) {
                     neww[8] = Math.max(1, neww[8] / Data.VOLC_ITV) * Data.VOLC_ITV;
                     neww[9] = Math.max(1, neww[9] / Data.VOLC_ITV) * Data.VOLC_ITV;
                 }
@@ -219,13 +219,16 @@ class PCoinEditTable extends Page {
                     } else if (vals[1] == Data.PC2_HB) {
                         v[0] = Math.min(v[0], unit.hp - unit.hb);
                         w = Math.min(w, unit.hp - unit.hb);
+                    } else if (vals[1] == Data.PC2_TBA) {
+                        v[0] = Math.min(v[0], 100);
+                        w = Math.min(w, 100);
                     }
                 }
 
-                if (finalI < 6 && !(vals[1] == Data.P_SATK || vals[1] == Data.P_VOLC || vals[1] == Data.P_CRIT)) {
+                if (finalI < 6 && !(vals[1] == Data.P_SATK || vals[1] == Data.P_VOLC || vals[1] == Data.P_CRIT || vals[1] == Data.P_ARMOR || vals[1] == Data.P_SPEED)) {
                     v[0] = Math.max(0, v[0]);
                     w = Math.max(0, w);
-                } else if (finalI >= 8) {
+                } else if (finalI >= 8 && (vals[1] == Data.P_VOLC || vals[1] == Data.P_MINIVOLC)) {
                     v[0] = Math.max(1, v[0] / Data.VOLC_ITV) * Data.VOLC_ITV;
                     w = Math.max(1, w / Data.VOLC_ITV) * Data.VOLC_ITV;
                 }
@@ -450,7 +453,7 @@ class PCoinEditTable extends Page {
             for (int i = 0; i < getMax(); i++)
                 if (!tchance[i].isEnabled())
                     unit.pcoin.info.get(talent)[2 + i] = unit.pcoin.info.get(talent)[1 + i];
-                else
+                else if (i != 4 && i != 5 && pdata[1] != Data.P_ARMOR && pdata[1] != Data.P_SPEED)
                     unit.pcoin.info.get(talent)[2 + i] = Math.max(0, unit.pcoin.info.get(talent)[2 + i]);
         }
     }

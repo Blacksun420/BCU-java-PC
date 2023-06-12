@@ -5,6 +5,7 @@ import common.pack.Identifier;
 import common.pack.PackData.UserPack;
 import common.pack.UserProfile;
 import common.system.ENode;
+import common.util.pack.Soul;
 import common.util.stage.*;
 import common.util.stage.info.CustomStageInfo;
 import common.util.stage.info.StageInfo;
@@ -101,7 +102,7 @@ public class AdvStEditPage extends Page {
 	private final JBTN remrev = new JBTN(MainLocale.PAGE, "rem");
 	private final JL revEne = new JL();
 	private final JL revBGM = new JL();
-	private final JL revSoul = new JL();
+	private final JComboBox<Soul> revSoul = new JComboBox<>();
 	private final JL revMults = new JL(MainLocale.INFO, "t2");
 	private final JTF jtMults = new JTF();
 	private final JBTN addrev = new JBTN(MainLocale.PAGE, "add");
@@ -328,7 +329,7 @@ public class AdvStEditPage extends Page {
 
 		bossType.addActionListener(l -> {
 			rev.boss = (byte)((rev.boss + 1) % 3);
-			bossType.setText("b" + rev.boss);
+			bossType.setText(get(MainLocale.INFO, "b" + rev.boss));
 		});
 
 		revback.addActionListener(l -> setRevival(rev.par));
@@ -366,6 +367,12 @@ public class AdvStEditPage extends Page {
 				}
 				changePanel(musp);
 			}
+		});
+
+		revSoul.addActionListener(l -> {
+			if (rev == null)
+				return;
+			rev.soul = revSoul.getSelectedItem() != null ? ((Soul)revSoul.getSelectedItem()).getID() : null;
 		});
 
 		jtMults.addActionListener(l -> {
@@ -420,6 +427,10 @@ public class AdvStEditPage extends Page {
 		add(revNext);
 		add(revEne);
 		add(revBGM);
+		List<Soul> souls = UserProfile.getAll(st.id.pack.substring(0, st.id.pack.indexOf('/')), Soul.class);
+		souls.add(0, null);
+		revSoul.setModel(new DefaultComboBoxModel<>(souls.toArray(new Soul[0])));
+		add(revSoul);
 		add(bossType);
 		add(revMults);
 		add(jtMults);
@@ -508,19 +519,19 @@ public class AdvStEditPage extends Page {
 			revEne.setText(ene.toString());
 
 			revBGM.setText("BGM: " + r.bgm);
-			revSoul.setText("Soul: " + r.soul);
+			revSoul.setSelectedItem(r.soul);
 
 			jtMults.setText(r.mhp + "% / " + r.matk + "%");
-			bossType.setText("b" + rev.boss);
+			bossType.setText(get(MainLocale.INFO, "b" + rev.boss));
 		} else {
 			revEne.setIcon(null);
 			revEne.setText("N/A");
 
 			revBGM.setText("N/A");
-			revSoul.setText("N/A");
+			revSoul.setSelectedIndex(0);
 
 			jtMults.setText("N/A");
-			bossType.setText("catsex");
+			bossType.setText("N/A");
 		}
 	}
 
@@ -547,6 +558,7 @@ public class AdvStEditPage extends Page {
 		}
 		if (musp != null) {
 			rev.bgm = musp.getSelectedID();
+			setRevival(rev);
 			musp = null;
 		}
 		if (efp != null && efp.getSelected() != null) {

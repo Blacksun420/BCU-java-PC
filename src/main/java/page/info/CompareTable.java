@@ -286,11 +286,11 @@ public class CompareTable extends Page {
         int effectiveHP = hp;
         if (traits.size() > 0 && (me.getAbi() & checkHealth) > 0) {
             if ((me.getAbi() & Data.AB_RESISTS) > 0)
-                effectiveHP *= isEnemy ? 6 : b.t().getRESISTSDEF(traits);
+                effectiveHP /= isEnemy ? 1f/6 : b.t().getRESISTSDEF(traits);
             if ((me.getAbi() & Data.AB_RESIST) > 0)
-                effectiveHP *= isEnemy ? 4 : b.t().getRESISTDEF(traits, traits, null, (Level)maskEntityLvl);
+                effectiveHP /= isEnemy ? 0.25f : b.t().getRESISTDEF(traits, traits, null, (Level)maskEntityLvl);
             if ((me.getAbi() & Data.AB_GOOD) > 0)
-                effectiveHP *= isEnemy ? 2 : b.t().getGOODDEF(traits, traits, null, (Level)maskEntityLvl);
+                effectiveHP /= isEnemy ? 0.5f : b.t().getGOODDEF(traits, traits, null, (Level)maskEntityLvl);
         }
         if (spTraits.contains(DefTraits.get(Data.TRAIT_WITCH)) && (me.getAbi() & Data.AB_WKILL) > 0)
             effectiveHP /= b.t().getWKDef();

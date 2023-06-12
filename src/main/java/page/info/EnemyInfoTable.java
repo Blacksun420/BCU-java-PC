@@ -72,8 +72,11 @@ public class EnemyInfoTable extends Page {
 			for (int j = 0; j < atks[i].length; j++) {
 				add(atks[i][j] = new JL());
 				atks[i][j].setBorder(BorderFactory.createEtchedBorder());
-				if (j % 2 == 0)
-					atks[i][j].setHorizontalAlignment(SwingConstants.CENTER);
+				if (j == 0) {
+					atks[i][0].setHorizontalAlignment(SwingConstants.LEFT);
+					atks[i][0].setHorizontalTextPosition(SwingConstants.RIGHT);
+				} else if (j % 2 == 0)
+					 atks[i][j].setHorizontalAlignment(SwingConstants.CENTER);
 			}
 		List<Interpret.ProcDisplay> ls = Interpret.getAbi(e.de, dispAtk);
 		if (proc != null)
@@ -101,7 +104,8 @@ public class EnemyInfoTable extends Page {
 
 		MaskAtk[] atkData = e.de.getAtks(dispAtk);
 		for (int i = 0; i < atkData.length; i++) {
-			atks[i][0].setText(get(MainLocale.INFO, "atk") + (atkData[i].getName().toLowerCase().startsWith("combo") ? " [combo]" : ""));
+			atks[i][0].setText(atkData[i].getName().toLowerCase().startsWith("combo") ? " [combo]" : get(MainLocale.INFO, "atk"));
+			atks[i][0].setIcon(UtilPC.getIcon(2, atkData[i].isRange() ? Data.ATK_AREA : Data.ATK_SINGLE));
 			atks[i][2].setText(MainLocale.INFO, "preaa");
 			atks[i][3].setText(MainBCU.convertTime(atkData[i].getPre()));
 			atks[i][4].setText(MainLocale.INFO, "dire");
@@ -130,6 +134,7 @@ public class EnemyInfoTable extends Page {
 			atks[ind][3].setText(MainBCU.convertTime(atkList.get(i).pre));
 			atks[ind][4].setText(MainLocale.INFO, "dire");
 			atks[ind][5].setText(atkList.get(i).dire == 1 ? get(MainLocale.PAGE, "unit") : atkList.get(i).dire == -1 ? get(MainLocale.PAGE, "enemy") : "N/A");
+			atks[ind][0].setIcon(UtilPC.getIcon(2, atkList.get(i).range ? Data.ATK_AREA : Data.ATK_SINGLE));
 		}
 		reset();
 	}
