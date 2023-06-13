@@ -316,7 +316,7 @@ class PCoinEditTable extends Page {
 
                 boolean add = type[0] == Data.PC_BASE;
                 if (type[0] == Data.PC_P)
-                    add = unit.getProc().getArr(type[1]).get("prob") != null && unit.getProc().getArr(type[1]).get(0) < 100;
+                    add = unit.getProc().getArr(type[1]).get(0) < 100;
                 if (type[0] == Data.PC_AB)
                     add = (unit.abi & type[1]) == 0;
                 if (add && unused)

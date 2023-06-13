@@ -146,6 +146,7 @@ public class MainBCU {
 				e.printStackTrace();
 				return;
 			}
+			(t == ErrType.INFO ? System.out : System.err).println(str);
 			e.printStackTrace(t == ErrType.INFO ? System.out : System.err);
 			printErr(t, str);
 		}
@@ -161,8 +162,6 @@ public class MainBCU {
 				System.out.println(str);
 				return;
 			}
-
-			(t == ErrType.INFO ? System.out : System.err).println(str);
 
 			if (t != ErrType.INFO)
 				Opts.errOnce(str, "ERROR", t == ErrType.FATAL);

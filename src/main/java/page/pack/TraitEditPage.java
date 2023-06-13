@@ -1,6 +1,7 @@
 package page.pack;
 
 import common.CommonStatic;
+import common.battle.entity.Entity;
 import common.pack.Context;
 import common.pack.Source;
 import common.pack.UserProfile;
@@ -84,6 +85,7 @@ public class TraitEditPage extends Page {
             for (Unit u : packpack.units)
                 for (Form f : u.forms)
                     list.remove(f);
+            list.removeIf(f -> ((Form)f).maxu().getTraits().isEmpty() || Entity.targetTraited(((Form)f).maxu().getTraits()));
 
             jlf.setListData(list.toArray(new AbForm[0]));
             jlf.clearSelection();
