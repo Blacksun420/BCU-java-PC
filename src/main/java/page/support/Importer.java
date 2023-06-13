@@ -23,7 +23,7 @@ public class Importer extends JFileChooser {
 		setCurrentDirectory(curs[t]);
 		setFileFilter(filter);
 
-		String[] fils = new String[]{"jpg", "jfif", "jpeg", "webp"};
+		String[] fils = new String[]{"jpg", "jfif", "jpeg"};
 		for (String fil : fils) {
 			FileNameExtensionFilter fnef = new FileNameExtensionFilter(fil.toUpperCase()+" Images", fil);
 			addChoosableFileFilter(fnef);//Five Nights Et Freddy's
