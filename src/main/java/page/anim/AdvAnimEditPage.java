@@ -410,13 +410,14 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 				}
 				int[][] movs = data[i].moves;
 				int pre = 0;
-				while (pre < movs.length && unecessarymove(data[i], pre) && ((pre == movs.length - 1 && data[i].ints[2] == 1) || movs[pre][2] == 1 || movs[pre][1] == movs[pre + 1][1] || movs[pre][0] == movs[pre + 1][0] - 1)) {
-					movs[pre] = null;
-					data[i].n--;
-					pre++;
-				}
-				for (int j = pre + 1; j < movs.length; j++) {
-					if (movs[pre][1] == movs[j][1] && ((j == movs.length - 1 && data[i].ints[2] == 1) || (j < movs.length - 1 && movs[j + 1][1] == movs[j][1]) || (movs[pre][2] == 1 && movs[j][2] == 1))) {
+				if (data[i].ints[2] == 1)//Needed to not ruin loops
+					while (pre < movs.length && unecessarymove(data[i], pre) && (movs[pre][2] == 1 || pre == movs.length - 1 || movs[pre][1] == movs[pre + 1][1] || movs[pre][0] == movs[pre + 1][0] - 1)) {
+						movs[pre] = null;
+						data[i].n--;
+						pre++;
+					}
+				for (int j = pre + 1; j < movs.length; j++)
+					if (movs[pre][1] == movs[j][1] && (j < movs.length - 1 || data[i].ints[2] == 1) && ((j < movs.length - 1 && movs[j + 1][1] == movs[j][1]) || (movs[pre][2] == 1 && movs[j][2] == 1))) {
 						movs[j] = null;
 						data[i].n--;
 					} else if (j < movs.length - 1 && movs[pre][1] == movs[j][1] && movs[j][0] == movs[j + 1][0] - 1) {
@@ -425,7 +426,6 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 						data[i].n--;
 					} else
 						pre = j;
-				}
 				if (data[i].n < movs.length) {
 					data[i].moves = new int[data[i].n][];
 					pre = 0;

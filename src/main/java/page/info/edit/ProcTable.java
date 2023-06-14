@@ -21,7 +21,7 @@ public abstract class ProcTable extends Page {
 		private static final int SEC = 17;
 
 		private static final int[] INDS = new int[] { Data.P_KB, Data.P_STOP, Data.P_SLOW, Data.P_CRIT, Data.P_WAVE, Data.P_MINIWAVE, Data.P_WEAK, Data.P_LETHARGY, Data.P_BREAK,
-				Data.P_SHIELDBREAK, Data.P_WARP, Data.P_CURSE, Data.P_SATK, Data.P_POIATK, Data.P_VOLC, Data.P_MINIVOLC, Data.P_BOUNTY, Data.P_DEMONVOLC, Data.P_CDSETTER, Data.P_ATKBASE,
+				Data.P_SHIELDBREAK, Data.P_WARP, Data.P_CURSE, Data.P_SATK, Data.P_POIATK, Data.P_VOLC, Data.P_MINIVOLC, Data.P_BOUNTY, Data.P_CDSETTER, Data.P_ATKBASE,
 				Data.P_SEAL, Data.P_RAGE, Data.P_SUMMON, Data.P_MOVEWAVE, Data.P_HYPNO, Data.P_SNIPER, Data.P_BOSS, Data.P_TIME, Data.P_THEME, Data.P_POISON, Data.P_ARMOR, Data.P_SPEED,
 				Data.P_WORKERLV};
 
@@ -63,13 +63,13 @@ public abstract class ProcTable extends Page {
 		private static final long serialVersionUID = 1L;
 
 		private static final int[] INDS = { Data.P_STRONG, Data.P_LETHAL, Data.P_BURROW, Data.P_REVIVE, Data.P_CRITI,
-				Data.P_COUNTER, Data.P_IMUATK, Data.P_DMGCUT, Data.P_DMGCAP, Data.P_IMUKB, Data.P_IMUSTOP,
+				Data.P_DEMONVOLC, Data.P_COUNTER, Data.P_IMUATK, Data.P_DMGCUT, Data.P_DMGCAP, Data.P_IMUKB, Data.P_IMUSTOP,
 				Data.P_IMUSLOW, Data.P_IMUWAVE, Data.P_IMUWEAK, Data.P_IMULETHARGY, Data.P_IMUWARP, Data.P_IMUCURSE,
 				Data.P_IMUSEAL, Data.P_IMUMOVING, Data.P_IMUARMOR, Data.P_IMUPOI, Data.P_IMUPOIATK, Data.P_IMUVOLC,
 				Data.P_IMUSPEED, Data.P_IMUSUMMON, Data.P_BARRIER, Data.P_DEMONSHIELD, Data.P_DEATHSURGE, Data.P_BSTHUNT,
 				Data.P_WEAKAURA, Data.P_STRONGAURA, Data.P_REMOTESHIELD, Data.P_AI, Data.P_IMURAGE, Data.P_IMUHYPNO}; //Procs for units
 		private static final int[] EINDS = { Data.P_STRONG, Data.P_LETHAL, Data.P_BURROW, Data.P_REVIVE, Data.P_CRITI,
-				Data.P_COUNTER, Data.P_IMUATK, Data.P_DMGCUT, Data.P_DMGCAP, Data.P_IMUKB, Data.P_IMUSTOP,
+				Data.P_DEMONVOLC, Data.P_COUNTER, Data.P_IMUATK, Data.P_DMGCUT, Data.P_DMGCAP, Data.P_IMUKB, Data.P_IMUSTOP,
 				Data.P_IMUSLOW, Data.P_IMUWAVE, Data.P_IMUWEAK, Data.P_IMULETHARGY, Data.P_IMUWARP, Data.P_IMUCURSE,
 				Data.P_IMUSEAL, Data.P_IMUMOVING, Data.P_IMUARMOR, Data.P_IMUPOI, Data.P_IMUPOIATK, Data.P_IMUVOLC,
 				Data.P_IMUSPEED, Data.P_IMUSUMMON, Data.P_BARRIER, Data.P_DEMONSHIELD, Data.P_DEATHSURGE, Data.P_IMUCANNON,

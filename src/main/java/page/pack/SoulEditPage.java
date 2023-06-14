@@ -36,7 +36,7 @@ public class SoulEditPage extends Page {
 
     private final JTF jtfs = new JTF();
 
-    private final Vector<PackData.UserPack> vpack = new Vector<>(UserProfile.getUserPacks().stream().filter(p -> p.souls.size() > 0).collect(Collectors.toList()));
+    private final Vector<PackData.UserPack> vpack = new Vector<>(UserProfile.getUserPacks().stream().filter(p -> p.souls.size() > 0 || p.editable).collect(Collectors.toList()));
     private final JList<PackData.UserPack> jlp = new JList<>(vpack);
     private final JScrollPane jspp = new JScrollPane(jlp);
     private final JList<Soul> jls = new JList<>();

@@ -414,23 +414,23 @@ public class Interpret extends Data {
 			}
 		}
 
-		AtkDataModel[][] sps = du.getSpAtks(true);
-		for (int i = 0; i < sps.length; i++) {
-			for (int j = 0; j < sps[i].length; j++) {
-				AtkDataModel rev = sps[i][j];
-				if (rev != null) {
-					for (int k = 0; k < Data.PROC_TOT; k++) {
-						ProcItem item = rev.getProc().getArr(k);
+		if (!du.isCommon()) {
+			AtkDataModel[][] sps = du.getSpAtks(true);
+			for (int i = 0; i < sps.length; i++)
+				for (int j = 0; j < sps[i].length; j++) {
+					AtkDataModel rev = sps[i][j];
+					if (rev != null)
+						for (int k = 0; k < Data.PROC_TOT; k++) {
+							ProcItem item = rev.getProc().getArr(k);
 
-						if (!item.exists() || rev.getProc().sharable(k))
-							continue;
+							if (!item.exists() || rev.getProc().sharable(k))
+								continue;
 
-						String format = ProcLang.get().get(k).format;
-						String formatted = Formatter.format(format, item, ctx);
-						l.add(new ProcDisplay(formatted + " [" + Page.get(MainLocale.UTIL, "aa" + (6 + i)) + " " + j + "]", UtilPC.getIcon(1, k), item));
-					}
+							String format = ProcLang.get().get(k).format;
+							String formatted = Formatter.format(format, item, ctx);
+							l.add(new ProcDisplay(formatted + " [" + Page.get(MainLocale.UTIL, "aa" + (6 + i)) + " " + j + "]", UtilPC.getIcon(1, k), item));
+						}
 				}
-			}
 		}
 
 		return l;

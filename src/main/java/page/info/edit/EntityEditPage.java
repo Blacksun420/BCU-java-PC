@@ -934,26 +934,26 @@ public abstract class EntityEditPage extends Page {
 		if (isSp()) {
 			if (adm.str.contains("revenge")) {
 				lpst.setText(MainLocale.INFO, "Post-HB");
-				vpst.setText(MainBCU.convertTime(KB_TIME[INT_HB] - ce.getPost(true, 0)));
+				vpst.setText(MainBCU.convertTime(KB_TIME[INT_HB] + ce.getPost(true, 0)));
 			} else if (adm.str.contains("resurrection")) {
 				lpst.setText(MainLocale.INFO, "Post-Death");
 				Soul s = Identifier.get(ce.death);
-				vpst.setText(s == null ? "-" : MainBCU.convertTime((s.anim.len(AnimU.SOUL[0]) - ce.getPost(true, 1))));
+				vpst.setText(s == null ? "-" : MainBCU.convertTime((s.anim.len(AnimU.SOUL[0]) + ce.getPost(true, 1))));
 			} else if (adm.str.contains("counterattack")) {
 				lpst.setText(MainLocale.INFO, "Post-Counter");
 				vpst.setText("-");
 			} else if (adm.str.contains("burrow")) {
 				lpst.setText(MainLocale.INFO, "Post-Bury Atk");
-				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[4].len - ce.getPost(true, 2) + 1));
+				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[4].len + ce.getPost(true, 2) + 1));
 			} else if (adm.str.contains("revive")) {
 				lpst.setText(MainLocale.INFO, "Post-Revival Atk");
-				vpst.setText(MainBCU.convertTime(effas().A_ZOMBIE.getEAnim(EffAnim.ZombieEff.REVIVE).len() - ce.getPost(true, 3)));
+				vpst.setText(MainBCU.convertTime(effas().A_ZOMBIE.getEAnim(EffAnim.ZombieEff.REVIVE).len() + ce.getPost(true, 3)));
 			} else if (adm.str.contains("resurface")) {
 				lpst.setText(MainLocale.INFO, "Post-Unburrow Atk");
-				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[6].len - ce.getPost(true, 4) + 1));
+				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[6].len + ce.getPost(true, 4) + 1));
 			} else {
 				lpst.setText(MainLocale.INFO, "Post-Entrance Atk");
-				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[7].len - ce.getPost(true, 5) + 1));
+				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[7].len + ce.getPost(true, 5) + 1));
 			}
 		} else {
 			lpst.setText(MainLocale.INFO, "postaa");
