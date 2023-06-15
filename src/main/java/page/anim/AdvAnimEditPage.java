@@ -443,6 +443,8 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 					data[i] = null;
 					anim.n--;
 				}
+				if (data[i] != null)
+					data[i].validate();
 			}
 			anim.parts = new Part[anim.n];
 			int ind = 0;
@@ -457,7 +459,7 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 
 		jstfs.setLnr(theJ -> {
 			MaAnim anim = ac.getMaAnim(animID);
-			if (anim == null || death || isAdj())
+			if (anim == null || death || isAdj() || jstfs.getText().isEmpty())
 				return;
 			death = true;
 			int add = CommonStatic.parseIntN(jstfs.getText());
@@ -469,9 +471,11 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 			}
 			if (add != 0 && Opts.conf((add > 0 ? "Add " : "Substract ") + Math.abs(add) + "f startup time for the selected parts?")) {
 				change(true);
-				for (int row : rows)
+				for (int row : rows) {
 					for (int i = 0; i < anim.parts[row].n; i++)
 						anim.parts[row].moves[i][0] += add;
+					anim.parts[row].validate();
+				}
 				anim.validate();
 				maet.anim.unSave("Maanim " + (add > 0 ? "Add " : "Substract ") + Math.abs(add) + "f startup time to " + Arrays.toString(rows));
 				callBack(null);
@@ -483,7 +487,7 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 
 		jtrim.setLnr(theJ -> {
 			MaAnim anim = ac.getMaAnim(animID);
-			if (anim == null || isAdj())
+			if (anim == null || isAdj() || jtrim.getText().isEmpty())
 				return;
 			int trim = CommonStatic.parseIntN(jtrim.getText());
 			int[] rows = maet.getSelectedRows();
@@ -496,29 +500,30 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 			if (Opts.conf("Trim every keyframe timed " + (trim > 0 ? "after " : "before ") + trim + "f for the selected parts?")) {
 				change(true);
 				for (int row : rows) {
+					Part p = anim.parts[row];
 					if (trim > 0) {
-						for (int i = anim.parts[row].n - 1; i >= 0; i--)
-							if (anim.parts[row].moves[i][0] <= trim || (i == 0 && anim.parts[row].moves[0][0] > Math.abs(trim))) {
-								anim.parts[row].n = i + 1;
+						for (int i = p.n - 1; i >= 0; i--)
+							if (p.moves[i][0] <= trim || (i == 0 && p.moves[0][0] > Math.abs(trim))) {
+								p.n = i + 1;
 								break;
 							}
-						if (anim.parts[row].n < anim.parts[row].moves.length) //To prevent pointless processing, only copy if there was actually trimming
-							anim.parts[row].moves = Arrays.copyOf(anim.parts[row].moves, anim.parts[row].n);
+						if (p.n < p.moves.length) //To prevent pointless processing, only copy if there was actually trimming
+							p.moves = Arrays.copyOf(p.moves, p.n);
 					} else {
 						int v = -1;
-						for (int i = 0; i < anim.parts[row].n; i++)
-							if (anim.parts[row].moves[i][0] >= Math.abs(trim) || (i == anim.parts[row].n - 1 && anim.parts[row].moves[i][0] < Math.abs(trim))) {
+						for (int i = 0; i < p.n; i++)
+							if (p.moves[i][0] >= Math.abs(trim) || (i == p.n - 1 && p.moves[i][0] < Math.abs(trim))) {
 								v = i;
 								break;
 							}
 						if (v > 0) {
-							int[][] moovs = new int[anim.parts[row].moves.length - v][];
-							System.arraycopy(anim.parts[row].moves, v, moovs, 0, anim.parts[row].moves.length - v);
-							anim.parts[row].moves = moovs;
-							anim.parts[row].n = moovs.length;
+							int[][] moovs = new int[p.moves.length - v][];
+							System.arraycopy(p.moves, v, moovs, 0, p.moves.length - v);
+							p.moves = moovs;
+							p.n = moovs.length;
 						}
 					}
-					anim.parts[row].validate();
+					p.validate();
 				}
 				anim.validate();
 				maet.anim.unSave("Maanim trim " + Arrays.toString(rows) + " to " + trim + "f");
