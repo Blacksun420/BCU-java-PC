@@ -242,9 +242,7 @@ class AtkEditTable extends Page {
 			if (!changing && !atktr.getValueIsAdjusting()) {
 				for (int i = 0; i < atktr.list.size(); i++)
 					if (atktr.isSelectedIndex(i)) {
-						if (!adm.traits.contains(atktr.list.get(i))) {
-							adm.traits.add(atktr.list.get(i));
-						}
+						adm.traits.add(atktr.list.get(i));
 					} else
 						adm.traits.remove(atktr.list.get(i));
 			}

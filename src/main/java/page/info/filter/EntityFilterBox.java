@@ -32,6 +32,15 @@ public abstract class EntityFilterBox extends Page {
                 }
             });
         }
+
+        public boolean containsPack(PackData pac) {
+            if (pac == null || pac instanceof PackData.DefPack)
+                return true;
+            for (int i = 2; i < getModel().getSize(); i++)
+                if (getModel().getElementAt(i) == pac)
+                    return true;
+            return false;
+        }
     }
 
     private static final long serialVersionUID = 1L;

@@ -3,9 +3,11 @@ package page.battle;
 import common.CommonStatic;
 import common.battle.*;
 import common.battle.entity.Entity;
+import common.pack.SaveData;
 import common.util.Data;
 import common.util.stage.Replay;
 import common.util.stage.Stage;
+import common.util.stage.info.CustomStageInfo;
 import common.util.unit.AbForm;
 import io.BCMusic;
 import main.MainBCU;
@@ -78,6 +80,8 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 	private byte spe = 0;
 	private int upd = 0;
 	private boolean musicChanged = false, exPopupShown = false;
+	private byte dataPopup = 75;
+	private final SaveData packData;
 
 	/**
 	 * Creates a new Battle Page
@@ -105,6 +109,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		ini();
 		rply.setText(0, recd.rl == null ? "save" : "start");
 		resized();
+		packData = null;
 	}
 
 	protected BattleInfoPage(BattleInfoPage p, SBRply rpl) {
@@ -124,6 +129,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		rply.setText(0, "rply");
 		resized();
 		current = this;
+		packData = null;
 	}
 
 	protected BattleInfoPage(Page p, Stage st, int star, BasisLU bl, int[] ints) {
@@ -148,6 +154,8 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		rply.setText(0, "rply");
 		resized();
 		current = this;
+
+		packData = st.getCont().getCont().getSave();
 	}
 
 	@Override
@@ -333,6 +341,13 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			BCMusic.EndTheme(sb.ebase.health <= 0);
 
 			if (sb.ebase.health <= 0) {
+				if (packData != null && dataPopup >= 0) {
+					if (dataPopup == 0 && packData.validClear(basis.sb.st) == 2) {
+						BCMusic.doSound(29); //Fanfare SE
+						Opts.pop("Unlocked " + ((CustomStageInfo) basis.sb.st.info).reward.toString(), "Hooray");
+					}
+					dataPopup--;
+				}
 				if(!exPopupShown && CommonStatic.getConfig().exContinuation && sb.st.info != null && (sb.st.info.exConnection() || (sb.st.info.getExStages() != null && sb.st.info.getExStages().length != 0))) {
 					exPopupShown = true;
 					Opts.showExStageSelection("EX stages found", "You can select one of these EX stages and continue the battle", sb.st, this);

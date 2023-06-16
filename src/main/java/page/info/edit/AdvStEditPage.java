@@ -86,6 +86,11 @@ public class AdvStEditPage extends Page {
 	private final JL jubas = new JL(MainLocale.PAGE, "ubase");
 	private final JLabel lves = new JL();
 	private final JTF ubaslv = new JTF();
+	private final JList<StageMap> jmex = new JList<>();
+	private final JScrollPane jmsex = new JScrollPane(jmex);
+	private final JBTN addreq = new JBTN(MainLocale.PAGE, "add");
+	private final JBTN remreq = new JBTN(MainLocale.PAGE, "rem");
+	private final JL jurwd = new JL(MainLocale.PAGE, "ubase");
 
 	private StageViewPage svp;
 	private UnitFindPage ufp;
@@ -108,7 +113,7 @@ public class AdvStEditPage extends Page {
 	private final JBTN addrev = new JBTN(MainLocale.PAGE, "add");
 	private final JBTN bossType = new JBTN(MainLocale.PAGE, "b0");
 	private Revival rev;
-	private boolean addEne = false;
+	private boolean addEne = false, addMap = false, rewUni = false;
 
 	protected AdvStEditPage(Page p, Stage stage) {
 		super(p);
@@ -151,7 +156,12 @@ public class AdvStEditPage extends Page {
 		set(jtprob, x, y, 1350, 850, 150, 50);
 		set(equal, x, y, 1200, 900, 300, 50);
 
+		set(jmsex, x, y, 1900, 200, 300, 600);
+		set(addreq, x, y, 1900, 150, 150, 50);
+		set(remreq, x, y, 2050, 150, 150, 50);
+
 		set(jubas, x, y, 1200, 1050, 300, 50);
+		set(jurwd, x, y, 1200, 975, 300, 50);
 		set(lves, x, y, 1200, 1100, 300, 50);
 		set(ubaslv, x, y, 1200, 1150, 300, 50);
 
@@ -232,6 +242,7 @@ public class AdvStEditPage extends Page {
 
 				svp = new StageViewPage(this, maps);
 			}
+			addMap = false;
 			changePanel(svp);
 		});
 
@@ -277,11 +288,26 @@ public class AdvStEditPage extends Page {
 			public void mouseClicked(MouseEvent e) {
 				super.mouseClicked(e);
 				if (e.getButton() == MouseEvent.BUTTON1) {
+					rewUni = false;
 					if (ufp == null)
 						ufp = new UnitFindPage(getThis(), false, UserProfile.getUserPack(st.id.pack.substring(0, st.id.pack.indexOf('/'))));
 					changePanel(ufp);
 				} else if (st.info != null && ((CustomStageInfo)st.info).ubase != null)
 					changePanel(new UnitInfoPage(getThis(), ((CustomStageInfo)st.info).ubase.unit, ((CustomStageInfo)st.info).lv));
+			}
+		});
+
+		jurwd.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				super.mouseClicked(e);
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					rewUni = true;
+					if (ufp == null)
+						ufp = new UnitFindPage(getThis(), false, UserProfile.getUserPack(st.id.pack.substring(0, st.id.pack.indexOf('/'))));
+					changePanel(ufp);
+				} else if (st.info != null && ((CustomStageInfo)st.info).reward != null)
+					changePanel(new UnitInfoPage(getThis(), ((CustomStageInfo)st.info).reward.unit, ((CustomStageInfo)st.info).reward.unit.getPrefLvs()));
 			}
 		});
 
@@ -296,6 +322,33 @@ public class AdvStEditPage extends Page {
 		});
 
 		equal.setLnr(e -> ((CustomStageInfo)st.info).equalizeChances());
+
+		addreq.setLnr(e -> {
+			if (svp == null) {
+				ArrayList<MapColc> maps = new ArrayList<>();
+				maps.add(st.getCont().getCont());
+
+				UserPack pack = ((MapColc.PackMapColc)st.getCont().getCont()).pack;
+				for (MapColc map : MapColc.values())
+					if (map instanceof MapColc.DefMapColc || pack.desc.dependency.contains(((MapColc.PackMapColc)map).pack.desc.id))
+						maps.add(map);
+
+				svp = new StageViewPage(this, maps);
+				svp.nonSt = true;
+			}
+			addMap = true;
+			changePanel(svp);
+		});
+
+		remreq.setLnr(e -> {
+			int ind = jmex.getSelectedIndex();
+			st.getCont().unlockReq.remove(ind);
+
+			die();
+			if (ind >= st.getCont().unlockReq.size())
+				ind--;
+			jmex.setSelectedIndex(ind);
+		});
 	}
 
 	private void addListeners$1() {
@@ -413,6 +466,7 @@ public class AdvStEditPage extends Page {
 		add(jtprob);
 		add(equal);
 		add(jubas);
+		add(jurwd);
 		add(lves);
 		add(ubaslv);
 		jle.setCellRenderer(new AnimLCR());
@@ -445,7 +499,12 @@ public class AdvStEditPage extends Page {
 		addListeners$0();
 		addListeners$1();
 		setUBase(st.info);
+		setRwd(st.info);
 		setRevival(null);
+		add(jmsex);
+		add(addreq);
+		add(remreq);
+		die();
 	}
 
 	private void setListG() {
@@ -488,7 +547,7 @@ public class AdvStEditPage extends Page {
 			ubaslv.setText("");
 			lves.setText("");
 			jubas.setIcon(null);
-			jubas.setText("null");
+			jubas.setText(get(MainLocale.PAGE, "ubase"));
 			return;
 		}
 		CustomStageInfo csi = (CustomStageInfo)si;
@@ -499,6 +558,18 @@ public class AdvStEditPage extends Page {
 		if (csi.ubase.getIcon() != null)
 			jubas.setIcon(new ImageIcon((BufferedImage) csi.ubase.getIcon().getImg().bimg()));
 		jubas.setText(csi.ubase.toString());
+	}
+
+	public void setRwd(StageInfo si) {
+		if (si == null || ((CustomStageInfo)si).reward == null) {
+			jurwd.setIcon(null);
+			jurwd.setText(get(MainLocale.PAGE, "urwd"));
+			return;
+		}
+		CustomStageInfo csi = (CustomStageInfo)si;
+		if (csi.reward.getIcon() != null)
+			jurwd.setIcon(new ImageIcon((BufferedImage) csi.reward.getIcon().getImg().bimg()));
+		jurwd.setText(csi.reward.toString());
 	}
 
 	public void setRevival(Revival r) {
@@ -535,8 +606,23 @@ public class AdvStEditPage extends Page {
 		}
 	}
 
+	private void die() {
+		StageMap[] maps = new StageMap[st.getCont().unlockReq.size];
+		for (int i = 0; i < maps.length; i++)
+			maps[i] = st.getCont().unlockReq.get(i).get();
+		jmex.setListData(maps);
+	}
+
 	@Override
 	public void renew() {
+		if (svp != null && svp.getSelectedStages().size() > 0 && addMap) {
+			//TODO move this to an advanced stagemap page or something cause this doesn'rt belong here
+			StageMap stm = svp.getSelectedStages().get(0).getCont();
+			if (!st.getCont().unlockReq.add(stm.id))
+				Opts.pop("Already added req map", stm + " already exists in the stagemap's requirements list");
+			die();
+			svp = null;
+		}
 		if (svp != null && svp.getSelectedStages().size() > 0) {
 			if (st.info == null)
 				st.info = new CustomStageInfo(st);
@@ -587,18 +673,25 @@ public class AdvStEditPage extends Page {
 					st.info = new CustomStageInfo(st);
 			CustomStageInfo csi = (CustomStageInfo)st.info;
 
-			if (csi.ubase != ufp.getForm() && (csi.ubase == null || Opts.conf("Replace base " + csi.ubase + " with " + ufp.getForm() + "?"))) {
-				csi.ubase = (Form)ufp.getForm();
-				if (csi.ubase != null)
-					csi.lv = csi.ubase.unit().getPrefLvs();
-				else {
-					csi.lv = null;
-					if (csi.stages.isEmpty())
-						csi.destroy();
+			if (rewUni) {
+				if (csi.reward != ufp.getForm() && (csi.reward == null || Opts.conf("Replace base " + csi.reward + " with " + ufp.getForm() + "?"))) {
+					csi.reward = (Form) ufp.getForm();
+					csi.destroy(true);
+					setRwd(csi);
 				}
-				setUBase(csi);
+			} else {
+				if (csi.ubase != ufp.getForm() && (csi.ubase == null || Opts.conf("Replace base " + csi.ubase + " with " + ufp.getForm() + "?"))) {
+					csi.ubase = (Form) ufp.getForm();
+					if (csi.ubase != null)
+						csi.lv = csi.ubase.unit().getPrefLvs();
+					else {
+						csi.lv = null;
+						csi.destroy(true);
+					}
+					setUBase(csi);
+				}
+				ufp = null;
 			}
-			ufp = null;
 		}
 	}
 

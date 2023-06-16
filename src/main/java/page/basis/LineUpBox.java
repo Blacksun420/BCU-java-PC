@@ -3,6 +3,7 @@ package page.basis;
 
 import common.CommonStatic;
 import common.battle.LineUp;
+import common.pack.SaveData;
 import common.system.P;
 import common.system.SymCoord;
 import common.system.VImg;
@@ -34,7 +35,8 @@ public class LineUpBox extends Canvas {
 	protected boolean enableCost = false;
 
 	protected Limit lim;
-	protected int price;
+	protected int price = 1;
+	protected SaveData sdat;
 
 	protected AbForm sf;
 
@@ -73,7 +75,7 @@ public class LineUpBox extends Canvas {
 						gra.drawImage(slot[2].getImg(), 120 * j, 100 * i);
 				if (sf == null || sf != f || relative == null) {
 					IForm ef = i != 2 ? lu.efs[i][j] : IForm.newIns(f, lu.getLv(f));
-					if (lim != null && ((lim.line > 0 && 2 - (lim.line - i) != 1) || (ef instanceof EForm && lim.unusable(((EForm)ef).du, price)))) {
+					if (lim != null && ((lim.line > 0 && 2 - (lim.line - i) != 1) || unusable(f, ef))) {
 						gra.colRect(120 * j, 100 * i, img.getImg().getWidth(), img.getImg().getHeight(), 255, 0, 0, 100);
 						Res.getCost(-1, false,
 							new SymCoord(gra, 1, 120 * j, 100 * i + img.getImg().getHeight(), 2));
@@ -90,7 +92,7 @@ public class LineUpBox extends Canvas {
 			FakeImage uni = sf.getDeployIcon().getImg();
 			gra.drawImage(uni, p.x, p.y);
 			IForm ef = IForm.newIns(sf, lu.getLv(sf));
-			if (lim != null && ef instanceof EForm && lim.unusable(((EForm)ef).du, price)) {
+			if (unusable(sf, ef)) {
 				gra.colRect(p.x, p.y, uni.getWidth(), uni.getHeight(), 255, 0, 0, 100);
 				Res.getCost(-1, true, new SymCoord(gra, 1, p.x, p.y + uni.getHeight(), 2));
 			} else if (enableCost)
@@ -106,14 +108,21 @@ public class LineUpBox extends Canvas {
 		pt %= 5;
 	}
 
+	public boolean unusable(AbForm f, IForm ef) {
+		if (lim != null && ef instanceof EForm && lim.unusable(((EForm)ef).du, price))
+			return true;
+		return sdat != null && sdat.locked(f);
+	}
+
 	public void setLU(LineUp l) {
 		lu = l;
 		backup = new AbForm[5];
 	}
 
-	public void setLimit(Limit l, int price) {
+	public void setLimit(Limit l, SaveData data, int price) {
 		lim = l;
 		this.price = price;
+		sdat = data;
 		paint(getGraphics());
 	}
 

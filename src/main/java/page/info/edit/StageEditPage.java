@@ -380,14 +380,14 @@ public class StageEditPage extends Page {
 			StageMap stm = (StageMap)obj;
 			for (Stage s : stm.list)
 				if (s.info != null)
-					((CustomStageInfo)s.info).destroy();
+					((CustomStageInfo)s.info).destroy(false);
 			for (Stage s : stm.list)
 				for (CustomStageInfo si : ((MapColc.PackMapColc)mc).si)
 					si.remove(s);
 		} else {
 			Stage st = (Stage)obj;
 			if (st.info != null)
-				((CustomStageInfo)st.info).destroy();
+				((CustomStageInfo)st.info).destroy(false);
 			for (CustomStageInfo si : ((MapColc.PackMapColc)mc).si)
 				si.remove(st);
 		}

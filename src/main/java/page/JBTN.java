@@ -41,7 +41,7 @@ public class JBTN extends JButton implements LocComp {
 	public void setLnr(Consumer<ActionEvent> c) {
 		addActionListener(e -> {
 			if(MainBCU.buttonSound)
-				BCMusic.clickSound();
+				BCMusic.doSound(11);
 			c.accept(e);
 		});
 	}

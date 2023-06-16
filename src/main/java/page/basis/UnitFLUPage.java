@@ -1,6 +1,7 @@
 package page.basis;
 
 import common.battle.BasisSet;
+import common.pack.SaveData;
 import common.util.stage.Limit;
 import common.util.unit.AbForm;
 import page.JBTN;
@@ -28,12 +29,12 @@ public class UnitFLUPage extends LubCont {
 	private final JTF seatf = new JTF();
 	private final JBTN seabt = new JBTN(0, "search");
 
-	public UnitFLUPage(Page p, Limit lim, int price) {
+	public UnitFLUPage(Page p, SaveData sdat, Limit lim, int price) {
 		super(p);
 
 		ult.cost = price;
-		lub.setLimit(lim, price);
-		ufb = new UnitFilterBox(this, true, lim, price);
+		lub.setLimit(lim, sdat, price);
+		ufb = new UnitFilterBox(this, true, lim, price, sdat);
 		ini();
 		resized();
 	}

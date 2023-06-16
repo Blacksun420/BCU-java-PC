@@ -118,14 +118,14 @@ public class BCMusic extends Data {
 		sounds.clear();
 	}
 
-	public static synchronized void clickSound() {
+	public static synchronized void doSound(int snd) {
 		if (!play || VOL_SE == 0)
 			return;
 		try {
-			if (CACHE[11] == null)
-				loadSound(11, UserProfile.getBCData().musics.get(11), false, 0);
+			if (CACHE[snd] == null)
+				loadSound(snd, UserProfile.getBCData().musics.get(snd), false, 0);
 			else
-				loadSound(11, CACHE[11]);
+				loadSound(snd, CACHE[snd]);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

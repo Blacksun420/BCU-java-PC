@@ -31,6 +31,7 @@ public class StageViewPage extends StagePage {
 	private final JBTN recd = new JBTN(0, "replay");
 	private final JBTN info = new JBTN(0, "info");
 	private final JBTN search = new JBTN(0, "search");
+	public boolean nonSt;
 
 	public StageViewPage(Page p, Collection<MapColc> collection) {
 		super(p);
@@ -84,7 +85,15 @@ public class StageViewPage extends StagePage {
 			MapColc mc = jlmc.getSelectedValue();
 			if (mc == null)
 				return;
-			jlsm.setListData(mc.maps.toArray());
+
+			if (!nonSt && mc.getSave() != null) {
+				Vector<StageMap> sms = new Vector<>();
+				for (StageMap sm : mc.maps)
+					if (sm.unlockReq.isEmpty() || mc.getSave().cSt.containsKey(sm.id))
+						sms.add(sm);
+				jlsm.setListData(sms);
+			} else
+				jlsm.setListData(mc.maps.toArray());
 			jlsm.setSelectedIndex(0);
 		});
 
@@ -96,7 +105,24 @@ public class StageViewPage extends StagePage {
 			if (sm == null)
 				return;
 			cpsm.setEnabled(true);
-			jlst.setListData(sm.list.toArray());
+
+			if (!nonSt && sm.getCont().getSave() != null) {
+				Integer stInds = sm.getCont().getSave().cSt.get(sm.id);
+				if (stInds == null) {
+					if (sm.list.size() > 0 && sm.unlockReq.isEmpty())
+						jlst.setListData(new Stage[]{sm.list.get(0)});
+					else
+						jlst.setListData(sm.list.toArray());
+				} else if (stInds >= sm.list.size() - 1)
+					jlst.setListData(sm.list.toArray());
+				else {
+					Vector<Stage> sts = new Vector<>(stInds + 1);
+					for (int i = 0; i <= stInds; i++)
+						sts.add(sm.list.get(i));
+					jlst.setListData(sts);
+				}
+			} else
+				jlst.setListData(sm.list.toArray());
 			jlst.setSelectedIndex(0);
 		});
 
@@ -158,5 +184,40 @@ public class StageViewPage extends StagePage {
 
 	public List<Stage> getSelectedStages() {
 		return jlst.getSelectedValuesList();
+	}
+
+	@Override
+	public void renew() {
+		MapColc mc = jlmc.getSelectedValue();
+		if (mc == null || mc.getSave() == null)
+			return;
+
+		Vector<StageMap> sms = new Vector<>();
+		for (StageMap sm : mc.maps)
+			if (sm.unlockReq.isEmpty() || mc.getSave().cSt.containsKey(sm.id))
+				sms.add(sm);
+		jlsm.setListData(sms);
+
+		StageMap sm = jlsm.getSelectedValue();
+		if (sm == null) {
+			if (jlst.getSelectedValue() != null)
+				sm = jlst.getSelectedValue().getCont();
+			else
+				return;
+		}
+		Integer stInds = mc.getSave().cSt.get(sm.id);
+		if (stInds == null) {
+			if (sm.list.size() > 0 && sm.unlockReq.isEmpty())
+				jlst.setListData(new Stage[]{sm.list.get(0)});
+			else
+				jlst.setListData(sm.list.toArray());
+		} else if (stInds >= sm.list.size() - 1)
+			jlst.setListData(sm.list.toArray());
+		else {
+			Vector<Stage> sts = new Vector<>(stInds + 1);
+			for (int i = 0; i <= stInds; i++)
+				sts.add(sm.list.get(i));
+			jlst.setListData(sts);
+		}
 	}
 }

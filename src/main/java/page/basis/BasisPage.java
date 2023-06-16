@@ -8,6 +8,7 @@ import common.pack.UserProfile;
 import common.system.Node;
 import common.util.pack.NyCastle;
 import common.util.stage.Limit;
+import common.util.stage.Stage;
 import common.util.unit.*;
 import page.JBTN;
 import page.JTF;
@@ -78,6 +79,7 @@ public class BasisPage extends LubCont {
 	private boolean changing = false, outside = false, resize = true;
 
 	private UnitFLUPage ufp;
+	private final Stage st;
 
 	private final TreaTable trea = new TreaTable(this);
 	private final JScrollPane jspt = new JScrollPane(trea);
@@ -87,14 +89,16 @@ public class BasisPage extends LubCont {
 
 	public BasisPage(Page p) {
 		super(p);
+		st = null;
 
 		ini();
 		resized();
 	}
 
-	public BasisPage(Page p, Limit lim, int price) {
+	public BasisPage(Page p, Stage st, Limit lim) {
 		super(p);
-		lub.setLimit(lim, price);
+		this.st = st;
+		lub.setLimit(lim, st.getCont().getCont().getSave(), st.getCont().price);
 
 		ini();
 		resized();
@@ -242,7 +246,7 @@ public class BasisPage extends LubCont {
 
 		unit.addActionListener(e -> {
 			if (ufp == null)
-				ufp = new UnitFLUPage(getThis(), lub.lim, lub.price);
+				ufp = new UnitFLUPage(getThis(), st == null ? null : st.getCont().getCont().getSave(), lub.lim, lub.price);
 			changePanel(ufp);
 		});
 

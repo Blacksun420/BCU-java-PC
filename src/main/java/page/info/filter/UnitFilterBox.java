@@ -2,9 +2,7 @@ package page.info.filter;
 
 import common.CommonStatic;
 import common.battle.data.MaskUnit;
-import common.pack.PackData;
-import common.pack.SortedPackSet;
-import common.pack.UserProfile;
+import common.pack.*;
 import common.util.lang.MultiLangCont;
 import common.util.lang.ProcLang;
 import common.util.stage.Limit;
@@ -35,11 +33,13 @@ public class UnitFilterBox extends EntityFilterBox {
 	private final JScrollPane jr = new JScrollPane(rare);
 	private final JScrollPane jab = new JScrollPane(abis);
 	private final JTG limbtn = new JTG(0, "usable");
+	private final SaveData sdat;
 
-	public UnitFilterBox(Page p, boolean rand, Limit limit, int price) {
-		super(p, rand);
+	public UnitFilterBox(Page p, boolean rand, Limit limit, int price, SaveData sdat) {
+		super(p, sdat == null ? null : sdat.pack, rand && sdat == null);
 		lim = limit;
 		this.price = price;
+		this.sdat = sdat;
 
 		ini();
 		confirm();
@@ -48,7 +48,8 @@ public class UnitFilterBox extends EntityFilterBox {
 	public UnitFilterBox(Page p, boolean rand, PackData.UserPack pack) {
 		super(p, pack, rand);
 		lim = null;
-		price = 0;
+		price = 1;
+		sdat = null;
 
 		ini();
 		confirm();
@@ -130,6 +131,8 @@ public class UnitFilterBox extends EntityFilterBox {
 					pkv.add(p);
 		} else {
 			pkv.add(UserProfile.getBCData());
+			if (pack.units.size() > 0 || (rand && pack.randUnits.size() > 0))
+				pkv.add(pack);
 			for (String s : pack.desc.dependency) {
 				PackData p = UserProfile.getUserPack(s);
 				if (p.units.size() > 0 || (rand && p.randUnits.size() > 0))
@@ -145,11 +148,14 @@ public class UnitFilterBox extends EntityFilterBox {
 	}
 
 	protected boolean validateUnit(Unit u) {
-		return rare.getSelectedIndex() == -1 || rare.isSelectedIndex(u.rarity) || (rare.getSelectedIndices().length == 1 && rare.isSelectedIndex(rare.getModel().getSize() - 1));
+		return (rare.getSelectedIndex() == -1 || rare.isSelectedIndex(u.rarity) || (rare.getSelectedIndices().length == 1 && rare.isSelectedIndex(rare.getModel().getSize() - 1)))
+				&& (sdat == null || (u.id.pack.equals(Identifier.DEF) && !pack.defVals.BCLockeds.contains(u)) || pack.defVals.defULK.containsKey(u.id) || sdat.ulckUni.containsKey(u.id));
 	}
 
 	protected boolean validateForm(Form f) {
 		if (rare.isSelectedIndex(rare.getModel().getSize() - 1) && !CommonStatic.getFaves().units.contains(f))
+			return false;
+		if (sdat != null && sdat.locked(f))
 			return false;
 
 		String fname = MultiLangCont.getStatic().FNAME.getCont(f);

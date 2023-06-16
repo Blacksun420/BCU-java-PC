@@ -74,6 +74,7 @@ public class ConfigPage extends Page {
 	private final JL autosave = new JL(MainLocale.PAGE, "autosave");
 	private final JTF savetime = new JTF(MainBCU.autoSaveTime > 0 ? MainBCU.autoSaveTime + "min" : "deactivated");
 	private final JCB reallv = new JCB(MainLocale.PAGE, "reallv");
+	private final JCB pkprog = new JCB(MainLocale.PAGE, "pkprog");
 
 	private final JScrollPane jsps = new JScrollPane(jls);
 
@@ -142,6 +143,7 @@ public class ConfigPage extends Page {
 		set(shake, x, y, 50, 1200, 300, 50);
 
 		set(reallv, x, y, 350, 950, 300, 50);
+		set(pkprog, x, y, 350, 1000, 300, 50);
 
 		set(jlot, x, y, 650, 900, 300, 50);
 		set(jcbac, x, y, 650, 950, 300, 50);
@@ -305,17 +307,13 @@ public class ConfigPage extends Page {
 		jcsnd.addActionListener(a -> {
 			MainBCU.buttonSound = jcsnd.isSelected();
 			if(MainBCU.buttonSound)
-				BCMusic.clickSound();
+				BCMusic.doSound(11);
 		});
 
 		jcraw.addActionListener(a -> CommonStatic.getConfig().rawDamage = jcraw.isSelected());
-
 		jcdly.addActionListener(a -> CommonStatic.getConfig().buttonDelay = !CommonStatic.getConfig().buttonDelay);
-
 		stdis.addActionListener(a -> CommonStatic.getConfig().stageName = !CommonStatic.getConfig().stageName);
-
 		jceff.addActionListener(a -> CommonStatic.getConfig().drawBGEffect = !CommonStatic.getConfig().drawBGEffect);
-
 		rlpk.addActionListener(l -> UserProfile.reloadExternalPacks());
 
 		vcol.addActionListener(l -> {
@@ -326,7 +324,6 @@ public class ConfigPage extends Page {
 		});
 
 		vres.addActionListener(l -> CommonStatic.getConfig().viewerColor = -1);
-
 		excont.addActionListener(l -> CommonStatic.getConfig().exContinuation = excont.isSelected());
 
 		savetime.setLnr(c -> {
@@ -334,10 +331,9 @@ public class ConfigPage extends Page {
 			savetime.setText(MainBCU.autoSaveTime > 0 ? MainBCU.autoSaveTime + "min" : "deactivated");
 			MainBCU.restartAutoSaveTimer();
 		});
-
 		shake.addActionListener(c -> CommonStatic.getConfig().shake = shake.isSelected());
-
 		reallv.addActionListener(c -> CommonStatic.getConfig().realLevel = reallv.isSelected());
+		pkprog.addActionListener(c -> CommonStatic.getConfig().prog = pkprog.isSelected());
 	}
 
 	private void ini() {
@@ -389,6 +385,7 @@ public class ConfigPage extends Page {
 		add(jcmus);
 		add(shake);
 		add(reallv);
+		add(pkprog);
 		excont.setSelected(cfg().exContinuation);
 		prlvmd.setText("" + cfg().prefLevel);
 		jls.setSelectedIndex(localeIndexOf(cfg().lang));
@@ -437,6 +434,8 @@ public class ConfigPage extends Page {
 		shake.setSelected(cfg().shake);
 		reallv.setSelected(cfg().realLevel);
 		reallv.setToolTipText(get(MainLocale.PAGE, "reallvtip"));
+		pkprog.setSelected(cfg().prog);
+		pkprog.setToolTipText(get(MainLocale.PAGE, "pkprogtip"));
 		addListeners();
 	}
 
@@ -460,11 +459,9 @@ public class ConfigPage extends Page {
 	}
 
 	private int localeIndexOf(int elem) {
-		for(byte i = 0; i < MainLocale.LOC_INDEX.length; i++) {
+		for(byte i = 0; i < MainLocale.LOC_INDEX.length; i++)
 			if(MainLocale.LOC_INDEX[i] == elem)
 				return i;
-		}
-
 		return -1;
 	}
 }
