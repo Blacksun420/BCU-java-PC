@@ -28,8 +28,8 @@ public class UnitListTable extends EntityListTable<AbForm> {
 	}
 
 	public static void redefine() {
-		tit = new String[] { "ID", "name", Page.get(MainLocale.INFO, "pref"), "HP", Page.get(MainLocale.INFO,"hb"), "atk", Page.get(MainLocale.INFO, "range"),
-				Page.get(MainLocale.INFO, "speed"), "dps", Page.get(MainLocale.INFO, "preaa"), "CD", Page.get(MainLocale.INFO, "price"), Page.get(MainLocale.INFO, "atkf"), Page.get(MainLocale.INFO, "will") };
+		tit = new String[] { "ID", "name", Page.get(MainLocale.INFO, "pref"), Page.get(MainLocale.INFO,"HP"), Page.get(MainLocale.INFO,"hb"), Page.get(MainLocale.INFO,"atk"), Page.get(MainLocale.INFO, "range"),
+				Page.get(MainLocale.INFO, "speed"), "dps", Page.get(MainLocale.INFO, "preaa"), Page.get(MainLocale.INFO, "cdo"), Page.get(MainLocale.INFO, "price"), Page.get(MainLocale.INFO, "atkf"), Page.get(MainLocale.INFO, "will") };
 	}
 
 	public UnitListTable(Page p) {

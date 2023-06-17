@@ -7,6 +7,7 @@ import common.pack.UserProfile;
 import common.util.stage.MapColc;
 import common.util.stage.Replay;
 import common.util.stage.Stage;
+import main.MainBCU;
 import main.Opts;
 import page.*;
 import page.basis.BasisPage;
@@ -111,7 +112,7 @@ public abstract class AbRecdPage extends Page {
 		set(len, x, y, 600, 300, 300, 50);
 		set(vsta, x, y, 600, 600, 300, 50);
 		set(jlu, x, y, 950, 600, 300, 50);
-		set(seed, x, y, 950, 300, 500, 50);
+		set(seed, x, y, 950, 300, 300, 50);
 	}
 
 	protected abstract void setList();
@@ -132,7 +133,7 @@ public abstract class AbRecdPage extends Page {
 			seed.setText("");
 		} else {
 			seed.setText("seed: " + r.seed);
-			len.setText("length: " + r.getLen() + " frame");
+			len.setText("length: " + MainBCU.convertTime(r.getLen()));
 		}
 	}
 

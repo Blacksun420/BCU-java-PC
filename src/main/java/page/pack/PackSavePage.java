@@ -16,23 +16,23 @@ import java.util.List;
 
 public class PackSavePage extends Page {
 
-    private final JBTN back = new JBTN(0, "back");
-    private final JL packJL = new JL("Pack Stage Maps");
+    private final JBTN back = new JBTN(MainLocale.PAGE, "back");
+    private final JL packJL = new JL(MainLocale.PAGE, "pkstm");
     private final JList<StageMap> packMaps = new JList<>();
     private final JScrollPane jkMaps = new JScrollPane(packMaps);
-    private final JL potJL = new JL("Addable Requirement Maps");
+    private final JL potJL = new JL(MainLocale.PAGE, "adreq");
     private final JList<StageMap> potMaps = new JList<>();
     private final JScrollPane jotMap = new JScrollPane(potMaps);
-    private final JL reqJL = new JL("Requirement Maps");
+    private final JL reqJL = new JL(MainLocale.PAGE, "cureq");
     private final JList<StageMap> reqMaps = new JList<>();
     private final JScrollPane jrqMap = new JScrollPane(reqMaps);
     private final JBTN addreq = new JBTN(MainLocale.PAGE, "add");
     private final JBTN remreq = new JBTN(MainLocale.PAGE, "rem");
 
-    private final JL lockUnit = new JL("Locked Units");
+    private final JL lockUnit = new JL(MainLocale.PAGE, "ulk");
     private final ReorderList<AbUnit> locUnits = new ReorderList<>();
     private final JScrollPane jcU = new JScrollPane(locUnits);
-    private final JL unlockUnit = new JL("Pre-Unlocked Units");
+    private final JL unlockUnit = new JL(MainLocale.PAGE, "plku");
     private final ReorderList<AbUnit> ulkUnits = new ReorderList<>();
     private final JScrollPane jlU = new JScrollPane(ulkUnits);
     private final JBTN addulk = new JBTN(MainLocale.PAGE, "add");
@@ -163,11 +163,6 @@ public class PackSavePage extends Page {
         ulkUnits.setListData(uu.toArray(new AbUnit[0]));
         addulk.setEnabled(pk.editable && locUnits.getSelectedIndex() != -1);
         remulk.setEnabled(pk.editable && ulkUnits.getSelectedIndex() != -1);
-        maxFrm.setEnabled(pk.editable && ulkUnits.getSelectedIndex() != -1);
-        if (ulkUnits.getSelectedIndex() != -1)
-            maxFrm.setText("Max Form: " + pk.defULK.get(ulkUnits.getSelectedValue()));
-        else
-            maxFrm.setText("");
         setMJTF();
     }
 

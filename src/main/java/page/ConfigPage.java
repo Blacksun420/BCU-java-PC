@@ -251,7 +251,7 @@ public class ConfigPage extends Page {
 				}
 			} else {
 				jsba.setEnabled(true);
-				jsba.setValue(Backup.backups.size());
+				jsba.setValue(Math.max(1, Backup.backups.size()));
 			}
 		});
 
@@ -263,20 +263,17 @@ public class ConfigPage extends Page {
 				int pre = CommonStatic.getConfig().maxBackup;
 
 				if(pre >= back && back > jsba.getValue() && jsba.getValue() > 0) {
-					if(Opts.conf((back-jsba.getValue())+" "+get(MainLocale.PAGE, "backremwarn"))) {
+					if(Opts.conf((back-jsba.getValue())+" "+get(MainLocale.PAGE, "backremwarn")))
 						CommonStatic.getConfig().maxBackup = jsba.getValue();
-					} else {
+					else
 						jsba.setValue(CommonStatic.getConfig().maxBackup);
-					}
 				} else if(jsba.getValue() == 0) {
-					if(Opts.conf((get(MainLocale.PAGE, "backinfwarn")))) {
+					if(Opts.conf((get(MainLocale.PAGE, "backinfwarn"))))
 						CommonStatic.getConfig().maxBackup = jsba.getValue();
-					} else {
+					else
 						jsba.setValue(CommonStatic.getConfig().maxBackup);
-					}
-				} else {
+				} else
 					CommonStatic.getConfig().maxBackup = jsba.getValue();
-				}
 			}
 		});
 

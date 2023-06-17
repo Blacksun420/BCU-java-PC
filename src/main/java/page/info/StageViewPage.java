@@ -74,7 +74,7 @@ public class StageViewPage extends StagePage {
 
 	private void addListeners() {
 
-		info.setLnr(x -> Opts.pop(stage.info.getHTML(), "stage info"));
+		info.setLnr(x -> Opts.pop(stage.info.getHTML(), stage + " info"));
 
 		recd.setLnr(x -> changePanel(new StRecdPage(this, stage, false)));
 
@@ -178,6 +178,7 @@ public class StageViewPage extends StagePage {
 		cpsm.setEnabled(false);
 		cpst.setEnabled(false);
 		recd.setEnabled(false);
+		info.setEnabled(false);
 		addListeners();
 	}
 

@@ -3,6 +3,7 @@ package page.anim;
 import common.util.anim.AnimCE;
 import common.util.anim.MaAnim;
 import common.util.anim.Part;
+import page.MainLocale;
 import page.Page;
 import page.support.AnimTable;
 import page.support.AnimTableTH;
@@ -19,14 +20,12 @@ public class MaAnimEditTable extends AnimTable<Part> {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String[] strs = new String[] { "part id", "modification", "loop", "name" };
-
 	public AnimCE anim;
 	public MaAnim ma;
 	private final Page page;
 
 	protected MaAnimEditTable(Page p) {
-		super(strs);
+		super(Page.get(MainLocale.PAGE, "maapi", 4));
 
 		page = p;
 		selectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -52,11 +51,6 @@ public class MaAnimEditTable extends AnimTable<Part> {
 	}
 
 	@Override
-	public int getColumnCount() {
-		return strs.length;
-	}
-
-	@Override
 	public int getRowCount() {
 		if (ma == null)
 			return 0;
@@ -74,7 +68,7 @@ public class MaAnimEditTable extends AnimTable<Part> {
 
 	@Override
 	public Object getValueAt(int r, int c) {
-		if (ma == null || r < 0 || c < 0 || r >= ma.n || c >= strs.length)
+		if (ma == null || r < 0 || c < 0 || r >= ma.n || c >= getColumnCount())
 			return null;
 		if (lnk[c] == 3)
 			return ma.parts[r].name;

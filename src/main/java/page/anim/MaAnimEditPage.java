@@ -54,7 +54,7 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 	private final JBTN rema = new JBTN(MainLocale.PAGE, "Remove Attack");
 	private final JBTN addl = new JBTN(MainLocale.PAGE, "addl");
 	private final JBTN reml = new JBTN(MainLocale.PAGE, "reml");
-	private final JBTN advs = new JBTN(MainLocale.PAGE, "advs");
+	private final JBTN advs = new JBTN(MainLocale.PAGE, "advance");
 	private final JBTN sort = new JBTN(MainLocale.PAGE, "sort");
 	private final JBTN camres = new JBTN(MainLocale.PAGE, "rescam");
 	private final JBTN zomres = new JBTN(MainLocale.PAGE, "reszom");
@@ -62,7 +62,7 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 	private final JLabel inff = new JLabel();
 	private final JLabel infv = new JLabel();
 	private final JLabel infm = new JLabel();
-	private final JTG lmul = new JTG("Set speed for selected");
+	private final JTG lmul = new JTG(MainLocale.PAGE, "selspeed");
 	private final JTF tmul = new JTF();
 	private final EditHead aep;
 

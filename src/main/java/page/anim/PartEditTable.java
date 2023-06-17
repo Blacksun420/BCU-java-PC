@@ -3,6 +3,7 @@ package page.anim;
 import common.util.anim.AnimCE;
 import common.util.anim.MaAnim;
 import common.util.anim.Part;
+import page.MainLocale;
 import page.Page;
 import page.support.AnimTable;
 import page.support.AnimTableTH;
@@ -19,15 +20,13 @@ class PartEditTable extends AnimTable<int[]> {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String[] strs = new String[] { "frame", "value", "easing", "parameter" };
-
 	protected AnimCE anim;
 	protected MaAnim ma;
 	protected Part part;
 	private final Page page;
 
 	protected PartEditTable(Page p) {
-		super(strs);
+		super(Page.get(MainLocale.PAGE, "mape", 4));
 
 		page = p;
 		selectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -51,11 +50,6 @@ class PartEditTable extends AnimTable<int[]> {
 	}
 
 	@Override
-	public int getColumnCount() {
-		return strs.length;
-	}
-
-	@Override
 	public int getRowCount() {
 		if (part == null)
 			return 0;
@@ -73,7 +67,7 @@ class PartEditTable extends AnimTable<int[]> {
 
 	@Override
 	public Object getValueAt(int r, int c) {
-		if (part == null || r < 0 || c < 0 || r >= part.n || c >= strs.length)
+		if (part == null || r < 0 || c < 0 || r >= part.n || c >= getColumnCount())
 			return null;
 		if (lnk[c] == 0)
 			return part.moves[r][0] - part.off;
@@ -141,14 +135,19 @@ class PartEditTable extends AnimTable<int[]> {
 					v = anim.mamodel.n - 1;
 				if (v == part.ints[0])
 					v = -1;
-			}
-			if (m == 2 && v >= anim.imgcut.n)
+			} else if (m == 2 && v >= anim.imgcut.n)
 				v = anim.imgcut.n - 1;
-			if (m == 12 && v > anim.mamodel.ints[2])
+			else if (m == 12 && v > anim.mamodel.ints[2])
 				v = anim.mamodel.ints[2];
-		}
-		if (c == 0)
+		} else if (c == 0)
 			v += part.off;
+		else if (c == 2)
+			v = Math.min(Math.max(0,v),4);
+		else if (c == 3)
+			if (part.moves[r][2] != 2 && part.moves[r][2] != 4)
+				v = 0;
+			else if (part.moves[r][2] == 4)
+				v = Math.min(Math.max(-1,v),1);
 		part.moves[r][c] = v;
 		part.validate();
 		ma.validate();

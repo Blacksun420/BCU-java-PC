@@ -32,32 +32,33 @@ public class MainPage extends Page {
 	private final JLabel seicon = new JLabel("Source of enemy icon: battlecats-db.com");
 	private final JLabel sgifau = new JLabel("Author of GIF exporter: Kevin Weiner, FM Software");
 	private final JLabel welcome = new JLabel("Welcome " + MainBCU.author + "!");
-	private final JBTN vuni = new JBTN(0, "vuni");
-	private final JBTN vene = new JBTN(0, "vene");
-	private final JBTN vsta = new JBTN(0, "vsta");
-	private final JBTN vdiy = new JBTN(0, "vdiy");
-	private final JBTN conf = new JBTN(0, "conf");
-	private final JBTN veff = new JBTN(0, "veff");
-	private final JBTN vcas = new JBTN(0, "vcas");
-	private final JBTN vbgr = new JBTN(0, "vbgr");
-	private final JBTN veif = new JBTN(0, "veif");
-	private final JBTN vuif = new JBTN(0, "vuif");
-	private final JBTN vmsc = new JBTN(0, "vmsc");
-	private final JBTN bass = new JBTN(0, "bass");
-	private final JBTN curr = new JBTN(0, "curr");
-	private final JBTN pcus = new JBTN(0, "pcus");
-	private final JBTN rply = new JBTN(0, "rply");
-	private final JBTN caic = new JBTN(0, "caic");
-	private final JBTN camm = new JBTN(0, "camm");
-	private final JBTN cama = new JBTN(0, "cama");
-	private final JBTN save = new JBTN(0, "save");
-	private final JBTN allf = new JBTN(0, "allfile");
-	private final JBTN auth = new JBTN(0, "author");
-	private final JBTN comp = new JBTN(0, "compare");
-	private final JBTN bckp = new JBTN(0, "backup");
-	private final JBTN logs = new JBTN(0, "logs");
+	private final JBTN vuni = new JBTN(MainLocale.PAGE, "vuni");
+	private final JBTN vene = new JBTN(MainLocale.PAGE, "vene");
+	private final JBTN vsta = new JBTN(MainLocale.PAGE, "vsta");
+	private final JBTN vdiy = new JBTN(MainLocale.PAGE, "vdiy");
+	private final JBTN conf = new JBTN(MainLocale.PAGE, "conf");
+	private final JBTN veff = new JBTN(MainLocale.PAGE, "veff");
+	private final JBTN vcas = new JBTN(MainLocale.PAGE, "vcas");
+	private final JBTN vbgr = new JBTN(MainLocale.PAGE, "vbgr");
+	private final JBTN veif = new JBTN(MainLocale.PAGE, "veif");
+	private final JBTN vuif = new JBTN(MainLocale.PAGE, "vuif");
+	private final JBTN vmsc = new JBTN(MainLocale.PAGE, "vmsc");
+	private final JBTN bass = new JBTN(MainLocale.PAGE, "bass");
+	private final JBTN curr = new JBTN(MainLocale.PAGE, "curr");
+	private final JBTN pcus = new JBTN(MainLocale.PAGE, "pcus");
+	private final JBTN rply = new JBTN(MainLocale.PAGE, "rply");
+	private final JBTN caic = new JBTN(MainLocale.PAGE, "caic");
+	private final JBTN camm = new JBTN(MainLocale.PAGE, "camm");
+	private final JBTN cama = new JBTN(MainLocale.PAGE, "cama");
+	private final JBTN save = new JBTN(MainLocale.PAGE, "save");
+	private final JBTN allf = new JBTN(MainLocale.PAGE, "allfile");
+	private final JBTN auth = new JBTN(MainLocale.PAGE, "author");
+	private final JBTN comp = new JBTN(MainLocale.PAGE, "compare");
+	private final JBTN bckp = new JBTN(MainLocale.PAGE, "backup");
+	private final JBTN logs = new JBTN(MainLocale.PAGE, "logs");
+	private final JBTN docs = new JBTN("Documentation (TODO)"); //(MainLocale.PAGE, "docs");
 
-	private final JBTN refr = new JBTN(0, "refrtips");
+	private final JBTN refr = new JBTN(MainLocale.PAGE, "refrtips");
 	private final JLabel tips = new JLabel();
 
 	public MainPage() {
@@ -118,6 +119,7 @@ public class MainPage extends Page {
 		set(camm, x, y, 1500, 400, 200, 50);
 		set(cama, x, y, 1500, 500, 200, 50);
 		set(ui, x, y, 1500, 600, 200, 50);
+		set(docs, x, y, 1500, 700, 200, 50);
 
 	}
 
@@ -254,6 +256,8 @@ public class MainPage extends Page {
 
 		add(ui);
 		ui.setToolTipText(get(MainLocale.PAGE,"ui-tip"));
+
+		add(docs);
 
 		welcome.setVisible(!MainBCU.author.isEmpty());
 
