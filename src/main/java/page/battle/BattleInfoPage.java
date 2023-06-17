@@ -341,13 +341,8 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			BCMusic.EndTheme(sb.ebase.health <= 0);
 
 			if (sb.ebase.health <= 0) {
-				if (packData != null && dataPopup >= 0) {
-					if (dataPopup == 0 && packData.validClear(basis.sb.st) == 2) {
-						BCMusic.doSound(29); //Fanfare SE
-						Opts.pop("Unlocked " + ((CustomStageInfo) basis.sb.st.info).reward.toString(), "Hooray");
-					}
-					dataPopup--;
-				}
+				if (packData != null && dataPopup >= 0)
+					claimReward();
 				if(!exPopupShown && CommonStatic.getConfig().exContinuation && sb.st.info != null && (sb.st.info.exConnection() || (sb.st.info.getExStages() != null && sb.st.info.getExStages().length != 0))) {
 					exPopupShown = true;
 					Opts.showExStageSelection("EX stages found", "You can select one of these EX stages and continue the battle", sb.st, this);
@@ -412,6 +407,14 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			bb.getPainter().dragFrame++;
 	}
 
+	public void claimReward() {
+		if (dataPopup == 0 && packData.validClear(basis.sb.st) == 2) {
+			BCMusic.doSound(29); //Fanfare SE
+			Opts.pop("Unlocked " + ((CustomStageInfo) basis.sb.st.info).reward.toString(), "Hooray");
+		}
+		dataPopup--;
+	}
+
 	private void updateTables() {
 		StageBasis sb = basis.sb;
 		ct.update(sb.est);
@@ -473,6 +476,10 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 					bbr.quit();
 				}
 				bb.releaseData();
+			}
+			if (basis.sb.ebase.health <= 0 && packData != null && dataPopup > 0) {
+				dataPopup = 0;
+				claimReward();
 			}
 			changePanel(getFront());
 		});

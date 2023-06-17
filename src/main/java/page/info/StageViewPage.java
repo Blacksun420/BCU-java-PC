@@ -31,7 +31,6 @@ public class StageViewPage extends StagePage {
 	private final JBTN recd = new JBTN(0, "replay");
 	private final JBTN info = new JBTN(0, "info");
 	private final JBTN search = new JBTN(0, "search");
-	public boolean nonSt;
 
 	public StageViewPage(Page p, Collection<MapColc> collection) {
 		super(p);
@@ -86,10 +85,10 @@ public class StageViewPage extends StagePage {
 			if (mc == null)
 				return;
 
-			if (!nonSt && mc.getSave() != null) {
+			if (mc.getSave() != null) {
 				Vector<StageMap> sms = new Vector<>();
 				for (StageMap sm : mc.maps)
-					if (sm.unlockReq.isEmpty() || mc.getSave().cSt.containsKey(sm.id))
+					if (sm.unlockReq.isEmpty() || mc.getSave().cSt.containsKey(sm))
 						sms.add(sm);
 				jlsm.setListData(sms);
 			} else
@@ -106,8 +105,8 @@ public class StageViewPage extends StagePage {
 				return;
 			cpsm.setEnabled(true);
 
-			if (!nonSt && sm.getCont().getSave() != null) {
-				Integer stInds = sm.getCont().getSave().cSt.get(sm.id);
+			if (sm.getCont().getSave() != null) {
+				Integer stInds = sm.getCont().getSave().cSt.get(sm);
 				if (stInds == null) {
 					if (sm.list.size() > 0 && sm.unlockReq.isEmpty())
 						jlst.setListData(new Stage[]{sm.list.get(0)});
@@ -194,7 +193,7 @@ public class StageViewPage extends StagePage {
 
 		Vector<StageMap> sms = new Vector<>();
 		for (StageMap sm : mc.maps)
-			if (sm.unlockReq.isEmpty() || mc.getSave().cSt.containsKey(sm.id))
+			if (sm.unlockReq.isEmpty() || mc.getSave().cSt.containsKey(sm))
 				sms.add(sm);
 		jlsm.setListData(sms);
 
@@ -205,7 +204,7 @@ public class StageViewPage extends StagePage {
 			else
 				return;
 		}
-		Integer stInds = mc.getSave().cSt.get(sm.id);
+		Integer stInds = mc.getSave().cSt.get(sm);
 		if (stInds == null) {
 			if (sm.list.size() > 0 && sm.unlockReq.isEmpty())
 				jlst.setListData(new Stage[]{sm.list.get(0)});

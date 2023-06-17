@@ -149,7 +149,7 @@ public class UnitFilterBox extends EntityFilterBox {
 
 	protected boolean validateUnit(Unit u) {
 		return (rare.getSelectedIndex() == -1 || rare.isSelectedIndex(u.rarity) || (rare.getSelectedIndices().length == 1 && rare.isSelectedIndex(rare.getModel().getSize() - 1)))
-				&& (sdat == null || (u.id.pack.equals(Identifier.DEF) && !pack.defVals.BCLockeds.contains(u)) || pack.defVals.defULK.containsKey(u.id) || sdat.ulckUni.containsKey(u.id));
+				&& (sdat == null || pack.defULK.containsKey(u) || sdat.ulkUni.containsKey(u));
 	}
 
 	protected boolean validateForm(Form f) {

@@ -86,10 +86,6 @@ public class AdvStEditPage extends Page {
 	private final JL jubas = new JL(MainLocale.PAGE, "ubase");
 	private final JLabel lves = new JL();
 	private final JTF ubaslv = new JTF();
-	private final JList<StageMap> jmex = new JList<>();
-	private final JScrollPane jmsex = new JScrollPane(jmex);
-	private final JBTN addreq = new JBTN(MainLocale.PAGE, "add");
-	private final JBTN remreq = new JBTN(MainLocale.PAGE, "rem");
 	private final JL jurwd = new JL(MainLocale.PAGE, "ubase");
 
 	private StageViewPage svp;
@@ -113,7 +109,7 @@ public class AdvStEditPage extends Page {
 	private final JBTN addrev = new JBTN(MainLocale.PAGE, "add");
 	private final JBTN bossType = new JBTN(MainLocale.PAGE, "b0");
 	private Revival rev;
-	private boolean addEne = false, addMap = false, rewUni = false;
+	private boolean addEne = false, rewUni = false;
 
 	protected AdvStEditPage(Page p, Stage stage) {
 		super(p);
@@ -155,10 +151,6 @@ public class AdvStEditPage extends Page {
 		set(jltprob, x, y, 1200, 850, 150, 50);
 		set(jtprob, x, y, 1350, 850, 150, 50);
 		set(equal, x, y, 1200, 900, 300, 50);
-
-		set(jmsex, x, y, 1900, 200, 300, 600);
-		set(addreq, x, y, 1900, 150, 150, 50);
-		set(remreq, x, y, 2050, 150, 150, 50);
 
 		set(jubas, x, y, 1200, 1050, 300, 50);
 		set(jurwd, x, y, 1200, 975, 300, 50);
@@ -242,7 +234,6 @@ public class AdvStEditPage extends Page {
 
 				svp = new StageViewPage(this, maps);
 			}
-			addMap = false;
 			changePanel(svp);
 		});
 
@@ -322,33 +313,6 @@ public class AdvStEditPage extends Page {
 		});
 
 		equal.setLnr(e -> ((CustomStageInfo)st.info).equalizeChances());
-
-		addreq.setLnr(e -> {
-			if (svp == null) {
-				ArrayList<MapColc> maps = new ArrayList<>();
-				maps.add(st.getCont().getCont());
-
-				UserPack pack = ((MapColc.PackMapColc)st.getCont().getCont()).pack;
-				for (MapColc map : MapColc.values())
-					if (map instanceof MapColc.DefMapColc || pack.desc.dependency.contains(((MapColc.PackMapColc)map).pack.desc.id))
-						maps.add(map);
-
-				svp = new StageViewPage(this, maps);
-				svp.nonSt = true;
-			}
-			addMap = true;
-			changePanel(svp);
-		});
-
-		remreq.setLnr(e -> {
-			int ind = jmex.getSelectedIndex();
-			st.getCont().unlockReq.remove(ind);
-
-			die();
-			if (ind >= st.getCont().unlockReq.size())
-				ind--;
-			jmex.setSelectedIndex(ind);
-		});
 	}
 
 	private void addListeners$1() {
@@ -501,10 +465,6 @@ public class AdvStEditPage extends Page {
 		setUBase(st.info);
 		setRwd(st.info);
 		setRevival(null);
-		add(jmsex);
-		add(addreq);
-		add(remreq);
-		die();
 	}
 
 	private void setListG() {
@@ -606,23 +566,8 @@ public class AdvStEditPage extends Page {
 		}
 	}
 
-	private void die() {
-		StageMap[] maps = new StageMap[st.getCont().unlockReq.size];
-		for (int i = 0; i < maps.length; i++)
-			maps[i] = st.getCont().unlockReq.get(i).get();
-		jmex.setListData(maps);
-	}
-
 	@Override
 	public void renew() {
-		if (svp != null && svp.getSelectedStages().size() > 0 && addMap) {
-			//TODO move this to an advanced stagemap page or something cause this doesn'rt belong here
-			StageMap stm = svp.getSelectedStages().get(0).getCont();
-			if (!st.getCont().unlockReq.add(stm.id))
-				Opts.pop("Already added req map", stm + " already exists in the stagemap's requirements list");
-			die();
-			svp = null;
-		}
 		if (svp != null && svp.getSelectedStages().size() > 0) {
 			if (st.info == null)
 				st.info = new CustomStageInfo(st);

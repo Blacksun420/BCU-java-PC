@@ -127,6 +127,7 @@ public class PackEditPage extends Page {
 	private final JBTN recd = new JBTN(MainLocale.PAGE, "replay");
 	private final JBTN csol = new JBTN(MainLocale.PAGE, "csoul");
 	private final JBTN cbge = new JBTN(MainLocale.PAGE, "cbge");
+	private final JBTN csav = new JBTN(MainLocale.PAGE, "csav");
 	private final JTG cmbo = new JTG(MainLocale.PAGE, "usecombo");
 	private final JBTN cdesc = new JBTN(MainLocale.PAGE, "pinfo");
 	private final JBTN merge = new JBTN(MainLocale.PAGE, "merge");
@@ -227,6 +228,7 @@ public class PackEditPage extends Page {
 		set(csol, x, y, w, 1150, 300, 50);
 		w += 350;
 		set(cbge, x, y, w, 1150, 350, 50);
+		set(csav, x, y, w, 1050, 350, 50);
 		set(lbt, x, y, w, 100, 350, 50);
 		set(jspt, x, y, w, 150, 350, 600);
 		set(merge, x, y, w, 800, 350, 50);
@@ -242,6 +244,8 @@ public class PackEditPage extends Page {
 		csol.setLnr(x -> changePanel(new SoulEditPage(this, pac)));
 
 		cbge.setLnr(x -> changePanel(new BGEffectEditPage(this, pac)));
+
+		csav.setLnr(x -> changePanel(new PackSavePage(this, pac)));
 
 		vcas.addActionListener(arg0 -> {
 			if (pac != null && pac.editable)
@@ -733,6 +737,7 @@ public class PackEditPage extends Page {
 		add(recd);
 		add(csol);
 		add(cbge);
+		add(csav);
 		add(cmbo);
 		add(cdesc);
 		add(merge);
@@ -806,12 +811,10 @@ public class PackEditPage extends Page {
 		SortedPackSet<String> deps = pac != null ? parentedList(pac) : null;
 		remp.setEnabled(pac != null && deps.isEmpty());
 
-		if(pac != null)
-			if(!deps.isEmpty()) {
-				remp.setToolTipText(Page.get(MainLocale.PAGE, "packused") + deps);
-			} else {
-				remp.setToolTipText(null);
-			}
+		if(pac != null && !deps.isEmpty())
+			remp.setToolTipText(Page.get(MainLocale.PAGE, "packused") + deps);
+		else
+			remp.setToolTipText(null);
 
 		jtfp.setEnabled(b);
 		adde.setEnabled(b);
@@ -824,6 +827,7 @@ public class PackEditPage extends Page {
 		recd.setEnabled(pac != null);
 		ener.setEnabled(pac != null);
 		cbge.setEnabled(pac != null);
+		csav.setEnabled(pac != null);
 		cdesc.setEnabled(pac != null);
 		boolean canUnpack = pac != null && !pac.editable;
 		boolean canExport = pac != null && pac.editable;

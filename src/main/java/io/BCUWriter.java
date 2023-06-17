@@ -171,7 +171,8 @@ public class BCUWriter extends DataIO {
 					Arrays.asList(
 							CommonStatic.ctx.getWorkspaceFile(""),
 							CommonStatic.ctx.getUserFile(""),
-							CommonStatic.ctx.getAuxFile("./packs")
+							CommonStatic.ctx.getAuxFile("./packs"),
+							CommonStatic.ctx.getAuxFile("./saves")
 					)
 			));
 	}

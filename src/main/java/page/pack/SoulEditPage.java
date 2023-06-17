@@ -55,7 +55,7 @@ public class SoulEditPage extends Page {
         super(p);
         vpack.sort(null);
 
-        ini(pack.souls.size() > 0 ? pack : null);
+        ini(pack != null && (pack.souls.size() > 0 || pack.editable) ? pack : null);
         resized();
     }
 
