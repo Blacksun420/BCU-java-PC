@@ -7,8 +7,10 @@ import common.pack.SaveData;
 import common.util.Data;
 import common.util.stage.Replay;
 import common.util.stage.Stage;
+import common.util.stage.StageMap;
 import common.util.stage.info.CustomStageInfo;
 import common.util.unit.AbForm;
+import common.util.unit.Form;
 import io.BCMusic;
 import main.MainBCU;
 import main.Opts;
@@ -16,15 +18,15 @@ import main.Timer;
 import page.*;
 import page.awt.BBBuilder;
 import page.battle.BattleBox.OuterBox;
+import utilpc.Interpret;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 
 public class BattleInfoPage extends KeyHandler implements OuterBox {
 
@@ -408,9 +410,30 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 	}
 
 	public void claimReward() {
-		if (dataPopup == 0 && packData.validClear(basis.sb.st) == 2) {
-			BCMusic.doSound(29); //Fanfare SE
-			Opts.pop("Unlocked " + ((CustomStageInfo) basis.sb.st.info).reward.toString(), "Hooray");
+		if (dataPopup == 0) {
+			Object[] clearStuff = packData.validClear(basis.sb.st);
+			if (clearStuff != null && (byte)clearStuff[0] != 0) {
+				String rewardText = get(MainLocale.PAGE, "rewardText");
+				Form rf = ((CustomStageInfo) basis.sb.st.info).reward;
+				if ((byte)clearStuff[0] == 1)
+					rewardText = rewardText.replaceFirst("_", rf.unit.toString());
+				else {
+					rewardText = rewardText.replaceFirst("_", get(MainLocale.PAGE, "formType"));
+					if (rf.fid == rf.unit.forms.length - 1)
+						rewardText = rewardText.replaceFirst("_", get(MainLocale.PAGE, "final"));
+					else
+						rewardText = rewardText.replaceFirst("_", Interpret.getExtension(rf.fid + 1));
+					rewardText = rewardText.replace("{UNITNAME}", rf.unit.toString());
+				}
+				BCMusic.doSound(29); //Fanfare SE
+				Opts.pop(rewardText, get(MainLocale.PAGE, "grats"));
+			}
+			if (clearStuff != null && !((LinkedList<StageMap>)clearStuff[1]).isEmpty()) {
+				LinkedList<StageMap> newMaps = (LinkedList<StageMap>)clearStuff[1];
+				String rewardText = get(MainLocale.PAGE, "rewardText").replace("_", Arrays.toString(newMaps.toArray()));
+				BCMusic.doSound(29); //Fanfare SE
+				Opts.pop(rewardText, get(MainLocale.PAGE, "grats"));
+			}
 		}
 		dataPopup--;
 	}

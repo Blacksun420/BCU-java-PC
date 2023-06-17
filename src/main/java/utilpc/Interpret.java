@@ -803,37 +803,18 @@ public class Interpret extends Data {
 
 	private static String getAtkNumbers(List<Integer> inds) {
 		StringBuilder builder = new StringBuilder("[");
-
+		String suffix;
 		switch (CommonStatic.getConfig().lang) {
 			case 1:
 				builder.append("第 ");
-
-				for(int i = 0; i < inds.size(); i++) {
-					builder.append(inds.get(i));
-
-					if(i < inds.size() -1)
-						builder.append(", ");
-				}
-
-				return builder.append(" 次攻擊]").toString();
+				suffix = " 次攻擊]";
+				break;
 			case 2:
-				for(int i = 0; i < inds.size(); i++) {
-					builder.append(inds.get(i));
-
-					if(i < inds.size() - 1)
-						builder.append(", ");
-				}
-
-				return builder.append(" 번째 공격]").toString();
+				suffix = " 번째 공격]";
+				break;
 			case 3:
-				for(int i = 0; i < inds.size(); i++) {
-					builder.append(inds.get(i));
-
-					if(i < inds.size() - 1)
-						builder.append(", ");
-				}
-
-				return builder.append(" 回目の攻撃]").toString();
+				suffix = " 回目の攻撃]";
+				break;
 			default:
 				for (int i = 0; i < inds.size(); i++) {
 					builder.append(getNumberExtension(inds.get(i)));
@@ -841,9 +822,14 @@ public class Interpret extends Data {
 					if (i < inds.size() - 1)
 						builder.append(", ");
 				}
-
 				return builder.append(" Attack]").toString();
 		}
+		for(int i = 0; i < inds.size(); i++) {
+			builder.append(inds.get(i));
+			if(i < inds.size() -1)
+				builder.append(", ");
+		}
+		return builder.append(suffix).toString();
 	}
 
 	public static String translateDate(String date) {
@@ -859,6 +845,19 @@ public class Interpret extends Data {
 					.append((times[3] - 1) % 12 + 1).append(times[3] >= 12 ? "PM" : "AM");
 		}
 		return ans.toString();
+	}
+
+	public static String getExtension(int i) {
+		switch (CommonStatic.getConfig().lang) {
+			case 1:
+				return ("第 " + i);
+			case 2:
+				return (i + " 번째");
+			case 3:
+				return (i + " 回目");
+			default:
+				return getNumberExtension(i);
+		}
 	}
 
 	private static String getNumberExtension(int i) {
