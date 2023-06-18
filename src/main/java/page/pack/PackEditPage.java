@@ -541,7 +541,7 @@ public class PackEditPage extends Page {
 					UserPack pack = UserProfile.getUserPack(id);
 
 					if(pack == null) {
-						Opts.pop("Can't get parent pack ["+id+".pack.bcuzip] from data, aborting parent pack adding", "Can't find parent pack");
+						Opts.pop("Can't get parent pack ["+id+".pack.bcuzip/.userpack] from data, aborting parent pack adding", "Can't find parent pack");
 						passedParents.forEach(pac.desc.dependency::remove);
 						changing = false;
 						return;
