@@ -39,6 +39,15 @@ public class PackSavePage extends Page {
     private final JTF maxFrm = new JTF();
     private final JBTN remulk = new JBTN(MainLocale.PAGE, "rem");
 
+    private final JL syncpar = new JL(MainLocale.PAGE, "unsyncpar");
+    private final PackEditPage.PackList usPar = new PackEditPage.PackList();
+    private final JScrollPane jusPr = new JScrollPane(usPar);
+    private final JL syncedpar = new JL(MainLocale.PAGE, "syncpar");
+    private final PackEditPage.PackList sPar = new PackEditPage.PackList();
+    private final JScrollPane jsPar = new JScrollPane(sPar);
+    private final JBTN addpar = new JBTN(MainLocale.PAGE, "add");
+    private final JBTN rempar = new JBTN(MainLocale.PAGE, "rem");
+
     private final UserPack pk;
     private StageMap curMap;
     private boolean changing = false;
@@ -94,6 +103,12 @@ public class PackSavePage extends Page {
             }
             changing = true;
             AbUnit u = ulkUnits.getSelectedValue();
+            if (!u.getID().pack.equals(pk.getSID())) {
+                UserPack p = UserProfile.getUserPack(u.getID().pack);
+                if (p.save.ulkUni.containsKey(u) && p.save.ulkUni.get(u) + 1 >= f)
+                    f = p.save.ulkUni.get(u) + 2;
+            }
+
             pk.defULK.replace(u, Math.min(f - 1, u.getForms().length - 1));
             setMJTF();
             changing = false;
@@ -118,6 +133,29 @@ public class PackSavePage extends Page {
             setUnits();
             changing = false;
         });
+
+        usPar.addListSelectionListener(l -> addpar.setEnabled(pk.editable && usPar.getSelectedIndex() != -1));
+        sPar.addListSelectionListener(l -> rempar.setEnabled(pk.editable && sPar.getSelectedIndex() != -1));
+        addpar.setLnr(e -> {
+            if (changing)
+                return;
+            changing = true;
+            List<UserPack> packs = usPar.getSelectedValuesList();
+            for (UserPack p : packs)
+                pk.syncPar.add(p.getSID());
+            setSyncPacks();
+            changing = false;
+        });
+        rempar.setLnr(e -> {
+            if (changing)
+                return;
+            changing = true;
+            List<UserPack> packs = sPar.getSelectedValuesList();
+            for (UserPack p : packs)
+                pk.syncPar.remove(p.getSID());
+            setSyncPacks();
+            changing = false;
+        });
     }
 
     private void setMap(StageMap smap, boolean nmod) {
@@ -125,12 +163,18 @@ public class PackSavePage extends Page {
             return;
         curMap = smap;
         if (smap != null) {
-            List<StageMap> maps = pk.mc.maps.getList();
             LinkedList<StageMap> rm = new LinkedList<>(), pm = new LinkedList<>();
-            for (StageMap m : maps) {
+            for (StageMap m : pk.mc.maps) {
                 if (m == smap)
                     continue;
                 (smap.unlockReq.contains(m) ? rm : pm).add(m);
+            }
+            for (String s : pk.desc.dependency) {
+                UserPack p = UserProfile.getUserPack(s);
+                if (p == null || p.save == null)
+                    continue;
+                for (StageMap m : p.mc.maps)
+                    (smap.unlockReq.contains(m) ? rm : pm).add(m);
             }
             potMaps.setListData(pm.toArray(new StageMap[0]));
             potMaps.setSelectedIndex(0);
@@ -158,12 +202,36 @@ public class PackSavePage extends Page {
             (pk.defULK.containsKey(u) ? uu : lu).add(u);
         for (Unit u : pk.units)
             (pk.defULK.containsKey(u) ? uu : lu).add(u);
+        for (String s : pk.desc.dependency) {
+            UserPack p = UserProfile.getUserPack(s);
+            boolean sync = p.save != null && pk.syncPar.contains(s);
+            for (Unit u : p.units) {
+                if (sync && p.defULK.containsKey(u) && p.defULK.get(u) >= u.forms.length - 1)
+                    continue;
+                (pk.defULK.containsKey(u) ? uu : lu).add(u);
+            }
+        }
 
         locUnits.setListData(lu.toArray(new AbUnit[0]));
         ulkUnits.setListData(uu.toArray(new AbUnit[0]));
         addulk.setEnabled(pk.editable && locUnits.getSelectedIndex() != -1);
         remulk.setEnabled(pk.editable && ulkUnits.getSelectedIndex() != -1);
         setMJTF();
+    }
+
+    private void setSyncPacks() {
+        LinkedList<UserPack> usp = new LinkedList<>(), sp = new LinkedList<>();
+        for (String s : pk.desc.dependency) {
+            UserPack p = UserProfile.getUserPack(s);
+            if (p == null || p.save == null)
+                continue;
+            (pk.syncPar.contains(s) ? sp : usp).add(p);
+        }
+        usPar.setListData(usp.toArray(new UserPack[0]));
+        sPar.setListData(sp.toArray(new UserPack[0]));
+        addpar.setEnabled(pk.editable && usPar.getSelectedIndex() != -1);
+        rempar.setEnabled(pk.editable && sPar.getSelectedIndex() != -1);
+        setUnits();
     }
 
     private void ini() {
@@ -187,12 +255,18 @@ public class PackSavePage extends Page {
         add(maxFrm);
         add(remulk);
 
-        List<StageMap> maps = pk.mc.maps.getList();
-        packMaps.setListData(maps.toArray(new StageMap[0]));
+        packMaps.setListData(pk.mc.maps.toArray());
+
+        add(syncpar);
+        add(jusPr);
+        add(addpar);
+        add(syncedpar);
+        add(jsPar);
+        add(rempar);
 
         addListeners();
         setMap(null, false);
-        setUnits();
+        setSyncPacks();
     }
 
     @Override
@@ -218,6 +292,13 @@ public class PackSavePage extends Page {
         set(jlU, x, y, 1000, 150, 300, 850);
         set(maxFrm, x, y, 1000, 1000, 300, 50);
         set(remulk, x, y, 1000, 1050, 300, 50);
+
+        set(syncpar, x, y, 1350, 100, 300, 50);
+        set(jusPr, x, y, 1350, 150, 300, 400);
+        set(addpar, x, y, 1350, 550, 300, 50);
+        set(syncedpar, x, y, 1350, 600, 300, 50);
+        set(jsPar, x, y, 1350, 650, 300, 400);
+        set(rempar, x, y, 1350, 1050, 300, 50);
     }
 
     @Override

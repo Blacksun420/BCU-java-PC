@@ -142,7 +142,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		if (CommonStatic.getConfig().realLevel)
 			lu.simulateBCLeveling();
 
-		SBCtrl sb = new SBCtrl(this, st, star, lu, ints, seed);
+		SBCtrl sb = new SBCtrl(this, st, star, lu, ints, seed, st.getCont().getCont().getSave(false) != null);
 		bb = BBBuilder.def.getCtrl(this, sb);
 		basis = sb;
 		ct.setData(basis.sb.st);
@@ -157,7 +157,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		resized();
 		current = this;
 
-		packData = st.getCont().getCont().getSave();
+		packData = st.getCont().getCont().getSave(false);
 	}
 
 	@Override

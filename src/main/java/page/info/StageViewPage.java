@@ -12,6 +12,7 @@ import page.battle.StRecdPage;
 
 import javax.swing.*;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
@@ -67,14 +68,33 @@ public class StageViewPage extends StagePage {
 	@Override
 	protected void setData(Stage st) {
 		super.setData(st);
-		info.setEnabled(st != null && st.info != null);
+		info.setEnabled(st != null && (st.info != null || st.getCont().getCont().getSave(false) != null));
 		cpst.setEnabled(st != null);
 		recd.setEnabled(st != null);
 	}
 
 	private void addListeners() {
 
-		info.setLnr(x -> Opts.pop(stage.info.getHTML(), stage + " info"));
+		info.setLnr(x -> {
+			StringBuilder str = new StringBuilder();
+			if (stage.info != null)
+				str = new StringBuilder(stage.info.getHTML());
+			if (stage.getCont().getCont().getSave(false) != null && stage.getCont().list.indexOf(stage) == stage.getCont().list.size() - 1) {
+				if (stage.info == null)
+					str.append("<html>");
+				LinkedList<StageMap> newUnlocks = stage.getCont().getCont().getSave(false).getUnlockableMaps(stage.getCont());
+				if (!newUnlocks.isEmpty()) {
+					str.append("<table><tr><th>Chapters that require clearing this chapter to be unlocked:</th></tr> ");
+					for (StageMap newUnlock : newUnlocks)
+						str.append("<tr><td>").append(newUnlock).append("</td></tr>");
+				}
+			}
+			if (str.length() <= 6) {
+				info.setEnabled(false);
+				return;
+			}
+			Opts.pop(str.toString(), stage + " info");
+		});
 
 		recd.setLnr(x -> changePanel(new StRecdPage(this, stage, false)));
 
@@ -85,10 +105,10 @@ public class StageViewPage extends StagePage {
 			if (mc == null)
 				return;
 
-			if (mc.getSave() != null) {
+			if (mc.getSave(false) != null) {
 				Vector<StageMap> sms = new Vector<>();
 				for (StageMap sm : mc.maps)
-					if (sm.unlockReq.isEmpty() || mc.getSave().cSt.containsKey(sm))
+					if (sm.unlockReq.isEmpty() || mc.getSave(false).cSt.containsKey(sm))
 						sms.add(sm);
 				jlsm.setListData(sms);
 			} else
@@ -105,8 +125,8 @@ public class StageViewPage extends StagePage {
 				return;
 			cpsm.setEnabled(true);
 
-			if (sm.getCont().getSave() != null) {
-				Integer stInds = sm.getCont().getSave().cSt.get(sm);
+			if (sm.getCont().getSave(false) != null) {
+				Integer stInds = sm.getCont().getSave(false).cSt.get(sm);
 				if (stInds == null) {
 					if (sm.list.size() > 0 && sm.unlockReq.isEmpty())
 						jlst.setListData(new Stage[]{sm.list.get(0)});
@@ -189,12 +209,12 @@ public class StageViewPage extends StagePage {
 	@Override
 	public void renew() {
 		MapColc mc = jlmc.getSelectedValue();
-		if (mc == null || mc.getSave() == null)
+		if (mc == null || mc.getSave(false) == null)
 			return;
 
 		Vector<StageMap> sms = new Vector<>();
 		for (StageMap sm : mc.maps)
-			if (sm.unlockReq.isEmpty() || mc.getSave().cSt.containsKey(sm))
+			if (sm.unlockReq.isEmpty() || mc.getSave(false).cSt.containsKey(sm))
 				sms.add(sm);
 		jlsm.setListData(sms);
 
@@ -205,7 +225,7 @@ public class StageViewPage extends StagePage {
 			else
 				return;
 		}
-		Integer stInds = mc.getSave().cSt.get(sm);
+		Integer stInds = mc.getSave(false).cSt.get(sm);
 		if (stInds == null) {
 			if (sm.list.size() > 0 && sm.unlockReq.isEmpty())
 				jlst.setListData(new Stage[]{sm.list.get(0)});

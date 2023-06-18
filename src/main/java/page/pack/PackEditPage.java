@@ -68,8 +68,17 @@ public class PackEditPage extends Page {
 
 		private static final long serialVersionUID = 1L;
 
+		protected PackList() {
+			super();
+			ini();
+		}
+
 		protected PackList(Vector<UserPack> packs) {
 			super(packs);
+			ini();
+		}
+
+		private void ini() {
 			setSelectionBackground(Theme.DARK.NIMBUS_SELECT_BG);
 			setCellRenderer(new DefaultListCellRenderer() {
 
@@ -97,9 +106,9 @@ public class PackEditPage extends Page {
 	private final JScrollPane jspd = new JScrollPane(jtd);
 	private final RLFIM<StageMap> jls = new RLFIM<>(() -> this.changing = true, () -> changing = false, this::finishRemoving, this::setMap, StageMap::new);
 	private final JScrollPane jsps = new JScrollPane(jls);
-	private final JList<UserPack> jlr = new JList<>();
+	private final PackList jlr = new PackList();
 	private final JScrollPane jspr = new JScrollPane(jlr);
-	private final JList<UserPack> jlt = new JList<>(vpack);
+	private final PackList jlt = new PackList(vpack);
 	private final JScrollPane jspt = new JScrollPane(jlt);
 
 	private final JBTN addp = new JBTN(MainLocale.PAGE, "add");

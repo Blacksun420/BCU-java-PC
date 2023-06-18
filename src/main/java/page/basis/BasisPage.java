@@ -98,7 +98,7 @@ public class BasisPage extends LubCont {
 	public BasisPage(Page p, Stage st, Limit lim) {
 		super(p);
 		this.st = st;
-		lub.setLimit(lim, st.getCont().getCont().getSave(), st.getCont().price);
+		lub.setLimit(lim, st.getCont().getCont().getSave(false), st.getCont().price);
 
 		ini();
 		resized();
@@ -246,7 +246,7 @@ public class BasisPage extends LubCont {
 
 		unit.addActionListener(e -> {
 			if (ufp == null)
-				ufp = new UnitFLUPage(getThis(), st == null ? null : st.getCont().getCont().getSave(), lub.lim, lub.price);
+				ufp = new UnitFLUPage(getThis(), st == null ? null : st.getCont().getCont().getSave(false), lub.lim, lub.price);
 			changePanel(ufp);
 		});
 
