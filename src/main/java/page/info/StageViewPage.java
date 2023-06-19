@@ -68,7 +68,7 @@ public class StageViewPage extends StagePage {
 	@Override
 	protected void setData(Stage st) {
 		super.setData(st);
-		info.setEnabled(st != null && (st.info != null || st.getCont().getCont().getSave(false) != null));
+		info.setEnabled(st != null && (st.info != null || st.getCont().getCont().getSave(true) != null));
 		cpst.setEnabled(st != null);
 		recd.setEnabled(st != null);
 	}
@@ -79,7 +79,7 @@ public class StageViewPage extends StagePage {
 			StringBuilder str = new StringBuilder();
 			if (stage.info != null)
 				str = new StringBuilder(stage.info.getHTML());
-			if (stage.getCont().getCont().getSave(false) != null && stage.getCont().list.indexOf(stage) == stage.getCont().list.size() - 1) {
+			if (stage.getCont().getCont().getSave(true) != null && stage.getCont().list.indexOf(stage) == stage.getCont().list.size() - 1) {
 				if (stage.info == null)
 					str.append("<html>");
 				LinkedList<StageMap> newUnlocks = stage.getCont().getCont().getSave(false).getUnlockableMaps(stage.getCont());
