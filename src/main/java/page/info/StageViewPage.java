@@ -82,7 +82,7 @@ public class StageViewPage extends StagePage {
 			if (stage.getCont().getCont().getSave(true) != null && stage.getCont().list.indexOf(stage) == stage.getCont().list.size() - 1) {
 				if (stage.info == null)
 					str.append("<html>");
-				LinkedList<StageMap> newUnlocks = stage.getCont().getCont().getSave(false).getUnlockableMaps(stage.getCont());
+				LinkedList<StageMap> newUnlocks = stage.getCont().getCont().getSave(true).getUnlockableMaps(stage.getCont());
 				if (!newUnlocks.isEmpty()) {
 					str.append("<table><tr><th>Chapters that require clearing this chapter to be unlocked:</th></tr> ");
 					for (StageMap newUnlock : newUnlocks)
