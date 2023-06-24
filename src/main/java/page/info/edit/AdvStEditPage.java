@@ -21,6 +21,7 @@ import page.info.UnitInfoPage;
 import page.info.filter.EnemyFindPage;
 import page.info.filter.UnitFindPage;
 import page.support.AnimLCR;
+import page.support.UnitLCR;
 import page.view.MusicPage;
 import utilpc.Theme;
 import utilpc.UtilPC;
@@ -37,6 +38,8 @@ public class AdvStEditPage extends Page {
 
 	private static final long serialVersionUID = 1L;
 	private static class LineList extends JList<SCDef.Line> {
+		private static final long serialVersionUID = 1L;
+
 		public LineList() {
 			setSelectionBackground(Theme.DARK.NIMBUS_SELECT_BG);
 
@@ -86,7 +89,11 @@ public class AdvStEditPage extends Page {
 	private final JL jubas = new JL(MainLocale.PAGE, "ubase");
 	private final JLabel lves = new JL();
 	private final JTF ubaslv = new JTF();
-	private final JL jurwd = new JL(MainLocale.PAGE, "ubase");
+	private final JL jurwd = new JL(MainLocale.PAGE, "urwd");
+	private final JList<Form> jrwd = new JList<>();
+	private final JScrollPane jsrwd = new JScrollPane(jrwd);
+	private final JBTN addrw = new JBTN(MainLocale.PAGE, "add");
+	private final JBTN remrw = new JBTN(MainLocale.PAGE, "rem");
 
 	private StageViewPage svp;
 	private UnitFindPage ufp;
@@ -109,7 +116,7 @@ public class AdvStEditPage extends Page {
 	private final JBTN addrev = new JBTN(MainLocale.PAGE, "add");
 	private final JBTN bossType = new JBTN(MainLocale.PAGE, "b0");
 	private Revival rev;
-	private boolean addEne = false, rewUni = false;
+	private boolean addEne = false, rewUni = false, summons;
 
 	protected AdvStEditPage(Page p, Stage stage) {
 		super(p);
@@ -131,44 +138,56 @@ public class AdvStEditPage extends Page {
 		setBounds(0, 0, x, y);
 		set(back, x, y, 0, 0, 200, 50);
 		set(groups, x, y, 50, 100, 300, 50);
-		set(jsps, x, y, 50, 150, 300, 700);
-		set(addg, x, y, 50, 850, 150, 50);
-		set(remg, x, y, 200, 850, 150, 50);
-		set(smax, x, y, 50, 900, 300, 50);
+		set(jsps, x, y, 50, 150, 300, 950);
+		set(addg, x, y, 50, 1100, 150, 50);
+		set(remg, x, y, 200, 1100, 150, 50);
+		set(smax, x, y, 50, 1150, 300, 50);
 
-		set(jspe, x, y, 400, 100, 300, 800);
-		set(sdef, x, y, 400, 900, 300, 50);
-		set(jspt, x, y, 750, 150, 400, 800);
-		set(addt, x, y, 750, 100, 200, 50);
-		set(remt, x, y, 950, 100, 200, 50);
+		short w = 350;
+		if (summons) {
+			set(jspe, x, y, w, 100, 300, 1050);
+			set(sdef, x, y, w, 1150, 300, 50);
+			w += 300;
+			set(jspt, x, y, w, 150, 400, 1050);
+			set(addt, x, y, w, 100, 200, 50);
+			set(remt, x, y, w + 200, 100, 200, 50);
+			w += 450;
+			sget.setRowHeight(size(x, y, 50));
+		} else
+			w += 50;
 
-		set(exSt, x, y, 1200, 100, 300, 50);
-		set(jsex, x, y, 1200, 200, 300, 600);
-		set(addex, x, y, 1200, 150, 150, 50);
-		set(remex, x, y, 1350, 150, 150, 50);
-		set(jlprob, x, y, 1200, 800, 150, 50);
-		set(jprob, x, y, 1350, 800, 150, 50);
-		set(jltprob, x, y, 1200, 850, 150, 50);
-		set(jtprob, x, y, 1350, 850, 150, 50);
-		set(equal, x, y, 1200, 900, 300, 50);
+		set(exSt, x, y, w, 100, 300, 50);
+		set(jsex, x, y, w, 200, 300, 650);
+		set(addex, x, y, w, 150, 150, 50);
+		set(remex, x, y, w + 150, 150, 150, 50);
+		set(jlprob, x, y, w, 850, 150, 50);
+		set(jprob, x, y, w + 150, 850, 150, 50);
+		set(jltprob, x, y, w, 900, 150, 50);
+		set(jtprob, x, y, w + 150, 900, 150, 50);
+		set(equal, x, y, w, 950, 300, 50);
 
-		set(jubas, x, y, 1200, 1050, 300, 50);
-		set(jurwd, x, y, 1200, 975, 300, 50);
-		set(lves, x, y, 1200, 1100, 300, 50);
-		set(ubaslv, x, y, 1200, 1150, 300, 50);
+		set(jubas, x, y, w, 1050, 300, 50);
+		set(lves, x, y, w, 1100, 300, 50);
+		set(ubaslv, x, y, w, 1150, 300, 50);
+		w += 350;
 
-		set(jsines, x, y, 1600, 100, 300, 800);
-		set(addrev, x, y, 1600, 900, 150, 50);
-		set(remrev, x, y, 1750, 900, 150, 50);
-		set(bossType, x, y, 1600, 950, 300, 50);
-		set(revback, x, y, 1600, 1000, 150, 50);
-		set(revNext, x, y, 1750, 1000, 150, 50);
-		set(revEne, x, y, 1600, 1050, 300, 50);
-		set(revBGM, x, y, 1600, 1100, 150, 50);
-		set(revSoul, x, y, 1750, 1100, 150, 50);
-		set(revMults, x, y, 1600, 1150, 100, 50);
-		set(jtMults, x, y, 1700, 1150, 200, 50);
-		sget.setRowHeight(size(x, y, 50));
+		set(jsines, x, y, w, 100, 300, 800);
+		set(addrev, x, y, w, 900, 150, 50);
+		set(remrev, x, y, w + 150, 900, 150, 50);
+		set(bossType, x, y, w, 950, 300, 50);
+		set(revback, x, y, w, 1000, 150, 50);
+		set(revNext, x, y, w + 150, 1000, 150, 50);
+		set(revEne, x, y, w, 1050, 300, 50);
+		set(revBGM, x, y, w, 1100, 150, 50);
+		set(revSoul, x, y, w + 150, 1100, 150, 50);
+		set(revMults, x, y, w, 1150, 100, 50);
+		set(jtMults, x, y, w + 100, 1150, 200, 50);
+
+		w += 350;
+		set(jurwd, x, y, w, 100, 300, 50);
+		set(addrw, x, y, w, 150, 150, 50);
+		set(remrw, x, y, w + 150, 150, 150, 50);
+		set(jsrwd, x, y, w, 200, 300, 1000);
 	}
 
 	private void addListeners$0() {
@@ -288,18 +307,20 @@ public class AdvStEditPage extends Page {
 			}
 		});
 
-		jurwd.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				super.mouseClicked(e);
-				if (e.getButton() == MouseEvent.BUTTON1) {
-					rewUni = true;
-					if (ufp == null)
-						ufp = new UnitFindPage(getThis(), false, UserProfile.getUserPack(st.id.pack.substring(0, st.id.pack.indexOf('/'))));
-					changePanel(ufp);
-				} else if (st.info != null && ((CustomStageInfo)st.info).reward != null)
-					changePanel(new UnitInfoPage(getThis(), ((CustomStageInfo)st.info).reward.unit, ((CustomStageInfo)st.info).reward.unit.getPrefLvs()));
-			}
+		jrwd.addListSelectionListener(r -> remrw.setEnabled(st.info != null && jrwd.getSelectedIndex() != -1));
+
+		addrw.addActionListener(r -> {
+			rewUni = true;
+			if (ufp == null)
+				ufp = new UnitFindPage(getThis(), false, UserProfile.getUserPack(st.id.pack.substring(0, st.id.pack.indexOf('/'))));
+			changePanel(ufp);
+		});
+
+		remrw.addActionListener(r -> {
+			CustomStageInfo csi = (CustomStageInfo)st.info;
+			for (Form f : jrwd.getSelectedValuesList())
+				csi.rewards.remove(f);
+			setRwd(csi);
 		});
 
 		ubaslv.addActionListener(l -> {
@@ -312,7 +333,11 @@ public class AdvStEditPage extends Page {
 			ubaslv.setText(UtilPC.lvText(csi.ubase, csi.lv)[0]);
 		});
 
-		equal.setLnr(e -> ((CustomStageInfo)st.info).equalizeChances());
+		equal.setLnr(e -> {
+			((CustomStageInfo)st.info).equalizeChances();
+			if (jex.getSelectedIndex() != -1)
+				jprob.setText(((CustomStageInfo)st.info).chances.get(jex.getSelectedIndex()) + "%");
+		});
 	}
 
 	private void addListeners$1() {
@@ -405,6 +430,7 @@ public class AdvStEditPage extends Page {
 
 	private void ini() {
 		AbEnemy[] aes = data.getSummon().toArray(new AbEnemy[0]);
+		summons = aes.length > 0;
 		add(back);
 		add(groups);
 		add(jsps);
@@ -412,7 +438,7 @@ public class AdvStEditPage extends Page {
 		add(remg);
 		add(smax);
 
-		if (aes.length > 0) {
+		if (summons) {
 			add(sdef);
 			add(jspe);
 			add(jspt);
@@ -431,6 +457,10 @@ public class AdvStEditPage extends Page {
 		add(equal);
 		add(jubas);
 		add(jurwd);
+		add(addrw);
+		add(remrw);
+		add(jsrwd);
+		jrwd.setCellRenderer(new UnitLCR());
 		add(lves);
 		add(ubaslv);
 		jle.setCellRenderer(new AnimLCR());
@@ -521,15 +551,13 @@ public class AdvStEditPage extends Page {
 	}
 
 	public void setRwd(StageInfo si) {
-		if (si == null || ((CustomStageInfo)si).reward == null) {
-			jurwd.setIcon(null);
-			jurwd.setText(get(MainLocale.PAGE, "urwd"));
-			return;
-		}
-		CustomStageInfo csi = (CustomStageInfo)si;
-		if (csi.reward.getIcon() != null)
-			jurwd.setIcon(new ImageIcon((BufferedImage) csi.reward.getIcon().getImg().bimg()));
-		jurwd.setText(csi.reward.toString());
+		int sel = Math.min(jrwd.getSelectedIndex(),jrwd.getModel().getSize() - 1);
+		remrw.setEnabled(si != null && sel != -1);
+		if (si == null)
+			jrwd.setListData(new Form[0]);
+		else
+			jrwd.setListData(((CustomStageInfo)si).rewards.toArray(new Form[0]));
+		jrwd.setSelectedIndex(sel);
 	}
 
 	public void setRevival(Revival r) {
@@ -619,11 +647,11 @@ public class AdvStEditPage extends Page {
 			CustomStageInfo csi = (CustomStageInfo)st.info;
 
 			if (rewUni) {
-				if (csi.reward != ufp.getForm() && (csi.reward == null || Opts.conf("Replace base " + csi.reward + " with " + ufp.getForm() + "?"))) {
-					csi.reward = (Form) ufp.getForm();
-					csi.destroy(true);
-					setRwd(csi);
-				}
+				Form fr = (Form)ufp.getForm();
+				csi.rewards.removeIf(f -> f.unit.equals(fr.unit));
+				csi.rewards.add(fr);
+				csi.destroy(true);
+				setRwd(csi);
 			} else {
 				if (csi.ubase != ufp.getForm() && (csi.ubase == null || Opts.conf("Replace base " + csi.ubase + " with " + ufp.getForm() + "?"))) {
 					csi.ubase = (Form) ufp.getForm();

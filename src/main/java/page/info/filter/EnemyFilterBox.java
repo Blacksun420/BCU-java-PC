@@ -43,15 +43,6 @@ public class EnemyFilterBox extends EntityFilterBox {
 	}
 
 	@Override
-	public void callBack(Object o) {
-		confirm();
-	}
-
-	protected int[] getSizer() {
-		return new int[] { 450, 1150, 0, 500 };
-	}
-
-	@Override
 	protected void resized(int x, int y) {
 		super.resized(x, y);
 		set(orop[3], x, y, 0, 0, 200, 50);
@@ -134,6 +125,12 @@ public class EnemyFilterBox extends EntityFilterBox {
 			if (b2 != unchangeable(1))
 				break;
 		}
+		if (b2 == unchangeable(1) && ((EnemyFindPage)getFront()).adv != null) {
+			b2 = processOperator(1, ((EnemyFindPage)getFront()).adv.compare(e.de.getAllProc()));
+			if (b2 != unchangeable(1) && !b2)
+				return false;
+		}
+
 		boolean b3 = unchangeable(2);
 		for (int i : atkt.getSelectedIndices()) {
 			b3 = processOperator(2, isType(e.de, i, 0));
@@ -185,5 +182,6 @@ public class EnemyFilterBox extends EntityFilterBox {
 		}
 		multipacks = pkv.size() > 2;
 		pks.setModel(new DefaultComboBoxModel<>(pkv));
+		postIni();
 	}
 }

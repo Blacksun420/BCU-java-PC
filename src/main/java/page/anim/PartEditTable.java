@@ -128,14 +128,14 @@ class PartEditTable extends AnimTable<int[]> {
 		int v = (int) val;
 		int m = part.ints[1];
 		if (c == 1) {
-			if ((m < 4 || m > 11) && v < 0)
-				v = 0;
 			if (m == 0) {
 				if (v >= anim.mamodel.n)
 					v = anim.mamodel.n - 1;
-				if (v == part.ints[0])
+				if (v == part.ints[0] || v < -1)
 					v = -1;
-			} else if (m == 2 && v >= anim.imgcut.n)
+			} else if ((m < 4 || m > 11) && v < 0)
+				v = 0;
+			else if (m == 2 && v >= anim.imgcut.n)
 				v = anim.imgcut.n - 1;
 			else if (m == 12 && v > anim.mamodel.ints[2])
 				v = anim.mamodel.ints[2];

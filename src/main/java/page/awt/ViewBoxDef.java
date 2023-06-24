@@ -49,6 +49,7 @@ class ViewBoxDef extends Canvas implements ViewBox, ViewBox.VBExporter {
 		if (lbimg == null)
 			return;
 		loader.finish(btn);
+		loader.thr.end = true;
 		lbimg = null;
 		loader = null;
 	}

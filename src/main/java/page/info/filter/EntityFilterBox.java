@@ -3,6 +3,7 @@ package page.info.filter;
 import common.pack.FixIndexList;
 import common.pack.PackData;
 import common.pack.UserProfile;
+import common.util.Data;
 import common.util.unit.Trait;
 import page.JBTN;
 import page.MainLocale;
@@ -59,6 +60,7 @@ public abstract class EntityFilterBox extends Page {
     protected final JScrollPane jat = new JScrollPane(atkt);
     protected final PackBox pks = new PackBox();
     protected final boolean rand;
+    protected final Data.Proc proc = Data.Proc.blank();
 
     protected EntityFilterBox(Page p, boolean rand) {
         super(p);
@@ -82,7 +84,10 @@ public abstract class EntityFilterBox extends Page {
         confirm();
     }
 
-    protected abstract int[] getSizer();
+    public int[] getSizer() {
+        return new int[]{ 450, 1150, 0, 500 };
+    }
+
     @Override
     protected void resized(int x, int y) {
         set(orop[0], x, y, 0, 350, 200, 50);
@@ -104,15 +109,6 @@ public abstract class EntityFilterBox extends Page {
         FixIndexList.FixIndexMap<Trait> BCtraits = UserProfile.getBCData().traits;
         for (int i = 0 ; i < (this instanceof UnitFilterBox ? TRAIT_EVA : BCtraits.size() - 1) ; i++)
             trait.list.add(BCtraits.get(i));
-        if (pack == null)
-            for (PackData.UserPack pacc : UserProfile.getUserPacks())
-                pacc.traits.forEach(t -> trait.list.add(t));
-        else {
-            trait.list.addAll(pack.traits.getList());
-            for (String s : pack.desc.dependency)
-                UserProfile.getUserPack(s).traits.forEach(t -> trait.list.add(t));
-        }
-        trait.setListData();
 
         atkt.setListData(ATKCONF);
         int m = ListSelectionModel.MULTIPLE_INTERVAL_SELECTION;
@@ -124,6 +120,22 @@ public abstract class EntityFilterBox extends Page {
         add(jat);
         add(pks);
         pks.addActionListener(l -> confirm());
+    }
+
+    protected void postIni() {
+        if (pack == null) {
+            for (PackData.UserPack pacc : UserProfile.getUserPacks())
+                if (pks.containsPack(pacc))
+                    pacc.traits.forEach(t -> trait.list.add(t));
+        } else {
+            trait.list.addAll(pack.traits.getList());
+            for (String s : pack.desc.dependency) {
+                PackData.UserPack up = UserProfile.getUserPack(s);
+                if (up != null && pks.containsPack(up))
+                    up.traits.forEach(t -> trait.list.add(t));
+            }
+        }
+        trait.setListData();
     }
 
     private void opBtnListeners() {

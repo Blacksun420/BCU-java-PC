@@ -8,7 +8,7 @@ import javax.sound.sampled.LineListener;
 import java.util.ArrayDeque;
 
 public class BCPlayer implements LineListener {
-	private static final int FACTOR = 20;
+	private static final byte FACTOR = 20;
 
 	private static float getVol(int vol) {
 		return FACTOR * ((float) Math.log10(vol) - 2);
@@ -29,16 +29,11 @@ public class BCPlayer implements LineListener {
 	}
 
 	protected BCPlayer(Clip c, int ind, long loop) {
-		this.ind = ind;
-		this.c = c;
-		this.c.addLineListener(this);
-		this.master = (FloatControl) c.getControl(FloatControl.Type.MASTER_GAIN);
-
-		if (loop > 0 && loop * 1000 < c.getMicrosecondLength()) {
+		this(c, ind);
+		if (loop > 0 && loop * 1000 < c.getMicrosecondLength())
 			c.setLoopPoints(milliToFrame(loop), -1);
-		} else if (loop * 1000 >= c.getMicrosecondLength()) {
+		else if (loop * 1000 >= c.getMicrosecondLength())
 			c.loop(0);
-		}
 	}
 
 	public boolean isPlaying() {
@@ -47,15 +42,13 @@ public class BCPlayer implements LineListener {
 
 	public void stop() {
 		playing = false;
-		if (c != null) {
+		if (c != null)
 			c.stop();
-		}
 	}
 
 	@Override
 	public void update(LineEvent event) {
 		if (event.getType() == Type.STOP) {
-			playing = false;
 			stop();
 
 			if (ind >= 0 && ind != 8 && ind != 9 && ind != 20 && ind != 21 && ind != 22)
@@ -84,9 +77,8 @@ public class BCPlayer implements LineListener {
 	}
 
 	protected void rewind() {
-		if (rewinding) {
+		if (rewinding)
 			return;
-		}
 
 		rewinding = true;
 		c.setFramePosition(0);
@@ -102,9 +94,8 @@ public class BCPlayer implements LineListener {
 	}
 
 	protected void start() {
-		if (playing) {
+		if (playing)
 			return;
-		}
 
 		playing = true;
 		c.start();

@@ -29,7 +29,6 @@ public class MainPage extends Page {
 	private static final long serialVersionUID = 1L;
 
 	private final JLabel memo = new JLabel();
-	private final JLabel seicon = new JLabel("Source of enemy icon: battlecats-db.com");
 	private final JLabel sgifau = new JLabel("Author of GIF exporter: Kevin Weiner, FM Software");
 	private final JLabel welcome = new JLabel("Welcome " + MainBCU.author + "!");
 	private final JBTN vuni = new JBTN(MainLocale.PAGE, "vuni");
@@ -56,7 +55,7 @@ public class MainPage extends Page {
 	private final JBTN comp = new JBTN(MainLocale.PAGE, "compare");
 	private final JBTN bckp = new JBTN(MainLocale.PAGE, "backup");
 	private final JBTN logs = new JBTN(MainLocale.PAGE, "logs");
-	private final JBTN docs = new JBTN("Documentation (TODO)"); //(MainLocale.PAGE, "docs");
+	private final JBTN docs = new JBTN(MainLocale.DOCS, "docs");
 
 	private final JBTN refr = new JBTN(MainLocale.PAGE, "refrtips");
 	private final JLabel tips = new JLabel();
@@ -85,9 +84,8 @@ public class MainPage extends Page {
 	protected void resized(int x, int y) {
 		setBounds(0, 0, x, y);
 		set(memo, x, y, 50, 30, 500, 50);
-		set(seicon, x, y, 50, 60, 500, 50);
-		set(sgifau, x, y, 50, 90, 800, 50);
-		set(welcome, x, y, 50, 120, 500, 50);
+		set(sgifau, x, y, 50, 60, 800, 50);
+		set(welcome, x, y, 50, 90, 500, 50);
 
 		set(vuni, x, y, 600, 200, 200, 50);
 		set(vene, x, y, 600, 300, 200, 50);
@@ -146,6 +144,7 @@ public class MainPage extends Page {
 		allf.setLnr(() -> new ResourcePage(this));
 		bckp.setLnr(() -> new BackupPage(this, true));
 		logs.setLnr(() -> new LogPage(this));
+		docs.setLnr(() -> new DocumentationPage(this));
 		auth.setLnr(e -> {
 			String author = Opts.read("Decide your author name");
 
@@ -230,7 +229,6 @@ public class MainPage extends Page {
 		add(save);
 		save.setToolTipText(get(MainLocale.PAGE,"savetip"));
 
-		add(seicon);
 		add(sgifau);
 		add(welcome);
 		add(rply);

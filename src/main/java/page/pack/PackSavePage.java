@@ -16,6 +16,8 @@ import java.util.List;
 
 public class PackSavePage extends Page {
 
+    private static final long serialVersionUID = 1L;
+
     private final JBTN back = new JBTN(MainLocale.PAGE, "back");
     private final JL packJL = new JL(MainLocale.PAGE, "pkstm");
     private final JList<StageMap> packMaps = new JList<>();

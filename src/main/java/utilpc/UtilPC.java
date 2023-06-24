@@ -132,6 +132,19 @@ public class UtilPC {
 	public static ImageIcon getIcon(Data.Proc.ProcItem p, int type, int id) {
 		if (id == Data.P_IMUWAVE && (p.get(0) == 0 || p.get(1) == 100))
 			return getIcon(CommonStatic.getBCAssets().waveShield);
+		if (id == Data.P_DMGINC) {
+			int m = p.get(0);
+			if (m > 100 && m < 300)
+				return getIcon(CommonStatic.getBCAssets().dmgIcons[0]);
+			else if (m >= 500)
+				return getIcon(CommonStatic.getBCAssets().dmgIcons[2]);
+		} else if (id == Data.P_DEFINC) {
+			int m = p.get(0);
+			if (m > 100 && m < 400)
+				return getIcon(CommonStatic.getBCAssets().dmgIcons[0]);
+			else if (m >= 600)
+				return getIcon(CommonStatic.getBCAssets().dmgIcons[1]);
+		}
 
 		return getIcon(type, id);
 	}

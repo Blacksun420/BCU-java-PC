@@ -84,7 +84,6 @@ public class MusicPage extends Page implements SupPage<Music> {
 				return;
 			BCMusic.setBG(jlf.getSelectedValue());
 		});
-
 	}
 
 	private void ini() {

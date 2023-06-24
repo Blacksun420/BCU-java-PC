@@ -31,6 +31,7 @@ import page.info.edit.SwingEditor.EditCtrl;
 import page.info.edit.SwingEditor.IdEditor;
 import page.info.filter.EnemyFindPage;
 import page.info.filter.UnitFindPage;
+import page.support.EntSupInt;
 import page.support.ListJtfPolicy;
 import page.support.ReorderList;
 import page.support.ReorderListener;
@@ -44,7 +45,7 @@ import java.util.*;
 
 import static common.util.Data.*;
 
-public abstract class EntityEditPage extends Page {
+public abstract class EntityEditPage extends Page implements EntSupInt {
 
 	private static final long serialVersionUID = 1L;
 
@@ -155,6 +156,7 @@ public abstract class EntityEditPage extends Page {
 		setData(ce);
 	}
 
+	@Override
 	public SupPage<Music> getMusicSup(IdEditor<Music> edi) {
 		editor = edi;
 		SupPage<Music> ans = new MusicPage(this, pack.getSID());
@@ -162,6 +164,7 @@ public abstract class EntityEditPage extends Page {
 		return ans;
 	}
 
+	@Override
 	public SupPage<Background> getBGSup(IdEditor<Background> edi) {
 		editor = edi;
 		SupPage<Background> ans = new BGViewPage(this, pack.getSID());
@@ -169,6 +172,7 @@ public abstract class EntityEditPage extends Page {
 		return ans;
 	}
 
+	@Override
 	public SupPage<?> getEntitySup(IdEditor<?> edi) {
 		editor = edi;
 
@@ -176,9 +180,8 @@ public abstract class EntityEditPage extends Page {
 		if ((ce.getPack() instanceof Enemy && get(jli.getSelectedIndex()).dire != -1)
 				|| (ce.getPack() instanceof Form && get(jli.getSelectedIndex()).dire == -1)) {
 			ans = new EnemyFindPage(this, true, pack);
-		} else {
+		} else
 			ans = new UnitFindPage(this, true, pack);
-		}
 
 		sup = ans;
 		return ans;

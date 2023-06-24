@@ -8,7 +8,6 @@ import utilpc.UtilPC;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.Vector;
 
 public class TraitList extends JList<Trait> {

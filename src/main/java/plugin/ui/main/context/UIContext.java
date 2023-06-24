@@ -107,7 +107,7 @@ public abstract class UIContext {
     public abstract static class UIChecker {
         private static final String LIB_URL = "https://repo1.maven.org/maven2/com/formdev/";
         private static final String LIB_DIRECTORY = "./BCU_lib/";
-        private static final String JAR_CHECK_URL = "https://raw.githubusercontent.com/Blacksun420/bcu-assets/master/jar/check.json";
+        private static final String JAR_CHECK_URL = "https://raw.githubusercontent.com/Blacksun420/sun-bcu-assets/main/jar/check.json";
         private static final String[] UILibs = {
                 "flatlaf-intellij-themes-2.3.jar", "flatlaf-2.3.jar"
         };
@@ -206,8 +206,9 @@ public abstract class UIContext {
                 JsonElement json = WebFileIO.read(JAR_CHECK_URL);
                 if (json != null)
                     return JsonUtils.get("latest", json.getAsJsonObject(), UpdateJson.class);
-            } catch (Exception ignored) {
+            } catch (Exception e) {
                 UIPlugin.popError("Failed to check update, try again later on a stable WI-FI connection");
+                e.printStackTrace();
             }
             return null;
         }
@@ -240,7 +241,7 @@ public abstract class UIContext {
                 return "BCU-" + ver.replace(".", "-") + ".jar";
             }
             public String getURL() {
-                return "https://github.com/Blacksun420/bcu-assets/raw/master/jar/" + getArtifact();
+                return "https://github.com/Blacksun420/sun-bcu-assets/raw/main/jar/" + getArtifact();
             }
 
             public boolean prio() {

@@ -11,14 +11,15 @@ public abstract class EntityFindPage<R> extends Page {
     private static final long serialVersionUID = 1L;
 
     protected final JBTN back = new JBTN(0, "back");
-    protected static final JLabel source = new JLabel("All BC unit icons belong to Spica");
     protected final JTG show = new JTG(0, "showf");
     protected EntityListTable<R> elt;
     protected EntityFilterBox efb;
     protected JScrollPane jsp;
+    protected AdvProcFilterPage adv;
     protected final JTF seatf = new JTF();
     protected final JBTN seabt = new JBTN(0, "search");
     protected final JBTN favs = new JBTN(MainLocale.PAGE, "addfav");
+    private final JTG advs = new JTG(MainLocale.PAGE, "advance");
 
     public EntityFindPage(Page p) {
         super(p);
@@ -55,21 +56,28 @@ public abstract class EntityFindPage<R> extends Page {
     protected void resized(int x, int y) {
         setBounds(0, 0, x, y);
         set(back, x, y, 0, 0, 200, 50);
-        set(source, x, y, 0, 50, 600, 50);
-        set(show, x, y, 250, 0, 200, 50);
-        set(seatf, x, y, 550, 0, 1000, 50);
+        set(show, x, y, 250, 0, 150, 50);
+        set(advs, x, y, 400, 0, 150, 50);
+        set(seatf, x, y, 600, 0, 950, 50);
         set(seabt, x, y, 1600, 0, 200, 50);
+
+        int[] coords = new int[]{50, 2200};
+
         if (show.isSelected()) {
             int[] siz = efb.getSizer();
             set(efb, x, y, 50, 100, siz[0], siz[1]);
-            int mx = 0, my = 0;
-            if (siz[2] == 0)
-                mx = siz[3];
-            else
-                my = siz[3];
-            set(jsp, x, y, 50 + mx, 100 + my, 2200 - mx, 1150 - my);
-        } else
-            set(jsp, x, y, 50, 100, 2200, 1150);
+            coords[0] += siz[3];
+            coords[1] -= siz[3];
+        }
+        if (advs.isSelected()) {
+            coords[show.isSelected() ? 0 : 1] -= 50;
+
+            set(adv, x, y, coords[0], 100, ProcFilterTable.tabW * 3 + 25, 1150);
+            coords[0] += ProcFilterTable.tabW * 3 + 75;
+            coords[1] -= ProcFilterTable.tabW * 3 + 25;
+        } else if (adv != null)
+            set(adv, 0, 0, 0, 0, 0, 0);
+        set(jsp, x, y, coords[0], 100, coords[1], 1150);
         set(favs, x, y, 1850, 0, 400, 50);
         elt.setRowHeight(size(x, y, 50));
     }
@@ -104,10 +112,11 @@ public abstract class EntityFindPage<R> extends Page {
         add(show);
         add(efb);
         add(jsp);
-        add(source);
         add(seatf);
         add(seabt);
         add(favs);
+        add(advs);
+        add(adv);
         show.setSelected(true);
         addListeners();
     }

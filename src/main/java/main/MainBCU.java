@@ -69,13 +69,15 @@ public class MainBCU {
 
 		@Override
 		public InputStream getLangFile(String file) {
-			File f = new File(getBCUFolder(),
-					"./assets/lang/" + CommonStatic.Lang.LOC_CODE[CommonStatic.getConfig().lang] + "/" + file);
-			if (!f.exists()) {
-				String path = "common/util/lang/assets/" + file;
-				return ClassLoader.getSystemResourceAsStream(path);
+			int l = CommonStatic.getConfig().lang;
+			for (int i = 0; i < CommonStatic.Lang.LOC_CODE.length; i++) {
+				int pref = i < CommonStatic.Lang.LOC_CODE[l].length() ? CommonStatic.Lang.pref[l][i] : i;
+				File f = new File(getBCUFolder(),"./assets/lang/" + CommonStatic.Lang.LOC_CODE[pref] + "/" + file);
+				if (f.exists())
+					return Data.err(() -> new FileInputStream(f));
 			}
-			return Data.err(() -> new FileInputStream(f));
+			String path = "common/util/lang/assets/" + file;
+			return ClassLoader.getSystemResourceAsStream(path);
 		}
 
 		@Override
@@ -297,7 +299,7 @@ public class MainBCU {
 		}
 	}
 
-	public static final int ver = 60102;
+	public static final int ver = 60103;
 	private static final DecimalFormat df = new DecimalFormat("#.##");
 	public static int autoSaveTime = 0;
 	public static final boolean WRITE = !new File("./.idea").exists();

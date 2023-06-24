@@ -42,8 +42,8 @@ public class RLFIM<T extends IndexContainer.Indexable<?, T>> extends ReorderList
 		sta.run();
 		int ind = getSelectedIndex();
 		T val = getSelectedValue();
-		map.remove(val);
 		del.accept(val);
+		map.remove(val);
 		setListData(ic, map);
 		if (ind >= 0)
 			ind--;

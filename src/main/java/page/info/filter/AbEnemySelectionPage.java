@@ -84,7 +84,6 @@ public class AbEnemySelectionPage extends EnemyFindPage implements SupPage<AbEne
         add(show);
         add(efb);
         add(jsp);
-        add(source);
         add(seatf);
         add(seabt);
         show.setSelected(true);

@@ -56,7 +56,7 @@ public abstract class SwingEditor extends Editor {
 		}
 
 		@Override
-		protected void add(Consumer<JComponent> con) {
+		public void add(Consumer<JComponent> con) {
 			con.accept(input);
 		}
 
@@ -160,7 +160,7 @@ public abstract class SwingEditor extends Editor {
 		}
 
 		@Override
-		protected void add(Consumer<JComponent> con) {
+		public void add(Consumer<JComponent> con) {
 			con.accept(input);
 			con.accept(jl);
 		}
@@ -189,7 +189,6 @@ public abstract class SwingEditor extends Editor {
 	}
 
 	public static class IntEditor extends SwingEditor {
-
 		public final JL label;
 		public final JTF input = new JTF();
 
@@ -227,7 +226,7 @@ public abstract class SwingEditor extends Editor {
 		}
 
 		@Override
-		protected void add(Consumer<JComponent> con) {
+		public void add(Consumer<JComponent> con) {
 			con.accept(label);
 			con.accept(input);
 		}
@@ -237,7 +236,6 @@ public abstract class SwingEditor extends Editor {
 			field.setInt(Data.ignore(() -> CommonStatic.parseIntN(input.getText())));
 			update();
 		}
-
 	}
 
 	public interface PageSup<T extends IndexContainer.Indexable<?, T>> {
@@ -257,7 +255,7 @@ public abstract class SwingEditor extends Editor {
 		}
 
 		@Override
-		public void setData(Object obj) {
+		public void setData(Data.Proc.ProcItem obj) {
 			super.setData(obj);
 			jlm.getLSC().update();
 		}
@@ -276,6 +274,6 @@ public abstract class SwingEditor extends Editor {
 
 	public abstract void resize(int x, int y, int x0, int y0, int w0, int h0);
 
-	protected abstract void add(Consumer<JComponent> con);
+	public abstract void add(Consumer<JComponent> con);
 
 }

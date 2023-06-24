@@ -18,7 +18,6 @@ public class EnemyInfoPage extends Page {
 	private final JBTN next = new JBTN(0, "next");
 	private final JBTN find = new JBTN(0, "stage");
 	private final JTG extr = new JTG(0, "extra");
-	private final JLabel source = new JLabel("Source of enemy icon: DB");
 	private final JPanel cont = new JPanel();
 	private final JScrollPane jsp = new JScrollPane(cont);
 	private final EnemyInfoTable info;
@@ -50,7 +49,6 @@ public class EnemyInfoPage extends Page {
 	protected void resized(int x, int y) {
 		setBounds(0, 0, x, y);
 		set(back, x, y, 0, 0, 200, 50);
-		set(source, x, y, 0, 50, 600, 50);
 		set(prev, x, y, 300, 0, 200, 50);
 		set(anim, x, y, 600, 0, 200, 50);
 		set(next, x, y, 900, 0, 200, 50);
@@ -96,7 +94,6 @@ public class EnemyInfoPage extends Page {
 		add(next);
 		add(find);
 		add(extr);
-		add(source);
 		prev.setEnabled(e.prev != null);
 		next.setEnabled(e.next != null);
 		addListeners();

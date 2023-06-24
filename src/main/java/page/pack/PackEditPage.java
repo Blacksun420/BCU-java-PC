@@ -796,12 +796,12 @@ public class PackEditPage extends Page {
 	}
 
 	private void finishRemoving(StageMap map) {
-		for (Stage s : map.list)
+		for (Stage s : map.list) {
 			if (s.info != null)
-				((CustomStageInfo)s.info).destroy(false);
-		for (Stage s : map.list)
+				((CustomStageInfo) s.info).destroy(false);
 			for (CustomStageInfo si : ((MapColc.PackMapColc)map.getCont()).si)
 				si.remove(s);
+		}
 	}
 
 	private void setMap(StageMap map) {

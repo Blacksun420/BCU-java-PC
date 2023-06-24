@@ -37,35 +37,28 @@ public class BCMusic extends Data {
 	protected static final ArrayDeque<BCPlayer> customSounds = new ArrayDeque<>();
 	protected static final HashMap<Music, Clip> csecalls = new HashMap<>();
 
-	@SuppressWarnings("UnusedAssignment")
 	public static void clear() {
 		csecalls.clear();
 		for (BCPlayer sound : customSounds)
 			sound.release();
 		customSounds.clear();
 
-		for (ArrayDeque<BCPlayer> clips : sounds.values()) {
+		for (ArrayDeque<BCPlayer> clips : sounds.values())
 			while (true) {
 				BCPlayer c = clips.poll();
-
-				if (c != null) {
+				if (c != null)
 					c.release();
-					c = null;
-				} else {
+				else
 					break;
-				}
 			}
-		}
 
 		if (hit != null) {
 			for (int i = 0; i < hit.length; i++) {
 				if(hit[i] == null)
 					continue;
-
 				hit[i].release();
 				hit[i] = null;
 			}
-
 			hit = null;
 		}
 
@@ -73,11 +66,9 @@ public class BCMusic extends Data {
 			for (int i = 0; i < hit1.length; i++) {
 				if(hit1[i] == null)
 					continue;
-
 				hit1[i].release();
 				hit1[i] = null;
 			}
-
 			hit1 = null;
 		}
 
@@ -85,11 +76,9 @@ public class BCMusic extends Data {
 			for (int i = 0; i < baseHit.length; i++) {
 				if(baseHit[i] == null)
 					continue;
-
 				baseHit[i].release();
 				baseHit[i] = null;
 			}
-
 			baseHit = null;
 		}
 
@@ -102,11 +91,9 @@ public class BCMusic extends Data {
 			for(int i = 0; i < UI.length; i++) {
 				if(UI[i] == null)
 					continue;
-
 				UI[i].release();
 				UI[i] = null;
 			}
-
 			UI = null;
 		}
 
@@ -119,7 +106,7 @@ public class BCMusic extends Data {
 	}
 
 	public static synchronized void doSound(int snd) {
-		if (!play || VOL_SE == 0)
+		if (!play || getVol(snd) == 0)
 			return;
 		try {
 			if (CACHE[snd] == null)
@@ -159,48 +146,45 @@ public class BCMusic extends Data {
 		if (hit == null) {
 			hit = new BCPlayer[2];
 
-			for (int i = 0; i < hit.length; i++) {
+			for (int i = 0; i < hit.length; i++)
 				try {
 					hit[i] = new BCPlayer(openFile(UserProfile.getBCData().musics.get(20)), 20);
 					hit[i].setVolume(VOL_SE);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
 		}
 
 		if (hit1 == null) {
 			hit1 = new BCPlayer[2];
 
-			for (int i = 0; i < hit1.length; i++) {
+			for (int i = 0; i < hit1.length; i++)
 				try {
 					hit1[i] = new BCPlayer(openFile(UserProfile.getBCData().musics.get(21)), 21);
 					hit1[i].setVolume(VOL_SE);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
 		}
 
 		if (baseHit == null) {
 			baseHit = new BCPlayer[2];
 
-			for (int i = 0; i < baseHit.length; i++) {
+			for (int i = 0; i < baseHit.length; i++)
 				try {
 					baseHit[i] = new BCPlayer(openFile(UserProfile.getBCData().musics.get(22)), 22);
 					baseHit[i].setVolume(VOL_SE);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
 		}
 
 		if(UI == null) {
 			UI = new BCPlayer[3];
 
 			try {
-				UI[0] = new BCPlayer(openFile(UserProfile.getBCData().musics.get(15)), 15);
-				UI[1] = new BCPlayer(openFile(UserProfile.getBCData().musics.get(28)), 28);
+				UI[0] = new BCPlayer(openFile(UserProfile.getBCData().musics.get(SE_SPEND_FAIL)), SE_SPEND_FAIL);
+				UI[1] = new BCPlayer(openFile(UserProfile.getBCData().musics.get(SE_CANNON_CHARGE)), SE_CANNON_CHARGE);
 				UI[2] = new BCPlayer(openFile(UserProfile.getBCData().musics.get(10)), 10);
 
 				UI[0].setVolume(VOL_UI);
@@ -222,11 +206,10 @@ public class BCMusic extends Data {
 					e.printStackTrace();
 				}
 		secall = new boolean[TOT];
-
-		for (Map.Entry<Music, Clip> mus : csecalls.entrySet()) {
-			loadSound(-1, mus.getValue());
-			csecalls.remove(mus.getKey());
-		}
+		if (allow)
+			for (Clip cl : csecalls.values())
+				loadSound(-1, cl);
+		csecalls.clear();
 	}
 
 	public static synchronized void play(Identifier<Music> mus) {
@@ -250,9 +233,8 @@ public class BCMusic extends Data {
 		if (!play)
 			return;
 		try {
-			if (BG != null) {
+			if (BG != null)
 				BG.release();
-			}
 			loadSound(-1, f, true, f.loop);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -261,16 +243,20 @@ public class BCMusic extends Data {
 
 	public static synchronized void setBGVol(int vol) {
 		VOL_BG = vol;
-
-		if (BG != null) {
+		if (BG != null)
 			BG.setVolume(vol);
-		}
 	}
 
 	public static synchronized void setSE(int ind) {
-		if (!play || VOL_SE == 0)
+		if (!play || getVol(ind) == 0)
 			return;
 		secall[ind] = true;
+	}
+
+	public static synchronized int getVol(int ind) {
+		if (ind == 10 || ind == SE_SPEND_FAIL || ind == SE_CANNON_CHARGE || ind == SE_SPEND_SUC || ind ==SE_SPEND_REF)
+			return VOL_UI;
+		return VOL_SE;
 	}
 
 	public static synchronized void setSE(Identifier<Music> mus) {
@@ -287,14 +273,13 @@ public class BCMusic extends Data {
 			if (m == null || csecalls.containsKey(m))
 				return;
 
-			if (CACHE_CUSTOM.containsKey(mus)) {
+			if (CACHE_CUSTOM.containsKey(mus))
 				csecalls.put(m, openFile(CACHE_CUSTOM.get(mus)));
-			} else {
+			else {
 				Clip c = openFile(m);
 				if (c.getMicrosecondLength() < 10_000_000L)
-					csecalls.put(m, openFile(CACHE_CUSTOM.put(mus, m.data.getBytes())));
-				else
-					csecalls.put(m, c); // TODO stop audio if battle is exited after
+					CACHE_CUSTOM.put(mus, m.data.getBytes());
+				csecalls.put(m, c);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -414,7 +399,7 @@ public class BCMusic extends Data {
 
 	private static void loadSound(int ind, Clip c) {
 		BCPlayer player = new BCPlayer(c, ind);
-		player.setVolume(VOL_SE);
+		player.setVolume(getVol(ind));
 
 		player.start();
 		if (ind == -1)

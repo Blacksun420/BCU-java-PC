@@ -56,11 +56,6 @@ public class UnitFilterBox extends EntityFilterBox {
 	}
 
 	@Override
-	public int[] getSizer() {
-		return new int[] { 450, 1150, 0, 500 };
-	}
-
-	@Override
 	protected void resized(int x, int y) {
 		super.resized(x, y);
 
@@ -145,6 +140,7 @@ public class UnitFilterBox extends EntityFilterBox {
 			add(limbtn);
 			limbtn.addActionListener(l -> confirm());
 		}
+		postIni();
 	}
 
 	protected boolean validateUnit(Unit u) {
@@ -187,6 +183,12 @@ public class UnitFilterBox extends EntityFilterBox {
 			if (b1 != unchangeable(1))
 				break;
 		}
+		if (b1 == unchangeable(1) && getFront() instanceof UnitFindPage && ((UnitFindPage)getFront()).adv != null) {
+			b1 = processOperator(1, ((UnitFindPage)getFront()).adv.compare(du.getAllProc()));
+			if (b1 != unchangeable(1) && !b1)
+				return false;
+		}
+
 		boolean b2 = unchangeable(2);
 		for (int i : atkt.getSelectedIndices()) {
 			b2 = processOperator(2, isType(du, i, 0));

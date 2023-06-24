@@ -246,9 +246,6 @@ public class CompareTable extends Page {
             enem.setText("-");
         }
         abilityPanes.setViewportView(abilities = new EntityAbilities(getFront(), me, maskEntityLvl));
-        int checkHealth = (Data.AB_GOOD | Data.AB_RESIST | Data.AB_RESISTS);
-        int checkAttack = (Data.AB_GOOD | Data.AB_MASSIVE | Data.AB_MASSIVES);
-
         for (MaskAtk atkDatum : atkData) {
             if (atkString.length() > 0) {
                 atkString.append(" / ");
@@ -261,14 +258,9 @@ public class CompareTable extends Page {
             preString.append(MainBCU.convertTime(atkDatum.getPre()));
 
             int effectiveDMG = att;
-            if (traits.size() > 0 && (me.getAbi() & checkAttack) > 0) {
-                if ((me.getAbi() & Data.AB_MASSIVES) > 0)
-                    effectiveDMG *= isEnemy ? 5 : b.t().getMASSIVESATK(traits);
-                if ((me.getAbi() & Data.AB_MASSIVE) > 0)
-                    effectiveDMG *= isEnemy ? 3 : b.t().getMASSIVEATK(traits);
-                if ((me.getAbi() & Data.AB_GOOD) > 0)
-                    effectiveDMG *= isEnemy ? 1.5 : b.t().getGOODATK(traits);
-            }
+            if (traits.size() > 0 && me.getProc().DMGINC.mult != 0)
+                effectiveDMG *= isEnemy ? me.getProc().DMGINC.mult/100.0 : b.t().getATK(me.getProc().DMGINC.mult, traits);
+
             if (spTraits.contains(DefTraits.get(Data.TRAIT_WITCH)) && (me.getAbi() & Data.AB_WKILL) > 0)
                 effectiveDMG *= b.t().getWKAtk();
             if (spTraits.contains(DefTraits.get(Data.TRAIT_EVA)) && (me.getAbi() & Data.AB_EKILL) > 0)
@@ -277,20 +269,15 @@ public class CompareTable extends Page {
                 effectiveDMG *= 1.6;
             if (spTraits.contains(DefTraits.get(Data.TRAIT_BEAST)) && me.getProc().BSTHUNT.type.active)
                 effectiveDMG *= 2.5;
-            if (effectiveDMG > att)
+            if (effectiveDMG != att)
                 atkString.append(" (").append(effectiveDMG).append(")");
             atk += att;
             eatk += effectiveDMG;
         }
         int effectiveHP = hp;
-        if (traits.size() > 0 && (me.getAbi() & checkHealth) > 0) {
-            if ((me.getAbi() & Data.AB_RESISTS) > 0)
-                effectiveHP /= isEnemy ? 1f/6 : b.t().getRESISTSDEF(traits);
-            if ((me.getAbi() & Data.AB_RESIST) > 0)
-                effectiveHP /= isEnemy ? 0.25f : b.t().getRESISTDEF(traits, traits, null, (Level)maskEntityLvl);
-            if ((me.getAbi() & Data.AB_GOOD) > 0)
-                effectiveHP /= isEnemy ? 0.5f : b.t().getGOODDEF(traits, traits, null, (Level)maskEntityLvl);
-        }
+        if (traits.size() > 0 && me.getProc().DEFINC.mult != 0)
+            effectiveHP /= isEnemy ? 100.0/me.getProc().DEFINC.mult : b.t().getDEF(me.getProc().DEFINC.mult, traits, traits, null, (Level)maskEntityLvl);
+
         if (spTraits.contains(DefTraits.get(Data.TRAIT_WITCH)) && (me.getAbi() & Data.AB_WKILL) > 0)
             effectiveHP /= b.t().getWKDef();
         if (spTraits.contains(DefTraits.get(Data.TRAIT_EVA)) && (me.getAbi() & Data.AB_EKILL) > 0)

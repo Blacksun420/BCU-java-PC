@@ -89,10 +89,6 @@ public class Opts {
 		return JOptionPane.showInputDialog(null, string, "");
 	}
 
-	public static void success(String text) {
-		pop(text, "success");
-	}
-
 	public static boolean writeErr0(String f) {
 		return Opts.warning("failed to write file: " + f + " do you want to retry?", "IO error");
 	}

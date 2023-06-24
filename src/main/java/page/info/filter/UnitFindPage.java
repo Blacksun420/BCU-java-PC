@@ -19,6 +19,7 @@ public class UnitFindPage extends EntityFindPage<AbForm> implements SupPage<AbUn
 		elt = new UnitListTable(this);
 		jsp = new JScrollPane(elt);
 		efb = new UnitFilterBox(this, rand, null, 0, null);
+		adv = new AdvProcFilterPage(this, true, efb.proc);
 		ini();
 		resized();
 	}
@@ -29,6 +30,7 @@ public class UnitFindPage extends EntityFindPage<AbForm> implements SupPage<AbUn
 		elt = new UnitListTable(this);
 		jsp = new JScrollPane(elt);
 		efb = new UnitFilterBox(this, rand, pack);
+		adv = new AdvProcFilterPage(this, true, efb.proc);
 		ini();
 		resized();
 	}

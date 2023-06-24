@@ -39,7 +39,7 @@ public class FIBI implements FakeImage {
 
 	@Override
 	public FIBI getSubimage(int i, int j, int k, int l) {
-		return (FIBI) builder.build(bimg.getSubimage(i, j, k, l));
+		return (FIBI) builder.build(bimg.getSubimage(i, j, Math.max(1, k), Math.max(1, l)));
 	}
 
 	@Override
