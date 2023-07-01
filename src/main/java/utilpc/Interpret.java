@@ -598,8 +598,8 @@ public class Interpret extends Data {
 			if (type == 8)
 				return de.getCounter() != null;
 			if (type < 8 || de.getCounter() != null)
-				return de.getSpAtks(type - 6).length != 0;
-			return de.getSpAtks(type - 7).length != 0;
+				return de.getSpAtks(true, type - 6).length != 0;
+			return de.getSpAtks(true, type - 7).length != 0;
 		}
 		return false;
 	}
