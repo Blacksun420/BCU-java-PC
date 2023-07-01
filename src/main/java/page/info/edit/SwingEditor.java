@@ -110,12 +110,6 @@ public abstract class SwingEditor extends Editor {
 		}
 
 		@Override
-		public boolean EditorVisible(Editor e) {
-			SwingEditor edi = (SwingEditor) e;
-			return !edi.isInvisible();
-		}
-
-		@Override
 		public boolean isEnemy() {
 			return isEnemy;
 		}

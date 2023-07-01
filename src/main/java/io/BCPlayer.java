@@ -85,7 +85,7 @@ public class BCPlayer implements LineListener {
 		rewinding = false;
 	}
 
-	protected void setLineListener(LineListener l) {
+	public void setLineListener(LineListener l) {
 		c.addLineListener(l);
 	}
 

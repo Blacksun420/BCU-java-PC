@@ -1,16 +1,23 @@
 package page.pack;
 
 import common.CommonStatic;
+import common.pack.Context;
 import common.pack.PackData.UserPack;
+import common.system.files.FDFile;
+import common.util.Data;
 import common.util.stage.Music;
 import io.BCMusic;
 import main.Opts;
 import page.*;
+import page.support.Importer;
 
+import javax.sound.sampled.LineEvent;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -23,12 +30,15 @@ public class MusicEditPage extends Page {
 	private final JList<Music> jlst = new JList<>();
 	private final JScrollPane jspst = new JScrollPane(jlst);
 
+	private final JBTN add = new JBTN(MainLocale.PAGE, "add");
+	private final JBTN rem = new JBTN(MainLocale.PAGE, "rem");
 	private final JBTN relo = new JBTN(MainLocale.PAGE, "read list");
 	private final JBTN play = new JBTN(MainLocale.PAGE, "start");
 	private final JBTN stop = new JBTN(MainLocale.PAGE, "stop");
 	private final JBTN show = new JBTN(MainLocale.PAGE, "show");
 	private final JL jlp = new JL(MainLocale.INFO, "loop");
 	private final JTF jtp = new JTF();
+	private final JTF jtn = new JTF();
 
 	private final UserPack pack;
 	private Music sele;
@@ -44,13 +54,16 @@ public class MusicEditPage extends Page {
 	protected void resized(int x, int y) {
 		setBounds(0, 0, x, y);
 		set(back, x, y, 0, 0, 200, 50);
-		set(jspst, x, y, 50, 100, 300, 1000);
-		set(relo, x, y, 400, 100, 200, 50);
-		set(play, x, y, 400, 200, 200, 50);
-		set(stop, x, y, 400, 300, 200, 500);
-		set(show, x, y, 400, 400, 200, 50);
-		set(jlp, x, y, 400, 500, 200, 50);
-		set(jtp, x, y, 400, 550, 200, 50);
+		set(jspst, x, y, 50, 100, 400, 1000);
+		set(relo, x, y, 500, 100, 200, 50);
+		set(show, x, y, 500, 200, 200, 50);
+		set(add, x, y, 500, 350, 200, 50);
+		set(rem, x, y, 500, 450, 200, 50);
+		set(play, x, y, 750, 100, 200, 50);
+		set(stop, x, y, 750, 200, 200, 50);
+		set(jlp, x, y, 500, 600, 200, 50);
+		set(jtp, x, y, 500, 650, 200, 50);
+		set(jtn, x, y, 50, 1100, 400, 50);
 	}
 
 	@Override
@@ -64,7 +77,6 @@ public class MusicEditPage extends Page {
 				BCMusic.BG.stop();
 				BCMusic.clear();
 			}
-
 			changePanel(getFront());
 		});
 
@@ -75,16 +87,31 @@ public class MusicEditPage extends Page {
 			setList();
 		});
 
+		add.addActionListener(arg0 -> {
+			Music m = getFile("Choose Music");
+			if (m != null) {
+				pack.musics.set(m.id.id, m);
+				setList();
+			}
+		});
+
+		rem.addActionListener(l -> {
+			try {
+				Context.delete(new File(CommonStatic.ctx.getBCUFolder(), "/workspace/" + pack.desc.id + "/musics/" + sele.data));
+				pack.musics.remove(sele);
+				setList();
+			} catch (Exception e) {
+				CommonStatic.ctx.noticeErr(e, Context.ErrType.ERROR, "Failed to delete " + sele.data);
+			}
+		});
+
 		show.addActionListener(arg0 -> {
 			File f = new File(CommonStatic.ctx.getBCUFolder(), "./workspace/" + pack.desc.id + "/musics/");
-			if(!f.exists()) {
-				boolean result = f.mkdirs();
-
-				if(!result) {
+			if(!f.exists())
+				if(!f.mkdirs()) {
 					Opts.pop("Couldn't create folder "+f.getAbsolutePath(), "IO Error");
 					return;
 				}
-			}
 			try {
 				Desktop.getDesktop().open(f);
 			} catch (IOException e) {
@@ -92,9 +119,20 @@ public class MusicEditPage extends Page {
 			}
 		});
 
-		play.addActionListener(arg0 -> BCMusic.setBG(sele));
+		play.addActionListener(arg0 -> {
+			BCMusic.setBG(sele);
+			BCMusic.BG.setLineListener(event -> {
+				if (event.getType() == LineEvent.Type.STOP)
+					stop.setEnabled(false);
+			});
+			stop.setEnabled(true);
+		});
 
-		stop.addActionListener(arg -> BCMusic.BG.stop());
+		stop.addActionListener(arg -> {
+			BCMusic.BG.stop();
+			BCMusic.clear();
+			stop.setEnabled(false);
+		});
 
 		jlst.addListSelectionListener(arg0 -> {
 			if (isAdj() || arg0.getValueIsAdjusting())
@@ -106,12 +144,13 @@ public class MusicEditPage extends Page {
 		jtp.setLnr(x -> {
 			if (sele.data == null)
 				return;
-
 			long tim = Math.min(toMilli(jtp.getText()), toMilli(getMusTime()) - 1);
 			if (tim != -1)
 				sele.loop = tim;
 			jtp.setText(convertTime(sele.loop));
 		});
+
+		jtn.setLnr(x -> sele.name = jtn.getText());
 	}
 
 	private void ini() {
@@ -120,17 +159,24 @@ public class MusicEditPage extends Page {
 		add(show);
 		add(relo);
 		add(play);
+		add(stop);
 		add(jlp);
 		add(jtp);
+		add(jtn);
+		add(add);
+		add(rem);
 		setList();
 		addListeners();
 	}
 
 	private void toggleButtons() {
-		play.setEnabled(sele != null);
+		play.setEnabled(sele != null && BCMusic.play && BCMusic.VOL_BG > 0);
+		stop.setEnabled(BCMusic.BG != null);
 		jtp.setEnabled(sele != null);
 		jtp.setText(sele != null ? convertTime(sele.loop) : "-");
 		jtp.setToolTipText(getMusTime());
+		jtn.setText(sele != null ? sele.name : "-");
+		rem.setEnabled(sele != null);
 	}
 
 	private void setList() {
@@ -150,9 +196,8 @@ public class MusicEditPage extends Page {
 	}
 
 	private String getMusTime() {
-		if (sele == null || sele.data == null) {
+		if (sele == null || sele.data == null)
 			return "Music not found";
-		}
 		try {
 			long duration = CommonStatic.def.getMusicLength(sele);
 
@@ -230,5 +275,30 @@ public class MusicEditPage extends Page {
 			return milis * 10;
 		else
 			return milis * 100;
+	}
+
+	private Music getFile(String str) {
+		File mus = new Importer(str, Importer.IMP_MUS).get();
+		if (mus == null)
+			return null;
+		if (!Music.isMusic(mus.getName()))
+			return getFile("Wrong file format. Must be ogg");
+
+		int id = CommonStatic.parseIntN(mus.getName().substring(0, 3));
+		if (id == -1)
+			id = pack.musics.nextInd();
+
+		Music musc = pack.musics.getRaw(id);
+		if (musc != null && !Opts.conf("Music file with id " + id + " already exists in the pack. Replace?"))
+			return null;
+		try {
+			File nmf = CommonStatic.ctx.getWorkspaceFile("./" + pack.getSID() + "/musics/" + Data.trio(id) + mus.getName().substring(mus.getName().length() - 4));
+			Context.check(nmf);
+			Files.copy(mus.toPath(), nmf.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			return new Music(pack.getID(Music.class, id), new FDFile(nmf), musc);
+		} catch (Exception e) {
+			CommonStatic.ctx.noticeErr(e, Context.ErrType.ERROR, "Failed to copy music file to pack");
+		}
+		return null;
 	}
 }

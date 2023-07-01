@@ -51,12 +51,12 @@ public class CompareTable extends Page {
 
     private final BasisLU b = BasisSet.current().sele;
 
-    public CompareTable(ComparePage p, int ind, int sellen) {
+    public CompareTable(ComparePage p, int ind, JCB[] sels) {
         super(p);
         par = p;
         this.ind = ind;
-        for (int i = 0; i < sellen; i++)
-            seles[i] = true;
+        for (int i = 0; i < sels.length; i++)
+            seles[i] = sels[i].isSelected();
 
         ini();
     }
@@ -244,6 +244,8 @@ public class CompareTable extends Page {
                     ev.setToolTipText(null);
                 }
             enem.setText("-");
+            for (JBTN btn : swap)
+                btn.setEnabled(f.unit.forms.length > 1);
         }
         abilityPanes.setViewportView(abilities = new EntityAbilities(getFront(), me, maskEntityLvl));
         for (MaskAtk atkDatum : atkData) {

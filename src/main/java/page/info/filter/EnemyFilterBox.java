@@ -23,9 +23,9 @@ public class EnemyFilterBox extends EntityFilterBox {
 	private static final long serialVersionUID = 1L;
 
 	protected final JList<String> rare = new JList<>(ERARE);
-	protected final AttList abis = new AttList(-1, EABIIND.length);
-	protected final JScrollPane jr = new JScrollPane(rare);
-	protected final JScrollPane jab = new JScrollPane(abis);
+	private final AttList abis = new AttList(-1, EABIIND.length);
+	private final JScrollPane jr = new JScrollPane(rare);
+	private final JScrollPane jab = new JScrollPane(abis);
 	private boolean multipacks;
 
 	protected EnemyFilterBox(Page p, boolean rand) {
@@ -155,8 +155,8 @@ public class EnemyFilterBox extends EntityFilterBox {
 
 		va.addAll(Arrays.asList(EABI).subList(0, EABIIND.length));
 		ProcLang proclang = ProcLang.get();
-		for (int i = 0; i < EPROCIND.length; i++)
-			va.add(proclang.get(EPROCIND[i]).abbr_name);
+		for (byte pr : EPROCIND)
+			va.add(proclang.get(pr).abbr_name);
 		abis.setListData(va);
 		abis.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		set(rare);

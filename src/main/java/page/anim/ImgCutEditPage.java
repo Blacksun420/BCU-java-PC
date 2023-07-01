@@ -211,7 +211,7 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 		back.addActionListener(arg0 -> changePanel(getFront()));
 
 		add.addActionListener(arg0 -> {
-			BufferedImage bimg = new Importer("Add your sprite").getImg();
+			BufferedImage bimg = new Importer("Add your sprite", Importer.IMP_IMG).getImg();
 			if (bimg == null)
 				return;
 			int selection = Opts.selection("What kind of animation do you want to create?",
@@ -243,7 +243,7 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 		});
 
 		impt.addActionListener(arg0 -> {
-			BufferedImage bimg = new Importer("Update your sprite").getImg();
+			BufferedImage bimg = new Importer("Update your sprite", Importer.IMP_IMG).getImg();
 			if (bimg != null) {
 				AnimCE ac = icet.anim;
 				ac.setNum(MainBCU.builder.build(bimg));
@@ -367,7 +367,7 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 		});
 
 		ico.addActionListener(arg0 -> {
-			BufferedImage bimg = new Importer("select icon image").getImg();
+			BufferedImage bimg = new Importer("select icon image", Importer.IMP_IMG).getImg();
 			if (bimg == null)
 				return;
 			int selection = Opts.selection("What icon is this for?",

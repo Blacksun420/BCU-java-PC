@@ -5,6 +5,7 @@ import common.pack.PackData;
 import common.util.unit.AbEnemy;
 import page.Page;
 import page.SupPage;
+import utilpc.Interpret;
 
 import javax.swing.*;
 
@@ -46,6 +47,8 @@ public class EnemyFindPage extends EntityFindPage<AbEnemy> implements SupPage<Ab
 				else
 					CommonStatic.getFaves().enemies.remove(sel);
 			}
+			if (efb.processOperator(0, ((EnemyFilterBox)efb).rare.isSelectedIndex(Interpret.ERARE.length - 1)))
+				efb.confirm();
 		});
 	}
 

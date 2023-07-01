@@ -11,29 +11,37 @@ public class Importer extends JFileChooser {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final int IMP_DEF = 0, IMP_IMG = 1; //TODO use importer to import music
+	public static final int IMP_MUS = 0, IMP_IMG = 1;
 	public static final File[] curs = new File[2];
 
 	public File file;
 
-	public Importer(String str) {
-		int t = IMP_IMG;
+	public Importer(String str, int imp) {
 		setDialogTitle(str);
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("PNG Images", "png");
-		setCurrentDirectory(curs[t]);
-		setFileFilter(filter);
+		setCurrentDirectory(curs[imp]);
 
-		String[] fils = new String[]{"jpg", "jfif", "jpeg"};
-		for (String fil : fils) {
-			FileNameExtensionFilter fnef = new FileNameExtensionFilter(fil.toUpperCase()+" Images", fil);
-			addChoosableFileFilter(fnef);//Five Nights Et Freddy's
+		if (imp == IMP_MUS) {
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("OGG Music", "ogg");
+			setFileFilter(filter);
+		} else {
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("PNG Images", "png");
+			setFileFilter(filter);
+			String[] fils = new String[]{"jpg", "jfif", "jpeg"};
+			for (String fil : fils) {
+				FileNameExtensionFilter fnef = new FileNameExtensionFilter(fil.toUpperCase() + " Images", fil);
+				addChoosableFileFilter(fnef);//Five Nights Et Freddy's
+			}
 		}
 		setDragEnabled(true);
 		int returnVal = showOpenDialog(null);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			file = getSelectedFile();
-			curs[t] = getCurrentDirectory();
+			curs[imp] = getCurrentDirectory();
 		}
+	}
+
+	public File get() {
+		return file;
 	}
 
 	public BufferedImage getImg() {

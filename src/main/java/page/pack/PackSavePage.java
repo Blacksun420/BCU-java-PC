@@ -1,6 +1,7 @@
 package page.pack;
 
 import common.CommonStatic;
+import common.pack.Identifier;
 import common.pack.PackData.UserPack;
 import common.pack.UserProfile;
 import common.util.stage.StageMap;
@@ -105,7 +106,13 @@ public class PackSavePage extends Page {
             }
             changing = true;
             AbUnit u = ulkUnits.getSelectedValue();
-            if (!u.getID().pack.equals(pk.getSID())) {
+            if (u.getID().pack.equals(Identifier.DEF)) {
+                for (String s : pk.syncPar) {
+                    UserPack p = UserProfile.getUserPack(s);
+                    if (p.save.ulkUni.containsKey(u) && p.save.ulkUni.get(u) + 1 >= f)
+                        f = p.save.ulkUni.get(u) + 2;
+                }
+            } else if (!u.getID().pack.equals(pk.getSID())) {
                 UserPack p = UserProfile.getUserPack(u.getID().pack);
                 if (p.save.ulkUni.containsKey(u) && p.save.ulkUni.get(u) + 1 >= f)
                     f = p.save.ulkUni.get(u) + 2;

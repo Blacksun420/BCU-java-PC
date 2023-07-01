@@ -181,7 +181,7 @@ public class DescPage extends Page {
     }
 
     private void getImage(boolean icon, String text) {
-        BufferedImage bimg = new Importer(text).getImg();
+        BufferedImage bimg = new Importer(text, Importer.IMP_IMG).getImg();
         if (bimg == null)
             return;
         if (icon) {

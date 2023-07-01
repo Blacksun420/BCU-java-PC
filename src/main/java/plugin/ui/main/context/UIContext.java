@@ -241,7 +241,7 @@ public abstract class UIContext {
                 return "BCU-" + ver.replace(".", "-") + ".jar";
             }
             public String getURL() {
-                return "https://github.com/Blacksun420/sun-bcu-assets/raw/main/jar/" + getArtifact();
+                return "https://raw.githubusercontent.com/Blacksun420/sun-bcu-assets/main/jar/" + getArtifact();
             }
 
             public boolean prio() {

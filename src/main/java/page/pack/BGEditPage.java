@@ -213,7 +213,7 @@ public class BGEditPage extends Page {
 	}
 
 	private void getFile(String str, Background bgr) {
-		BufferedImage bimg = new Importer(str).getImg();
+		BufferedImage bimg = new Importer(str, Importer.IMP_IMG).getImg();
 		if (bimg == null)
 			return;
 

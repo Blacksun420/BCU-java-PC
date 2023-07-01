@@ -315,9 +315,9 @@ public class ConfigPage extends Page {
 
 		vcol.addActionListener(l -> {
 			if(CommonStatic.getConfig().viewerColor != -1)
-				Opts.showColorPicker("Color pick pick", this, CommonStatic.getConfig().viewerColor);
+				Opts.showColorPicker("Pick Viewer BG Color", this, CommonStatic.getConfig().viewerColor);
 			else
-				Opts.showColorPicker("Color pick pick", this);
+				Opts.showColorPicker("Pick Viewer BG Color", this);
 		});
 
 		vres.addActionListener(l -> CommonStatic.getConfig().viewerColor = -1);

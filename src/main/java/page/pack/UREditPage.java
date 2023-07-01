@@ -356,7 +356,7 @@ public class UREditPage extends Page {
     }
 
     private void getFile(String str, boolean uni) {
-        BufferedImage bimg = new Importer(str).getImg();
+        BufferedImage bimg = new Importer(str, Importer.IMP_IMG).getImg();
         if (bimg == null)
             return;
         if (uni) {

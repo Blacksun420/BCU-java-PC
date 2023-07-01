@@ -276,7 +276,7 @@ public class Interpret extends Data {
 							bi = (UtilPC.getIcon(2, ATK_LD));
 						l.add(new ProcDisplay(Page.get(MainLocale.UTIL, "ld1") + ": " + revs + "~" + revl +
 								", " + Page.get(MainLocale.UTIL, "ld2") + ": " + Math.abs(revl - revs) +
-								" [" + Page.get(MainLocale.UTIL, "aa" + (z + 6)) + " " + j + "]", bi));
+								" [" + Page.get(MainLocale.UTIL, "aa" + (z + (me.getCounter() == null && z >= 2 ? 7 : 6))) + " " + j + "]", bi));
 					}
 				}
 		}
@@ -422,13 +422,12 @@ public class Interpret extends Data {
 					if (rev != null)
 						for (int k = 0; k < Data.PROC_TOT; k++) {
 							ProcItem item = rev.getProc().getArr(k);
-
 							if (!item.exists() || rev.getProc().sharable(k))
 								continue;
 
 							String format = ProcLang.get().get(k).format;
 							String formatted = Formatter.format(format, item, ctx);
-							l.add(new ProcDisplay(formatted + " [" + Page.get(MainLocale.UTIL, "aa" + (6 + i)) + " " + j + "]", UtilPC.getIcon(1, k), item));
+							l.add(new ProcDisplay(formatted + " [" + Page.get(MainLocale.UTIL, "aa" + ((du.getCounter() == null && i >= 2 ? 7 : 6) + i)) + " #" + j + "]", UtilPC.getIcon(1, k), item));
 						}
 				}
 		}
@@ -595,8 +594,13 @@ public class Interpret extends Data {
 			return de.isOmni();
 		else if (type == 5)
 			return de.getTBA() + (de.getAnimLen(ind) - de.getPost(false, ind)) < de.getPost(false, ind);
-		else if (type >= 6 && type <= 11)
-			return de.getSpAtks(type - 6).length != 0;
+		else if (type >= 6 && type <= 11) {
+			if (type == 8)
+				return de.getCounter() != null;
+			if (type < 8 || de.getCounter() != null)
+				return de.getSpAtks(type - 6).length != 0;
+			return de.getSpAtks(type - 7).length != 0;
+		}
 		return false;
 	}
 

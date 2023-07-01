@@ -28,7 +28,7 @@ public class UnitFilterBox extends EntityFilterBox {
 	protected final Limit lim;
 	protected final int price;
 
-	private final JList<String> rare = new JList<>(Page.get(MainLocale.UTIL, "r", 7));
+	protected final JList<String> rare = new JList<>(Page.get(MainLocale.UTIL, "r", 7));
 	private final AttList abis = new AttList(0, 0);
 	private final JScrollPane jr = new JScrollPane(rare);
 	private final JScrollPane jab = new JScrollPane(abis);

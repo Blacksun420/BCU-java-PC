@@ -41,14 +41,15 @@ public class UtilPC {
 
 		@Override
 		public long getMusicLength(Music f) {
-			if (f.data == null) {
+			if (f.data == null)
 				return -1;
-			}
 
 			try {
 				OggTimeReader otr = new OggTimeReader(f);
+				long tim = otr.getTime();
 
-				return otr.getTime();
+				otr.close();
+				return tim;
 			} catch (Exception e) {
 				e.printStackTrace();
 				return -1;

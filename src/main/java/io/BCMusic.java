@@ -230,7 +230,7 @@ public class BCMusic extends Data {
 	}
 
 	public static synchronized void setBG(Music f) {
-		if (!play)
+		if (!play || VOL_BG == 0)
 			return;
 		try {
 			if (BG != null)

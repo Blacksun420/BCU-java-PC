@@ -6,6 +6,7 @@ import common.util.unit.AbForm;
 import common.util.unit.AbUnit;
 import page.Page;
 import page.SupPage;
+import utilpc.Interpret;
 
 import javax.swing.*;
 
@@ -52,6 +53,8 @@ public class UnitFindPage extends EntityFindPage<AbForm> implements SupPage<AbUn
 					CommonStatic.getFaves().units.add(sel);
 				else
 					CommonStatic.getFaves().units.remove(sel);
+				if (((UnitFilterBox)efb).rare.isSelectedIndex(Interpret.RARITY_TOT))
+					efb.confirm();
 			}
 		});
 	}

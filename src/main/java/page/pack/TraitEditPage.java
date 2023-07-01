@@ -297,7 +297,7 @@ public class TraitEditPage extends Page {
     }
 
     private void getFile(String str) {
-        BufferedImage bimg = new Importer(str).getImg();
+        BufferedImage bimg = new Importer(str, Importer.IMP_IMG).getImg();
         if (bimg == null)
             return;
         if (bimg.getWidth() != bimg.getHeight()) {

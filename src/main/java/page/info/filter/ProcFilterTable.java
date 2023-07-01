@@ -156,11 +156,7 @@ public class ProcFilterTable extends Page {
             SwingEditor edi = (SwingEditor) e;
             edi.setVisible(b);
         }
-        @Override
-        public boolean EditorVisible(Editors.Editor e) {
-            SwingEditor edi = (SwingEditor) e;
-            return !edi.isInvisible();
-        }
+
         @Override
         public boolean isEnemy() {
             return isEnemy;

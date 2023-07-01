@@ -106,7 +106,7 @@ public class ComparePage extends Page {
         boxes[boxes.length - 1].setText("ability");
 
         for (int i = 0; i < 3; i++) {
-            CompareTable comp = new CompareTable(this, i, boxes.length);
+            CompareTable comp = new CompareTable(this, i, boxes);
             tables.add(comp);
             cont.add(comp);
         }
@@ -148,7 +148,7 @@ public class ComparePage extends Page {
         }
 
         addE.addActionListener(l -> {
-            CompareTable comp = new CompareTable(this, tables.size(), boxes.length);
+            CompareTable comp = new CompareTable(this, tables.size(), boxes);
             tables.add(comp);
             cont.add(comp);
             remE.setEnabled(true);

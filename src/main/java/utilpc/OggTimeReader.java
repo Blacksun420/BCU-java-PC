@@ -14,15 +14,13 @@ public class OggTimeReader {
 	private final InputStream fis;
 	public final boolean canUse;
 
-	public int time;
-
 	public OggTimeReader(Music mus) {
 		this.mus = mus;
 		this.fis = mus.data.getStream();
 		canUse = fis != null;
 	}
 
-	public int getNextByte() {
+	private int getNextByte() {
 		byte[] res = new byte[1];
 		try {
 			fis.read(res);
@@ -33,7 +31,7 @@ public class OggTimeReader {
 		return res[0];
 	}
 
-	public double getNextDouble() {
+	private double getNextDouble() {
 		byte[] res = new byte[8];
 		try {
 			fis.read(res);
@@ -44,7 +42,7 @@ public class OggTimeReader {
 		return ByteBuffer.wrap(res).getDouble();
 	}
 
-	public int getNextInt() {
+	private int getNextInt() {
 		byte[] res = new byte[4];
 		try {
 			fis.read(res);
@@ -59,7 +57,7 @@ public class OggTimeReader {
 		return ByteBuffer.wrap(real).getInt();
 	}
 
-	public String getNextString(int len) {
+	private String getNextString(int len) {
 		byte[] res = new byte[len];
 		try {
 			fis.read(res);
@@ -109,7 +107,11 @@ public class OggTimeReader {
 		return (long) mus.data.size() * 8 * 1000 / bitNormal;
 	}
 
-	public long getTimeWithInfo() {
+	public void close() throws IOException {
+		fis.close();
+	}
+
+	/*public long getTimeWithInfo() {
 		String start = getNextString(4);
 		if (!start.equals("OggS")) {
 			return -1;
@@ -169,9 +171,9 @@ public class OggTimeReader {
 			return -3;
 		}
 		return (long) mus.data.size() * 8 * 1000 / bitNormal;
-	}
+	}*/
 
-	public void skip(int len) {
+	private void skip(int len) {
 		try {
 			fis.skip(len);
 		} catch (IOException e) {
