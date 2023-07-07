@@ -631,8 +631,6 @@ public interface BattleBox {
 					gra.setTransform(at);
 				}
 			}
-			posx += castw * bf.sb.siz / 2;
-			Res.getBase(sb.ubase, setSym(gra, bf.sb.siz, posx, posy, 1), false);
 		}
 
 		private void drawCastleHealthIndicator(FakeGraphics gra) {
@@ -652,10 +650,10 @@ public interface BattleBox {
 				posy -= casth * bf.sb.siz * 0.95 + aux.num[5][0].getImg().getHeight() * bf.sb.siz;
 			}
 
-			Res.getBase(sb.ebase, setSym(gra, bf.sb.siz * 0.8, posx, posy, 0), bf.sb.st.trail);
+			Res.getBase(sb.ebase, setSym(gra, bf.sb.siz, posx, posy, 0), bf.sb.st.trail);
 			posy = (int) (midh - road_h * bf.sb.siz - casth * bf.sb.siz - aux.num[5][0].getImg().getHeight() * bf.sb.siz);
 			posx = (int) (((sb.st.len - 800) * ratio + off) * bf.sb.siz + sb.pos);
-			Res.getBase(sb.ubase, setSym(gra, bf.sb.siz * 0.8, posx, posy, 0), false);
+			Res.getBase(sb.ubase, setSym(gra, bf.sb.siz, posx, posy, 0), false);
 		}
 
 		private void drawEntity(FakeGraphics gra) {
