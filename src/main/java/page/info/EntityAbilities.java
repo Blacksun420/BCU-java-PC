@@ -34,7 +34,7 @@ public class EntityAbilities extends Page {
 
     private void ini() {
         boolean isEnemy = me instanceof MaskEnemy;
-        List<Interpret.ProcDisplay> ls = Interpret.getAbi(me, 0);
+        List<Interpret.ProcDisplay> ls = Interpret.getAbi(me, me.firstAtk());
         double[] mag = new double[2];
         if (lvl instanceof Level) {
             mag[0] = ((Level) lvl).getLv();
@@ -43,7 +43,7 @@ public class EntityAbilities extends Page {
             mag[0] = ((Magnification) lvl).hp * ((MaskEnemy) me).multi(BasisSet.current()) / 100;
             mag[1] = ((Magnification) lvl).atk * ((MaskEnemy) me).multi(BasisSet.current()) / 100;
         }
-        ls.addAll(Interpret.getProc(me, isEnemy, mag, 0));
+        ls.addAll(Interpret.getProc(me, isEnemy, mag, me.firstAtk()));
         proc = new JLabel[ls.size()];
 
         for (int i = 0; i < ls.size(); i++) {

@@ -2,6 +2,7 @@ package page.basis;
 
 import common.pack.UserProfile;
 import common.util.unit.Form;
+import common.util.unit.UniRand;
 import common.util.unit.Unit;
 import page.Page;
 import page.info.UnitInfoPage;
@@ -42,7 +43,7 @@ public abstract class LubCont extends Page {
 			else if (getLub().sf instanceof Form)
 				changePanel(new UnitInfoPage(this, (Unit)getLub().sf.unit(), getLub().lu.getLv(getLub().sf)));
 			else if (getLub().sf != null)
-				changePanel(new UREditPage(this, UserProfile.getUserPack(getLub().sf.getID().pack)));
+				changePanel(new UREditPage(this, UserProfile.getUserPack(getLub().sf.getID().pack), (UniRand)getLub().sf));
 	}
 
 	@Override

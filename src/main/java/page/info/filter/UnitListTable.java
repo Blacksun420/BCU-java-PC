@@ -53,7 +53,7 @@ public class UnitListTable extends EntityListTable<AbForm> {
 			Node<Unit> n = Node.getList(UserProfile.getAll((((Form) e).unit.id.pack), Unit.class), ((Form) e).unit);
 			MainFrame.changePanel(new UnitInfoPage(page, n));
 		} else if (e instanceof UniRand)
-			MainFrame.changePanel(new UREditPage(page, UserProfile.getUserPack(e.getID().pack)));
+			MainFrame.changePanel(new UREditPage(page, UserProfile.getUserPack(e.getID().pack), (UniRand)e));
 	}
 
 	@Override
@@ -102,15 +102,15 @@ public class UnitListTable extends EntityListTable<AbForm> {
 			else if (c == 4)
 				return du.getHb();
 			else if (c == 5)
-				return (int) (Math.round(du.allAtk(0) * mul) * atk);
+				return (int) (Math.round(du.allAtk(du.firstAtk()) * mul) * atk);
 			else if (c == 6)
 				return du.getRange();
 			else if (c == 7)
 				return du.getSpeed();
 			else if (c == 8)
-				return itv == -1 ? "Corrupted" : (int) (du.allAtk(0) * mul * atk * 30 / itv);
+				return itv == -1 ? "Corrupted" : (int) (du.allAtk(du.firstAtk()) * mul * atk * 30 / itv);
 			else if (c == 9)
-				return du.getAtkModel(0, 0).getPre();
+				return du.getAtkModel(du.firstAtk(), 0).getPre();
 			else if (c == 10)
 				return b.t().getFinRes(du.getRespawn());
 			else if (c == 11)

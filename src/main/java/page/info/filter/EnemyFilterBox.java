@@ -133,7 +133,7 @@ public class EnemyFilterBox extends EntityFilterBox {
 
 		boolean b3 = unchangeable(2);
 		for (int i : atkt.getSelectedIndices()) {
-			b3 = processOperator(2, isType(e.de, i, 0));
+			b3 = processOperator(2, isType(e.de, i));
 			if (b3 != unchangeable(2))
 				break;
 		}

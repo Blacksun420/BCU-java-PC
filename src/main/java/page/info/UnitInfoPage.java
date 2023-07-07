@@ -1,6 +1,7 @@
 package page.info;
 
 import common.battle.BasisSet;
+import common.pack.Identifier;
 import common.system.Node;
 import common.util.unit.Level;
 import common.util.unit.Unit;
@@ -37,14 +38,14 @@ public class UnitInfoPage extends Page {
 
 		info = new UnitInfoTable[u.forms.length];
 		for (int i = 0; i < info.length; i++)
-			info[i] = new UnitInfoTable(this, n.val.forms[i], lvs);
+			info[i] = new UnitInfoTable(this, n.val.forms[i], lvs, !u.id.pack.equals(Identifier.DEF));
 		trea = new TreaTable(this);
 		ini();
 		resized();
 	}
 
 	public UnitInfoPage(Page p, Node<Unit> de) {
-		this(p, de, BasisSet.current(), false);
+		this(p, de, BasisSet.current(), !de.val.id.pack.equals(Identifier.DEF));
 	}
 
 	private UnitInfoPage(Page p, Node<Unit> de, BasisSet bas, boolean sp) {
@@ -122,7 +123,7 @@ public class UnitInfoPage extends Page {
 
 		extr.addActionListener(arg0 -> {
 			for (UnitInfoTable inf : info) {
-				inf.setDisplaySpecial(extr.isSelected());
+				inf.displaySpecial = extr.isSelected();
 			}
 		});
 	}

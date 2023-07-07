@@ -5,6 +5,7 @@ import common.battle.BasisLU;
 import common.battle.BasisSet;
 import common.battle.Treasure;
 import common.battle.data.*;
+import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.Data;
 import common.util.Data.Proc.ProcItem;
@@ -14,6 +15,7 @@ import common.util.stage.MapColc;
 import common.util.stage.MapColc.DefMapColc;
 import common.util.unit.Combo;
 import common.util.unit.Enemy;
+import common.util.unit.Trait;
 import main.MainBCU;
 import page.MainLocale;
 import page.Page;
@@ -435,6 +437,18 @@ public class Interpret extends Data {
 		return l;
 	}
 
+	public static String[] getTrait(SortedPackSet<Trait> trs) {
+		String[] TraitBox = new String[trs.size()];
+		for (int i = 0; i < TraitBox.length; i++) {
+			Trait trait = trs.get(i);
+			if (trait.BCTrait())
+				TraitBox[i] = Interpret.TRAIT[trait.id.id];
+			else
+				TraitBox[i] = trait.name;
+		}
+		return TraitBox;
+	}
+
 	public static String getTrait(String[] cTraits, int star) {
 		StringBuilder ans = new StringBuilder();
 		for (String cTrait : cTraits) ans.append(cTrait).append(", ");
@@ -442,10 +456,8 @@ public class Interpret extends Data {
 			ans.append(STAR[star]);
 
 		String res = ans.toString();
-
-		if(res.endsWith(", ")) {
+		if(res.endsWith(", "))
 			res = res.substring(0, res.length() - 2);
-		}
 
 		return res;
 	}
@@ -580,7 +592,8 @@ public class Interpret extends Data {
 		return false;
 	}
 
-	public static boolean isType(MaskEntity de, int type, int ind) {
+	public static boolean isType(MaskEntity de, int type) {
+		int ind = de.firstAtk();
 		MaskAtk[] atks = de.getAtks(ind);
 		if (type == 0)
 			return !de.isRange(ind);

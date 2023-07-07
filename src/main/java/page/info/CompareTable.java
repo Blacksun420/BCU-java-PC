@@ -41,8 +41,8 @@ public class CompareTable extends Page {
     private final JBTN[] swap = new JBTN[2];
 
     private final ComparePage par;
-    private Character maskEntities;
-    private LevelInterface maskEntityLvl;
+    private Character Ent;
+    private LevelInterface Lvl;
     private boolean resize = true;
 
     protected final boolean[] seles = new boolean[main.length + unit.length + 4];
@@ -98,17 +98,17 @@ public class CompareTable extends Page {
         for (byte i = 0; i < 2 ; i++) {
             byte FI = i;
             swap[i].addActionListener(x -> {
-                Form oldf = (Form) maskEntities;
+                Form oldf = (Form) Ent;
                 int fid = oldf.fid;
                 Form f = oldf.uid.get().getForms()[(FI == 1 ? fid + 1 : fid - 1) % oldf.unit.forms.length];
 
                 int[] data = CommonStatic.parseIntsN(level.getText());
-                maskEntityLvl = f.regulateLv(Level.lvList(f.unit, data, null), (Level) maskEntityLvl);
+                Lvl = f.regulateLv(Level.lvList(f.unit, data, null), (Level) Lvl);
 
-                String[] strs = UtilPC.lvText(f, (Level) maskEntityLvl);
+                String[] strs = UtilPC.lvText(f, (Level) Lvl);
                 level.setText(strs[0]);
 
-                maskEntities = f;
+                Ent = f;
                 reset();
             });
         }
@@ -118,21 +118,21 @@ public class CompareTable extends Page {
             public void focusLost(FocusEvent e) {
                 int[] data = CommonStatic.parseIntsN(level.getText().trim().replace("%", ""));
 
-                if (maskEntities instanceof Enemy) {
+                if (Ent instanceof Enemy) {
                     if (data.length == 1) {
                         if (data[0] > 0)
-                            ((Magnification) maskEntityLvl).hp = ((Magnification) maskEntityLvl).atk = data[0];
+                            ((Magnification) Lvl).hp = ((Magnification) Lvl).atk = data[0];
                     } else if (data.length >= 2) {
                         if (data[0] > 0)
-                            ((Magnification) maskEntityLvl).hp = data[0];
+                            ((Magnification) Lvl).hp = data[0];
                         if (data[1] > 0)
-                            ((Magnification) maskEntityLvl).atk = data[1];
+                            ((Magnification) Lvl).atk = data[1];
                     }
-                    level.setText(CommonStatic.toArrayFormat(((Magnification) maskEntityLvl).hp, ((Magnification) maskEntityLvl).atk) + "%");
+                    level.setText(CommonStatic.toArrayFormat(((Magnification) Lvl).hp, ((Magnification) Lvl).atk) + "%");
                 } else {
-                    Form f = (Form) maskEntities;
-                    maskEntityLvl = f.regulateLv(Level.lvList(f.unit, data, null), (Level) maskEntityLvl);
-                    String[] strs = UtilPC.lvText(f, (Level) maskEntityLvl);
+                    Form f = (Form) Ent;
+                    Lvl = f.regulateLv(Level.lvList(f.unit, data, null), (Level) Lvl);
+                    String[] strs = UtilPC.lvText(f, (Level) Lvl);
                     level.setText(strs[0]);
                 }
                 reset();
@@ -141,7 +141,7 @@ public class CompareTable extends Page {
     }
 
     protected void reset() {
-        if (maskEntities == null) {
+        if (Ent == null) {
             abilityPanes.setViewportView(null);
             abilityPanes.setEnabled(false);
 
@@ -168,13 +168,13 @@ public class CompareTable extends Page {
             return;
         }
         boolean state = level.isEnabled();
-        MaskEntity me = maskEntities.getMask();
-        boolean isEnemy = maskEntities instanceof Enemy;
+        MaskEntity me = Ent.getMask();
+        boolean isEnemy = Ent instanceof Enemy;
         int hp = me.getHp();
         int atk = 0, eatk = 0;
         double mul, mula = 1;
 
-        MaskAtk[] atkData = maskEntities.getMask().getAtks(0);
+        MaskAtk[] atkData = Ent.getMask().getAtks(Ent.getMask().firstAtk());
         StringBuilder atkString = new StringBuilder();
         StringBuilder preString = new StringBuilder();
         List<Trait> DefTraits = UserProfile.getBCData().traits.getList();
@@ -184,9 +184,9 @@ public class CompareTable extends Page {
         if (isEnemy) {
             MaskEnemy enemy = (MaskEnemy)me;
             if (!state)
-                maskEntityLvl = new Magnification(100, 100);
-            hp *= (((Magnification) maskEntityLvl).hp * enemy.multi(b)) / 100.0;
-            mul = (((Magnification) maskEntityLvl).atk * enemy.multi(b)) / 100.0;
+                Lvl = new Magnification(100, 100);
+            hp *= (((Magnification) Lvl).hp * enemy.multi(b)) / 100.0;
+            mul = (((Magnification) Lvl).atk * enemy.multi(b)) / 100.0;
             enem.setText(Math.floor(enemy.getDrop() * b.t().getDropMulti()) / 100 + "");
             for (JL jls : unit)
                 jls.setText("-");
@@ -198,10 +198,10 @@ public class CompareTable extends Page {
             for (JBTN btn : swap)
                 btn.setEnabled(false);
         } else {
-            Level multi = (Level)(state ? maskEntityLvl : (maskEntityLvl = ((MaskUnit) me).getPack().unit.getPrefLvs()));
+            Level multi = (Level)(state ? Lvl : (Lvl = ((MaskUnit) me).getPack().unit.getPrefLvs()));
             MaskUnit mu = (((MaskUnit) me).getPCoin() != null) ? ((MaskUnit) me).getPCoin().improve(multi.getTalents()) : (MaskUnit) me;
             me = mu;
-            Form f = (Form)maskEntities;
+            Form f = (Form) Ent;
 
             abilityPanes.setViewportView(abilities = new EntityAbilities(getFront(), mu, multi));
             mul = f.unit.lv.getMult(multi.getTotalLv());
@@ -247,7 +247,7 @@ public class CompareTable extends Page {
             for (JBTN btn : swap)
                 btn.setEnabled(f.unit.forms.length > 1);
         }
-        abilityPanes.setViewportView(abilities = new EntityAbilities(getFront(), me, maskEntityLvl));
+        abilityPanes.setViewportView(abilities = new EntityAbilities(getFront(), me, Lvl));
         for (MaskAtk atkDatum : atkData) {
             if (atkString.length() > 0) {
                 atkString.append(" / ");
@@ -255,7 +255,7 @@ public class CompareTable extends Page {
             }
             int att = (int)(Math.round(atkDatum.getAtk() * mul) * mula);
             if (!isEnemy && ((MaskUnit)me).getPCoin() != null)
-                att = (int) (att * ((MaskUnit)me).getPCoin().getStatMultiplication(Data.PC2_ATK, ((Level)maskEntityLvl).getTalents()));
+                att = (int) (att * ((MaskUnit)me).getPCoin().getStatMultiplication(Data.PC2_ATK, ((Level) Lvl).getTalents()));
             atkString.append(att);
             preString.append(MainBCU.convertTime(atkDatum.getPre()));
 
@@ -278,7 +278,7 @@ public class CompareTable extends Page {
         }
         int effectiveHP = hp;
         if (traits.size() > 0 && me.getProc().DEFINC.mult != 0)
-            effectiveHP /= isEnemy ? 100.0/me.getProc().DEFINC.mult : b.t().getDEF(me.getProc().DEFINC.mult, traits, traits, null, (Level)maskEntityLvl);
+            effectiveHP /= isEnemy ? 100.0/me.getProc().DEFINC.mult : b.t().getDEF(me.getProc().DEFINC.mult, traits, traits, null, (Level) Lvl);
 
         if (spTraits.contains(DefTraits.get(Data.TRAIT_WITCH)) && (me.getAbi() & Data.AB_WKILL) > 0)
             effectiveHP /= b.t().getWKDef();
@@ -300,47 +300,39 @@ public class CompareTable extends Page {
 
         abilityPanes.setEnabled(true);
         level.setEnabled(true);
-        names.setIcon(UtilPC.getIcon(maskEntities.getIcon()));
-        names.setText(maskEntities.toString());
+        names.setIcon(UtilPC.getIcon(Ent.getIcon()));
+        names.setText(Ent.toString());
 
         main[1].setText(me.getHb() + "");
         main[2].setText(me.getRange() + "");
         main[3].setText(atkString.toString());
         main[5].setText(preString.toString());
-        main[6].setText(MainBCU.convertTime(me.getPost(false, 0)));
-        main[7].setText(MainBCU.convertTime(me.getItv(0)));
+        main[6].setText(MainBCU.convertTime(me.getPost(false, me.firstAtk())));
+        main[7].setText(MainBCU.convertTime(me.getItv(me.firstAtk())));
         main[8].setText(MainBCU.convertTime(me.getTBA()));
         main[9].setText(me.getSpeed() + "");
 
-        SortedPackSet<Trait> trs = me.getTraits();
-        String[] TraitBox = new String[trs.size()];
-        for (int t = 0; t < trs.size(); t++) {
-            Trait trait = trs.get(t);
-            if (trait.BCTrait())
-                TraitBox[t] = Interpret.TRAIT[trait.id.id];
-            else
-                TraitBox[t] = trait.name;
-        }
-        seco.setText(Interpret.getTrait(TraitBox, maskEntities instanceof MaskEnemy ? ((MaskEnemy) maskEntities).getStar() : 0));
+        String[] TraitBox = Interpret.getTrait(me.getTraits());
+        seco.setText(Interpret.getTrait(TraitBox, Ent instanceof MaskEnemy ? ((MaskEnemy) Ent).getStar() : 0));
 
         requireResize();
     }
 
     protected void renewEnemy(Enemy ene) {
-        maskEntities = ene;
-        if (!(maskEntityLvl instanceof Magnification))
-            maskEntityLvl = new Magnification(100, 100);
-        level.setText(CommonStatic.toArrayFormat(((Magnification) maskEntityLvl).hp, ((Magnification) maskEntityLvl).atk) + "%");
+        Ent = ene;
+        if (!(Lvl instanceof Magnification))
+            Lvl = new Magnification(100, 100);
+        level.setText(CommonStatic.toArrayFormat(((Magnification) Lvl).hp, ((Magnification) Lvl).atk) + "%");
     }
 
     protected void renewUnit(Form f) {
-        maskEntities = f;
-        if (!(maskEntityLvl instanceof Level)) {
+        Ent = f;
+        if (!(Lvl instanceof Level)) {
             Level lvs = f.unit.getPrefLvs();
-            maskEntityLvl = lvs.clone();
+            Lvl = lvs.clone();
         } else
-            maskEntityLvl = f.regulateLv(Level.lvList(f.unit, CommonStatic.parseIntsN(level.getText()), null), (Level)maskEntityLvl);
-        level.setText(UtilPC.lvText(f, (Level) maskEntityLvl)[0]);
+            Lvl = f.regulateLv(Level.lvList(f.unit, CommonStatic.parseIntsN(level.getText()), null), (Level) Lvl);
+        level.setText(UtilPC.lvText(f, (Level) Lvl)[0]);
     }
 
     private void addStatLabels() {

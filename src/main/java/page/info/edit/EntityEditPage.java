@@ -232,6 +232,7 @@ public abstract class EntityEditPage extends Page implements EntSupInt {
 		if (ce.getAtkTypeCount() > 1) {
 			add(jsh);
 			set(josh);
+			atkS.setSelectedIndex(ce.firstAtk());
 		}
 		add(aet);
 		add(jspm);
@@ -283,7 +284,7 @@ public abstract class EntityEditPage extends Page implements EntSupInt {
 				+ "use name \"resurface\" for attack during burrow up animation<br>"
 				+ "use name \"revive\" for attack during reviving</html>");
 		ftp.setToolTipText(
-				"<html>" + "+1 for normal attack<br>" + "+2 to attack kb<br>" + "+4 to attack underground<br>"
+				"<html>Modify unit's enemy detection<br>" + "+1 for normal attack<br>" + "+2 to attack kb<br>" + "+4 to attack underground<br>"
 						+ "+8 to attack corpse<br>" + "+16 to attack soul<br>" + "+32 to attack ghost<br>" +
 						"+64 to attack entities that can revive others<br>" + "+128 to attack enter animations</html>");
 		fwp.setToolTipText(
@@ -449,6 +450,14 @@ public abstract class EntityEditPage extends Page implements EntSupInt {
 		mpt.setData(ce.rep.proc);
 
 		int ind = jli.getSelectedIndex();
+		josh.setVisible(pack.editable && !isSp());
+
+		aet.setVisible(getSelMask() != null);
+		apt.setVisible(getSelMask() != null);
+		add.setEnabled(getSelMask() != null);
+		rem.setEnabled(getSelMask() != null);
+		copy.setEnabled(getSelMask() != null);
+		link.setEnabled(getSelMask() != null);
 		if (isSp()) {
 			extra.clear();
 			for (AtkDataModel[] atks : ce.getSpAtks(true))
@@ -457,13 +466,14 @@ public abstract class EntityEditPage extends Page implements EntSupInt {
 
 			if (ind >= extra.size())
 				ind = extra.size() - 1;
-		} else {
+		} else if (ce.hits.get(getSel()) != null) {
 			AtkDataModel[] raw = (AtkDataModel[])ce.getAtks(getSel());
 			jli.setListData(raw);
 			if (ind >= raw.length)
 				ind = raw.length - 1;
 			josh.setText("" + ce.getShare(getSel()));
-		}
+		} else
+			josh.setText("" + 0);
 		if (ind < 0)
 			ind = 0;
 		setA(ind);
@@ -557,7 +567,7 @@ public abstract class EntityEditPage extends Page implements EntSupInt {
 					atkS.setSelectedIndex(ce.getAtkTypeCount() - 1);
 				else
 					jli.setSelectedIndex(0);
-			} else if (jli.getSelectedIndex() >= getSelMask().length)
+			} else if (getSelMask() == null || jli.getSelectedIndex() >= getSelMask().length)
 				jli.setSelectedIndex(0);
 			setData(ce);
 			changing = false;
@@ -836,8 +846,23 @@ public abstract class EntityEditPage extends Page implements EntSupInt {
 						v[0] = 50;
 					ce.will = v[0] - 1;
 				}
-				if (jtf == josh)
-					ce.share[getSel()] = Math.max(1, v[0]);
+				if (jtf == josh) {
+					boolean nz = v[0] == 0;
+					if (nz)
+						for (int i = 0; i < ce.share.length; i++)
+							if (ce.share[i] > 0) {
+								nz = false;
+								break;
+							}
+					ce.share[getSel()] = Math.max(nz ? 1 : 0, v[0]); //TODO - Adapt BCU for null atkdatamodels
+					if (ce.share[getSel()] == 0)
+						ce.hits.set(getSel(), null);
+					else if (ce.hits.get(getSel()) == null) {
+						AtkDataModel[] adm = new AtkDataModel[1];
+						adm[0] = new AtkDataModel(ce);
+						ce.hits.set(getSel(), adm);
+					}
+				}
 
 				getInput(jtf, v);
 			}
@@ -924,6 +949,9 @@ public abstract class EntityEditPage extends Page implements EntSupInt {
 	}
 
 	private void setA(int ind) {
+		if (getSelMask() == null)
+			return;
+
 		setA(get(ind));
 		boolean b = pack.editable && ind < getSelMask().length;
 		link.setEnabled(b);

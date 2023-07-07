@@ -89,6 +89,11 @@ public class UREditPage extends Page {
         resized();
     }
 
+    public UREditPage(Page p, UserPack pac, UniRand u) {
+        this(p, pac);
+        jlu.setSelectedValue(u, true);
+    }
+
     @Override
     public JButton getBackButton() {
         return back;

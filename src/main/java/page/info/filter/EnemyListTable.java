@@ -93,17 +93,17 @@ public class EnemyListTable extends EntityListTable<AbEnemy> {
 			else if (c == 3)
 				return e.de.getHb();
 			else if (c == 4)
-				return e.de.allAtk(0);
+				return e.de.allAtk(e.de.firstAtk());
 			else if (c == 5)
 				return e.de.getRange();
 			else if (c == 6)
-				return e.anim != null ? e.de.getItv(0) : "Corrupted";
+				return e.anim != null ? e.de.getItv(e.de.firstAtk()) : "Corrupted";
 			else if (c == 7)
 				return e.de.getSpeed();
 			else if (c == 8)
 				return Math.floor(e.de.getDrop() * b.t().getDropMulti()) / 100;
 			else if (c == 9)
-				return e.de.getAtkModel(0, 0).getPre();
+				return e.de.getAtkModel(e.de.firstAtk(), 0).getPre();
 			else if (c == 10)
 				return (int) ((long) e.de.allAtk(0) * 30 / e.de.getItv(0));
 			else if (c == 11)
