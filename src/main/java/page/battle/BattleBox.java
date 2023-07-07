@@ -652,7 +652,7 @@ public interface BattleBox {
 
 			Res.getBase(sb.ebase, setSym(gra, bf.sb.siz * 0.8, posx, posy, 0), bf.sb.st.trail);
 			posy = (int) (midh - road_h * bf.sb.siz - casth * bf.sb.siz - aux.num[5][0].getImg().getHeight() * bf.sb.siz);
-			posx = (int) (((sb.st.len - 750) * ratio + off) * bf.sb.siz + sb.pos);
+			posx = (int) (((sb.st.len - 800) * ratio + off) * bf.sb.siz + sb.pos);
 			Res.getBase(sb.ubase, setSym(gra, bf.sb.siz * 0.8, posx, posy, 0), false);
 		}
 
