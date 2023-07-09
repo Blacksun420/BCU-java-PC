@@ -109,6 +109,7 @@ public abstract class CharacterInfoTable extends Page {
             add(prevatk);
             prevatk.setEnabled(false);
             add(atkind);
+            atkind.setHorizontalAlignment(SwingConstants.CENTER);
             add(nextatk);
         }
     }
@@ -147,7 +148,7 @@ public abstract class CharacterInfoTable extends Page {
      * Make sure to also call reset() after finishing with overriden resetAtk(). Not called now as proc doesn't get initialized
      */
     protected void resetAtk() {
-        atkind.setText(get(MainLocale.PAGE, "atk") + " " + dispAtk);
+        atkind.setText(get(MainLocale.PAGE, "atk") + " " + (dispAtk + 1));
         if (atks != null)
             for (JL[] atk : atks)
                 for (JL jl : atk)
@@ -181,7 +182,7 @@ public abstract class CharacterInfoTable extends Page {
                 atks[i][6].setText(MainLocale.INFO, "type");
                 atks[i][7].setText(matk.getTarget() + "");
                 atks[i][8].setText(MainLocale.INFO, "count");
-                atks[i][9].setText(matk.loopCount() + "");
+                atks[i][9].setText(matk.loopCount() < 0 ? get(MainLocale.UTIL, "inf") : matk.loopCount() + "");
 
                 atks[i][10].setText(MainLocale.INFO, "ability");
                 StringBuilder abis = new StringBuilder();
@@ -240,7 +241,7 @@ public abstract class CharacterInfoTable extends Page {
 
         if (multiAtk) {
             set(prevatk, x, y, 0, h, 400, 50);
-            set(atkind, x, y, 700, h, 300, 50);
+            set(atkind, x, y, 600, h, 400, 50);
             set(nextatk, x, y, 1200, h, 400, 50);
             h += 50;
         }

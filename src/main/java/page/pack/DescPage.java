@@ -56,7 +56,7 @@ public class DescPage extends Page {
         add(pauth);
         pauth.setText(pack.desc.getAuthor().isEmpty() ? "No Author" : "By " + pack.desc.author);
         add(pdate);
-        pdate.setText(pack.desc.creationDate == null ? "Unknown Creation Date" : get(MainLocale.PAGE, "cdate") + Interpret.translateDate(pack.desc.creationDate));
+        pdate.setText(pack.desc.creationDate == null ? get(MainLocale.PAGE, "ucdate") : get(MainLocale.PAGE, "cdate") + Interpret.translateDate(pack.desc.creationDate));
         if (!pack.editable) {
             add(panim);
             panim.setText((pack.desc.parentPassword == null ? "Parentable, " : "Unparentable, ") + "anims " +  (pack.desc.allowAnim ? "copyable" : "uncopyable"));
@@ -65,7 +65,7 @@ public class DescPage extends Page {
             add(pbcuver);
             pbcuver.setText("Core Ver: " + pack.desc.BCU_VERSION + (pack.desc.FORK_VERSION > 0 ? " " + pack.desc.FORK_VERSION + "f" : ""));
             add(pdatexp);
-            pdatexp.setText(pack.desc.exportDate == null ? "Unknown Export Date" : get(MainLocale.PAGE, "edate") + Interpret.translateDate(pack.desc.exportDate));
+            pdatexp.setText(pack.desc.exportDate == null ? get(MainLocale.PAGE, "uedate") : get(MainLocale.PAGE, "edate") + Interpret.translateDate(pack.desc.exportDate));
         } else {
             add(tver);
             tver.setText("Version " + pack.desc.version);

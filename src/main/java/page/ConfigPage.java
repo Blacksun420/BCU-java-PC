@@ -72,7 +72,7 @@ public class ConfigPage extends Page {
 	private final JBTN vres = new JBTN(MainLocale.PAGE, "viewreset");
 	private final JCB excont = new JCB(MainLocale.PAGE, "excont");
 	private final JL autosave = new JL(MainLocale.PAGE, "autosave");
-	private final JTF savetime = new JTF(MainBCU.autoSaveTime > 0 ? MainBCU.autoSaveTime + "min" : "deactivated");
+	private final JTF savetime = new JTF(MainBCU.autoSaveTime > 0 ? MainBCU.autoSaveTime + "min" : get(MainLocale.PAGE, "deactivated"));
 	private final JCB reallv = new JCB(MainLocale.PAGE, "reallv");
 	private final JCB pkprog = new JCB(MainLocale.PAGE, "pkprog");
 
@@ -325,7 +325,7 @@ public class ConfigPage extends Page {
 
 		savetime.setLnr(c -> {
 			MainBCU.autoSaveTime = Math.max(0, CommonStatic.parseIntN(savetime.getText()));
-			savetime.setText(MainBCU.autoSaveTime > 0 ? MainBCU.autoSaveTime + "min" : "deactivated");
+			savetime.setText(MainBCU.autoSaveTime > 0 ? MainBCU.autoSaveTime + "min" : get(MainLocale.PAGE, "deactivated"));
 			MainBCU.restartAutoSaveTimer();
 		});
 		shake.addActionListener(c -> CommonStatic.getConfig().shake = shake.isSelected());
