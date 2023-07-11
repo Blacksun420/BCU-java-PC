@@ -148,7 +148,7 @@ public abstract class CharacterInfoTable extends Page {
      * Make sure to also call reset() after finishing with overriden resetAtk(). Not called now as proc doesn't get initialized
      */
     protected void resetAtk() {
-        atkind.setText(get(MainLocale.PAGE, "atk") + " " + (dispAtk + 1));
+        atkind.setText(get(MainLocale.PAGE, "atk") + " " + (dispAtk + 1) + " (" + get(MainLocale.INFO, "er2") + ": " + c.getMask().getShare(dispAtk) + ")");
         if (atks != null)
             for (JL[] atk : atks)
                 for (JL jl : atk)
