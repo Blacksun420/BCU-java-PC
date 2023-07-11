@@ -171,11 +171,12 @@ public class Opts {
 		int result = JOptionPane.showConfirmDialog(null, panel, title, JOptionPane.OK_CANCEL_OPTION);
 
 		if(result == JOptionPane.OK_OPTION) {
-			Object[] res = new Object[3];
+			Object[] res = new Object[4];
 
 			res[0] = text.getText();
 			res[1] = check.isSelected();
 			res[2] = !parentCheck.isSelected() ? parentText.getText() : null;
+			res[3] = true; //test
 
 			return res;
 		} else {

@@ -6,6 +6,7 @@ import common.battle.data.AtkDataModel;
 import common.battle.data.CustomEnemy;
 import common.battle.data.CustomUnit;
 import common.io.PackLoader;
+import common.io.json.JsonEncoder;
 import common.pack.*;
 import common.pack.Context.ErrType;
 import common.pack.PackData.UserPack;
@@ -350,17 +351,17 @@ public class PackEditPage extends Page {
 		extr.setLnr(x -> {
 			if (pac.editable) {
 				Object[] result = Opts.showTextCheck("Password", "Decide the password of pack : ", pac.desc.allowAnim);
-
 				if (result == null)
 					return;
 
 				String password = (String) result[0];
 				String parentPassword = (String) result[2];
-
 				pac.desc.allowAnim = (boolean) result[1];
+				JsonEncoder.backCompat = (boolean) result[3];
 
 				CommonStatic.ctx.noticeErr(() -> ((Workspace) pac.source).export(pac, password, parentPassword, (d) -> {
 				}), ErrType.WARN, "failed to export pack");
+				JsonEncoder.backCompat = false;
 			}
 		});
 

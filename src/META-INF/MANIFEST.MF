@@ -29,3 +29,4 @@ Class-Path: BCU_lib/jetty-6.1.26.jar BCU_lib/jogl-all-2.4.0-natives-linu
  .4.0-natives-android-aarch64.jar BCU_lib/failureaccess-1.0.1.jar BCU_li
  b/httpclient-4.5.13.jar BCU_lib/vorbisspi-1.0.3.3.jar BCU_lib/gluegen-r
  t-2.4.0-natives-linux-amd64.jar BCU_lib/flatlaf-2.3.jar BCU_lib/flatlaf-intellij-themes-2.3.jar
+ BCU_lib/guava-20.0.jar
