@@ -14,10 +14,7 @@ import common.util.anim.Part;
 import common.util.unit.Enemy;
 import main.MainBCU;
 import main.Opts;
-import page.JBTN;
-import page.JTF;
-import page.MainLocale;
-import page.Page;
+import page.*;
 import page.support.AnimTreeRenderer;
 import page.support.Exporter;
 import page.support.Importer;
@@ -34,7 +31,6 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -42,7 +38,7 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JTF jtf = new JTF();
+	private final JTF name = new JTF();
 	private final JTF resz = new JTF("resize to: _%");
 	private final JBTN back = new JBTN(0, "back");
 	private final JBTN add = new JBTN(0, "add");
@@ -51,9 +47,10 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 	private final JBTN addl = new JBTN(0, "addl");
 	private final JBTN reml = new JBTN(0, "reml");
 	private final JBTN relo = new JBTN(0, "relo");
+	private final JBTN save = new JBTN(0, "saveimg");
 	private final JBTN impt = new JBTN(0, "import");
 	private final JBTN expt = new JBTN(0, "export");
-	private final JBTN ico = new JBTN(0, "icon");
+	private final JBTN ico = new JBTN(0, "icondi");
 	private final JBTN loca = new JBTN(0, "localize");
 	private final JBTN merg = new JBTN(0, "merge");
 	private final JBTN spri = new JBTN(0, "sprite");
@@ -99,7 +96,7 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 	@Override
 	public void callBack(Object o) {
 		changing = true;
-		if (sb.sele >= 0) {
+		if (o instanceof SpriteBox && sb.sele >= 0) {
 			icet.getSelectionModel().setSelectionInterval(sb.sele, sb.sele);
 			int h = icet.getRowHeight();
 			icet.scrollRectToVisible(new Rectangle(0, h * sb.sele, 1, h));
@@ -127,36 +124,6 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 	}
 
 	@Override
-	protected void keyTyped(KeyEvent ke) {
-		if (ke.getSource() == sb)
-			sb.keyTyped(ke);
-	}
-
-	@Override
-	protected void mouseDragged(MouseEvent me) {
-		if (me.getSource() == sb)
-			sb.mouseDragged(me);
-	}
-
-	@Override
-	protected void mousePressed(MouseEvent me) {
-		if (me.getSource() == sb)
-			sb.mousePressed(me.getPoint());
-	}
-
-	@Override
-	protected void mouseReleased(MouseEvent me) {
-		if (me.getSource() == sb)
-			sb.mouseReleased(me.getPoint());
-	}
-
-	@Override
-	protected void mouseWheel(MouseEvent e) {
-		if(e.getSource() == sb)
-			sb.mouseWheel(e);
-	}
-
-	@Override
 	protected void renew() {
 		if (sep != null && Opts.conf("Do you want to save edited sprite?")) {
 			icet.anim.setNum(MainBCU.builder.build(sep.getEdit()));
@@ -181,7 +148,7 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 		set(loca, x, y, 650, 300, 200, 50);
 		set(merg, x, y, 400, 350, 200, 50);
 		set(spri, x, y, 650, 350, 200, 50);
-		set(jtf, x, y, 400, 100, 200, 50);
+		set(name, x, y, 400, 100, 200, 50);
 		set(copy, x, y, 650, 100, 200, 50);
 		set(addl, x, y, 400, 500, 200, 50);
 		set(reml, x, y, 650, 500, 200, 50);
@@ -189,8 +156,10 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 		set(sb, x, y, 900, 100, 1400, 900);
 		set(ico, x, y, 900, 1050, 200, 50);
 		set(icon, x, y, 1150, 1050, 200, 50);
-		set(uni, x, y, 925, 1100, 200, 200); // one day... the ui will be better... another day...
-		set(white, x, y, 1500, 1050, 200, 50);
+		set(uni, x, y, 925, 1100, 200, 200);
+		set(white, x, y, 1400, 1050, 200, 50);
+		set(save, x, y, 1400, 1150, 200, 50);
+
 		SwingUtilities.invokeLater(() -> jta.setUI(new TreeNodeExpander(jta)));
 		aep.componentResized(x, y);
 		icet.setRowHeight(size(x, y, 50));
@@ -272,14 +241,14 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 
 		});
 
-		jtf.addFocusListener(new FocusAdapter() {
+		name.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent arg0) {
 				changing = true;
-				String str = CommonStatic.verifyFileName(jtf.getText().trim());
+				String str = CommonStatic.verifyFileName(name.getText().trim());
 				if (str.length() == 0 || icet.anim == null || icet.anim.id.id.equals(str)) {
 					if (icet.anim != null)
-						jtf.setText(icet.anim.id.id);
+						name.setText(icet.anim.id.id);
 					changing = false;
 					return;
 				}
@@ -296,7 +265,7 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 				} else {
 					str = AnimCE.getAvailable(str, icet.anim.id.base);
 					icet.anim.renameTo(str);
-					jtf.setText(str);
+					name.setText(str);
 				}
 				changing = false;
 			}
@@ -366,10 +335,10 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 			icet.anim.ICedited();
 		});
 
+		save.addActionListener(arg0 -> icet.anim.saveImg());
+
 		ico.addActionListener(arg0 -> {
 			BufferedImage bimg = new Importer("select icon image", Importer.IMP_IMG).getImg();
-			if (bimg == null)
-				return;
 			int selection = Opts.selection("What icon is this for?",
 					"Select Icon Type",
 					"Display icon",
@@ -568,7 +537,7 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 		add(copy);
 		add(addl);
 		add(reml);
-		add(jtf);
+		add(name);
 		add(sb);
 		add(impt);
 		add(expt);
@@ -579,8 +548,14 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 		add(spri);
 		add(white);
 		add(uni);
+		icon.setVerticalAlignment(SwingConstants.CENTER);
+		icon.setHorizontalAlignment(SwingConstants.CENTER);
+		icon.setBorder(BorderFactory.createEtchedBorder());
+		uni.setVerticalAlignment(SwingConstants.CENTER);
+		uni.setHorizontalAlignment(SwingConstants.CENTER);
+		uni.setBorder(BorderFactory.createEtchedBorder());
 		add.setEnabled(aep.focus == null);
-		jtf.setEnabled(aep.focus == null);
+		name.setEnabled(aep.focus == null);
 		relo.setEnabled(aep.focus == null);
 		jta.setCellRenderer(new AnimTreeRenderer());
 		SwingUtilities.invokeLater(() -> jta.setUI(new TreeNodeExpander(jta)));
@@ -597,13 +572,16 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 		changing = true;
 		aep.setAnim(anim);
 		addl.setEnabled(anim != null);
-		resz.setEditable(anim != null);
+		save.setEnabled(anim != null);
+		resz.setEnabled(anim != null);
+		relo.setEnabled(anim != null);
+		white.setEnabled(anim != null);
 		icet.setCut(anim);
 		sb.setAnim(anim);
 		if (sb.sele == -1)
 			icet.clearSelection();
-		jtf.setEnabled(anim != null);
-		jtf.setText(anim == null ? "" : anim.id.id);
+		name.setEnabled(anim != null);
+		name.setText(anim == null ? "" : anim.id.id);
 		boolean del = anim != null && anim.deletable();
 		rem.setEnabled(aep.focus == null && anim != null && del);
 		loca.setEnabled(aep.focus == null && anim != null && !del && anim.inPool());
@@ -611,6 +589,7 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 		impt.setEnabled(anim != null);
 		expt.setEnabled(anim != null);
 		spri.setEnabled(anim != null);
+		ico.setEnabled(anim != null);
 
 		boolean mergeEnabled = true;
 
@@ -646,7 +625,7 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 	}
 
 	private void setB() {
-		sb.sele = icet.getSelectedRow();
+		sb.setSprite(icet.getSelectedRow(), false);
 		reml.setEnabled(sb.sele != -1);
 		if (sb.sele >= 0) {
 			for (int[] ints : icet.anim.mamodel.parts)
@@ -660,5 +639,4 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 								reml.setEnabled(false);
 		}
 	}
-
 }
