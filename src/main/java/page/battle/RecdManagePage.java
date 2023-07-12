@@ -1,8 +1,8 @@
 package page.battle;
 
 import common.CommonStatic;
+import common.pack.Context;
 import common.util.stage.Replay;
-import main.MainBCU;
 import main.Opts;
 import page.JBTN;
 import page.JTF;
@@ -80,7 +80,7 @@ public class RecdManagePage extends AbRecdPage {
 			String n = rena.getText();
 			if (r == null || r.rl.id.equals(n))
 				return;
-			String name = MainBCU.validate(rena.getText().trim(),'-');
+			String name = Context.validate(rena.getText().trim(),'-');
 			if (!Replay.getMap().containsKey(name) || Opts.conf("A replay named " + name + " already exists. Do you wish to overwrite?"))
 				r.rename(name);
 			rena.setText(r.rl.id);

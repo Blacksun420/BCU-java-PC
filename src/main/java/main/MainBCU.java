@@ -48,8 +48,8 @@ public class MainBCU {
 	public static class AdminContext implements Context {
 
 		@Override
-		public boolean confirmDelete() {
-			return Opts.conf();
+		public boolean confirm(String str) {
+			return Opts.conf(str);
 		}
 
 		@Override
@@ -382,15 +382,8 @@ public class MainBCU {
 		MainFrame.changePanel(new MainPage());
 	}
 
-	public static String validate(String str, char replace) {
-		char[] chs = new char[] { '.', '/', '\\', ':', '*', '?', '"', '<', '>', '|' };
-		for (char c : chs)
-			str = str.replace(c, replace);
-		return str;
-	}
-
 	private static void noticeErr(Thread t, Throwable e) {
-		String msg = e.getMessage() + " in " + t.getName();
+		String msg = "ERROR: " + e.getMessage(); // TODO: More accurate cause
 		Exception exc = (e instanceof Exception) ? (Exception) e : new Exception(msg, e);
 		if (CommonStatic.ctx != null)
 			CommonStatic.ctx.noticeErr(exc, ErrType.FATAL, msg);

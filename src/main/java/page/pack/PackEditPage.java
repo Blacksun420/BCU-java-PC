@@ -357,9 +357,8 @@ public class PackEditPage extends Page {
 				String password = (String) result[0];
 				String parentPassword = (String) result[2];
 				pac.desc.allowAnim = (boolean) result[1];
-				JsonEncoder.backCompat = (boolean) result[3];
 
-				CommonStatic.ctx.noticeErr(() -> ((Workspace) pac.source).export(pac, password, parentPassword, (d) -> {
+				CommonStatic.ctx.noticeErr(() -> ((Workspace) pac.source).export(pac, password, parentPassword, (boolean)result[3], (d) -> {
 				}), ErrType.WARN, "failed to export pack");
 				JsonEncoder.backCompat = false;
 			}

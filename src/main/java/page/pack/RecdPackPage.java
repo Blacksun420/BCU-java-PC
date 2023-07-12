@@ -1,8 +1,8 @@
 package page.pack;
 
+import common.pack.Context;
 import common.pack.PackData.UserPack;
 import common.util.stage.Replay;
-import main.MainBCU;
 import page.JL;
 import page.JTF;
 import page.Page;
@@ -73,7 +73,7 @@ public class RecdPackPage extends AbRecdPage {
 			Replay r = jlr.getSelectedValue();
 			if (r == null)
 				return;
-			r.rename(MainBCU.validate(rena.getText().trim(), '-'));
+			r.rename(Context.validate(rena.getText().trim(), '-'));
 			rena.setText(r.rl.id);
 		});
 

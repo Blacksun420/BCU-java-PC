@@ -133,9 +133,10 @@ public class Opts {
 		JCheckBox check = new JCheckBox("Allow users to copy animation without password");
 		JCheckBox parentCheck = new JCheckBox("Allow users to set this pack as parent pack");
 		JTF parentText = new JTF();
+		JCheckBox legacyPack = new JCheckBox("Make compatible with upstream BCU");
 
 		parentCheck.setSelected(true);
-		parentText.setEnabled(!parentCheck.isSelected());
+		parentText.setEnabled(false);
 
 		check.addItemListener(e -> text.setEnabled(e.getStateChange() != ItemEvent.SELECTED));
 		parentCheck.addItemListener(e -> parentText.setEnabled(e.getStateChange() != ItemEvent.SELECTED));
@@ -165,6 +166,7 @@ public class Opts {
 		panel.add(check);
 		panel.add(parentCheck);
 		panel.add(parentText);
+		panel.add(legacyPack);
 
 		check.setSelected(defaultCheck);
 
@@ -176,7 +178,7 @@ public class Opts {
 			res[0] = text.getText();
 			res[1] = check.isSelected();
 			res[2] = !parentCheck.isSelected() ? parentText.getText() : null;
-			res[3] = true; //test
+			res[3] = legacyPack.isSelected();
 
 			return res;
 		} else {

@@ -1,8 +1,8 @@
 package page.battle;
 
+import common.pack.Context;
 import common.util.stage.Replay;
 import io.BCMusic;
-import main.MainBCU;
 import main.Opts;
 import page.JBTN;
 import page.JTF;
@@ -53,7 +53,7 @@ public class RecdSavePage extends Page {
 				String str = jtf.getText().trim();
 				if (str.length() == 0)
 					str = "new " + recd.st.get().toString() + " replay";
-				str = MainBCU.validate(str, '-');
+				str = Context.validate(str, '-');
 				jtf.setText(name = str);
 			}
 		});
@@ -79,7 +79,7 @@ public class RecdSavePage extends Page {
 		add(jtf);
 		add(save);
 		addListeners();
-		name = "new " + MainBCU.validate(recd.st.get().toString(),'-') + " replay";
+		name = "new " + Context.validate(recd.st.get().toString(),'-') + " replay";
 		jtf.setText(name);
 	}
 
