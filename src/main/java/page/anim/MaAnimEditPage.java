@@ -161,7 +161,7 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 		if (part[0] != -1)
 			a += getAngle(maet.anim.mamodel.parts[part[0]], false);
 		return a;
-	}
+	}*/
 
 	@Override
 	protected void mouseDragged(MouseEvent e) {
@@ -187,7 +187,7 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 			ab.ori.y += p.y - e.getY();
 			p = e.getPoint();
 		}
-	}*/
+	}
 
 	@Override
 	protected void mousePressed(MouseEvent e) {
