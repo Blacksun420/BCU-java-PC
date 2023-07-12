@@ -124,6 +124,13 @@ public class MaModelEditPage extends Page implements AbEditPage {
 		return scale;
 	}
 
+	private int getAngle(int[] part, boolean ignoreDef) {
+		int a = ignoreDef ? 0 : part[10];
+		if (part[0] != -1)
+			a += getAngle(mmet.mm.parts[part[0]], false);
+		return a;
+	}
+
 	@Override
 	protected void mouseDragged(MouseEvent e) {
 		if (p == null)
@@ -154,25 +161,19 @@ public class MaModelEditPage extends Page implements AbEditPage {
 					part[10] += (sB - sA) * 1800 / Math.PI;
 					part[10] %= 3600;
 				}
-			else if (isCtrlDown)
+			else {
 				for (int i : rows) {
 					part = parts[i];
-					P scale = realScale(part, false);
-					double angle = part[10] / 1800.0 * Math.PI; // TODO adjust speed according to angle
+					P scale = realScale(part, !isCtrlDown);
+					double angle = getAngle(part, !isCtrlDown) / 1800.0 * Math.PI;
 					double sin = Math.sin(angle);
 					double cos = Math.cos(angle);
-					int x = i != 0 ? p0.x - p1.x : p1.x - p0.x;
-					int y = i != 0 ? p0.y - p1.y : p1.y - p0.y;
-					part[6] += ((x * cos) + (y * sin)) / scale.x;
-					part[7] += ((y * cos) - (x * sin)) / scale.y;
+					int x = isCtrlDown && i != 0 ? p0.x - p1.x : p1.x - p0.x;
+					int y = isCtrlDown && i != 0 ? p0.y - p1.y : p1.y - p0.y;
+					part[isCtrlDown ? 6 : 4] += ((x * cos) + (y * sin)) / scale.x;
+					part[isCtrlDown ? 7 : 5] += ((y * cos) - (x * sin)) / scale.y;
 				}
-			else
-				for (int i : rows) {
-					part = parts[i];
-					P scale = realScale(part, true);
-					part[4] += (p1.x - p0.x) / (scale.x);
-					part[5] += (p1.y - p0.y) / (scale.y);
-				}
+			}
 			mb.getEntity().organize();
 		}
 	}
