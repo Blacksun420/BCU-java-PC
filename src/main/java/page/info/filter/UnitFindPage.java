@@ -9,20 +9,14 @@ import page.SupPage;
 import utilpc.Interpret;
 
 import javax.swing.*;
+import java.awt.event.MouseEvent;
 
 public class UnitFindPage extends EntityFindPage<AbForm> implements SupPage<AbUnit> {
 
 	private static final long serialVersionUID = 1L;
 
 	public UnitFindPage(Page p, boolean rand) {
-		super(p);
-
-		elt = new UnitListTable(this);
-		jsp = new JScrollPane(elt);
-		efb = new UnitFilterBox(this, rand, null, 0, null);
-		adv = new AdvProcFilterPage(this, true, efb.proc);
-		ini();
-		resized();
+		this(p, rand, null);
 	}
 
 	public UnitFindPage(Page p, boolean rand, UserPack pack) {
@@ -57,6 +51,13 @@ public class UnitFindPage extends EntityFindPage<AbForm> implements SupPage<AbUn
 					efb.confirm();
 			}
 		});
+	}
+
+	@Override
+	protected void mouseClicked(MouseEvent e) {
+		if (e.getSource() != elt)
+			return;
+		elt.clicked(e.getPoint());
 	}
 
 	@Override

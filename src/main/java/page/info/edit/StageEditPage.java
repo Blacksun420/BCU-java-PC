@@ -8,7 +8,9 @@ import common.util.stage.StageMap;
 import common.util.stage.info.CustomStageInfo;
 import common.util.unit.AbEnemy;
 import common.util.unit.Enemy;
+import main.Opts;
 import page.JBTN;
+import page.JTF;
 import page.Page;
 import page.battle.BattleSetupPage;
 import page.battle.StRecdPage;
@@ -18,6 +20,8 @@ import page.support.RLFIM;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Set;
 import java.util.TreeSet;
@@ -44,6 +48,7 @@ public class StageEditPage extends Page {
 	private final JBTN rmst = new JBTN(0, "rmst");
 	private final JBTN recd = new JBTN(0, "replay");
 	private final JBTN elim = new JBTN(0, "limit");
+	private final JTF enam = new JTF();
 	private final StageEditTable jt;
 	private final JScrollPane jspjt;
 	private final RLFIM<StageMap> jlsm = new RLFIM<>(() -> this.changing = true, () -> changing = false,
@@ -94,9 +99,8 @@ public class StageEditPage extends Page {
 
 	@Override
 	protected void mouseClicked(MouseEvent e) {
-		int modifier = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-		if (e.getSource() == jt && (e.getModifiers() & modifier) == 0)
-			jt.clicked(e.getPoint(), e.getButton());
+		if (e.getSource() == jt && !e.isShiftDown())
+			jt.clicked(e);
 	}
 
 	@Override
@@ -138,7 +142,8 @@ public class StageEditPage extends Page {
 		set(jlpst, x, y, 300, 1000, 300, 300);
 
 		set(veif, x, y, 600, 0, 300, 50);
-		set(jspe, x, y, 600, 50, 300, 1250);
+		set(enam, x, y, 600, 50, 300, 50);
+		set(jspe, x, y, 600, 100, 300, 1200);
 		jt.setRowHeight(size(x, y, 50));
 	}
 
@@ -174,6 +179,13 @@ public class StageEditPage extends Page {
 
 		veif.setLnr(x -> changePanel(efp));
 
+		enam.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				efp.setSearch(enam.getText());
+				renew();
+			}
+		});
 	}
 
 	private void addListeners$1() {
@@ -320,6 +332,7 @@ public class StageEditPage extends Page {
 	private void ini() {
 		add(back);
 		add(veif);
+		add(enam);
 		add(adds);
 		add(rems);
 		add(jspjt);
@@ -454,4 +467,11 @@ public class StageEditPage extends Page {
 		resized();
 	}
 
+	@Override
+	public void callBack(Object o) {
+		if (jt.findIndex == -1 || o == null || !Opts.conf("Are you sure you want to set the enemy to " + o + "?"))
+			jt.findIndex = -1;
+		else
+			jt.updateAbEnemy((Enemy) o);
+	}
 }

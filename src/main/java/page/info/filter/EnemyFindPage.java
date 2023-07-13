@@ -14,14 +14,7 @@ public class EnemyFindPage extends EntityFindPage<AbEnemy> implements SupPage<Ab
 	private static final long serialVersionUID = 1L;
 
 	public EnemyFindPage(Page p, boolean rand) {
-		super(p);
-
-		elt = new EnemyListTable(this);
-		jsp = new JScrollPane(elt);
-		efb = new EnemyFilterBox(this, rand);
-		adv = new AdvProcFilterPage(this, false, efb.proc);
-		ini();
-		resized();
+		this(p, rand, null);
 	}
 
 	public EnemyFindPage(Page p, boolean rand, PackData.UserPack pack) {

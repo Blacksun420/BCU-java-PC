@@ -28,13 +28,6 @@ public class EnemyFilterBox extends EntityFilterBox {
 	private final JScrollPane jab = new JScrollPane(abis);
 	private boolean multipacks;
 
-	protected EnemyFilterBox(Page p, boolean rand) {
-		super(p, rand);
-
-		ini();
-		confirm();
-	}
-
 	protected EnemyFilterBox(Page p, boolean rand, PackData.UserPack pack) {
 		super(p, pack, rand);
 

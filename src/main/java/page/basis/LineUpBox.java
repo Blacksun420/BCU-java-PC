@@ -32,7 +32,7 @@ public class LineUpBox extends Canvas {
 	private boolean time = false;
 	private Combo sc;
 	private PP relative, mouse;
-	protected boolean enableCost = false;
+	protected boolean swap = false;
 
 	protected Limit lim;
 	protected int price = 1;
@@ -79,12 +79,17 @@ public class LineUpBox extends Canvas {
 						gra.colRect(120 * j, 100 * i, img.getImg().getWidth(), img.getImg().getHeight(), 255, 0, 0, 100);
 						Res.getCost(-1, false,
 							new SymCoord(gra, 1, 120 * j, 100 * i + img.getImg().getHeight(), 2));
-					} else if (enableCost)
+					} else if (swap) {
+						Res.getCost((int) ef.getPrice(price), true,
+							new SymCoord(gra, 0.8, 120 * j, 100 * i + (img.getImg().getHeight() / 3.5), 2));
+						Res.getLv(lu.getLv(f).getLv() + lu.getLv(f).getPlusLv(),
+							new SymCoord(gra, 1, 120 * j, 100 * i + img.getImg().getHeight(), 2));
+					} else {
 						Res.getCost((int) ef.getPrice(price), true,
 							new SymCoord(gra, 1, 120 * j, 100 * i + img.getImg().getHeight(), 2));
-					else
-						Res.getLv(lu.getLv(f).getTotalLv(),
-							new SymCoord(gra, 1, 120 * j, 100 * i + img.getImg().getHeight(), 2));
+						Res.getLv(lu.getLv(f).getLv() + lu.getLv(f).getPlusLv(),
+							new SymCoord(gra, 0.8, 120 * j, 100 * i + (img.getImg().getHeight() / 3.5), 2));
+					}
 				}
 			}
 		if (relative != null && sf != null) {
@@ -95,11 +100,17 @@ public class LineUpBox extends Canvas {
 			if (unusable(sf, ef)) {
 				gra.colRect(p.x, p.y, uni.getWidth(), uni.getHeight(), 255, 0, 0, 100);
 				Res.getCost(-1, true, new SymCoord(gra, 1, p.x, p.y + uni.getHeight(), 2));
-			} else if (enableCost)
+			} else if (swap) {
+				Res.getCost((int) ef.getPrice(price), true,
+					new SymCoord(gra, 0.8, p.x, p.y + (uni.getHeight() / 3.5), 2));
+				Res.getLv(lu.getLv(sf).getLv() + lu.getLv(sf).getPlusLv(),
+					new SymCoord(gra, 1, p.x, p.y + uni.getHeight(), 2));
+			} else {
 				Res.getCost((int) ef.getPrice(price), true,
 					new SymCoord(gra, 1, p.x, p.y + uni.getHeight(), 2));
-			else
-				Res.getLv(lu.getLv(sf).getTotalLv(), new SymCoord(gra, 1, p.x, p.y + uni.getHeight(), 2));
+				Res.getLv(lu.getLv(sf).getLv() + lu.getLv(sf).getPlusLv(),
+					new SymCoord(gra, 0.8, p.x, p.y + (uni.getHeight() / 3.5), 2));
+			}
 		}
 		g.drawImage(bimg, 0, 0, getWidth(), getHeight(), null);
 		pt++;
