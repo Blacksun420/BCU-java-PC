@@ -383,7 +383,7 @@ public class MainBCU {
 	}
 
 	private static void noticeErr(Thread t, Throwable e) {
-		String msg = "ERROR: " + e.getMessage(); // TODO: More accurate cause
+		String msg = "ERROR: " + e + "/" + e.getMessage() + " in " + e.getStackTrace()[0].toString();
 		Exception exc = (e instanceof Exception) ? (Exception) e : new Exception(msg, e);
 		if (CommonStatic.ctx != null)
 			CommonStatic.ctx.noticeErr(exc, ErrType.FATAL, msg);

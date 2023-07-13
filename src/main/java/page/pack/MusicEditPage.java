@@ -81,9 +81,9 @@ public class MusicEditPage extends Page {
 		});
 
 		relo.addActionListener(arg0 -> {
-			pack.loadMusics();
 			for (Music m : pack.musics)
 				BCMusic.CACHE_CUSTOM.remove(m.getID());
+			pack.loadMusics();
 			setList();
 		});
 
