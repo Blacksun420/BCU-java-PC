@@ -46,7 +46,7 @@ public class ComboEditPage extends Page {
     private final ComboListTable jlc = new ComboListTable(this, b.sele.lu);
     private final JScrollPane jspc = new JScrollPane(jlc);
     private final JComboBox<String> ctypes = new JComboBox<>(Interpret.getComboFilter(0));
-    private final JComboBox<String> clvls = new JComboBox<>(new String[] { "Sm", "M", "L", "XL", "DOWN" });
+    private final JComboBox<String> clvls = new JComboBox<>(Interpret.comboLv);
     private final JTF comboname = new JTF();
 
     private final JBTN back = new JBTN(0, "back");

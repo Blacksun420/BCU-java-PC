@@ -120,7 +120,7 @@ public class Interpret extends Data {
 			Data.P_DEATHSURGE, Data.P_WEAKAURA, Data.P_STRONGAURA, Data.P_AI};
 
 	private static final DecimalFormat df;
-	public static String[] lvl;
+	public static final String[] comboLv = new String[] { "Sm", "M", "L", "XL", "DOWN" };
 
 	static {
 		redefine();
@@ -170,12 +170,12 @@ public class Interpret extends Data {
 	}
 
 	public static String deco(int type, BasisSet b) { // 0 = slow
-		double mag = ((int) ((1.0 - b.t().getDecorationMagnification(type + 1, type)) * 1000)) / 10.0;
+		double mag = ((int) ((1.0 - b.t().getDecorationMagnification(type + 1)) * 1000)) / 10.0;
 		return MainLocale.getLoc(MainLocale.UTIL, "dec" + type) + " +" + mag + "%";
 	}
 
 	public static String base(int type, BasisSet b) {
-		double mag = ((int) ((1.0 - b.t().getBaseMagnification(type + 1, UserProfile.getBCData().traits.getList())) * 1000)) / 10.0;
+		double mag = ((int) ((1.0 - b.t().getBaseMagnification(type + 1, new SortedPackSet<>(UserProfile.getBCData().traits.getList()))) * 1000)) / 10.0;
 		return MainLocale.getLoc(MainLocale.UTIL, "bas" + type) + " +" + mag + "%";
 	}
 

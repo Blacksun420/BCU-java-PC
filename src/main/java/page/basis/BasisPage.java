@@ -205,21 +205,21 @@ public class BasisPage extends LubCont {
 		set(bcop, x, y, 275, 700, 200, 50);
 		set(bjtf, x, y, 275, 750, 200, 50);
 
-		set(unit, x, y, 1500, 50, 200, 50);
-		set(ujtf, x, y, 1450, 100, 300, 50);
-		set(jspul, x, y, 1450, 150, 300, 600);
-		set(jspt, x, y, 1750, 150, 450, 600);
+		set(unit, x, y, 1450, 100, 325, 50);
+		set(ujtf, x, y, 1450, 750, 325, 50);
+		set(jspul, x, y, 1450, 150, 325, 600);
+		set(jspt, x, y, 1775, 100, 425, 700);
 
 		set(jspc, x, y, 50, 800, 1550, 450);
 		set(jspcs, x, y, 1600, 800, 300, 450);
 		set(jspcl, x, y, 1900, 800, 300, 450);
-		set(cjtf, x, y, 500, 750, 400, 50);
-		set(setc, x, y, 900, 750, 200, 50);
-		set(combo, x, y, 1100, 750, 200, 50);
+		set(cjtf, x, y, 500, 750, 600, 50);
+		set(setc, x, y, 1100, 750, 150, 50);
+		set(combo, x, y, 1250, 750, 150, 50);
 
 		set(pcoin, x, y, 500, 50, 1200, 50);
-		set(lvjtf, x, y, 500, 100, 400, 50);
-		set(lvorb, x, y, 900, 100, 200, 50);
+		set(lvjtf, x, y, 500, 100, 700, 50);
+		set(lvorb, x, y, 1200, 100, 200, 50);
 		set(form, x, y, 500, 450, 200, 50);
 		set(reset, x, y, 700, 450, 200, 50);
 		set(cost, x, y, 900, 450, 200, 50);
@@ -227,11 +227,11 @@ public class BasisPage extends LubCont {
 		set(jspcn, x, y, 500, 500, 600, 250);
 
 		set(lub, x, y, 500, 150, 600, 300);
-		set(ncb, x, y, 1220, 160, 128, 256);
+		set(ncb, x, y, 1175, 150, 150, 300);
 		for (int i = 0; i < jbcsL.length; i++)
-			set(jbcsL[i], x, y, 1100, 160 + 103 * i, 100, 50);
+			set(jbcsL[i], x, y, 1100, 150 + 100 * i, 75, 100);
 		for (int i = 0; i < jbcsR.length; i++) // 1375 - 1170 = 205
-			set(jbcsR[i], x, y, 1350, 160 + 103 * i, 100, 50);
+			set(jbcsR[i], x, y, 1325, 150 + 100 * i, 75, 100);
 
 		jlc.setRowHeight(50);
 		jlc.getColumnModel().getColumn(2).setPreferredWidth(size(x, y, 300));
@@ -596,12 +596,10 @@ public class BasisPage extends LubCont {
 		add(ujtf);
 		add(combo);
 		add(cost);
-		add(jbcsR[0] = new JBTN(0, ">"));
-		add(jbcsR[1] = new JBTN(0, ">"));
-		add(jbcsR[2] = new JBTN(0, ">"));
-		add(jbcsL[0] = new JBTN(0, "<"));
-		add(jbcsL[1] = new JBTN(0, "<"));
-		add(jbcsL[2] = new JBTN(0, "<"));
+		for (int i = 0; i < 3; i++)
+			add(jbcsR[i] = new JBTN(0, ">"));
+		for (int i = 0; i < 3; i++)
+			add(jbcsL[i] = new JBTN(0, "<"));
 		ul.setCellRenderer(new UnitLCR());
 		int m0 = ListSelectionModel.SINGLE_SELECTION;
 		int m1 = ListSelectionModel.MULTIPLE_INTERVAL_SELECTION;

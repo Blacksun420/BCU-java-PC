@@ -3,6 +3,8 @@ package page.info.filter;
 import page.*;
 
 import javax.swing.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
@@ -17,7 +19,6 @@ public abstract class EntityFindPage<R> extends Page {
     protected JScrollPane jsp;
     protected AdvProcFilterPage adv;
     protected final JTF seatf = new JTF();
-    protected final JBTN seabt = new JBTN(0, "search");
     protected final JBTN favs = new JBTN(MainLocale.PAGE, "addfav");
     private final JTG advs = new JTG(MainLocale.PAGE, "advance");
 
@@ -58,8 +59,8 @@ public abstract class EntityFindPage<R> extends Page {
         set(back, x, y, 0, 0, 200, 50);
         set(show, x, y, 250, 0, 150, 50);
         set(advs, x, y, 400, 0, 150, 50);
-        set(seatf, x, y, 600, 0, 950, 50);
-        set(seabt, x, y, 1600, 0, 200, 50);
+        set(seatf, x, y, 600, 0, 1050, 50);
+        set(favs, x, y, 1700, 0, 550, 50);
 
         int[] coords = new int[]{50, 2200};
 
@@ -78,7 +79,6 @@ public abstract class EntityFindPage<R> extends Page {
         } else if (adv != null)
             set(adv, 0, 0, 0, 0, 0, 0);
         set(jsp, x, y, coords[0], 100, coords[1], 1150);
-        set(favs, x, y, 1850, 0, 400, 50);
         elt.setRowHeight(size(x, y, 50));
     }
 
@@ -92,19 +92,20 @@ public abstract class EntityFindPage<R> extends Page {
                 remove(efb);
         });
 
-        seabt.setLnr((b) -> {
-            if (efb != null) {
-                efb.name = seatf.getText();
-                efb.callBack(null);
+        seatf.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                search(seatf.getText());
             }
         });
+    }
 
-        seatf.addActionListener(e -> {
-            if (efb != null) {
-                efb.name = seatf.getText();
-                efb.callBack(null);
-            }
-        });
+    public void search(String text) {
+        if (efb != null) {
+            efb.name = text;
+            seatf.setText(text);
+            efb.callBack(null);
+        }
     }
 
     protected void ini() {
@@ -113,7 +114,6 @@ public abstract class EntityFindPage<R> extends Page {
         add(efb);
         add(jsp);
         add(seatf);
-        add(seabt);
         add(favs);
         add(advs);
         add(adv);

@@ -2,7 +2,7 @@
   <artifact name="BCU-java-PC:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/BCU_java_PC_jar</output-path>
     <root id="root">
-      <element id="archive" name="BCU-java-PC.jar">
+      <element id="archive" name="BCU-0-6-1-5.jar">
         <element id="directory" name="META-INF">
           <element id="file-copy" path="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
         </element>

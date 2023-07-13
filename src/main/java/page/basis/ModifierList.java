@@ -2,6 +2,7 @@ package page.basis;
 
 import common.battle.BasisLU;
 import common.battle.BasisSet;
+import common.pack.SortedPackSet;
 import common.util.unit.Combo;
 import page.MainLocale;
 import utilpc.Interpret;
@@ -13,7 +14,7 @@ import java.util.List;
 
 public class ModifierList extends JList<Object> {
     private BasisSet lineup;
-    private List<Combo> combos;
+    private SortedPackSet<Combo> combos;
 
     private static final long serialVersionUID = 1L;
 
@@ -26,7 +27,7 @@ public class ModifierList extends JList<Object> {
                 JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
                 if (o instanceof Combo) {
                     Combo c = (Combo) o;
-                    jl.setText(Interpret.lvl[c.lv] + " Combo: " + Interpret.comboInfo(c, lineup));
+                    jl.setText(Interpret.comboLv[c.lv] + " Combo: " + Interpret.comboInfo(c, lineup));
                 }
                 else
                     jl.setText(o.toString());
@@ -59,7 +60,7 @@ public class ModifierList extends JList<Object> {
         setListData(list.toArray(new Object[0]));
     }
 
-    protected void setComboList(List<Combo> lf) {
+    protected void setComboList(SortedPackSet<Combo> lf) {
         combos = lf;
         reset();
     }

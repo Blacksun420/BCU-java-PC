@@ -62,12 +62,6 @@ public abstract class EntityFilterBox extends Page {
     protected final boolean rand;
     protected final Data.Proc proc = Data.Proc.blank();
 
-    protected EntityFilterBox(Page p, boolean rand) {
-        super(p);
-        pack = null;
-        this.rand = rand;
-    }
-
     protected EntityFilterBox(Page p, PackData.UserPack pack, boolean rand) {
         super(p);
         this.pack = pack;

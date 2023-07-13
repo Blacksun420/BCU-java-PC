@@ -142,7 +142,7 @@ public class UnitFLUPage extends LubCont {
 	protected void search(String text) {
 		if (ufb != null) {
 			ufb.name = text;
-			ufb.callBack(1);
+			ufb.callBack(null);
 		}
 	}
 

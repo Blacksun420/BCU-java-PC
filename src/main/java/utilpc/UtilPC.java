@@ -180,8 +180,7 @@ public class UtilPC {
 		ImageIcon i = getIcon(v);
 		if (i == null)
 			return null;
-		else
-			return getScaledIcon(i, w, h);
+		return getScaledIcon(i, w, h);
 	}
 
 	public static ImageIcon getScaledIcon(ImageIcon i, int w, int h) {
