@@ -440,8 +440,8 @@ public abstract class EntityEditPage extends Page implements EntSupInt {
 		else
 			cdps.setText("-");
 
-		String d = data.getPack().description.get(jlang.getSelectedIndex());
-		entDesc.setText(d.isEmpty() ? "Description" : d);
+		entDesc.setHintText(data.getPack().description.get(jlang.getSelectedIndex()));
+		entDesc.setHintText("Description");
 
 		comm.setSelected(data.common);
 		if (!comm.isSelected())
@@ -650,7 +650,7 @@ public abstract class EntityEditPage extends Page implements EntSupInt {
 
 		entDesc.setLnr(j -> {
 			String txt = entDesc.assignSplitText(-1);
-			if (txt.equals("Description") || txt.isEmpty() || (MainLocale.LOC_INDEX[jlang.getSelectedIndex()] != CommonStatic.getConfig().lang && txt.equals(ce.getPack().description.toString())))
+			if (txt.isEmpty() || (MainLocale.LOC_INDEX[jlang.getSelectedIndex()] != CommonStatic.getConfig().lang && txt.equals(ce.getPack().description.toString())))
 				ce.getPack().description.remove(MainLocale.LOC_INDEX[jlang.getSelectedIndex()]);
 			else
 				ce.getPack().description.put(MainLocale.LOC_INDEX[jlang.getSelectedIndex()], txt);

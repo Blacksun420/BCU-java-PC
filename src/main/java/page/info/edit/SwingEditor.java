@@ -246,7 +246,7 @@ public abstract class SwingEditor extends Editor {
 			super(Data.Proc.getName(ind), edit, cb);
 			jlm = new JL(getItem(ctx));
 			ImageIcon icon = UtilPC.getIcon(1, ind);
-			jlm.setIcon(icon == null ? null : UtilPC.getScaledIcon(icon, 40, 40));
+			jlm.setIcon(icon == null ? null : UtilPC.getScaledIcon(icon, UtilPC.iconSize, UtilPC.iconSize));
 		}
 
 		@Override

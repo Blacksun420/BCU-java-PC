@@ -64,7 +64,7 @@ public class UnitInfoTable extends CharacterInfoTable {
 			Interpret.ProcDisplay display = ls.get(i);
 			add(proc[i] = new JLabel(display.toString()));
 			proc[i].setBorder(BorderFactory.createEtchedBorder());
-			proc[i].setIcon(display.icon);
+			proc[i].setIcon(UtilPC.getScaledIcon(display.icon, UtilPC.iconSize, UtilPC.iconSize));
 		}
 		if (pc) {
 			pcoin = proc[ls.size() - 1];
@@ -148,7 +148,7 @@ public class UnitInfoTable extends CharacterInfoTable {
 		for (int i = 0; i < ls.size(); i++) {
 			Interpret.ProcDisplay display = ls.get(i);
 			proc[i].setText(display.toString());
-			proc[i].setIcon(display.icon);
+			proc[i].setIcon(UtilPC.getScaledIcon(display.icon, UtilPC.iconSize, UtilPC.iconSize));
 		}
 		updateTooltips();
 	}
@@ -230,6 +230,13 @@ public class UnitInfoTable extends CharacterInfoTable {
 			special[9].setText(Math.min(back, front) + " ~ " + Math.max(back, front));
 
 		if (f.hasEvolveCost()) {
+			for (int i = 0; i < upgrade.length; i++)
+				for (int j = 0; j < upgrade[i].length; j++) {
+					add(upgrade[i][j] = new JL());
+					upgrade[i][j].setBorder(BorderFactory.createEtchedBorder());
+				}
+			add(cfdesc);
+			cfdesc.setBorder(BorderFactory.createEtchedBorder());
 			int[][] evo = f.unit.info.evo;
 			int count = 0;
 			for (int i = 0; i < evo.length; i++) {
@@ -248,13 +255,14 @@ public class UnitInfoTable extends CharacterInfoTable {
 			String desc = f.unit.info.getCatfruitExplanation();
 			if (desc != null)
 				cfdesc.setText(desc.replace("<br>", "\n"));
+			cfdesc.setEditable(false);
 		}
 		String fDesc = f.getExplanation();
 		if (fDesc.replace("\n", "").length() > 0)
-			add(desc);
+			add(descr);
 		descr.setText(f.toString().replace((f.uid == null ? "NULL" : f.uid.id) + "-" + f.fid + " ", "") + "\n" + fDesc);
 		descr.setEditable(false);
-		cfdesc.setEditable(false);
+		descr.setBorder(BorderFactory.createEtchedBorder());
 		resetAtk();
 		addListeners();
 	}

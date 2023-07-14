@@ -86,6 +86,8 @@ public class UtilPC {
 		}
 	}
 
+	public static final byte iconSize = 41;
+
 	public static ImageIcon getBg(Background bg, int w, int h) {
 		bg.check();
 
@@ -155,7 +157,7 @@ public class UtilPC {
 		id %= 100;
 		if (CommonStatic.getBCAssets().icon[type][id] == null)
 			return null;
-		return resizeIcon(CommonStatic.getBCAssets().icon[type][id], 40, 40);
+		return resizeIcon(CommonStatic.getBCAssets().icon[type][id], iconSize, iconSize);
 	}
 
 	public static ImageIcon getIcon(VImg v) {
@@ -184,6 +186,8 @@ public class UtilPC {
 	}
 
 	public static ImageIcon getScaledIcon(ImageIcon i, int w, int h) {
+		if (i == null)
+			return null;
 		int pw = MainFrame.F.getRootPane().getWidth();
 		int ph = MainFrame.F.getRootPane().getHeight() - MenuBarHandler.getBar().getHeight();
 		Image img = i.getImage().getScaledInstance(pw * w / 2300, ph * h / 1300, Image.SCALE_SMOOTH);
