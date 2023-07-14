@@ -9,10 +9,7 @@ import common.util.unit.AbForm;
 import common.util.unit.Combo;
 import common.util.unit.Form;
 import common.util.unit.Unit;
-import page.JBTN;
-import page.JL;
-import page.Page;
-import page.JTF;
+import page.*;
 import page.basis.ComboListTable;
 import page.info.filter.UnitFindPage;
 import page.support.AnimLCR;
@@ -21,10 +18,7 @@ import page.support.UnitLCR;
 import utilpc.Interpret;
 
 import javax.swing.*;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 public class ComboEditPage extends Page {
 
@@ -37,7 +31,7 @@ public class ComboEditPage extends Page {
     private final BasisSet b = BasisSet.current();
 
     private final Vector<PackData.UserPack> vpack = new Vector<>(UserProfile.getUserPacks());
-    private final JList<PackData.UserPack> jlp = new JList<>(vpack);
+    private final PackEditPage.PackList jlp = new PackEditPage.PackList(vpack);
     private final JScrollPane jspp = new JScrollPane(jlp);
     private final JList<Unit> jlu = new JList<>();
     private final JScrollPane jspu = new JScrollPane(jlu);
@@ -55,14 +49,14 @@ public class ComboEditPage extends Page {
     private final JBTN remcf = new JBTN(0, "remcf");
     private final JBTN remc = new JBTN(0, "remc");
 
-    private final JL lbp = new JL(0, "pack");
+    private final JComboBox<String> lbp = new JComboBox<>();
     private final JL lbu = new JL(0, "unit");
     private final JL lbf = new JL(0, "forms");
 
     private UnitFindPage ufp;
     private final JBTN vuif = new JBTN(0,"vuif");
 
-    private boolean changing = false;
+    private boolean changing = false, unsorted = true;
 
     protected ComboEditPage(Page p, PackData.UserPack pack) {
         super(p);
@@ -111,6 +105,50 @@ public class ComboEditPage extends Page {
                 jlu.setSelectedIndex(0);
             jlc.setList(pac.combos.getList());
         }
+
+        lbp.addActionListener(j -> {
+            int method = lbp.getSelectedIndex();
+            switch (method) {
+                case 0:
+                    if (unsorted)
+                        return;
+                    Vector<PackData.UserPack> vpack2 = new Vector<>(UserProfile.getUserPacks());
+                    vpack.clear();
+                    vpack.addAll(vpack2); //Dunno a more efficient way to unsort a list
+                    break;
+                case 1:
+                    vpack.sort(null);
+                    break;
+                case 2:
+                    vpack.sort(Comparator.comparing(PackData.UserPack::getSID));
+                    break;
+                case 3:
+                    vpack.sort(Comparator.comparing(p -> p.desc.getAuthor()));
+                    break;
+                case 4:
+                    vpack.sort(Comparator.comparing(p -> p.desc.BCU_VERSION));
+                    vpack.sort(Comparator.comparingInt(p -> p.desc.FORK_VERSION));
+                    break;
+                case 5:
+                    vpack.sort(Comparator.comparingLong(p -> p.desc.getTimestamp("cdate")));
+                    break;
+                case 6:
+                    vpack.sort(Comparator.comparingLong(p -> p.desc.getTimestamp("edate")));
+                    break;
+                case 7:
+                    vpack.sort(Comparator.comparingInt(p -> p.enemies.size()));
+                    break;
+                case 8:
+                    vpack.sort(Comparator.comparingInt(p -> p.units.size()));
+                    break;
+                case 9:
+                    vpack.sort(Comparator.comparingInt(p -> p.mc.getStageCount()));
+                    break;
+            }
+            jlp.setListData(vpack);
+            unsorted = method == 0;
+            jlp.setSelectedValue(pac, true);
+        });
     }
 
     private void ini() {
@@ -137,6 +175,7 @@ public class ComboEditPage extends Page {
         jlu.setCellRenderer(new UnitLCR());
         jlf.setCellRenderer(new AnimLCR());
         jlc.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        lbp.setModel(new DefaultComboBoxModel<>(get(MainLocale.PAGE, "psort", 10)));
         ctypes.setEnabled(false);
         clvls.setEnabled(false);
 

@@ -18,6 +18,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.util.Comparator;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -30,14 +31,14 @@ public class SoulEditPage extends Page {
     private final JBTN rems = new JBTN(0, "rem");
     private final JBTN srea = new JBTN(0, "reassign");
 
-    private final JL lbp = new JL(0, "pack");
+    private final JComboBox<String> lbp = new JComboBox<>();
     private final JL lbs = new JL(0, "soul");
     private final JL lbd = new JL(0, "seleanim");
 
     private final JTF jtfs = new JTF();
 
     private final Vector<PackData.UserPack> vpack = new Vector<>(UserProfile.getUserPacks().stream().filter(p -> p.souls.size() > 0 || p.editable).collect(Collectors.toList()));
-    private final JList<PackData.UserPack> jlp = new JList<>(vpack);
+    private final PackEditPage.PackList jlp = new PackEditPage.PackList(vpack);
     private final JScrollPane jspp = new JScrollPane(jlp);
     private final JList<Soul> jls = new JList<>();
     private final JScrollPane jsps = new JScrollPane(jls);
@@ -49,7 +50,7 @@ public class SoulEditPage extends Page {
 
     private PackData.UserPack pac;
     private Soul soul;
-    private boolean changing = false;
+    private boolean changing = false, unsorted = true;
 
     public SoulEditPage(Page p, PackData.UserPack pack) {
         super(p);
@@ -212,6 +213,50 @@ public class SoulEditPage extends Page {
 
             changing = false;
         });
+
+        lbp.addActionListener(j -> {
+            int method = lbp.getSelectedIndex();
+            switch (method) {
+                case 0:
+                    if (unsorted)
+                        return;
+                    Vector<PackData.UserPack> vpack2 = new Vector<>(UserProfile.getUserPacks());
+                    vpack.clear();
+                    vpack.addAll(vpack2); //Dunno a more efficient way to unsort a list
+                    break;
+                case 1:
+                    vpack.sort(null);
+                    break;
+                case 2:
+                    vpack.sort(Comparator.comparing(PackData.UserPack::getSID));
+                    break;
+                case 3:
+                    vpack.sort(Comparator.comparing(p -> p.desc.getAuthor()));
+                    break;
+                case 4:
+                    vpack.sort(Comparator.comparing(p -> p.desc.BCU_VERSION));
+                    vpack.sort(Comparator.comparingInt(p -> p.desc.FORK_VERSION));
+                    break;
+                case 5:
+                    vpack.sort(Comparator.comparingLong(p -> p.desc.getTimestamp("cdate")));
+                    break;
+                case 6:
+                    vpack.sort(Comparator.comparingLong(p -> p.desc.getTimestamp("edate")));
+                    break;
+                case 7:
+                    vpack.sort(Comparator.comparingInt(p -> p.enemies.size()));
+                    break;
+                case 8:
+                    vpack.sort(Comparator.comparingInt(p -> p.units.size()));
+                    break;
+                case 9:
+                    vpack.sort(Comparator.comparingInt(p -> p.mc.getStageCount()));
+                    break;
+            }
+            jlp.setListData(vpack);
+            unsorted = method == 0;
+            jlp.setSelectedValue(pac, true);
+        });
     }
 
     private void ini(PackData.UserPack pack) {
@@ -235,6 +280,7 @@ public class SoulEditPage extends Page {
         add((Canvas)vb);
         jls.setCellRenderer(new SoulLCR());
         jld.setCellRenderer(new AnimLCR());
+        lbp.setModel(new DefaultComboBoxModel<>(get(MainLocale.PAGE, "psort", 10)));
 
         setPack(pack);
         addListeners();
