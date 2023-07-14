@@ -3,8 +3,8 @@ package page.info.filter;
 import page.*;
 
 import javax.swing.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
@@ -92,9 +92,16 @@ public abstract class EntityFindPage<R> extends Page {
                 remove(efb);
         });
 
-        seatf.addKeyListener(new KeyAdapter() {
+        seatf.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) {
+                search(seatf.getText());
+            }
             @Override
-            public void keyTyped(KeyEvent e) {
+            public void removeUpdate(DocumentEvent e) {
+                search(seatf.getText());
+            }
+            @Override
+            public void changedUpdate(DocumentEvent e) {
                 search(seatf.getText());
             }
         });
@@ -103,7 +110,6 @@ public abstract class EntityFindPage<R> extends Page {
     public void search(String text) {
         if (efb != null) {
             efb.name = text;
-            seatf.setText(text);
             efb.callBack(null);
         }
     }

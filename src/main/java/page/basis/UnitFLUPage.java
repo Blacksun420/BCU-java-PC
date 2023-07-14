@@ -12,7 +12,8 @@ import page.info.filter.UnitFilterBox;
 import page.info.filter.UnitListTable;
 
 import javax.swing.*;
-import java.awt.event.KeyAdapter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -131,9 +132,16 @@ public class UnitFLUPage extends LubCont {
 			lub.select(f);
 			lsm.clearSelection();
 		});
-		seatf.addKeyListener(new KeyAdapter() {
+		seatf.getDocument().addDocumentListener(new DocumentListener() {
+			public void insertUpdate(DocumentEvent e) {
+				search(seatf.getText());
+			}
 			@Override
-			public void keyTyped(KeyEvent e) {
+			public void removeUpdate(DocumentEvent e) {
+				search(seatf.getText());
+			}
+			@Override
+			public void changedUpdate(DocumentEvent e) {
 				search(seatf.getText());
 			}
 		});

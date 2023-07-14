@@ -31,7 +31,7 @@ public class ComboListTable extends SortTable<Combo> {
 				str + " 5" };
 	}
 
-	private final LineUp lu;
+	private LineUp lu;
 	private final Page fr;
 
 	public ComboListTable(Page p, LineUp line) {
@@ -143,5 +143,10 @@ public class ComboListTable extends SortTable<Combo> {
 			return t.forms[c - 4];
 		}
 		return null;
+	}
+
+	public void setLU(LineUp nlu) {
+		lu = nlu;
+		sort();
 	}
 }

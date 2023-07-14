@@ -22,6 +22,8 @@ import utilpc.Interpret;
 import utilpc.UtilPC;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -256,11 +258,17 @@ public class BasisPage extends LubCont {
 
 		unit.addActionListener(e -> changePanel(ufp));
 
-		ujtf.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
+		ujtf.getDocument().addDocumentListener(new DocumentListener() {
+			public void insertUpdate(DocumentEvent e) {
 				ufp.search(ujtf.getText());
-				renew();
+			}
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				ufp.search(ujtf.getText());
+			}
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				ufp.search(ujtf.getText());
 			}
 		});
 
@@ -556,6 +564,7 @@ public class BasisPage extends LubCont {
 
 	private void changeLU() {
 		jlcn.setComboList(lu().coms);
+		jlc.setLU(lu());
 		setCN();
 		updateSetC();
 		lub.updateLU();
