@@ -259,7 +259,7 @@ public class UnitInfoTable extends CharacterInfoTable {
 		}
 		String fDesc = f.getExplanation();
 		if (fDesc.replace("\n", "").length() > 0)
-			add(descr);
+			add(desc);
 		descr.setText(f.toString().replace((f.uid == null ? "NULL" : f.uid.id) + "-" + f.fid + " ", "") + "\n" + fDesc);
 		descr.setEditable(false);
 		descr.setBorder(BorderFactory.createEtchedBorder());
