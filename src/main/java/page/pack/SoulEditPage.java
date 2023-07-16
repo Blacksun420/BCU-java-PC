@@ -147,7 +147,7 @@ public class SoulEditPage extends AbViewPage {
                     change = true;
                     copyAnim(sl.anim);
                 } else {
-                    String pass = Opts.read("Enter the pack's password:");
+                    String pass = Opts.read("Enter " + pack + "'s password:");
                     if (pass == null)
                         return;
                     else if (((Source.ZipSource) pack.source).zip.matchKey(pass)) {

@@ -112,7 +112,7 @@ public class EnemyViewPage extends AbViewPage {
 						change = true;
 						copyAnim(ene.anim);
 					} else {
-						String pass = Opts.read("Enter the pack's password:");
+						String pass = Opts.read("Enter " + pack + "'s password:");
 						if (pass == null)
 							pkFail.add(pack);
 						else if (((Source.ZipSource) ((PackData.UserPack) pack).source).zip.matchKey(pass)) {

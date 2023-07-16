@@ -123,30 +123,27 @@ public class UnitViewPage extends AbViewPage {
 		});
 
 		copy.addActionListener(e -> {
-			{
-				Unit uni = jlu.getSelectedValue();
+			Unit uni = jlu.getSelectedValue();
+			if(uni != null) {
+				PackData pack = uni.getCont();
 
-				if(uni != null) {
-					PackData pack = uni.getCont();
-
-					if(pack != null)
-						if(pack instanceof PackData.DefPack)
+				if(pack != null)
+					if(pack instanceof PackData.DefPack)
+						copyAnim();
+					else if(pack instanceof PackData.UserPack) {
+						if(((PackData.UserPack) pack).editable || ((PackData.UserPack) pack).desc.allowAnim)
 							copyAnim();
-						else if(pack instanceof PackData.UserPack) {
-							if(((PackData.UserPack) pack).editable || ((PackData.UserPack) pack).desc.allowAnim)
-								copyAnim();
-							else {
-								String pass = Opts.read("Enter the password : ");
-								if(pass == null)
-									return;
+						else {
+							String pass = Opts.read("Enter the password : ");
+							if(pass == null)
+								return;
 
-								if(((Source.ZipSource) ((PackData.UserPack) pack).source).zip.matchKey(pass)) {
-									copyAnim();
-								} else
-									Opts.pop("You typed incorrect password", "Incorrect password");
-							}
+							if(((Source.ZipSource) ((PackData.UserPack) pack).source).zip.matchKey(pass)) {
+								copyAnim();
+							} else
+								Opts.pop("You typed incorrect password", "Incorrect password");
 						}
-				}
+					}
 			}
 		});
 	}
