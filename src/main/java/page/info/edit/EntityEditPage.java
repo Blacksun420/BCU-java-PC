@@ -251,6 +251,7 @@ public abstract class EntityEditPage extends Page implements EntSupInt {
 		add(jlang);
 		jlang.setSelectedIndex(MainLocale.LOC_INDEX[CommonStatic.getConfig().lang]);
 		add(jsDesc);
+		entDesc.setHintText("Description");
 		add(hbbo);
 		add(bobo);
 		Vector<Soul> vec = new Vector<>();
@@ -439,9 +440,7 @@ public abstract class EntityEditPage extends Page implements EntSupInt {
 			cdps.setText("" + (int) ((getLvAtk() * ce.allAtk(getSel())) * getAtk()  * 30 / ce.getItv(getSel())));
 		else
 			cdps.setText("-");
-
-		entDesc.setHintText(data.getPack().description.get(jlang.getSelectedIndex()));
-		entDesc.setHintText("Description");
+		entDesc.setText(data.getPack().description.get(jlang.getSelectedIndex()));
 
 		comm.setSelected(data.common);
 		if (!comm.isSelected())
@@ -854,7 +853,7 @@ public abstract class EntityEditPage extends Page implements EntSupInt {
 								nz = false;
 								break;
 							}
-					ce.share[getSel()] = Math.max(nz ? 1 : 0, v[0]); //TODO - Adapt BCU for null atkdatamodels
+					ce.share[getSel()] = Math.max(nz ? 1 : 0, v[0]);
 					if (ce.share[getSel()] == 0)
 						ce.hits.set(getSel(), null);
 					else if (ce.hits.get(getSel()) == null) {
