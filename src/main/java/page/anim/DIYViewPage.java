@@ -203,38 +203,29 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 	}
 
 	private void addListeners() {
+		defCopyListener();
 
 		jlt.addTreeSelectionListener(t -> {
 			TreePath[] paths = jlt.getSelectionPaths();
 
 			if(paths == null)
 				return;
-
 			boolean canEnabled = true;
-
 			for(TreePath path : paths) {
 				if(!(path.getLastPathComponent() instanceof DefaultMutableTreeNode))
 					return;
 
-				if(((DefaultMutableTreeNode) path.getLastPathComponent()).isRoot()) {
-					canEnabled = false;
-					break;
-				}
-
-				if(!(((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject() instanceof String)) {
+				if(((DefaultMutableTreeNode) path.getLastPathComponent()).isRoot() || !(((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject() instanceof String)) {
 					canEnabled = false;
 					break;
 				}
 			}
-
 			remgroup.setEnabled(canEnabled);
-
 			updateChoice();
 		});
 
 		remgroup.setLnr(a -> {
 			TreePath[] paths = jlt.getSelectionPaths();
-
 			if(paths == null)
 				return;
 
@@ -242,23 +233,17 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 				ArrayList<String> groups = new ArrayList<>();
 
 				for(TreePath path : paths) {
-					if(path == null || !(path.getLastPathComponent() instanceof DefaultMutableTreeNode) || !(((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject() instanceof String))
-						return;
-
-					if(((DefaultMutableTreeNode) path.getLastPathComponent()).isRoot())
+					if(path == null || !(path.getLastPathComponent() instanceof DefaultMutableTreeNode) || !(((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject() instanceof String)
+							|| ((DefaultMutableTreeNode) path.getLastPathComponent()).isRoot())
 						return;
 
 					String groupName = (String) ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
-
 					if(groupName.equals(""))
 						return;
-
 					groups.add(groupName);
 				}
-
-				for(String groupName : groups) {
+				for(String groupName : groups)
 					agt.removeGroup(groupName);
-				}
 
 				remgroup.setEnabled(false);
 			}

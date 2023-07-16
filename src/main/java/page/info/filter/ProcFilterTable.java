@@ -213,15 +213,9 @@ public class ProcFilterTable extends Page {
         return null;
     }
 
-    private void updateVisibility() {
-        for (int i = 0; i < inds.length; i++)
-            group[i].updateVisibility();
-    }
-
     public void setData(Data.Proc ints) {
         for (int i = 0; i < inds.length; i++)
             group[i].setData(ints.getArr(inds[i]));
-        updateVisibility();
     }
 
     private void ini() {

@@ -1,32 +1,30 @@
 package page.pack;
 
 import common.pack.Identifier;
-import common.pack.PackData;
+import common.pack.PackData.UserPack;
 import common.pack.Source;
 import common.pack.UserProfile;
 import common.util.anim.AnimCE;
+import common.util.anim.AnimU;
 import common.util.pack.Soul;
 import common.util.stage.Music;
 import main.Opts;
 import page.*;
-import page.awt.BBBuilder;
+import page.anim.ImgCutEditPage;
 import page.support.AnimLCR;
 import page.support.SoulLCR;
-import page.view.ViewBox;
+import page.view.AbViewPage;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 import java.util.Comparator;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-public class SoulEditPage extends Page {
+public class SoulEditPage extends AbViewPage {
 
     private static final long serialVersionUID = 1L;
 
-    private final JBTN back = new JBTN(0, "back");
     private final JBTN adds = new JBTN(0, "add");
     private final JBTN rems = new JBTN(0, "rem");
     private final JBTN srea = new JBTN(0, "reassign");
@@ -37,7 +35,7 @@ public class SoulEditPage extends Page {
 
     private final JTF jtfs = new JTF();
 
-    private final Vector<PackData.UserPack> vpack = new Vector<>(UserProfile.getUserPacks().stream().filter(p -> p.souls.size() > 0 || p.editable).collect(Collectors.toList()));
+    private final Vector<UserPack> vpack = new Vector<>(UserProfile.getUserPacks().stream().filter(p -> p.souls.size() > 0 || p.editable).collect(Collectors.toList()));
     private final PackEditPage.PackList jlp = new PackEditPage.PackList(vpack);
     private final JScrollPane jspp = new JScrollPane(jlp);
     private final JList<Soul> jls = new JList<>();
@@ -46,23 +44,18 @@ public class SoulEditPage extends Page {
     private final JList<AnimCE> jld = new JList<>(new Vector<>(AnimCE.map().values().stream().filter(a -> a.id.base.equals(Source.BasePath.SOUL)).collect(Collectors.toList())));
     private final JComboBox<Music> jcbm = new JComboBox<>();
     private final JScrollPane jspd = new JScrollPane(jld);
-    private final ViewBox vb = BBBuilder.def.getViewBox();
 
-    private PackData.UserPack pac;
+    private UserPack pac;
     private Soul soul;
     private boolean changing = false, unsorted = true;
 
-    public SoulEditPage(Page p, PackData.UserPack pack) {
+    public SoulEditPage(Page p, UserPack pack) {
         super(p);
         vpack.sort(null);
+        cx += 150;
 
         ini(pack != null && (pack.souls.size() > 0 || pack.editable) ? pack : null);
         resized();
-    }
-
-    @Override
-    public JButton getBackButton() {
-        return back;
     }
 
     @Override
@@ -71,67 +64,52 @@ public class SoulEditPage extends Page {
     }
 
     @Override
-    protected void mouseDragged(MouseEvent e) {
-        if (e.getSource() == vb)
-            vb.mouseDragged(e);
-    }
-    @Override
-    protected void mousePressed(MouseEvent e) {
-        if (e.getSource() == vb)
-            vb.mousePressed(e);
-    }
-    @Override
-    protected void mouseReleased(MouseEvent e) {
-        if (e.getSource() == vb)
-            vb.mouseReleased(e);
-    }
-    @Override
-    protected void mouseWheel(MouseEvent e) {
-        if (!(e.getSource() instanceof ViewBox))
-            return;
-        MouseWheelEvent mwe = (MouseWheelEvent) e;
-        double d = mwe.getPreciseWheelRotation();
-        vb.resize(Math.pow(0.95, d));
-    }
-
-    @Override
-    public void timer(int f) {
-        vb.update();
-        vb.paint();
+    protected void updateChoice() {
+        setSoul(soul);
     }
 
     @Override
     protected void resized(int x, int y) {
-        setBounds(0, 0, x, y);
-        set(back, x, y, 0, 0, 200, 50);
+        super.resized(x, y);
+        if (!larges.isSelected()) {
+            cx = 50;
 
-        int w = 50, dw = 150;
+            set(lbp, x, y, cx, 100, 400, 50);
+            set(jspp, x, y, cx, 150, 400, 600);
 
-        set(lbp, x, y, w, 100, 400, 50);
-        set(jspp, x, y, w, 150, 400, 600);
+            cx += 450;
 
-        w += 450;
+            set(lbs, x, y, cx, 100, 300, 50);
+            set(jsps, x, y, cx, 150, 300, 600);
+            set(srea, x, y, cx, 750, 300, 50);
+            set(adds, x, y, cx, 800, 150, 50);
+            set(rems, x, y, cx + 150, 800, 150, 50);
+            set(jtfs, x, y, cx, 850, 300, 50);
+            set(jcbm, x, y, cx, 900, 300, 50);
 
-        set(lbs, x, y, w, 100, 300, 50);
-        set(jsps, x, y, w, 150, 300, 600);
-        set(srea, x, y, w, 750, 300, 50);
-        set(adds, x, y, w, 800, 150, 50);
-        set(rems, x, y, w + dw, 800, 150, 50);
-        set(jtfs, x, y, w, 850, 300, 50);
-        set(jcbm, x, y, w, 900, 300, 50);
+            cx += 300;
 
-        w += 300;
+            set(lbd, x, y, cx, 100, 300, 50);
+            set(jspd, x, y, cx, 150, 300, 600);
 
-        set(lbd, x, y, w, 100, 300, 50);
-        set(jspd, x, y, w, 150, 300, 600);
+            cx += 350;
+        } else {
+            set(lbp, x, y, 50, 100, 400, 50);
+            set(jspp, x, y, 50, 150, 400, 350);
 
-        w += 350;
-        set((Canvas)vb, x, y, w, 150, 1000, 600);
+            set(lbs, x, y, 50, 800, 400, 50);
+            set(jsps, x, y, 50, 850, 400, 400);
+            set(srea, 0, 0, 0, 0, 0, 0);
+            set(adds, 0, 0, 0, 0, 0, 0);
+            set(rems, 0, 0, 0, 0, 0, 0);
+            set(jtfs, 0, 0, 0, 0, 0, 0);
+            set(jcbm, 0, 0, 0, 0, 0, 0);
+            set(lbd, 0, 0, 0, 0, 0, 0);
+            set(jspd, 0, 0, 0, 0, 0, 0);
+        }
     }
 
     private void addListeners() {
-        back.setLnr(x -> changePanel(getFront()));
-
         jls.addListSelectionListener(x -> {
             if (changing || jls.getValueIsAdjusting())
                 return;
@@ -157,6 +135,40 @@ public class SoulEditPage extends Page {
             rems.setEnabled(editable);
             srea.setEnabled(editable && selected);
         });
+
+        copy.addActionListener(e -> {
+            boolean change = false;
+            UserPack pack = jlp.getSelectedValue();
+            if (pack == null)
+                return;
+
+            for (Soul sl : jls.getSelectedValuesList()) {
+                if (change || pack.editable || pack.desc.allowAnim) {
+                    change = true;
+                    copyAnim(sl.anim);
+                } else {
+                    String pass = Opts.read("Enter the pack's password:");
+                    if (pass == null)
+                        return;
+                    else if (((Source.ZipSource) pack.source).zip.matchKey(pass)) {
+                        change = true;
+                        copyAnim(sl.anim);
+                    } else {
+                        Opts.pop("That's not the password", "Incorrect password");
+                        return;
+                    }
+                }
+            }
+
+            if (change)
+                changePanel(new ImgCutEditPage(getThis()));
+        });
+    }
+
+    private void copyAnim(AnimU<?> eau) {
+        Source.ResourceLocation rl = new Source.ResourceLocation(Source.ResourceLocation.LOCAL, "new anim", Source.BasePath.ANIM);
+        Source.Workspace.validate(rl);
+        new AnimCE(rl, eau);
     }
 
     private void addListeners$1() {
@@ -220,7 +232,7 @@ public class SoulEditPage extends Page {
                 case 0:
                     if (unsorted)
                         return;
-                    Vector<PackData.UserPack> vpack2 = new Vector<>(UserProfile.getUserPacks());
+                    Vector<UserPack> vpack2 = new Vector<>(UserProfile.getUserPacks());
                     vpack.clear();
                     vpack.addAll(vpack2); //Dunno a more efficient way to unsort a list
                     break;
@@ -228,7 +240,7 @@ public class SoulEditPage extends Page {
                     vpack.sort(null);
                     break;
                 case 2:
-                    vpack.sort(Comparator.comparing(PackData.UserPack::getSID));
+                    vpack.sort(Comparator.comparing(UserPack::getSID));
                     break;
                 case 3:
                     vpack.sort(Comparator.comparing(p -> p.desc.getAuthor()));
@@ -259,9 +271,9 @@ public class SoulEditPage extends Page {
         });
     }
 
-    private void ini(PackData.UserPack pack) {
-        add(back);
-
+    private void ini(UserPack pack) {
+        preini();
+        remove(jspt);
         add(lbp);
         add(jspp);
 
@@ -288,7 +300,7 @@ public class SoulEditPage extends Page {
         addListeners$2();
     }
 
-    private void setPack(PackData.UserPack pack) {
+    private void setPack(UserPack pack) {
         pac = pack;
         boolean boo = changing;
         boolean exists = pac != null;
@@ -332,7 +344,7 @@ public class SoulEditPage extends Page {
         if (s != null) {
             jtfs.setText(soul.name);
             jcbm.setSelectedItem(Identifier.get(s.audio));
-            vb.setEntity(s.getEAnim(s.anim.types()[0]));
+            setAnim(s.anim);
         }
 
         boolean editable = s != null && pac.editable;

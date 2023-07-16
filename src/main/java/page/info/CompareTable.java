@@ -209,7 +209,7 @@ public class CompareTable extends Page {
             hp = (int)(Math.round(hp * mul) * b.t().getDefMulti());
             if (mu.getPCoin() != null)
                 hp = (int) (hp * mu.getPCoin().getStatMultiplication(Data.PC2_HP, multi.getTalents()));
-            spTraits.addIf(DefTraits.subList(Data.TRAIT_EVA, Data.TRAIT_BEAST + 1), e -> trs.contains(e) && mu.getTraits().contains(e));
+            spTraits.addIf(DefTraits.subList(Data.TRAIT_EVA, Data.TRAIT_BEAST + 1), e -> trs.contains(e));
 
             EForm ef = new EForm(f, multi);
             unit[0].setText(MainBCU.convertTime(b.t().getFinRes(mu.getRespawn())));

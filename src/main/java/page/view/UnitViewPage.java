@@ -17,7 +17,6 @@ import page.info.UnitInfoPage;
 import page.support.UnitLCR;
 
 import javax.swing.*;
-import java.awt.event.ActionListener;
 import java.util.Vector;
 
 public class UnitViewPage extends AbViewPage {
@@ -123,17 +122,12 @@ public class UnitViewPage extends AbViewPage {
 			changePanel(new UnitInfoPage(getThis(), n));
 		});
 
-		ActionListener[] listeners = copy.getActionListeners();
-
-		for(ActionListener listener : listeners)
-			copy.removeActionListener(listener);
-
 		copy.addActionListener(e -> {
 			{
-				Unit ene = jlu.getSelectedValue();
+				Unit uni = jlu.getSelectedValue();
 
-				if(ene != null) {
-					PackData pack = ene.getCont();
+				if(uni != null) {
+					PackData pack = uni.getCont();
 
 					if(pack != null)
 						if(pack instanceof PackData.DefPack)
@@ -143,15 +137,13 @@ public class UnitViewPage extends AbViewPage {
 								copyAnim();
 							else {
 								String pass = Opts.read("Enter the password : ");
-
 								if(pass == null)
 									return;
 
 								if(((Source.ZipSource) ((PackData.UserPack) pack).source).zip.matchKey(pass)) {
 									copyAnim();
-								} else {
+								} else
 									Opts.pop("You typed incorrect password", "Incorrect password");
-								}
 							}
 						}
 				}

@@ -31,7 +31,7 @@ public abstract class AbViewPage extends Page {
 	private final JBTN back = new JBTN(MainLocale.PAGE, "back");
 	protected final JBTN copy = new JBTN(MainLocale.PAGE, "copy");
 	private final JList<String> jlt = new JList<>();
-	private final JScrollPane jspt = new JScrollPane(jlt);
+	protected final JScrollPane jspt = new JScrollPane(jlt);
 	private final JSlider jst = new JSlider(100, 900);
 	private final JSlider jtl = new JSlider();
 	private final JTG jtb = new JTG(MainLocale.PAGE, "pause");
@@ -51,6 +51,7 @@ public abstract class AbViewPage extends Page {
 	private boolean changingT;
 	private boolean changingtl;
 	private boolean focusOn = false;
+	protected int cx = 1000;
 	private final DecimalFormat df = new DecimalFormat("#.##");
 
 	protected AbViewPage(Page p) {
@@ -160,17 +161,17 @@ public abstract class AbViewPage extends Page {
 			set(manualScale, x, y, 200, 50, 150, 50);
 			set(jst, x, y, 0, 0, 0, 0);
 		} else {
-			set((Canvas) vb, x, y, 1000, 100, 1000, 600);
+			set((Canvas) vb, x, y, cx, 100, 1000, 600);
 			set(jspt, x, y, 400, 550, 300, 400);
-			set(jst, x, y, 1000, 750, 1000, 100);
-			set(jtl, x, y, 1000, 900, 1000, 100);
+			set(jst, x, y, cx, 750, 1000, 100);
+			set(jtl, x, y, cx, 900, 1000, 100);
 			set(jtb, x, y, 1300, 1050, 200, 50);
 			set(nex, x, y, 1600, 1050, 200, 50);
 			set(png, x, y, 1300, 1150, 200, 50);
 			set(gif, x, y, 1600, 1150, 400, 50);
 			set(mp4, x, y, 1800, 1050, 200, 50);
-			set(scale, x, y, 1000, 50, 100, 50);
-			set(manualScale, x, y, 1075, 50, 150, 50);
+			set(scale, x, y, cx, 50, 100, 50);
+			set(manualScale, x, y, cx + 75, 50, 150, 50);
 		}
 	}
 
@@ -240,25 +241,6 @@ public abstract class AbViewPage extends Page {
 
 		camres.setLnr(x -> vb.resetPos());
 
-		copy.addActionListener(arg0 -> {
-			EAnimI ei = vb.getEnt();
-			if (ei == null || !(ei.anim() instanceof AnimD))
-				return;
-			AnimD<?, ?> eau = (AnimD<?, ?>) ei.anim();
-			ResourceLocation rl;
-
-			if (eau.types[0].equals(AnimU.SOUL[0]))
-				rl = new ResourceLocation(ResourceLocation.LOCAL, "new soul anim", Source.BasePath.SOUL);
-			else if (eau.types[0].equals(AnimU.BGEFFECT[0]))
-				rl = new ResourceLocation(ResourceLocation.LOCAL, "new background effect", Source.BasePath.BGEffect);
-			else
-				rl = new ResourceLocation(ResourceLocation.LOCAL, "new anim", Source.BasePath.ANIM);
-
-			Workspace.validate(rl);
-			AnimCE ac = new AnimCE(rl, eau);
-			changePanel(new ImgCutEditPage(getThis(), ac));
-		});
-
 		jlt.addListSelectionListener(arg0 -> {
 			if (arg0.getValueIsAdjusting())
 				return;
@@ -326,6 +308,27 @@ public abstract class AbViewPage extends Page {
 
 				focusOn = false;
 			}
+		});
+	}
+
+	protected void defCopyListener() {
+		copy.addActionListener(arg0 -> {
+			EAnimI ei = vb.getEnt();
+			if (ei == null || !(ei.anim() instanceof AnimD))
+				return;
+			AnimD<?, ?> eau = (AnimD<?, ?>) ei.anim();
+			ResourceLocation rl;
+
+			if (eau.types[0].equals(AnimU.SOUL[0]))
+				rl = new ResourceLocation(ResourceLocation.LOCAL, "new soul anim", Source.BasePath.SOUL);
+			else if (eau.types[0].equals(AnimU.BGEFFECT[0]))
+				rl = new ResourceLocation(ResourceLocation.LOCAL, "new background effect", Source.BasePath.BGEffect);
+			else
+				rl = new ResourceLocation(ResourceLocation.LOCAL, "new anim", Source.BasePath.ANIM);
+
+			Workspace.validate(rl);
+			AnimCE ac = new AnimCE(rl, eau);
+			changePanel(new ImgCutEditPage(getThis(), ac));
 		});
 	}
 

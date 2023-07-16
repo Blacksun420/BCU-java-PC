@@ -128,15 +128,9 @@ public abstract class ProcTable extends Page {
 		return ret;
 	}
 
-	private void updateVisibility() {
-		for (int i = 0; i < inds.length; i++)
-			group[i].updateVisibility();
-	}
-
 	protected void setData(Proc ints) {
 		for (int i = 0; i < inds.length; i++)
 			group[i].setData(ints.getArr(inds[i]));
-		updateVisibility();
 	}
 
 	private void ini() {

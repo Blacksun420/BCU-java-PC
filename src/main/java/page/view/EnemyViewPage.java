@@ -5,8 +5,7 @@ import common.pack.Source;
 import common.pack.UserProfile;
 import common.system.ENode;
 import common.util.anim.AnimCE;
-import common.util.anim.AnimD;
-import common.util.anim.EAnimI;
+import common.util.anim.AnimU;
 import common.util.unit.AbEnemy;
 import common.util.unit.Enemy;
 import main.Opts;
@@ -17,7 +16,6 @@ import page.info.EnemyInfoPage;
 import page.support.AnimLCR;
 
 import javax.swing.*;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -102,63 +100,34 @@ public class EnemyViewPage extends AbViewPage {
 			changePanel(new EnemyInfoPage(getThis(), n));
 		});
 
-		ActionListener[] listeners = copy.getActionListeners();
-
-		for(ActionListener listener : listeners)
-			copy.removeActionListener(listener);
-
 		copy.addActionListener(e -> {
-			{
-				if (jlu.getSelectedValuesList().size() > 1) {
-					Enemy ene = jlu.getSelectedValue();
-
-					if (ene != null) {
-						PackData pack = ene.getCont();
-
-						if (pack != null)
-							if (pack instanceof PackData.DefPack)
-								copyAnim();
-							else if (pack instanceof PackData.UserPack) {
-								if (((PackData.UserPack) pack).editable || ((PackData.UserPack) pack).desc.allowAnim)
-									copyAnim();
-								else {
-									String pass = Opts.read("Enter the password : ");
-
-									if (pass == null)
-										return;
-
-									if (((Source.ZipSource) ((PackData.UserPack) pack).source).zip.matchKey(pass)) {
-										copyAnim();
-									} else {
-										Opts.pop("You typed incorrect password", "Incorrect password");
-									}
-								}
-							}
-					}
-				} else {
-					List<Enemy> list = jlu.getSelectedValuesList();
-					PackData pack = list.get(0).getCont();
-
-					if (pack == null)
-						return;
-
-					if (pack instanceof PackData.UserPack) {
-						if (!((PackData.UserPack) pack).editable && !((PackData.UserPack) pack).desc.allowAnim) {
-							String pass = Opts.read("Enter the password : ");
-
-							if (pass == null)
-								return;
-
-							if (!((Source.ZipSource) ((PackData.UserPack) pack).source).zip.matchKey(pass)) {
-								Opts.pop("You typed incorrect password", "Incorrect password");
-								return;
-							}
+			boolean change = false;
+			List<Enemy> list = jlu.getSelectedValuesList();
+			List<PackData> pk = new ArrayList<>();
+			List<PackData> pkFail = new ArrayList<>();
+			for (Enemy ene : list) {
+				PackData pack = ene.getCont();
+				if (pack != null && !pkFail.contains(pack))
+					if (pack instanceof PackData.DefPack || pk.contains(pack) || ((PackData.UserPack) pack).editable || ((PackData.UserPack) pack).desc.allowAnim) {
+						change = true;
+						copyAnim(ene.anim);
+					} else {
+						String pass = Opts.read("Enter the pack's password:");
+						if (pass == null)
+							pkFail.add(pack);
+						else if (((Source.ZipSource) ((PackData.UserPack) pack).source).zip.matchKey(pass)) {
+							change = true;
+							copyAnim(ene.anim);
+							pk.add(pack);
+						} else {
+							Opts.pop("That's not the password", "Incorrect password");
+							pkFail.add(pack);
 						}
 					}
-
-					copyAnim();
 				}
-			}
+
+			if (change)
+				changePanel(new ImgCutEditPage(getThis()));
 		});
 	}
 
@@ -171,14 +140,9 @@ public class EnemyViewPage extends AbViewPage {
 		addListeners();
 	}
 
-	private void copyAnim() {
-		EAnimI ei = vb.getEnt();
-		if (ei == null || !(ei.anim() instanceof AnimD))
-			return;
-		AnimD<?, ?> eau = (AnimD<?, ?>) ei.anim();
+	private void copyAnim(AnimU<?> eau) {
 		Source.ResourceLocation rl = new Source.ResourceLocation(Source.ResourceLocation.LOCAL, "new anim", Source.BasePath.ANIM);
 		Source.Workspace.validate(rl);
 		new AnimCE(rl, eau);
-		changePanel(new ImgCutEditPage(getThis()));
 	}
 }

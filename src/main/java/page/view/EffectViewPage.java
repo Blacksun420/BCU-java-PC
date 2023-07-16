@@ -48,6 +48,7 @@ public class EffectViewPage extends AbViewPage {
 	}
 
 	private void addListeners() {
+		defCopyListener();
 
 		jlu.addListSelectionListener(arg0 -> {
 			if (arg0.getValueIsAdjusting())
