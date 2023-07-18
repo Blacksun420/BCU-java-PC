@@ -582,20 +582,20 @@ public class BackupPage extends Page {
             DefaultMutableTreeNode tl = new DefaultMutableTreeNode(lr + "/");
             tlr.add(tl);
 
-            for (CharaGroup cg : lr.res.keySet()) {
-                String str = cg.getID().pack + cg + ": " + Form.lvString(lr.res.get(cg));
+            for (CharaGroup cg : lr.cgl.keySet()) {
+                String str = cg.getID().pack + cg + ": " + Level.lvString(lr.cgl.get(cg));
 
                 DefaultMutableTreeNode tc = new DefaultMutableTreeNode(str);
                 tl.add(tc);
             }
 
-            String str = "General: " + Form.lvString(lr.all);
+            String str = "General: " + Level.lvString(lr.def);
 
             DefaultMutableTreeNode tc = new DefaultMutableTreeNode(str);
             tl.add(tc);
 
-            for (int i = 0; i < lr.rares.length; i++) {
-                str = Interpret.RARITY[i] + ": " + Form.lvString(lr.rares[i]);
+            for (int i = 0; i < lr.rs.length; i++) {
+                str = Interpret.RARITY[i] + ": " + Level.lvString(lr.rs[i]);
 
                 tc = new DefaultMutableTreeNode(str);
 

@@ -1276,12 +1276,12 @@ public class PackEditPage extends Page {
 		src.lvrs.raw = true;
 		for (LvRestrict lvrs : src.lvrs) {
 			LvRestrict nlv = new LvRestrict(dest.getNextID(LvRestrict.class), lvrs);
-			nlv.res.clear();
-			for (CharaGroup cg : lvrs.res.keySet())
+			nlv.cgl.clear();
+			for (CharaGroup cg : lvrs.cgl.keySet())
 				if (cg.id.pack.equals(src.getSID()))
-					nlv.res.put(dest.groups.get(dest.groups.size() - src.groups.size() + cg.id.id), lvrs.res.get(cg));
+					nlv.cgl.put(dest.groups.get(dest.groups.size() - src.groups.size() + cg.id.id), lvrs.cgl.get(cg));
 				else
-					nlv.res.put(cg, lvrs.res.get(cg));
+					nlv.cgl.put(cg, lvrs.cgl.get(cg));
 			dest.lvrs.add(nlv);
 		}
 		src.lvrs.raw = false;

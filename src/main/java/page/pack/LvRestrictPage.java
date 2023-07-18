@@ -6,6 +6,7 @@ import common.util.Data;
 import common.util.stage.CharaGroup;
 import common.util.stage.LvRestrict;
 import common.util.unit.Form;
+import common.util.unit.Level;
 import page.JBTN;
 import page.Page;
 import page.support.AnimLCR;
@@ -136,13 +137,9 @@ public class LvRestrictPage extends Page {
 		addListeners();
 	}
 
-	private void set(JLabel jl, String str, int[] lvs) {
-		if (lvs != null) {
-			str += "Lv." + lvs[0] + " {";
-			for (int i = 1; i < 5; i++)
-				str += lvs[i] + ",";
-			str += lvs[5] + "}";
-		}
+	private void set(JLabel jl, String str, Level lvs) {
+		if (lvs != null)
+			str += Level.lvString(lvs);
 		jl.setText(str);
 	}
 
@@ -152,7 +149,7 @@ public class LvRestrictPage extends Page {
 			set(lsb, "group: ", null);
 			jlus.setListData(new Form[0]);
 		} else {
-			set(lsb, "group: ", lr.res.get(cg));
+			set(lsb, "group: ", lr.cgl.get(cg));
 			jlus.setListData(cg.fset.toArray(new Form[0]));
 		}
 	}
@@ -168,11 +165,11 @@ public class LvRestrictPage extends Page {
 			jlcg.setListData(new CharaGroup[0]);
 			cg = null;
 		} else {
-			set(lal, "all: ", lr.all);
+			set(lal, "all: ", lr.def);
 			for (int i = 0; i < lra.length; i++)
-				set(lra[i], RARITY[i] + ": ", lr.rares[i]);
+				set(lra[i], RARITY[i] + ": ", lr.rs[i]);
 
-			Set<CharaGroup> scg = lr.res.keySet();
+			Set<CharaGroup> scg = lr.cgl.keySet();
 			if (cg != null && !scg.contains(cg))
 				cg = null;
 			jlcg.setListData(scg.toArray(new CharaGroup[0]));

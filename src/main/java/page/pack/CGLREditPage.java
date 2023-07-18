@@ -2,12 +2,15 @@ package page.pack;
 
 import common.CommonStatic;
 import common.pack.FixIndexList.FixIndexMap;
+import common.pack.Identifier;
 import common.pack.PackData.UserPack;
+import common.pack.SortedPackSet;
 import common.util.Data;
 import common.util.stage.CharaGroup;
 import common.util.stage.LvRestrict;
 import common.util.unit.AbForm;
 import common.util.unit.Form;
+import common.util.unit.Level;
 import page.JBTN;
 import page.JTF;
 import page.MainLocale;
@@ -27,6 +30,8 @@ import static utilpc.Interpret.RARITY;
 public class CGLREditPage extends Page {
 
 	private static final long serialVersionUID = 1L;
+	private static final SortedPackSet<CharaGroup> copiedCGs = new SortedPackSet<>();
+	private static final ArrayList<LvRestrict> copiedLRs = new ArrayList<>();
 
 	private final JBTN back = new JBTN(MainLocale.PAGE, "back");
 	private final JList<CharaGroup> jlcg = new JList<>();
@@ -68,6 +73,17 @@ public class CGLREditPage extends Page {
 	private CharaGroup sb;
 	private LvRestrict lr;
 	private UnitFindPage ufp;
+
+	private final JList<CharaGroup> jcpc = new JList<>();
+	private final JScrollPane jscpc = new JScrollPane(jcpc);
+	private final JList<LvRestrict> jclr = new JList<>();
+	private final JScrollPane jsclr = new JScrollPane(jclr);
+	private final JBTN cpc = new JBTN(MainLocale.PAGE, "copy");
+	private final JBTN ppc = new JBTN(MainLocale.PAGE, "paste");
+	private final JBTN rpc = new JBTN(MainLocale.PAGE, "rem");
+	private final JBTN clr = new JBTN(MainLocale.PAGE, "copy");
+	private final JBTN plr = new JBTN(MainLocale.PAGE, "paste");
+	private final JBTN rlr = new JBTN(MainLocale.PAGE, "rem");
 
 	protected CGLREditPage(Page p, UserPack pac) {
 		super(p);
@@ -126,6 +142,15 @@ public class CGLREditPage extends Page {
 		for (int i = 0; i < jtfra.length; i++)
 			set(jtfra[i], x, y, 1800, 200 + 50 * i, 400, 50);
 
+		set(jscpc, x, y, 50, 1050, 300, 150);
+		set(cpc, x, y, 50, 1000, 150, 50);
+		set(ppc, x, y, 200, 1000, 150, 50);
+		set(rpc, x, y, 50, 1200, 300, 50);
+
+		set(jsclr, x, y, 1100, 1050, 300, 150);
+		set(clr, x, y, 1100, 1000, 150, 50);
+		set(plr, x, y, 1250, 1000, 150, 50);
+		set(rlr, x, y, 1100, 1200, 300, 50);
 	}
 
 	private void addListeners() {
@@ -217,6 +242,35 @@ public class CGLREditPage extends Page {
 				return;
 			cg.name = str;
 		});
+
+		jcpc.addListSelectionListener(arg0 -> {
+			if (changing || jlsb.getValueIsAdjusting())
+				return;
+			changing = true;
+			updateCGC(false);
+			changing = false;
+		});
+
+		cpc.addActionListener(c -> {
+			copiedCGs.add(cg);
+			updateCGC(true);
+		});
+
+		ppc.addActionListener(c -> {
+			changing = true;
+			CharaGroup pcg = new CharaGroup(pack.getNextID(CharaGroup.class), jcpc.getSelectedValue());
+			pcg.fset.removeIf(f -> !(f.getID().pack.equals(Identifier.DEF) || f.getID().pack.equals(pack.getSID()) || pack.desc.dependency.contains(f.getID().pack)));
+
+			lcg.add(pcg);
+			updateCGL();
+			jlcg.setSelectedValue(pcg, true);
+			changing = false;
+		});
+
+		rpc.addActionListener(arg0 -> {
+			copiedCGs.remove(jcpc.getSelectedValue());
+			updateCGC(true);
+		});
 	}
 
 	private void addListeners$LR() {
@@ -259,8 +313,7 @@ public class CGLREditPage extends Page {
 
 		addsb.addActionListener(arg0 -> {
 			changing = true;
-			int[] lv = new int[] { 120, 10, 10, 10, 10, 10 };
-			lr.res.put(cg, lv);
+			lr.cgl.put(cg, LvRestrict.MAX.clone());
 			sb = cg;
 			updateLR();
 			changing = false;
@@ -271,10 +324,10 @@ public class CGLREditPage extends Page {
 				return;
 			changing = true;
 			int ind = jlsb.getSelectedIndex();
-			lr.res.remove(sb);
+			lr.cgl.remove(sb);
 			updateLR();
-			if (lr.res.size() >= ind)
-				ind = lr.res.size() - 1;
+			if (lr.cgl.size() >= ind)
+				ind = lr.cgl.size() - 1;
 			jlsb.setSelectedIndex(ind);
 			sb = jlsb.getSelectedValue();
 			updateSB();
@@ -295,6 +348,35 @@ public class CGLREditPage extends Page {
 			if (lr.name.equals(str))
 				return;
 			lr.name = str;
+		});
+
+		jclr.addListSelectionListener(arg0 -> {
+			if (changing || jlsb.getValueIsAdjusting())
+				return;
+			changing = true;
+			updateLRC(false);
+			changing = false;
+		});
+
+		clr.addActionListener(c -> {
+			copiedLRs.add(lr);
+			updateLRC(true);
+		});
+
+		plr.addActionListener(c -> {
+			changing = true;
+			lr = new LvRestrict(pack.getNextID(LvRestrict.class), jclr.getSelectedValue());
+			lr.cgl.keySet().removeIf(cg -> !(cg.getID().pack.equals(Identifier.DEF) || cg.getID().pack.equals(pack.getSID()) || pack.desc.dependency.contains(cg.getID().pack)));
+
+			llr.add(lr);
+			updateLRL();
+			jllr.setSelectedValue(lr, true);
+			changing = false;
+		});
+
+		rlr.addActionListener(arg0 -> {
+			copiedLRs.remove(jclr.getSelectedValue());
+			updateLRC(true);
 		});
 	}
 
@@ -321,17 +403,38 @@ public class CGLREditPage extends Page {
 		set(jtflr);
 		for (int i = 0; i < jtfra.length; i++)
 			set(jtfra[i] = new JTF());
+		add(jscpc);
+		add(cpc);
+		add(ppc);
+		add(rpc);
+
+		add(jsclr);
+		add(clr);
+		add(plr);
+		add(rlr);
 		jlus.setCellRenderer(new AnimLCR());
 		jlua.setCellRenderer(new AnimLCR());
 		updateCGL();
+		updateCGC(true);
 		updateLRL();
+		updateLRC(true);
 		addListeners();
 		addListeners$CG();
 		addListeners$LR();
 	}
 
-	private void put(int[] tar, int[] val) {
-		System.arraycopy(val, 0, tar, 0, Math.min(tar.length, val.length));
+	private void put(Level tar, int[] val) {
+		if (val.length == 1) {
+			tar.setLevel(Math.max(1, Math.min(val[0], 200 - tar.getPlusLv())));
+			tar.setTalents(new int[0]);
+		} else {
+			tar.setLevel(Math.max(1, Math.min(val[0], 200 - val[1])));
+			tar.setPlusLevel(Math.max(0, Math.min(val[1], 200 - tar.getLv())));
+
+			int[] nps = new int[Math.min(Data.PC_CORRES.length + Data.PC_CUSTOM.length, val.length - 2)];
+			System.arraycopy(val, 2, nps, 0, nps.length);
+			tar.setTalents(nps);
+		}
 	}
 
 	private void set(JTF jtf) {
@@ -346,12 +449,12 @@ public class CGLREditPage extends Page {
 					if (inp[i] < 0)
 						inp[i] = 0;
 				if (jtf == jtfal)
-					put(lr.all, inp);
+					put(lr.def, inp);
 				if (jtf == jtfsb)
-					put(lr.res.get(sb), inp);
+					put(lr.cgl.get(sb), inp);
 				for (int i = 0; i < jtfra.length; i++)
 					if (jtf == jtfra[i])
-						put(lr.rares[i], inp);
+						put(lr.rs[i], inp);
 				updateSB();
 			}
 
@@ -359,15 +462,9 @@ public class CGLREditPage extends Page {
 
 	}
 
-	private void set(JTF jtf, String str, int[] lvs) {
-		if (lvs != null) {
-			str += "Lv." + lvs[0] + " {";
-			StringBuilder strBuilder = new StringBuilder(str);
-			for (int i = 1; i < 5; i++)
-				strBuilder.append(lvs[i]).append(",");
-			str = strBuilder.toString();
-			str += lvs[5] + "}";
-		}
+	private void set(JTF jtf, String str, Level lvs) {
+		if (lvs != null)
+			str += Level.lvString(lvs);
 		jtf.setText(str);
 	}
 
@@ -380,7 +477,8 @@ public class CGLREditPage extends Page {
 		jtfna.setEnabled(cg != null);
 		cgt.setText("");
 		jtfna.setText("");
-		addsb.setEnabled(lr != null && cg != null && !lr.res.containsKey(cg));
+		addsb.setEnabled(lr != null && cg != null && !lr.cgl.containsKey(cg));
+		cpc.setEnabled(cg != null && !copiedCGs.contains(cg));
 
 		if (cg == null)
 			jlus.setListData(new Form[0]);
@@ -389,6 +487,15 @@ public class CGLREditPage extends Page {
 			cgt.setText(0, cg.type == 0 ? "include" : "exclude");
 			jtfna.setText(cg.name);
 		}
+	}
+
+	private void updateCGC(boolean ul) {
+		if (ul)
+			jcpc.setListData(copiedCGs.toArray(new CharaGroup[0]));
+		CharaGroup cg = jcpc.getSelectedValue();
+		cpc.setEnabled(this.cg != null && !copiedCGs.contains(this.cg));
+		ppc.setEnabled(cg != null);
+		rpc.setEnabled(cg != null);
 	}
 
 	private void updateCGL() {
@@ -400,22 +507,32 @@ public class CGLREditPage extends Page {
 	private void updateLR() {
 		remlr.setEnabled(lr != null && !lr.used());
 		jlsb.setEnabled(lr != null);
-		addsb.setEnabled(lr != null && cg != null && !lr.res.containsKey(cg));
+		addsb.setEnabled(lr != null && cg != null && !lr.cgl.containsKey(cg));
 		jtflr.setEnabled(lr != null);
+		clr.setEnabled(lr != null && !copiedLRs.contains(lr));
 		jtflr.setText("");
 		if (lr == null)
 			jlsb.setListData(new CharaGroup[0]);
 		else {
-			jlsb.setListData(lr.res.keySet().toArray(new CharaGroup[0]));
+			jlsb.setListData(lr.cgl.keySet().toArray(new CharaGroup[0]));
 			jtflr.setText(lr.name);
 		}
-		if (lr == null || sb == null || !lr.res.containsKey(sb))
+		if (lr == null || sb == null || !lr.cgl.containsKey(sb))
 			sb = null;
 		jlsb.setSelectedValue(sb, true);
 		jtfal.setEnabled(lr != null);
 		for (JTF jtf : jtfra)
 			jtf.setEnabled(lr != null);
 		updateSB();
+	}
+
+	private void updateLRC(boolean ul) {
+		if (ul)
+			jclr.setListData(copiedLRs.toArray(new LvRestrict[0]));
+		LvRestrict lr = jclr.getSelectedValue();
+		clr.setEnabled(this.lr != null && !copiedLRs.contains(this.lr));
+		plr.setEnabled(lr != null);
+		rlr.setEnabled(lr != null);
 	}
 
 	private void updateLRL() {
@@ -428,9 +545,9 @@ public class CGLREditPage extends Page {
 		jtfsb.setEnabled(sb != null);
 
 		if (lr != null) {
-			set(jtfal, "all: ", lr.all);
+			set(jtfal, "all: ", lr.def);
 			for (int i = 0; i < jtfra.length; i++)
-				set(jtfra[i], RARITY[i] + ": ", lr.rares[i]);
+				set(jtfra[i], RARITY[i] + ": ", lr.rs[i]);
 		} else {
 			set(jtfal, "all: ", null);
 			for (int i = 0; i < jtfra.length; i++)
@@ -440,7 +557,7 @@ public class CGLREditPage extends Page {
 		if (lr == null || sb == null)
 			set(jtfsb, "group: ", null);
 		else
-			set(jtfsb, "group: ", lr.res.get(sb));
+			set(jtfsb, "group: ", lr.cgl.get(sb));
 		remsb.setEnabled(sb != null);
 	}
 
