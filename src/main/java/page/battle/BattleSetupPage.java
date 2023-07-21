@@ -3,8 +3,10 @@ package page.battle;
 import common.CommonStatic;
 import common.battle.BasisLU;
 import common.battle.BasisSet;
+import common.pack.SortedPackSet;
 import common.util.stage.RandStage;
 import common.util.stage.Stage;
+import common.util.unit.Form;
 import page.JBTN;
 import page.JTG;
 import page.MainLocale;
@@ -56,13 +58,36 @@ public class BattleSetupPage extends LubCont {
 	}
 
 	@Override
-	protected void renew() {
+	public void callBack(Object obj) {
 		BasisSet b = BasisSet.current();
 		jl.setText(b + "-" + b.sele);
-		if (st.lim != null && st.lim.lvr != null)
-			strt.setEnabled(st.lim.lvr.isValid(b.sele.lu));
-		else
-			tmax.setEnabled(false);
+		if (st.lim != null) {
+			boolean val = st.lim.valid(b.sele.lu);
+			strt.setEnabled(val);
+			if (!val) {
+				if (st.lim.group != null && st.lim.group.type % 2 != 0) {
+					SortedPackSet<Form> fSet = st.lim.getValid(b.sele.lu);
+					if (fSet.size() - st.lim.fa != 0)
+						if (st.lim.group.type == 3)
+							strt.setToolTipText("Remove at least " + (fSet.size() - st.lim.fa) + " of these units from the lineup: " + fSet);
+						else if (st.lim.group.type == 1) {
+							SortedPackSet<Form> ffSet = new SortedPackSet<>(st.lim.group.fset);
+							for (Form f : ffSet.inCommon(fSet))
+								ffSet.remove(f);
+							strt.setToolTipText((st.lim.fa - fSet.size()) + " more of these units is required in the lineup: " + ffSet);
+						}
+				}
+				if (st.lim.lvr != null && !st.lim.lvr.isValid(b.sele.lu))
+					strt.setToolTipText((strt.getToolTipText() == null ? "" : strt.getToolTipText() + ", and ") + " some units' Lv is above limits");
+			} else
+				strt.setToolTipText(null);
+		}
+	}
+
+	@Override
+	protected void renew() {
+		BasisSet b = BasisSet.current();
+		callBack(null);
 		lub.setLU(b.sele.lu);
 	}
 
@@ -134,6 +159,7 @@ public class BattleSetupPage extends LubCont {
 		add(snip);
 		add(tmax);
 		add(lub);
+		tmax.setEnabled(st.lim != null && st.lim.lvr != null);
 		if(st.isAkuStage()) {
 			add(plus);
 			add(lvlim);

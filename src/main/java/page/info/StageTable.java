@@ -154,7 +154,7 @@ public class StageTable extends AbJTable {
 			data[ind][1] = Identifier.get(info[i].enemy);
 			data[ind][0] = info[i].boss >= 1 ? MainLocale.getLoc(MainLocale.INFO,"b" + info[i].boss) : "";
 			data[ind][2] = info[i].multiple == info[i].mult_atk ? info[i].multiple+"" : CommonStatic.toArrayFormat(info[i].multiple, info[i].mult_atk);
-			data[ind][3] = info[i].number == 0 ? Page.get(MainLocale.UTIL, "inf") : info[i].number;
+			data[ind][3] = info[i].number == 0 ? MainLocale.getLoc(MainLocale.UTIL, "inf") : info[i].number;
 
 			if (info[i].castle_0 >= info[i].castle_1)
 				data[ind][4] = info[i].castle_0 + "%";

@@ -152,7 +152,7 @@ public class HeadTable extends AbJTable {
 				rar[7] = lim.lvr;
 			}
 			if (lim.group != null) {
-				img[6] = limits[5];
+				img[6] = limits[5] + (lim.group.type % 2 != 0 ? "(" + (lim.group.type == 3 ? "max:" : "min:") + lim.fa + ")" : "");
 				img[7] = lim.group;
 			}
 			if (lim.min + lim.max + lim.max + lim.line + lim.num > 0) {

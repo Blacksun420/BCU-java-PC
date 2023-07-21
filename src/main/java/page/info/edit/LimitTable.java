@@ -1,7 +1,10 @@
 package page.info.edit;
 
 import common.CommonStatic;
+import common.pack.PackData;
 import common.pack.PackData.UserPack;
+import common.pack.UserProfile;
+import common.util.stage.CharaGroup;
 import common.util.stage.Limit;
 import page.*;
 import page.pack.CharaGroupPage;
@@ -74,14 +77,13 @@ public class LimitTable extends Page {
 	@Override
 	protected void renew() {
 		if (cgp != null) {
-			jcg.setText("" + cgp.cg);
+			jcg.setText(cgp.cg + (cgp.cg != null && cgp.cg.type % 2 != 0 ? ": " + lim.fa : ""));
 			lim.group = cgp.cg;
 		}
 		if (lrp != null) {
 			jlr.setText("" + lrp.lr);
 			lim.lvr = lrp.lr;
 		}
-
 		cgp = null;
 		lrp = null;
 	}
@@ -120,15 +122,14 @@ public class LimitTable extends Page {
 		if (lim.rare > 0) {
 			for (int i = 0; i < brars.length; i++)
 				brars[i].setSelected(((lim.rare >> i) & 1) > 0);
-		} else {
-			for (int i = 0; i < brars.length; i++)
-				brars[i].setSelected(true);
-		}
+		} else
+			for (JTG brar : brars)
+				brar.setSelected(true);
 		jcmax.setText(limits[4] + ": " + lim.max);
 		jcmin.setText(limits[3] + ": " + lim.min);
 		jnum.setText(limits[1] + ": " + lim.num);
 		one.setText(MainLocale.getLoc(MainLocale.INFO, "row" + lim.line));
-		jcg.setText("" + lim.group);
+		jcg.setText(lim.group + (lim.group != null && lim.group.type % 2 != 0 ? ": " + lim.fa : ""));
 		jlr.setText("" + lim.lvr);
 	}
 
@@ -157,6 +158,22 @@ public class LimitTable extends Page {
 		lrb.addActionListener(arg0 -> {
 			lrp = new LvRestrictPage(main, pac, false);
 			changePanel(lrp);
+		});
+
+		jcg.addActionListener(l -> {
+			String[] strs = jcg.getText().split("/");
+			if (strs.length < 2)
+				return;
+			PackData pk = UserProfile.getPack(strs[0]);
+			if (pk != null) {
+				int[] ints = CommonStatic.parseIntsN(strs[1]);
+				CharaGroup cg = pk.groups.get(ints[0]);
+				if (cg != null)
+					lim.group = cg;
+				if (ints.length >= 2)
+					lim.fa = Math.max(0, Math.min(ints[1], Math.min(lim.group.fset.size(), 10)));
+			} else
+				lim.group = null;
 		});
 	}
 

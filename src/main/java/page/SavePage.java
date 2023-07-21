@@ -8,7 +8,7 @@ import javax.swing.*;
 public class SavePage extends Page {
     private static final long serialVersionUID = 1L;
 
-    private final JLabel save = new JLabel(Page.get(MainLocale.PAGE, "savepro"));
+    private final JLabel save = new JLabel(get(MainLocale.PAGE, "savepro"));
     private boolean[] saveOpts = new boolean[]{true, false};
 
     protected SavePage() {

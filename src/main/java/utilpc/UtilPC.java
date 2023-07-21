@@ -218,7 +218,7 @@ public class UtilPC {
 		StringBuilder lab = new StringBuilder();
 		StringBuilder str = new StringBuilder(LVs + ", {");
 
-		if (pc.trait.size > 0) {
+		if (pc.trait.size() > 0) {
 			String[] TraitsHolder = new String[pc.trait.size()];
 			for (int i = 0 ; i < pc.trait.size() ; i++) {
 				Trait trait = pc.trait.get(i);
