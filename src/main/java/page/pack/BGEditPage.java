@@ -300,13 +300,11 @@ public class BGEditPage extends Page {
 		overlay.setEnabled(b);
 		eff.setEnabled(b);
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++)
 			cs[i].setEnabled(b);
-		}
 
-		for(int i = 0; i < 5; i++) {
+		for(int i = 0; i < 5; i++)
 			cl[i].setEnabled(b);
-		}
 
 		for(int i = 0; i < 3; i++) {
 			os[i].setEnabled(b);
@@ -318,34 +316,28 @@ public class BGEditPage extends Page {
 			top.setEnabled(bgr.parts.length > Background.TOP && bgr.img.getImg().getHeight() == 1024);
 			top.setSelected(bgr.top);
 
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < 4; i++)
 				setCSText(i);
-			}
 
-			if(bgr.overlay != null) {
-				for(int i = 0; i < 3; i++) {
+			if(bgr.overlay != null)
+				for(int i = 0; i < 3; i++)
 					setOSText(i, i % 3 == 2);
-				}
-			} else {
+			else
 				for(int i = 0; i < 3; i++) {
 					os[i].setText(null);
 					os[i].setEnabled(false);
 				}
-			}
 
-			if(bgr.bgEffect == null) {
+			if(bgr.bgEffect == null)
 				eff.setSelectedIndex(0);
-			} else {
+			else
 				eff.setSelectedItem(bgr.bgEffect.get());
-			}
 		} else {
 			top.setEnabled(false);
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < 4; i++)
 				cs[i].setText(null);
-			}
-			for(int i = 0; i < 3; i++) {
+			for(int i = 0; i < 3; i++)
 				os[i].setText(null);
-			}
 		}
 	}
 
@@ -380,9 +372,9 @@ public class BGEditPage extends Page {
 		changing = true;
 		jlst.setListData(arr);
 		jlst.setSelectedIndex(ind);
-		if(bcgr == null && arr.length > 0) {
+		if(bcgr == null && arr.length > 0)
 			bgr = arr[0];
-		}
+
 		changing = boo;
 		setBG(bgr);
 	}

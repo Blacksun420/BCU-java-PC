@@ -61,8 +61,8 @@ public class BCUWriter extends DataIO {
 
 	public static void logPrepare() {
 		String str = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-		log = new File(CommonStatic.ctx.getBCUFolder(), "./logs/" + str + ".log");
-		ph = new File(CommonStatic.ctx.getBCUFolder(), "./logs/placeholder");
+		log = CommonStatic.ctx.newFile("./logs/" + str + ".log");
+		ph = CommonStatic.ctx.newFile("./logs/placeholder");
 
 		if (!log.getParentFile().exists()) {
 			boolean res = log.getParentFile().mkdirs();
@@ -99,9 +99,8 @@ public class BCUWriter extends DataIO {
 			} else if(!ph.exists()) {
 				boolean res = ph.createNewFile();
 
-				if(!res) {
+				if(!res)
 					Opts.ioErr("Can't create file "+ph.getAbsolutePath());
-				}
 			}
 		} catch (IOException ignored) {
 		}

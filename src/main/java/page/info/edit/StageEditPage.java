@@ -8,7 +8,6 @@ import common.util.stage.StageMap;
 import common.util.stage.info.CustomStageInfo;
 import common.util.unit.AbEnemy;
 import common.util.unit.Enemy;
-import main.Opts;
 import page.JBTN;
 import page.JTF;
 import page.Page;
@@ -73,7 +72,6 @@ public class StageEditPage extends Page {
 
 	private final MapColc mc;
 	private final UserPack pack;
-
 	private final EnemyFindPage efp;
 
 	private boolean changing = false;
@@ -108,8 +106,9 @@ public class StageEditPage extends Page {
 		info.renew();
 
 		Vector<AbEnemy> v = new Vector<>();
-		if (efp != null && efp.getList() != null)
+		if (efp.getList() != null)
 			v.addAll(efp.getList());
+		jt.updateAbEnemy();
 
 		jle.setListData(v);
 	}
@@ -363,6 +362,7 @@ public class StageEditPage extends Page {
 		setAA(null);
 		setBA(null);
 		jle.setCellRenderer(new AnimLCR());
+		jt.ini();
 		addListeners$0();
 		addListeners$1();
 		addListeners$2();
@@ -471,13 +471,5 @@ public class StageEditPage extends Page {
 		elim.setEnabled(st != null && !(st.getCont().getCont() instanceof MapColc.ClipMapColc));
 		jspjt.scrollRectToVisible(new Rectangle(0, 0, 1, 1));
 		resized();
-	}
-
-	@Override
-	public void callBack(Object o) {
-		if (jt.findIndex == -1 || o == null || !Opts.conf("Are you sure you want to replace the enemy with " + o + "?"))
-			jt.findIndex = -1;
-		else
-			jt.updateAbEnemy((Enemy) o);
 	}
 }

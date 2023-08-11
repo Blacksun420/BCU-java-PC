@@ -2,6 +2,7 @@ package plugin.ui.main.handler;
 
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.util.StringUtils;
+import common.CommonStatic;
 import plugin.ui.common.config.StaticConfig;
 import plugin.ui.common.util.Fio.FileUtil;
 import plugin.ui.main.Theme;
@@ -82,7 +83,7 @@ public abstract class UIHandler extends SwingComponentHandler {
     }
 
     private Font readUIFont() {
-        File file = new File(StaticConfig.UI_DIRECTORY + config.getString("fontFile"));
+        File file = CommonStatic.ctx.newFile(StaticConfig.UI_DIRECTORY + config.getString("fontFile"));
         Font UIFont = null;
         try {
             if (file.exists() && file.isFile()) {
@@ -95,7 +96,7 @@ public abstract class UIHandler extends SwingComponentHandler {
     }
 
     private void setGIF(String gifFile) {
-        GifComponent.gif = new GifComponent(new File(gifFile), config.getInteger("gifDelay"));
+        GifComponent.gif = new GifComponent(CommonStatic.ctx.newFile(gifFile), config.getInteger("gifDelay"));
         GifComponent.gif.resize = config.getBoolean("resizeGIF");
     }
 
@@ -179,7 +180,7 @@ public abstract class UIHandler extends SwingComponentHandler {
 
         if (file != null && confirm(getConfig("set-default-image"))) {
             String name = file.getName();
-            FileUtil.copyFile(file, new File(StaticConfig.UI_DIRECTORY + name));
+            FileUtil.copyFile(file, CommonStatic.ctx.newFile(StaticConfig.UI_DIRECTORY + name));
             config.set("bgFile", name);
             writeData();
         }
@@ -192,7 +193,7 @@ public abstract class UIHandler extends SwingComponentHandler {
 
         if (file != null && confirm(getConfig("set-default-icon"))) {
             String name = file.getName();
-            FileUtil.copyFile(file, new File(StaticConfig.UI_DIRECTORY + name));
+            FileUtil.copyFile(file, CommonStatic.ctx.newFile(StaticConfig.UI_DIRECTORY + name));
             config.set("iconFile", name);
             writeData();
         }
@@ -243,7 +244,7 @@ public abstract class UIHandler extends SwingComponentHandler {
 
         if (confirm(getConfig("set-default-gif"))) {
             String name = file.getName();
-            FileUtil.copyFile(file, new File(StaticConfig.UI_DIRECTORY + name));
+            FileUtil.copyFile(file, CommonStatic.ctx.newFile(StaticConfig.UI_DIRECTORY + name));
             config.set("gifDelay", name);
             writeData();
         }

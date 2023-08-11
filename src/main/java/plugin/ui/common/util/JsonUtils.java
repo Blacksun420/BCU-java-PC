@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import common.CommonStatic;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -15,7 +16,8 @@ public abstract class JsonUtils {
 
     public static void toFile(Object src, String path) throws IOException {
         String json = G.toJson(src);
-        Writer w = new OutputStreamWriter(new FileOutputStream(path), StandardCharsets.UTF_8);
+        File wf = CommonStatic.ctx.newFile(path);
+        Writer w = new OutputStreamWriter(new FileOutputStream(wf), StandardCharsets.UTF_8);
         w.write(json);
         w.close();
     }

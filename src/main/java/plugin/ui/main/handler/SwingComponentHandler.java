@@ -1,6 +1,7 @@
 package plugin.ui.main.handler;
 
 import com.formdev.flatlaf.util.StringUtils;
+import common.CommonStatic;
 import org.intellij.lang.annotations.MagicConstant;
 import plugin.ui.common.config.StaticConfig;
 import plugin.ui.common.util.Analyser;
@@ -208,7 +209,7 @@ public abstract class SwingComponentHandler {
 
     public BufferedImage getImage(String filename, String key, int alpha) {
         if (filename.contains(".")) {
-            File file = new File(StaticConfig.UI_DIRECTORY + filename);
+            File file = CommonStatic.ctx.newFile(StaticConfig.UI_DIRECTORY + filename);
             if (file.exists()) {
                 return ImageReader.getImage(file, key, alpha);
             }
@@ -216,7 +217,7 @@ public abstract class SwingComponentHandler {
 
         filename = filename.split("\\.")[0];
         for (String suffix : StaticConfig.IMAGE_SUFFIX) {
-            File file = new File(StaticConfig.UI_DIRECTORY + filename + suffix);
+            File file = CommonStatic.ctx.newFile(StaticConfig.UI_DIRECTORY + filename + suffix);
             if (file.exists()) {
                 return ImageReader.getImage(file, key, alpha);
             }
@@ -293,7 +294,7 @@ public abstract class SwingComponentHandler {
     public void showLocation() {
         if (confirm(getConfig("export-success"))) {
             try {
-                Desktop.getDesktop().open(new File(StaticConfig.UI_DIRECTORY));
+                Desktop.getDesktop().open(CommonStatic.ctx.newFile(StaticConfig.UI_DIRECTORY));
             } catch (IOException e) {
                 e.printStackTrace();
             }

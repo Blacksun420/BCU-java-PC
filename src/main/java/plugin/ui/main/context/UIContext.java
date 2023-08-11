@@ -48,13 +48,13 @@ public abstract class UIContext {
 
     private static <T> T getOrDefault(String path, Class<T> clazz) {
         T target = null;
-        File file = new File(path);
+        File file = CommonStatic.ctx.newFile(path);
         if (file.exists())
             // from locale
             try {
                 target = JsonUtils.fromFile(file, clazz);
             } catch (Exception e) {
-                UIPlugin.popError("Invalid file: " + new File(path).getAbsolutePath() + "\n<html><h2>Advice: delete it.\n<html><h3>Reason:" + e);
+                UIPlugin.popError("Invalid file: " + CommonStatic.ctx.newFile(path).getAbsolutePath() + "\n<html><h2>Advice: delete it.\n<html><h3>Reason:" + e);
                 e.printStackTrace();
             }
         if (target == null)
@@ -114,7 +114,7 @@ public abstract class UIContext {
 
         public static void checkEnvironment() {
             // check ui dir
-            File file = new File(StaticConfig.UI_DIRECTORY);
+            File file = CommonStatic.ctx.newFile(StaticConfig.UI_DIRECTORY);
             if (!file.exists()) {
                 System.out.println(file.getAbsolutePath());
                 boolean mkdir = file.mkdirs();
@@ -137,10 +137,10 @@ public abstract class UIContext {
         public static List<UpdateCheck.Downloader> getMissingLib() {
             List<UpdateCheck.Downloader> downloaderList = new ArrayList<>();
             for (String lib : UILibs) {
-                File libFile = new File(LIB_DIRECTORY + lib);
+                File libFile = CommonStatic.ctx.newFile(LIB_DIRECTORY + lib);
                 if (!libFile.exists()) {
                     String url = getURL(lib);
-                    downloaderList.add(new UpdateCheck.Downloader(libFile, new File("./BCU_lib/.jar.temp"),
+                    downloaderList.add(new UpdateCheck.Downloader(libFile, CommonStatic.ctx.newFile("./BCU_lib/.jar.temp"),
                             "download UI library: " + lib, false, url)
                     );
                 }
@@ -215,9 +215,9 @@ public abstract class UIContext {
 
         private static UpdateCheck.Downloader getDownloader(UpdateJson updateJson) {
             String filename = updateJson.getArtifact();
-            File target = new File("./" + filename);
+            File target = CommonStatic.ctx.newFile("./" + filename);
             return new UpdateCheck.Downloader(target,
-                    new File("./temp.temp"),
+                    CommonStatic.ctx.newFile("./temp.temp"),
                     "Downloading " + filename + "...",
                     true, updateJson.getURL());
         }

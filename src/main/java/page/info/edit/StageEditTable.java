@@ -14,6 +14,7 @@ import common.util.stage.Stage;
 import common.util.unit.AbEnemy;
 import common.util.unit.EneRand;
 import common.util.unit.Enemy;
+import main.Opts;
 import page.MainFrame;
 import page.MainLocale;
 import page.Page;
@@ -47,6 +48,7 @@ public class StageEditTable extends AbJTable implements Reorderable {
 
 	private SCDef stage;
 	private final Page page;
+	private EnemyFindPage efp;
 	private final UserPack pack;
 
 	private boolean changing = false;
@@ -59,6 +61,10 @@ public class StageEditTable extends AbJTable implements Reorderable {
 		pack = pac;
 		setTransferHandler(new InTableTH(this));
 		setDefaultRenderer(String.class, new EnemyTCR());
+	}
+
+	protected void ini() {
+		efp = new EnemyFindPage(page, true, pack);
 	}
 
 	@Override
@@ -101,8 +107,10 @@ public class StageEditTable extends AbJTable implements Reorderable {
 		return stage.datas.length;
 	}
 
-	public void updateAbEnemy(Enemy e) {
-		stage.datas[findIndex].enemy = e.id;
+	public void updateAbEnemy() {
+		AbEnemy ae = efp.getSelected();
+		if (findIndex != -1 && ae != null && stage.datas[findIndex].enemy != ae.getID() && Opts.conf("Are you sure you want to replace " + Identifier.get(stage.datas[findIndex].enemy) + " with " + ae + "?"))
+			stage.datas[findIndex].enemy = ae.getID();
 		findIndex = -1;
 	}
 
@@ -305,8 +313,7 @@ public class StageEditTable extends AbJTable implements Reorderable {
 				MainFrame.changePanel(new EREditPage(page, pack, (EneRand) e));
 		} else if (SwingUtilities.isRightMouseButton(event)) {
 			findIndex = ind;
-			EnemyFindPage find = new EnemyFindPage(page, true, pack);
-			MainFrame.changePanel(find);
+			MainFrame.changePanel(efp);
 		}
 	}
 

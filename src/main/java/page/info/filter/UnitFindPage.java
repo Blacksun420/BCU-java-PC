@@ -54,13 +54,6 @@ public class UnitFindPage extends EntityFindPage<AbForm> implements SupPage<AbUn
 	}
 
 	@Override
-	protected void mouseClicked(MouseEvent e) {
-		if (e.getSource() != elt)
-			return;
-		elt.clicked(e.getPoint());
-	}
-
-	@Override
 	public AbUnit getSelected() {
 		AbForm f = getForm();
 		return f == null ? null : f.unit();

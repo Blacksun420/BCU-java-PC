@@ -59,7 +59,7 @@ public class UtilPC {
 		@Override
 		@Deprecated
 		public File route(String path) {
-			return new File(path);
+			return CommonStatic.ctx.newFile(path);
 		}
 
 		@Override

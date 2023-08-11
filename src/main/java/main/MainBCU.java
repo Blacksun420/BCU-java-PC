@@ -115,9 +115,8 @@ public class MainBCU {
 				LoadPage.prog("restoring data");
 				boolean result = CommonStatic.ctx.restore(restore, LoadPage::prog);
 
-				if(!result) {
+				if(!result)
 					Opts.pop("Failed to restore data", "Restoration failed");
-				}
 			}
 
 			LoadPage.prog("reading local animations");
@@ -244,17 +243,21 @@ public class MainBCU {
 			return new File("./");
 		}
 
+		@NotNull
+		@Override
+		public File newFile(String path) {
+			return new File(getBCUFolder(), path);
+		}
+
 		private void extractData(VFile vf, Consumer<Double> prog) throws IOException {
 			if(vf.getData() != null) {
 				double max = vf.getData().size();
 				double progress = 0;
 
-				File f = new File(vf.getPath());
+				File f = newFile(vf.getPath());
 
-				if(!f.exists() && !f.createNewFile()) {
+				if(!f.exists() && !f.createNewFile())
 					return;
-				}
-
 				FileOutputStream fos = new FileOutputStream(f);
 				InputStream ins = vf.getData().getStream();
 				byte[] b = new byte[65536];
