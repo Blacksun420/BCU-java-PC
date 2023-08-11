@@ -5,6 +5,7 @@ import common.CommonStatic.Config;
 import common.io.Backup;
 import common.pack.UserProfile;
 import common.util.ImgCore;
+import common.util.Res;
 import common.util.lang.MultiLangCont;
 import io.BCMusic;
 import io.BCUReader;
@@ -285,6 +286,7 @@ public class ConfigPage extends Page {
 				jls.setSelectedIndex(localeIndexOf(cfg().lang));
 			}
 			cfg().lang = MainLocale.LOC_INDEX[jls.getSelectedIndex()];
+			Res.langIcons();
 			Page.renewLoc(getThis());
 			changing = false;
 		});

@@ -179,7 +179,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			spe--;
 			bb.paint();
 			bb.reset();
-		} else if (spe < 5 && e.getKeyChar() == '.') {
+		} else if (spe < 8 && e.getKeyChar() == '.') {
 			spe++;
 			bb.paint();
 			bb.reset();
