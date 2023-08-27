@@ -100,7 +100,11 @@ public class PCoinEditPage extends Page {
                 break;
             }
         int[] talent = Data.get_CORRES(slot);
-        if (talent[0] == Data.PC_AB || talent[0] == Data.PC_TRAIT)
+        if (talent[0] == Data.PC_IMU) {
+            slot = pCoinEdits.get(0).randomize();
+            talent = Data.get_CORRES(slot);
+        }
+        if (talent[0] == Data.PC_AB || talent[0] >= Data.PC_TRAIT)
             return new int[]{slot, 1, 0}; //[0],[1],[13]
         else if (talent[0] == Data.PC_BASE)
             return new int[]{slot, 1, 2, 20, 0}; //[0],[1],[2],[3],[13]

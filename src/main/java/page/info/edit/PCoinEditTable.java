@@ -290,11 +290,12 @@ class PCoinEditTable extends Page {
                     }
 
                 boolean add = type[0] == Data.PC_BASE;
-                if (type[0] == Data.PC_P)
-                    add = unit.getProc().getArr(type[1]).get(0) < 100;
-                if (type[0] == Data.PC_AB)
+                if (type[0] == Data.PC_P) {
+                    Data.Proc.ProcItem pee = unit.getProc().getArr(type[1]);
+                    add = !pee.getFieldName(0).equals("prob") || pee.get(0) < 100;
+                } else if (type[0] == Data.PC_AB)
                     add = (unit.abi & type[1]) == 0;
-                if (type[0] == Data.PC_TRAIT)
+                else if (type[0] == Data.PC_TRAIT)
                     add = !(unit.getTraits().contains(UserProfile.getBCData().traits.get(type[1])));
                 if (add && unused)
                     available.add(dat);
@@ -315,9 +316,10 @@ class PCoinEditTable extends Page {
                     }
 
                 boolean add = type[0] == Data.PC_BASE;
-                if (type[0] == Data.PC_P)
-                    add = unit.getProc().getArr(type[1]).get(0) < 100;
-                if (type[0] == Data.PC_AB)
+                if (type[0] == Data.PC_P) {
+                    Data.Proc.ProcItem pee = unit.getProc().getArr(type[1]);
+                    add = !pee.getFieldName(0).equals("prob") || pee.get(0) < 100;
+                } else if (type[0] == Data.PC_AB)
                     add = (unit.abi & type[1]) == 0;
                 if (add && unused)
                     available.add(dat);
@@ -377,14 +379,14 @@ class PCoinEditTable extends Page {
     private void enableSecondaries(int[] pdata) {
         cTypesY = 600;
         int maxlv = pdata[0] != -1 ? unit.pcoin.info.get(talent)[1] : 0;
-        if (pdata[0] == -1 || pdata[0] == Data.PC_AB || pdata[0] == Data.PC_TRAIT || pdata[0] == Data.PC_IMU) {
+        if (pdata[0] == -1 || pdata[0] == Data.PC_AB || pdata[0] == Data.PC_TRAIT || pdata[0] == Data.PC_IMU || pdata[0] == 5) {
             for (JTF jtf : tchance)
                 jtf.setVisible(false);
             for (JL jl : chance)
                 jl.setVisible(false);
             cTypesY -= 400;
             if (pdata[0] != -1)
-                if (pdata[0] == Data.PC_IMU) {
+                if (pdata[0] == Data.PC_IMU || pdata[0] == 5) {
                     pCoin.setText(ProcLang.get().get(pdata[1]).full_name);
                     pCoin.setIcon(UtilPC.getIcon(1, pdata[1]));
                 } else if (pdata[0] == Data.PC_AB) {
