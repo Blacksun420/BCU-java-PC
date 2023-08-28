@@ -22,11 +22,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class CastleEditPage extends Page {
+public class CastleEditPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JList<CastleImg> jlst = new JList<>();
 	private final JScrollPane jspst = new JScrollPane(jlst);
 	private final JL jl = new JL();
@@ -55,18 +54,12 @@ public class CastleEditPage extends Page {
 		cas = ac.castles;
 
 		ini();
-		resized();
-	}
-
-	@Override
-    public JButton getBackButton() {
-		return back;
+		resized(true);
 	}
 
 	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(jspst, x, y, 50, 100, 300, 1000);
 		set(addc, x, y, 400, 100, 200, 50);
 		set(impc, x, y, 400, 200, 200, 50);
@@ -83,8 +76,6 @@ public class CastleEditPage extends Page {
 	}
 
 	private void addListeners() {
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		jlst.addListSelectionListener(arg0 -> {
 			if (changing || arg0.getValueIsAdjusting())
 				return;
@@ -95,11 +86,11 @@ public class CastleEditPage extends Page {
 				if (s != null)
 					ic = UtilPC.resizeIcon(s, s.getImg().getWidth() * img.scale / 1000, s.getImg().getHeight() * img.scale / 1000);
 				spwn.setEnabled(true);
-				spwn.setText("" + img.boss_spawn);
+				spwn.setText(String.valueOf(img.boss_spawn));
 				sca.setEnabled(true);
-				sca.setText("" + img.scale);
+				sca.setText(String.valueOf(img.scale));
 				cen.setEnabled(true);
-				cen.setText("" + img.center);
+				cen.setText(String.valueOf(img.center));
 			} else {
 				spwn.setEnabled(false);
 				sca.setEnabled(false);
@@ -119,7 +110,7 @@ public class CastleEditPage extends Page {
 				double result = (25 * Math.floor(formatDouble / 25.0)) / 100;
 
 				jlst.getSelectedValue().boss_spawn = result;
-				spwn.setText(result + "");
+				spwn.setText(String.valueOf(result));
 				changing = false;
 			}
 		});
@@ -202,7 +193,6 @@ public class CastleEditPage extends Page {
 	}
 
 	private void ini() {
-		add(back);
 		add(jspst);
 		add(jl);
 		add(addc);
@@ -235,11 +225,11 @@ public class CastleEditPage extends Page {
 		if (img != null) {
 			jl.setIcon(UtilPC.getIcon(img.img));
 			spwn.setEnabled(true);
-			spwn.setText("" + img.boss_spawn);
+			spwn.setText(String.valueOf(img.boss_spawn));
 			sca.setEnabled(true);
-			sca.setText("" + img.scale);
+			sca.setText(String.valueOf(img.scale));
 			cen.setEnabled(true);
-			cen.setText("" + img.center);
+			cen.setText(String.valueOf(img.center));
 		} else {
 			jl.setIcon(null);
 			spwn.setEnabled(false);

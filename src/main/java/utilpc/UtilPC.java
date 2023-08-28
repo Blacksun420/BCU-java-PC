@@ -237,7 +237,6 @@ public class UtilPC {
 
 			if(pc.getReqLv(i) > 0)
 				str.append("*");
-
 			lab.append(getPCoinAbilityText(pc, i));
 
 			if(i < pc.info.size() - 1) {

@@ -4,6 +4,7 @@ import common.battle.BasisSet;
 import common.battle.LineUp;
 import common.util.unit.Combo;
 import common.util.unit.Form;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import page.MainLocale;
 import page.Page;
 import page.support.SortTable;
@@ -31,10 +32,11 @@ public class ComboListTable extends SortTable<Combo> {
 				str + " 5" };
 	}
 
+	@NonNull
 	private LineUp lu;
 	private final Page fr;
 
-	public ComboListTable(Page p, LineUp line) {
+	public ComboListTable(Page p, @NonNull LineUp line) {
 		super(tit);
 
 		fr = p;
@@ -145,8 +147,11 @@ public class ComboListTable extends SortTable<Combo> {
 		return null;
 	}
 
-	public void setLU(LineUp nlu) {
+	public void setLU(@NonNull LineUp nlu) {
 		lu = nlu;
 		sort();
+
+		revalidate();
+		repaint();
 	}
 }

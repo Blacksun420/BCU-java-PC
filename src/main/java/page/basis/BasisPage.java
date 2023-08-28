@@ -37,7 +37,6 @@ public class BasisPage extends LubCont {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JBTN unit = new JBTN(0, "vuif");
 	private final JBTN setc = new JBTN(0, "set0");
 	private final JBTN bsadd = new JBTN(0, "add");
@@ -78,7 +77,7 @@ public class BasisPage extends LubCont {
 	private final JBTN[] jbcsL = new JBTN[3];
 	private final JTG cost = new JTG(1, "price");
 
-	private boolean changing = false, outside = false, resize = true;
+	private boolean changing = false, outside = false;
 
 	private UnitFLUPage ufp;
 	private final Stage st;
@@ -94,7 +93,7 @@ public class BasisPage extends LubCont {
 		st = null;
 
 		ini();
-		resized();
+		resized(true);
 	}
 
 	public BasisPage(Page p, Stage st, Limit lim) {
@@ -103,17 +102,7 @@ public class BasisPage extends LubCont {
 		lub.setLimit(lim, st.getCont().getCont().getSave(false), st.getCont().price);
 
 		ini();
-		resized();
-	}
-
-
-	public void requireResize() {
-		resize = true;
-	}
-
-	@Override
-    public JButton getBackButton() {
-		return back;
+		resized(true);
 	}
 
 	@Override
@@ -192,8 +181,7 @@ public class BasisPage extends LubCont {
 
 	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 
 		set(jspbs, x, y, 50, 100, 200, 500);
 		set(bsadd, x, y, 50, 600, 200, 50);
@@ -238,12 +226,9 @@ public class BasisPage extends LubCont {
 		jlc.setRowHeight(50);
 		jlc.getColumnModel().getColumn(2).setPreferredWidth(size(x, y, 300));
 		trea.resized(x, y);
-		if (resize) {
-			trea.setPreferredSize(size(x, y, trea.getPWidth(), trea.getPHeight()).toDimension());
-			jspt.getVerticalScrollBar().setUnitIncrement(size(x, y, 25));
-			jspt.revalidate();
-			resize = false;
-		}
+		trea.setPreferredSize(size(x, y, trea.getPWidth(), trea.getPHeight()).toDimension());
+		jspt.getVerticalScrollBar().setUnitIncrement(size(x, y, 50));
+		jspt.revalidate();
 	}
 
 	@Override
@@ -253,9 +238,6 @@ public class BasisPage extends LubCont {
 	}
 
 	private void addListeners$0() {
-
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		unit.addActionListener(e -> changePanel(ufp));
 
 		ujtf.getDocument().addDocumentListener(new DocumentListener() {
@@ -573,7 +555,6 @@ public class BasisPage extends LubCont {
 	}
 
 	private void ini() {
-		add(back);
 		add(jspbs);
 		add(jspb);
 		add(jspt);
@@ -584,7 +565,6 @@ public class BasisPage extends LubCont {
 		add(brem);
 		add(bcop);
 		add(lub);
-		add(back);
 		add(unit);
 		add(jspcs);
 		add(jspcl);
@@ -744,6 +724,7 @@ public class BasisPage extends LubCont {
 			b = lu().willRem(com);
 		setc.setForeground(b ? Color.RED : Color.BLACK);
 		setc.setText(0, "set" + (b ? "1" : "0"));
-
+		jlc.revalidate();
+		jlc.repaint();
 	}
 }

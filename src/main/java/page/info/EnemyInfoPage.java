@@ -2,6 +2,7 @@ package page.info;
 
 import common.pack.Identifier;
 import common.system.ENode;
+import page.DefaultPage;
 import page.JBTN;
 import page.JTG;
 import page.Page;
@@ -9,11 +10,10 @@ import page.view.EnemyViewPage;
 
 import javax.swing.*;
 
-public class EnemyInfoPage extends Page {
+public class EnemyInfoPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JBTN anim = new JBTN(0, "anim");
 	private final JBTN prev = new JBTN(0, "prev");
 	private final JBTN next = new JBTN(0, "next");
@@ -38,12 +38,7 @@ public class EnemyInfoPage extends Page {
 		trea = new TreaTable(this);
 		ini();
 		extr.setSelected(sp);
-		resized();
-	}
-
-	@Override
-    public JButton getBackButton() {
-		return back;
+		resized(true);
 	}
 
 	@Override
@@ -53,8 +48,7 @@ public class EnemyInfoPage extends Page {
 
 	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(prev, x, y, 300, 0, 200, 50);
 		set(anim, x, y, 600, 0, 200, 50);
 		set(next, x, y, 900, 0, 200, 50);
@@ -66,13 +60,11 @@ public class EnemyInfoPage extends Page {
 		cont.setPreferredSize(size(x, y, 1600, ih).toDimension());
 		jsp.getVerticalScrollBar().setUnitIncrement(size(x, y, 50));
 		set(info, x, y, 0, 0, 1600, ih);
-		info.resized();
+		info.resized(true);
 		jsp.revalidate();
 	}
 
 	private void addListeners() {
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		prev.addActionListener(arg0 -> changePanel(new EnemyInfoPage(getFront(), (ENode) e.prev, extr.isSelected())));
 
 		anim.addActionListener(arg0 -> {
@@ -90,7 +82,6 @@ public class EnemyInfoPage extends Page {
 	}
 
 	private void ini() {
-		add(back);
 		cont.add(info);
 		cont.setLayout(null);
 		add(jsp);

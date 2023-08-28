@@ -34,12 +34,7 @@ public class StRecdPage extends AbRecdPage {
 		st = stage;
 		preini();
 		ini();
-		resized();
-	}
-
-	@Override
-    public JButton getBackButton() {
-		return super.getBackButton();
+		resized(true);
 	}
 
 	@Override

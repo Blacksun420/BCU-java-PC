@@ -25,11 +25,10 @@ import java.io.IOException;
 import java.util.Vector;
 
 @SuppressWarnings({"ResultOfMethodCallIgnored"})
-public class BGEditPage extends Page {
+public class BGEditPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JList<Background> jlst = new JList<>();
 	private final JScrollPane jspst = new JScrollPane(jlst);
 	private final JLabel jl = new JLabel();
@@ -57,12 +56,7 @@ public class BGEditPage extends Page {
 		super(p);
 		pack = ac;
 		ini();
-		resized();
-	}
-
-	@Override
-    public JButton getBackButton() {
-		return back;
+		resized(true);
 	}
 
 	@Override
@@ -79,8 +73,7 @@ public class BGEditPage extends Page {
 
 	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(jspst, x, y, 50, 100, 300, 1000);
 		set(addc, x, y, 400, 100, 200, 50);
 		set(impc, x, y, 400, 200, 200, 50);
@@ -109,8 +102,6 @@ public class BGEditPage extends Page {
 	}
 
 	private void addListeners$0() {
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		addc.addActionListener(arg0 -> getFile("Choose your file", null));
 
 		remc.addActionListener(arg0 -> {
@@ -246,7 +237,6 @@ public class BGEditPage extends Page {
 	}
 
 	private void ini() {
-		add(back);
 		add(jspst);
 		add(jl);
 		add(addc);
@@ -270,7 +260,6 @@ public class BGEditPage extends Page {
 		Vector<BackgroundEffect> effVector = new Vector<>();
 
 		effVector.add(null);
-
 		effVector.addAll(UserProfile.getBCData().bgEffects.getList());
 		effVector.addAll(pack.bgEffects.getList());
 		for (String s : pack.desc.dependency)
@@ -354,7 +343,7 @@ public class BGEditPage extends Page {
 		}
 
 		if(alpha) {
-			os[i].setText(""+bgr.overlayAlpha);
+			os[i].setText(String.valueOf(bgr.overlayAlpha));
 		} else {
 			os[i].setText(bgr.overlay[i][0]+","+bgr.overlay[i][1]+","+bgr.overlay[i][2]);
 		}

@@ -44,7 +44,7 @@ public class BattleSetupPage extends LubCont {
 		st = s;
 		conf = confs;
 		ini();
-		resized();
+		resized(true);
 	}
 
 	@Override

@@ -40,7 +40,6 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		EnemyDamageTable.redefine();
 	}
 
-	private final JBTN back = new JBTN(MainLocale.PAGE, "back");
 	private final JBTN paus = new JBTN(MainLocale.PAGE, "pause");
 	private final JBTN next = new JBTN(MainLocale.PAGE, "nextf");
 	private final JBTN rply = new JBTN();
@@ -108,7 +107,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		jsl.setMaximum(((SBRply) basis).size());
 		ini();
 		rply.setText(0, recd.rl == null ? "save" : "start");
-		resized();
+		resized(true);
 		packData = null;
 	}
 
@@ -127,7 +126,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 
 		ini();
 		rply.setText(0, "rply");
-		resized();
+		resized(true);
 		current = this;
 		packData = null;
 	}
@@ -152,7 +151,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 
 		ini();
 		rply.setText(0, "rply");
-		resized();
+		resized(true);
 		current = this;
 
 		packData = st.getCont().getCont().getSave(false);
@@ -245,8 +244,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 
 	@Override
 	protected synchronized void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(jtb, x, y, 2100, 0, 200, 50);
 		if (jtb.isSelected()) {
 			set(paus, x, y, 700, 0, 200, 50);
@@ -328,6 +326,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			BCMusic.flush(spe < 3 && sb.ebase.health > 0 && sb.ubase.health > 0);
 		}
 
+		bb.paint();
 		if (sb.getEBHP() < sb.st.bgh && sb.st.bg1 != null) {
 			if (!changedBG) {
 				changedBG = true;
@@ -462,7 +461,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		ecount.setText(sb.entityCount(1) + "/" + sb.st.max);
 		ucount.setText(sb.entityCount(-1) + "/" + sb.max_num);
 		respawn.setText("respawn timer: " + MainBCU.convertTime(sb.respawnTime));
-		resized();
+		resized(true);
 	}
 	private void updateTablesL() {
 		long h = basis.sb.ebase.health;
@@ -475,16 +474,11 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		bb.paint();
 	}
 
-	@Override
-	public JButton getBackButton() {
-		return back;
-	}
-
 	private void addListeners() {
 
 		jtb.setLnr(x -> {
 			remove((Canvas) bb);
-			resized();
+			resized(true);
 			add((Canvas) bb);
 			DEF_LARGE = jtb.isSelected();
 			if (!DEF_LARGE)
@@ -492,6 +486,8 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			updateTablesL();
 		});
 
+		JBTN back = (JBTN)getBackButton();
+		back.removeActionListener(back.getActionListeners()[0]);
 		back.setLnr(x -> {
 			backClicked = true;
 			BCMusic.stopAll();
@@ -500,9 +496,8 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 				if (Opts.conf("Do you want to save this video?")) {
 					bbr.end();
 					return;
-				} else {
+				} else
 					bbr.quit();
-				}
 				bb.releaseData();
 			}
 			if (basis.sb.ebase.health <= 0 && packData != null && dataPopup > 0) {
@@ -563,7 +558,6 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 	}
 
 	private void ini() {
-		add(back);
 		add(eup);
 		add(eusp);
 		add(eep);

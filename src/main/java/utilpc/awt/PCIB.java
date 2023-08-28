@@ -5,6 +5,7 @@ import common.system.fake.FakeImage;
 import common.system.fake.ImageBuilder;
 import common.util.Data;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -12,12 +13,30 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.function.Supplier;
 
-import javax.imageio.ImageIO;
-
 public class PCIB extends ImageBuilder<BufferedImage> {
 
 	@Override
 	public FakeImage build(BufferedImage o) {
+		if(o == null)
+			return new FIBI(o);
+
+		if(o.getType() != BufferedImage.TYPE_INT_ARGB_PRE) {
+			BufferedImage temp = new BufferedImage(o.getWidth(), o.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
+
+			for(int x = 0; x < o.getWidth(); x++) {
+				for(int y = 0; y < o.getHeight(); y++) {
+					temp.setRGB(x, y, o.getRGB(x, y));
+				}
+			}
+
+			o = temp;
+		}
+
+		return new FIBI(o);
+	}
+
+	@Override
+	public FakeImage build(BufferedImage o, int offsetX, int offsetY) {
 		if(o == null)
 			return new FIBI(o);
 

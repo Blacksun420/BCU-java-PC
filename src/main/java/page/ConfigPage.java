@@ -11,12 +11,13 @@ import io.BCMusic;
 import io.BCUReader;
 import main.MainBCU;
 import main.Opts;
+import main.Timer;
 import page.support.ColorPicker;
 import page.view.ViewBox;
 
 import javax.swing.*;
 
-public class ConfigPage extends Page {
+public class ConfigPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
@@ -24,7 +25,6 @@ public class ConfigPage extends Page {
 		return CommonStatic.getConfig();
 	}
 
-	private final JBTN back = new JBTN(MainLocale.PAGE, "back");
 	private final JBTN rlla = new JBTN(MainLocale.PAGE, "rllang");
 	private final JBTN rlpk = new JBTN(MainLocale.PAGE, "rlpks");
 	private final JCB prel = new JCB(MainLocale.PAGE, "preload");
@@ -38,6 +38,7 @@ public class ConfigPage extends Page {
 	private final JCB jceff = new JCB(MainLocale.PAGE, "bgeff");
 	private final JCB jcdly = new JCB(MainLocale.PAGE, "btdly");
 	private final JCB stdis = new JCB(MainLocale.PAGE, "stdis");
+	private final JCB perfo = new JCB("60 FPS");
 	private final JL preflv = new JL(MainLocale.PAGE, "preflv");
 	private final JCB shake = new JCB(MainLocale.PAGE, "shake");
 	private final JTF prlvmd = new JTF();
@@ -85,12 +86,7 @@ public class ConfigPage extends Page {
 		super(p);
 
 		ini();
-		resized();
-	}
-
-	@Override
-    public JButton getBackButton() {
-		return back;
+		resized(true);
 	}
 
 	@Override
@@ -105,14 +101,14 @@ public class ConfigPage extends Page {
 
 	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 
 		set(jlre, x, y, 50, 100, 200, 50);
 		set(jogl, x, y, 50, 150, 300, 50);
 		set(whit, x, y, 50, 200, 300, 50);
 		set(refe, x, y, 50, 250, 300, 50);
 		set(prel, x, y, 50, 300, 300, 50);
+		set(perfo, x, y, 50,  350, 300, 50);
 
 		if (!MainBCU.USE_JOGL)
 			for (byte i = 0; i < 4; i++) {
@@ -186,8 +182,6 @@ public class ConfigPage extends Page {
 	}
 
 	private void addListeners() {
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		secs.addActionListener(arg0 -> {
 			MainBCU.seconds = !MainBCU.seconds;
 			secs.setText(0, MainBCU.seconds ? "secs" : "frame");
@@ -312,6 +306,12 @@ public class ConfigPage extends Page {
 		jcraw.addActionListener(a -> CommonStatic.getConfig().rawDamage = jcraw.isSelected());
 		jcdly.addActionListener(a -> CommonStatic.getConfig().buttonDelay = !CommonStatic.getConfig().buttonDelay);
 		stdis.addActionListener(a -> CommonStatic.getConfig().stageName = !CommonStatic.getConfig().stageName);
+
+		perfo.addActionListener(a -> {
+			cfg().fps60 = !cfg().fps60;
+			Timer.fps = 1000 / (CommonStatic.getConfig().fps60 ? 60 : 30);
+		});
+
 		jceff.addActionListener(a -> CommonStatic.getConfig().drawBGEffect = !CommonStatic.getConfig().drawBGEffect);
 		rlpk.addActionListener(l -> UserProfile.reloadExternalPacks());
 
@@ -336,7 +336,6 @@ public class ConfigPage extends Page {
 	}
 
 	private void ini() {
-		add(back);
 		add(jogl);
 		add(prel);
 		add(refe);
@@ -374,6 +373,7 @@ public class ConfigPage extends Page {
 		add(jceff);
 		add(jcdly);
 		add(stdis);
+		add(perfo);
 		add(rlpk);
 		add(vcol);
 		add(vres);
@@ -386,7 +386,7 @@ public class ConfigPage extends Page {
 		add(reallv);
 		add(pkprog);
 		excont.setSelected(cfg().exContinuation);
-		prlvmd.setText("" + cfg().prefLevel);
+		prlvmd.setText(String.valueOf(cfg().prefLevel));
 		jls.setSelectedIndex(localeIndexOf(cfg().lang));
 		jsmin.setValue(cfg().deadOpa);
 		jsmax.setValue(cfg().fullOpa);
@@ -428,6 +428,7 @@ public class ConfigPage extends Page {
 			jsba.setEnabled(false);
 		jceff.setSelected(cfg().drawBGEffect);
 		jcdly.setSelected(cfg().buttonDelay);
+		perfo.setSelected(cfg().fps60);
 		stdis.setSelected(cfg().stageName);
 
 		shake.setSelected(cfg().shake);
@@ -444,7 +445,7 @@ public class ConfigPage extends Page {
 			if (text.length() > 0) {
 				int[] v = CommonStatic.parseIntsN(text);
 				CommonStatic.getConfig().prefLevel = Math.max(1, v[0]);
-				jtf.setText("" + CommonStatic.getConfig().prefLevel);
+				jtf.setText(String.valueOf(CommonStatic.getConfig().prefLevel));
 			}
 		});
 	}

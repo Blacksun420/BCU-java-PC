@@ -3,7 +3,6 @@ package page.anim;
 import common.CommonStatic;
 import common.pack.PackData;
 import common.pack.UserProfile;
-import common.system.P;
 import common.util.anim.*;
 import main.Opts;
 import page.*;
@@ -20,15 +19,15 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 
-public class MaAnimEditPage extends Page implements AbEditPage {
+public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 
 	private static final long serialVersionUID = 1L;
 
 	private static final double res = 0.95;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JTree jta = new JTree();
 	private final AnimGroupTree agt = new AnimGroupTree(jta);
 	private final JScrollPane jspu = new JScrollPane(jta);
@@ -75,7 +74,7 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 
 		aep = new EditHead(this, 3);
 		ini();
-		resized();
+		resized(true);
 	}
 
 	public MaAnimEditPage(Page p, EditHead bar) {
@@ -83,12 +82,7 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 
 		aep = bar;
 		ini();
-		resized();
-	}
-
-	@Override
-    public JButton getBackButton() {
-		return back;
+		resized(true);
 	}
 
 	@Override
@@ -124,7 +118,7 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 		AnimCE ac = maet.anim;
 		if (ind < 0 || ac == null)
 			return;
-		int time = ab.getEntity() == null ? 0 : ab.getEntity().ind();
+		float time = ab.getEntity() == null ? 0 : ab.getEntity().ind();
 		setJTL();
 		ab.setEntity(ac.getEAnim(ac.types[ind]));
 		ab.getEntity().setTime(time);
@@ -183,8 +177,8 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 
 			int[][] cells = mpet.part.moves;
 		} else {
-			ab.ori.x += p.x - e.getX();
-			ab.ori.y += p.y - e.getY();
+			AnimBox.ori.x += p.x - e.getX();
+			AnimBox.ori.y += p.y - e.getY();
 			p = e.getPoint();
 		}
 	}
@@ -265,9 +259,8 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 
 	@Override
 	protected synchronized void resized(int x, int y) {
-		setBounds(0, 0, x, y);
+		super.resized(x, y);
 		set(aep, x, y, 800, 0, 1750, 50);
-		set(back, x, y, 0, 0, 200, 50);
 
 		set(camres, x, y, 350, 0, 200, 50);
 		set(zomres, x, y, 560, 0, 200, 50);
@@ -308,8 +301,6 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 		aep.componentResized(x, y);
 		maet.setRowHeight(size(x, y, 50));
 		mpet.setRowHeight(size(x, y, 50));
-		sb.paint(sb.getGraphics());
-		ab.draw();
 	}
 
 	@Override
@@ -328,13 +319,12 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 			infv.setText("");
 			infm.setText("");
 		}
-		resized();
+		resized(false);
+		sb.paint(sb.getGraphics());
+		ab.draw();
 	}
 
 	private void addListeners() {
-
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		camres.setLnr(x -> {
 			AnimBox.ori.x = 0;
 			AnimBox.ori.y = 0;
@@ -427,7 +417,7 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 			ma.validate();
 			maet.anim.unSave("maanim add part");
 			callBack(null);
-			resized();
+			resized(true);
 			lsm.setSelectionInterval(ind, ind);
 			setC(ind);
 			int h = mpet.getRowHeight();
@@ -558,7 +548,7 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 			maet.ma.validate();
 			callBack(null);
 			maet.anim.unSave("maanim add line");
-			resized();
+			resized(true);
 			change(p.n - 1, i -> lsm.setSelectionInterval(i, i));
 			setD(p.n - 1);
 			int h = mpet.getRowHeight();
@@ -604,7 +594,7 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 		jtl.addChangeListener(arg0 -> {
 			if (isAdj() || !pause)
 				return;
-			ab.getEntity().setTime(jtl.getValue());
+			ab.getEntity().setTime(CommonStatic.fltFpsDiv(jtl.getValue()));
 			inft.setText("frame: " + ab.getEntity().ind());
 		});
 
@@ -617,7 +607,7 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 	private void eupdate() {
 		ab.update();
 		if (ab.getEntity() != null) {
-			change(0, x -> jtl.setValue(ab.getEntity().ind()));
+			change(0, x -> jtl.setValue((int)CommonStatic.fltFpsDiv(ab.getEntity().ind())));
 			inft.setText(ab.getEntity() != null ? "frame: " + ab.getEntity().ind() : "");
 		}
 	}
@@ -630,7 +620,6 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 
 	private void ini() {
 		add(aep);
-		add(back);
 		add(camres);
 		add(zomres);
 		add(jspu);
@@ -742,23 +731,35 @@ public class MaAnimEditPage extends Page implements AbEditPage {
 
 	public void setJTL() {
 		jtl.setMinimum(0);
-		jtl.setMaximum(ab.getEntity().len());
+		jtl.setMaximum((int) CommonStatic.fltFpsMul(ab.getEntity().len()));
 		jtl.setLabelTable(null);
+
+		int gap;
 		if (ab.getEntity().len() <= 50) {
-			jtl.setMajorTickSpacing(5);
+			jtl.setMajorTickSpacing(gap = 5);
 			jtl.setMinorTickSpacing(1);
 		} else if (ab.getEntity().len() <= 200) {
-			jtl.setMajorTickSpacing(10);
+			jtl.setMajorTickSpacing(gap = 10);
 			jtl.setMinorTickSpacing(2);
 		} else if (ab.getEntity().len() <= 1000) {
-			jtl.setMajorTickSpacing(50);
+			jtl.setMajorTickSpacing(gap = 50);
 			jtl.setMinorTickSpacing(10);
 		} else if (ab.getEntity().len() <= 5000) {
-			jtl.setMajorTickSpacing(250);
+			jtl.setMajorTickSpacing(gap = 250);
 			jtl.setMinorTickSpacing(50);
 		} else {
-			jtl.setMajorTickSpacing(1000);
+			jtl.setMajorTickSpacing(gap = 1000);
 			jtl.setMinorTickSpacing(200);
+		}
+		if (CommonStatic.getConfig().fps60) {
+			Hashtable<Integer, JLabel> labels = new Hashtable<>();
+
+			int f = 0;
+			while (f <= ab.getEntity().len()) {
+				labels.put(f * 2, new JLabel(String.valueOf(f)));
+				f += gap;
+			}
+			jtl.setLabelTable(labels);
 		}
 	}
 

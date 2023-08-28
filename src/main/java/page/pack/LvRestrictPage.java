@@ -7,6 +7,7 @@ import common.util.stage.CharaGroup;
 import common.util.stage.LvRestrict;
 import common.util.unit.Form;
 import common.util.unit.Level;
+import page.DefaultPage;
 import page.JBTN;
 import page.Page;
 import page.support.AnimLCR;
@@ -18,11 +19,10 @@ import java.util.Set;
 
 import static utilpc.Interpret.RARITY;
 
-public class LvRestrictPage extends Page {
+public class LvRestrictPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JBTN cglr = new JBTN(0, "edit");
 	private final JList<UserPack> jlpk = new JList<>(UserProfile.getUserPacks().toArray(new UserPack[0]));
 	private final JList<LvRestrict> jllr = new JList<>();
@@ -46,7 +46,7 @@ public class LvRestrictPage extends Page {
 		super(p);
 
 		ini();
-		resized();
+		resized(true);
 	}
 
 	public LvRestrictPage(Page p, LvRestrict lvr) {
@@ -64,14 +64,8 @@ public class LvRestrictPage extends Page {
 	}
 
 	@Override
-    public JButton getBackButton() {
-		return back;
-	}
-
-	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(jsppk, x, y, 50, 100, 400, 800);
 		set(cglr, x, y, 50, 950, 400, 50);
 		set(jsplr, x, y, 500, 100, 300, 800);
@@ -84,9 +78,6 @@ public class LvRestrictPage extends Page {
 	}
 
 	private void addListeners() {
-
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		cglr.addActionListener(arg0 -> changePanel(new CGLREditPage(getThis(), pack)));
 
 		jlpk.addListSelectionListener(arg0 -> {
@@ -118,7 +109,6 @@ public class LvRestrictPage extends Page {
 	}
 
 	private void ini() {
-		add(back);
 		add(jsppk);
 		add(jsplr);
 		add(jspcg);

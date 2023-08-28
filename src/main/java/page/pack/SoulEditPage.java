@@ -55,7 +55,7 @@ public class SoulEditPage extends AbViewPage {
         cx += 150;
 
         ini(pack != null && (pack.souls.size() > 0 || pack.editable) ? pack : null);
-        resized();
+        resized(true);
     }
 
     @Override

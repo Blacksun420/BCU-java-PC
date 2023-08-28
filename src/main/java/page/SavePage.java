@@ -17,7 +17,7 @@ public class SavePage extends Page {
         MainFrame.closeClicked = true;
 
         ini();
-        resized();
+        resized(true);
 
         new Thread(this::finishJob).start();
     }

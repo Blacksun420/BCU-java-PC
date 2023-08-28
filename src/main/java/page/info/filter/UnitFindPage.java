@@ -9,7 +9,6 @@ import page.SupPage;
 import utilpc.Interpret;
 
 import javax.swing.*;
-import java.awt.event.MouseEvent;
 
 public class UnitFindPage extends EntityFindPage<AbForm> implements SupPage<AbUnit> {
 
@@ -27,7 +26,7 @@ public class UnitFindPage extends EntityFindPage<AbForm> implements SupPage<AbUn
 		efb = new UnitFilterBox(this, rand, pack);
 		adv = new AdvProcFilterPage(this, true, efb.proc);
 		ini();
-		resized();
+		resized(true);
 	}
 
 	public AbForm getForm() {

@@ -5,6 +5,7 @@ import common.pack.Identifier;
 import common.system.Node;
 import common.util.unit.Level;
 import common.util.unit.Unit;
+import page.DefaultPage;
 import page.JBTN;
 import page.JTG;
 import page.Page;
@@ -13,11 +14,10 @@ import page.view.UnitViewPage;
 
 import javax.swing.*;
 
-public class UnitInfoPage extends Page {
+public class UnitInfoPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JBTN anim = new JBTN(0, "anim");
 	private final JBTN prev = new JBTN(0, "prev");
 	private final JBTN next = new JBTN(0, "next");
@@ -41,7 +41,7 @@ public class UnitInfoPage extends Page {
 			info[i] = new UnitInfoTable(this, n.val.forms[i], lvs, !u.id.pack.equals(Identifier.DEF));
 		trea = new TreaTable(this);
 		ini();
-		resized();
+		resized(true);
 	}
 
 	public UnitInfoPage(Page p, Node<Unit> de) {
@@ -59,12 +59,7 @@ public class UnitInfoPage extends Page {
 		trea = new TreaTable(this);
 		extr.setSelected(sp);
 		ini();
-		resized();
-	}
-
-	@Override
-    public JButton getBackButton() {
-		return back;
+		resized(true);
 	}
 
 	@Override
@@ -75,8 +70,7 @@ public class UnitInfoPage extends Page {
 
 	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(prev, x, y, 300, 0, 200, 50);
 		set(anim, x, y, 600, 0, 200, 50);
 		set(next, x, y, 900, 0, 200, 50);
@@ -87,7 +81,7 @@ public class UnitInfoPage extends Page {
 		for (int i = 0; i < info.length; i++) {
 			int ih = info[i].getH();
 			set(info[i], x, y, 0, h, 1600, ih);
-			info[i].resized();
+			info[i].resized(true);
 			h += ih + (n.val.forms[i].getExplanation().length() == 0 ? 50 : 0);
 		}
 		cont.setPreferredSize(size(x, y, 1600, h).toDimension());
@@ -97,8 +91,6 @@ public class UnitInfoPage extends Page {
 	}
 
 	private void addListeners() {
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		prev.addActionListener(arg0 -> changePanel(new UnitInfoPage(getFront(), n.prev, b, extr.isSelected())));
 
 		anim.addActionListener(arg0 -> {
@@ -129,7 +121,6 @@ public class UnitInfoPage extends Page {
 	}
 
 	private void ini() {
-		add(back);
 		add(prev);
 		add(anim);
 		add(next);

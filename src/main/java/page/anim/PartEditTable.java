@@ -161,6 +161,8 @@ class PartEditTable extends AnimTable<int[]> {
 		anim = au;
 		ma = maa;
 		part = p;
+		revalidate();
+		repaint();
 	}
 
 }

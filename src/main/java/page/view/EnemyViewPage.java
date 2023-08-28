@@ -40,7 +40,7 @@ public class EnemyViewPage extends AbViewPage {
 		if(pack != null)
 			jlu.setListData(new Vector<>(pack.enemies.getList()));
 		ini();
-		resized();
+		resized(true);
 	}
 
 	public EnemyViewPage(Page p) {
@@ -54,7 +54,7 @@ public class EnemyViewPage extends AbViewPage {
 		jlu.setListData(v);
 
 		ini();
-		resized();
+		resized(true);
 	}
 
 	@Override

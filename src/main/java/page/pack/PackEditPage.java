@@ -61,7 +61,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.*;
 
-public class PackEditPage extends Page {
+public class PackEditPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
@@ -96,7 +96,6 @@ public class PackEditPage extends Page {
 		}
 	}
 
-	private final JBTN back = new JBTN(0, "back");
 	private final Vector<UserPack> vpack = new Vector<>(UserProfile.getUserPacks());
 	private final PackList jlp = new PackList(vpack);
 	private final JScrollPane jspp = new JScrollPane(jlp);
@@ -168,11 +167,7 @@ public class PackEditPage extends Page {
 		agt.renewNodes();
 
 		ini();
-	}
-
-	@Override
-    public JButton getBackButton() {
-		return back;
+		resized(true);
 	}
 
 	@Override
@@ -186,8 +181,7 @@ public class PackEditPage extends Page {
 
 	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		int w = 50, dw = 150;
 		set(lbp, x, y, w, 100, 400, 50);
 		set(jspp, x, y, w, 150, 400, 600);
@@ -246,9 +240,6 @@ public class PackEditPage extends Page {
 	}
 
 	private void addListeners() {
-
-		back.setLnr(x -> changePanel(getFront()));
-
 		recd.setLnr(x -> changePanel(new RecdPackPage(this, pac)));
 
 		csol.setLnr(x -> changePanel(new SoulEditPage(this, pac)));
@@ -705,7 +696,6 @@ public class PackEditPage extends Page {
 	}
 
 	private void ini() {
-		add(back);
 		add(jspp);
 		add(jspe);
 		add(jspd);

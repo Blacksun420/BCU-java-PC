@@ -15,15 +15,15 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 
-public class AdvAnimEditPage extends Page implements TreeCont {
+public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 
 	private static final long serialVersionUID = 1L;
 
 	private static final double res = 0.95;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JTree jlm = new JTree();
 	private final JScrollPane jspm = new JScrollPane(jlm);
 	private final JList<String> jlv = new JList<>(Page.get(MainLocale.PAGE, "maepm", 17));
@@ -62,12 +62,7 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 		animID = id;
 		mmt = new MMTree(this, ac, jlm);
 		ini();
-		resized();
-	}
-
-	@Override
-    public JButton getBackButton() {
-		return back;
+		resized(true);
 	}
 
 	@Override
@@ -82,7 +77,7 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 					setD(rs[1]);
 				}
 			});
-		int time = ab.getEntity() == null ? 0 : ab.getEntity().ind();
+		float time = ab.getEntity() == null ? 0 : ab.getEntity().ind();
 		ab.setEntity(ac.getEAnim(animID));
 		ab.getEntity().setTime(time);
 	}
@@ -160,8 +155,7 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 
 	@Override
 	protected synchronized void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 
 		set(addp, x, y, 300, 750, 200, 50);
 		set(remp, x, y, 300, 800, 200, 50);
@@ -209,13 +203,10 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 			infv.setText("");
 			infm.setText("");
 		}
-		resized();
+		resized(false);
 	}
 
 	private void addListeners$0() {
-
-		back.setLnr(x -> changePanel(getFront()));
-
 		jlm.addTreeSelectionListener(arg0 -> selectTree(false));
 
 		jlv.addListSelectionListener(arg0 -> selectTree(true));
@@ -230,7 +221,7 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 		jtl.addChangeListener(arg0 -> {
 			if (isAdj() || !pause)
 				return;
-			ab.getEntity().setTime(jtl.getValue());
+			ab.getEntity().setTime(CommonStatic.fltFpsDiv(jtl.getValue()));
 		});
 
 		final ListSelectionModel lsm = maet.getSelectionModel();
@@ -260,7 +251,7 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 			ma.validate();
 			maet.anim.unSave("maanim add part");
 			callBack(null);
-			resized();
+			resized(true);
 			lsm.setSelectionInterval(ind, ind);
 			setC(ind);
 			int h = mpet.getRowHeight();
@@ -309,8 +300,8 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 			maet.ma.validate();
 			callBack(null);
 			maet.anim.unSave("maanim add line");
-			resized();
-			change(p.n - 1, i -> lsp.setSelectionInterval(i, i));
+			resized(true);
+			change(p.n - 1, i -> lsm.setSelectionInterval(i, i)); //lsp
 			setD(p.n - 1);
 			int h = mpet.getRowHeight();
 			mpet.scrollRectToVisible(new Rectangle(0, h * (p.n - 1), 1, h));
@@ -543,12 +534,13 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 
 	private void eupdate() {
 		ab.update();
-		if (ab.getEntity() != null)
-			change(0, x -> jtl.setValue(ab.getEntity().ind()));
+		if (ab.getEntity() != null) {
+			int selection = (int) CommonStatic.fltFpsMul(ab.getEntity().ind());
+			change(0, x -> jtl.setValue(selection));
+		}
 	}
 
 	private void ini() {
-		add(back);
 		add(jspm);
 		add(jspv);
 		add(jspma);
@@ -594,23 +586,36 @@ public class AdvAnimEditPage extends Page implements TreeCont {
 		jtl.setPaintTicks(true);
 		jtl.setPaintLabels(true);
 		jtl.setMinimum(0);
-		jtl.setMaximum(ab.getEntity().len());
+
+		jtl.setMaximum((int) CommonStatic.fltFpsMul(ab.getEntity().len()));
 		jtl.setLabelTable(null);
+
+		int gap;
 		if (ab.getEntity().len() <= 50) {
-			jtl.setMajorTickSpacing(5);
+			jtl.setMajorTickSpacing(gap = 5);
 			jtl.setMinorTickSpacing(1);
 		} else if (ab.getEntity().len() <= 200) {
-			jtl.setMajorTickSpacing(10);
+			jtl.setMajorTickSpacing(gap = 10);
 			jtl.setMinorTickSpacing(2);
 		} else if (ab.getEntity().len() <= 1000) {
-			jtl.setMajorTickSpacing(50);
+			jtl.setMajorTickSpacing(gap = 50);
 			jtl.setMinorTickSpacing(10);
 		} else if (ab.getEntity().len() <= 5000) {
-			jtl.setMajorTickSpacing(250);
+			jtl.setMajorTickSpacing(gap = 250);
 			jtl.setMinorTickSpacing(50);
 		} else {
-			jtl.setMajorTickSpacing(1000);
+			jtl.setMajorTickSpacing(gap = 1000);
 			jtl.setMinorTickSpacing(200);
+		}
+		if (CommonStatic.getConfig().fps60) {
+			Hashtable<Integer, JLabel> labels = new Hashtable<>();
+			int f = 0;
+
+			while (f <= ab.getEntity().len()) {
+				labels.put(f * 2, new JLabel(String.valueOf(f)));
+				f += gap;
+			}
+			jtl.setLabelTable(labels);
 		}
 	}
 

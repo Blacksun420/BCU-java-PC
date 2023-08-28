@@ -19,6 +19,7 @@ import common.util.unit.Enemy;
 import common.util.unit.Unit;
 import main.MainBCU;
 import main.Opts;
+import main.Timer;
 import page.LoadPage;
 import page.MainFrame;
 import page.MainLocale;
@@ -32,8 +33,10 @@ import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Queue;
 import java.util.stream.Collectors;
 
 public class BCUReader extends DataIO {
@@ -47,7 +50,7 @@ public class BCUReader extends DataIO {
 	public static void readInfo() {
 		File f = new File(CommonStatic.ctx.getBCUFolder(), "./user/config.json");
 		if (f.exists()) {
-			try (Reader r = new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8)) {
+			try (Reader r = new InputStreamReader(Files.newInputStream(f.toPath()), StandardCharsets.UTF_8)) {
 				JsonElement je = JsonParser.parseReader(r);
 				r.close();
 				Config cfg = CommonStatic.getConfig();
@@ -97,6 +100,16 @@ public class BCUReader extends DataIO {
 					Exporter.curs[i] = exp[i] == null ? null : new File(exp[i]);
 				for (int i = 0; i < Importer.curs.length; i++)
 					Importer.curs[i] = imp[i] == null ? null : new File(imp[i]);
+				if (jo.has("performance")) {
+					CommonStatic.getConfig().performanceModeAnimation = jo.get("performance").getAsBoolean();
+					CommonStatic.getConfig().performanceModeBattle = CommonStatic.getConfig().performanceModeAnimation;
+				}
+
+				if (CommonStatic.getConfig().performanceModeAnimation) {
+					Timer.p = 1000 / 60;
+				} else {
+					Timer.p = 1000 / 30;
+				}
 			} catch (Exception e) {
 				CommonStatic.ctx.noticeErr(e, ErrType.WARN, "failed to read config");
 			}

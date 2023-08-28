@@ -4,7 +4,6 @@ import common.battle.BasisSet;
 import common.pack.SaveData;
 import common.util.stage.Limit;
 import common.util.unit.AbForm;
-import page.JBTN;
 import page.JTF;
 import page.JTG;
 import page.Page;
@@ -23,7 +22,6 @@ public class UnitFLUPage extends LubCont {
 	private static final long serialVersionUID = 1L;
 
 	private final LineUpBox lub = new LineUpBox(this);
-	private final JBTN back = new JBTN(0, "back");
 	private final JTG show = new JTG(0, "showf");
 	private final UnitListTable ult = new UnitListTable(this);
 	private final JScrollPane jsp = new JScrollPane(ult);
@@ -37,7 +35,7 @@ public class UnitFLUPage extends LubCont {
 		lub.setLimit(lim, sdat, price);
 		ufb = new UnitFilterBox(this, true, lim, price, sdat);
 		ini();
-		resized();
+		resized(true);
 	}
 
 	@Override
@@ -45,16 +43,11 @@ public class UnitFLUPage extends LubCont {
 	public void callBack(Object o) {
 		if (o instanceof List)
 			ult.setList((List<AbForm>) o);
-		resized();
+		resized(true);
 	}
 
 	public List<AbForm> getList() {
 		return ult.list;
-	}
-
-	@Override
-    public JButton getBackButton() {
-		return back;
 	}
 
 	@Override
@@ -84,8 +77,7 @@ public class UnitFLUPage extends LubCont {
 
 	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(show, x, y, 250, 0, 200, 50);
 		set(seatf, x, y, 550, 0, 1000, 50);
 		int[] end = new int[] { 650, 350 };
@@ -110,8 +102,6 @@ public class UnitFLUPage extends LubCont {
 	}
 
 	private void addListeners() {
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		show.addActionListener(arg0 -> {
 			if (show.isSelected())
 				add(ufb);
@@ -155,7 +145,6 @@ public class UnitFLUPage extends LubCont {
 	}
 
 	private void ini() {
-		add(back);
 		add(show);
 		add(ufb);
 		add(jsp);

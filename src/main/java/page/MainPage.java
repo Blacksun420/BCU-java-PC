@@ -64,7 +64,7 @@ public class MainPage extends Page {
 		super(null);
 
 		ini();
-		resized();
+		resized(true);
 	}
 
 	@Override

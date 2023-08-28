@@ -46,7 +46,7 @@ public class FormEditPage extends EntityEditPage {
 		ueb = new UnitEditBox(this, pac, cu);
 		ini();
 		setData((CustomUnit) f.du);
-		resized();
+		resized(true);
 	}
 
 	@Override
@@ -173,18 +173,17 @@ public class FormEditPage extends EntityEditPage {
 		set(impt, x, y, 50, 1150, 200, 50);
 		set(vene, x, y, 250, 1150, 200, 50);
 		set(pcoin, x, y, 450, 1150, 200, 50);
-		ueb.resized();
-
+		ueb.resized(true);
 	}
 
 	@Override
 	protected void setData(CustomEntity data) {
 		super.setData(data);
-		flv.setText(lv + "");
-		frs.setText(bas.t().getFinRes(cu.getRespawn()) + "");
-		fdr.setText((int) Math.round(cu.getPrice() * 1.5) + "");
+		flv.setText(String.valueOf(lv));
+		frs.setText(String.valueOf(bas.t().getFinRes(cu.getRespawn())));
+		fdr.setText(String.valueOf((int) Math.round(cu.getPrice() * 1.5)));
 		flr.setText(interpretLayer(cu.back, cu.front));
-		fli.setText(cu.getLimit() + "");
+		fli.setText(String.valueOf(cu.getLimit()));
 		fli.setToolTipText("<html>This unit will always stay at least "
 				+ cu.getLimit()
 				+ " units away from the max stage length<br>once it passes that threshold.");
@@ -197,7 +196,7 @@ public class FormEditPage extends EntityEditPage {
 
 	private String interpretLayer(int back, int front) {
 		if (front == back)
-			return front + "";
+			return String.valueOf(front);
 		else
 			return back + "~" + front;
 	}

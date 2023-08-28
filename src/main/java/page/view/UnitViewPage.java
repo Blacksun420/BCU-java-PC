@@ -41,7 +41,7 @@ public class UnitViewPage extends AbViewPage {
 			jlu.setListData(new Vector<>(pac.units.getList()));
 
 		ini();
-		resized();
+		resized(true);
 	}
 
 	public UnitViewPage(Page p) {
@@ -56,7 +56,7 @@ public class UnitViewPage extends AbViewPage {
 		jlu.setListData(v);
 
 		ini();
-		resized();
+		resized(true);
 	}
 
 	public UnitViewPage(Page p, Unit u) {

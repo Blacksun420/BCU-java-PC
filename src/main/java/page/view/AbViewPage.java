@@ -22,13 +22,13 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Hashtable;
 
-public abstract class AbViewPage extends Page {
+public abstract class AbViewPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 	private static final double res = 0.95;
 
-	private final JBTN back = new JBTN(MainLocale.PAGE, "back");
 	protected final JBTN copy = new JBTN(MainLocale.PAGE, "copy");
 	private final JList<String> jlt = new JList<>();
 	protected final JScrollPane jspt = new JScrollPane(jlt);
@@ -65,7 +65,6 @@ public abstract class AbViewPage extends Page {
 
 	protected void enabler(boolean b) {
 		jtb.setEnabled(b);
-		back.setEnabled(b);
 		copy.setEnabled(b);
 		jlt.setEnabled(b);
 		jst.setEnabled(b);
@@ -77,13 +76,8 @@ public abstract class AbViewPage extends Page {
 	}
 
 	@Override
-    public JButton getBackButton() {
-		return back;
-	}
-
-	@Override
 	protected void exit() {
-		Timer.fps = 33;
+		Timer.fps = 1000 / (CommonStatic.getConfig().fps60 ? 60 : 30);
 	}
 
 	@Override
@@ -114,7 +108,6 @@ public abstract class AbViewPage extends Page {
 	}
 
 	protected void preini() {
-		add(back);
 		add(camres);
 		add(copy);
 		add((Canvas) vb);
@@ -143,8 +136,7 @@ public abstract class AbViewPage extends Page {
 
 	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(camres, x ,y, 600, 0, 200, 50);
 		set(copy, x, y, 300, 0, 200, 50);
 		set(larges, x, y , 900, 0, 200, 50);
@@ -191,23 +183,36 @@ public abstract class AbViewPage extends Page {
 			return;
 		vb.setEntity(a.getEAnim(a.types()[jlt.getSelectedIndex()]));
 		jtl.setMinimum(0);
-		jtl.setMaximum(vb.getEnt().len());
+		jtl.setMaximum((int)CommonStatic.fltFpsMul(vb.getEnt().len()));
+
+		int gap;
 		jtl.setLabelTable(null);
 		if (vb.getEnt().len() <= 50) {
-			jtl.setMajorTickSpacing(5);
+			jtl.setMajorTickSpacing(gap = 5);
 			jtl.setMinorTickSpacing(1);
 		} else if (vb.getEnt().len() <= 200) {
-			jtl.setMajorTickSpacing(10);
+			jtl.setMajorTickSpacing(gap = 10);
 			jtl.setMinorTickSpacing(2);
 		} else if (vb.getEnt().len() <= 1000) {
-			jtl.setMajorTickSpacing(50);
+			jtl.setMajorTickSpacing(gap = 50);
 			jtl.setMinorTickSpacing(10);
 		} else if (vb.getEnt().len() <= 5000) {
-			jtl.setMajorTickSpacing(250);
+			jtl.setMajorTickSpacing(gap = 250);
 			jtl.setMinorTickSpacing(50);
 		} else {
-			jtl.setMajorTickSpacing(1000);
+			jtl.setMajorTickSpacing(gap = 1000);
 			jtl.setMinorTickSpacing(200);
+		}
+
+		if (CommonStatic.getConfig().fps60) {
+			Hashtable<Integer, JLabel> labels = new Hashtable<>();
+
+			int f = 0;
+			while (f <= vb.getEnt().len()) {
+				labels.put(f * 2, new JLabel(String.valueOf(f)));
+				f += gap;
+			}
+			jtl.setLabelTable(labels);
 		}
 	}
 
@@ -237,8 +242,6 @@ public abstract class AbViewPage extends Page {
 	protected abstract void updateChoice();
 
 	private void addListener() {
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		camres.setLnr(x -> vb.resetPos());
 
 		jlt.addListSelectionListener(arg0 -> {
@@ -252,15 +255,14 @@ public abstract class AbViewPage extends Page {
 		jst.addChangeListener(arg0 -> {
 			if (jst.getValueIsAdjusting())
 				return;
-			Timer.fps = jst.getValue() * 33 / 100;
+			Timer.fps = jst.getValue() / 100 * 1000 / (CommonStatic.getConfig().fps60 ? 60 : 30);
+			Timer.fps = 1000 / (CommonStatic.getConfig().fps60 ? 60 : 30);
 		});
 
 		jtl.addChangeListener(arg0 -> {
-			if (changingtl || !pause)
+			if (changingtl || !pause || vb.getEnt() == null)
 				return;
-			if (vb.getEnt() != null)
-				vb.getEnt().setTime(jtl.getValue());
-
+			vb.getEnt().setTime(CommonStatic.fltFpsDiv(jtl.getValue()));
 		});
 
 		jtb.addActionListener(arg0 -> {
@@ -282,7 +284,7 @@ public abstract class AbViewPage extends Page {
 
 		larges.setLnr(x -> {
 			remove((Canvas) vb);
-			resized();
+			resized(true);
 			add((Canvas) vb);
 		});
 
@@ -346,8 +348,10 @@ public abstract class AbViewPage extends Page {
 	private void eupdate() {
 		vb.update();
 		changingtl = true;
-		if (vb.getEnt() != null)
-			jtl.setValue(vb.getEnt().ind());
+		if (vb.getEnt() != null) {
+			int selection = (int)CommonStatic.fltFpsMul(vb.getEnt().ind());
+			jtl.setValue(selection);
+		}
 		changingtl = false;
 	}
 

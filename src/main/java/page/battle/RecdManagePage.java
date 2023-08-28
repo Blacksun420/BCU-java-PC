@@ -25,12 +25,7 @@ public class RecdManagePage extends AbRecdPage {
 		super(p, true);
 		preini();
 		ini();
-		resized();
-	}
-
-	@Override
-    public JButton getBackButton() {
-		return super.getBackButton();
+		resized(true);
 	}
 
 	@Override

@@ -34,13 +34,12 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public class ImgCutEditPage extends Page implements AbEditPage {
+public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 
 	private static final long serialVersionUID = 1L;
 
 	private final JTF name = new JTF();
 	private final JTF resz = new JTF("resize to: _%");
-	private final JBTN back = new JBTN(0, "back");
 	private final JBTN add = new JBTN(0, "add");
 	private final JBTN rem = new JBTN(0, "rem");
 	private final JBTN copy = new JBTN(0, "copy");
@@ -89,11 +88,6 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 	}
 
 	@Override
-    public JButton getBackButton() {
-		return back;
-	}
-
-	@Override
 	public void callBack(Object o) {
 		changing = true;
 		if (o instanceof SpriteBox && sb.sele >= 0) {
@@ -134,10 +128,15 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 	}
 
 	@Override
+	public synchronized void timer(int t) {
+		resized(false);
+		sb.paint(sb.getGraphics());
+	}
+
+	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
+		super.resized(x, y);
 		set(aep, x, y, 800, 0, 1750, 50);
-		set(back, x, y, 0, 0, 200, 50);
 		set(relo, x, y, 250, 0, 200, 50);
 		set(jspu, x, y, 50, 100, 300, 450);
 		set(add, x, y, 400, 200, 200, 50);
@@ -163,7 +162,6 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 		SwingUtilities.invokeLater(() -> jta.setUI(new TreeNodeExpander(jta)));
 		aep.componentResized(x, y);
 		icet.setRowHeight(size(x, y, 50));
-		sb.paint(sb.getGraphics());
 	}
 
 	private void selectAnimNode(AnimCE ac) {
@@ -176,9 +174,6 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 	}
 
 	private void addListeners$0() {
-
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		add.addActionListener(arg0 -> {
 			BufferedImage bimg = new Importer("Add your sprite", Importer.IMP_IMG).getImg();
 			if (bimg == null)
@@ -396,7 +391,7 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 				ic.cuts[ic.n - 1] = new int[] { 0, 0, 1, 1 };
 			ic.strs[ic.n - 1] = "";
 			icet.anim.unSave("imgcut add line");
-			resized();
+			resized(true);
 			lsm.setSelectionInterval(ic.n - 1, ic.n - 1);
 			int h = icet.getRowHeight();
 			icet.scrollRectToVisible(new Rectangle(0, h * (ic.n - 1), 1, h));
@@ -516,7 +511,7 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 			jta.setModel(new DefaultTreeModel(root));
 		}
 		ini();
-		resized();
+		resized(true);
 	}
 
 	@Override
@@ -528,7 +523,6 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 	private void ini() {
 		add(aep);
 		add(resz);
-		add(back);
 		add(relo);
 		add(jspu);
 		add(jspic);
@@ -565,6 +559,7 @@ public class ImgCutEditPage extends Page implements AbEditPage {
 	}
 
 	private void setA(AnimCE anim) {
+		System.out.println("Dss");
 		boolean boo = changing;
 		if(anim != null) {
 			anim.check();

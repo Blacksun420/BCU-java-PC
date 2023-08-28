@@ -12,11 +12,10 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
 
-public class LogPage extends Page {
+public class LogPage extends DefaultPage {
 
     private static final long serialVersionUID = 1L;
 
-    private final JBTN back = new JBTN(0, "back");
     private final JBTN show = new JBTN(0, "show");
     private final JL jllg = new JL(0, "logs");
     private final JL jlfi = new JL(0, "log");
@@ -34,12 +33,12 @@ public class LogPage extends Page {
 
         ini();
         addListeners();
+        resized(true);
     }
 
     @Override
     protected void resized(int x, int y) {
-        setBounds(0, 0, x, y);
-        set(back, x, y, 0, 0, 200, 50);
+        super.resized(x, y);
         set(jllg, x, y, 50, 100, 300, 50);
         set(jlfi, x, y, 350, 100, 750, 50);
 
@@ -52,7 +51,6 @@ public class LogPage extends Page {
     }
 
     private void ini() {
-        add(back);
         add(jllg);
         add(jlfi);
         add(jslg);
@@ -68,13 +66,7 @@ public class LogPage extends Page {
                 return;
 
             files.addAll(Arrays.asList(fs));
-            files.removeIf(f -> {
-                try {
-                    return f.length() == 0;
-                } catch (Exception e) {
-                    return true;
-                }
-            });
+            files.removeIf(f -> f == null || f.length() == 0);
             files.sort((f1, f2) -> {
                 try {
                     long s1Num = format.parse(f1.getName()).getTime();
@@ -94,8 +86,6 @@ public class LogPage extends Page {
     }
 
     private void addListeners() {
-        back.addActionListener(arg0 -> changePanel(getFront()));
-
         show.addActionListener(x -> {
             File f = logs.getSelectedValue();
             try {
@@ -129,10 +119,5 @@ public class LogPage extends Page {
                 jldv.setText(null);
             }
         });
-    }
-
-    @Override
-    public JButton getBackButton() {
-        return back;
     }
 }

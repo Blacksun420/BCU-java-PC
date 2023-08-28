@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class ComparePage extends Page {
+public class ComparePage extends DefaultPage {
 
     private static final long serialVersionUID = 1L;
 
@@ -34,8 +34,6 @@ public class ComparePage extends Page {
 
     private final JCB[] boxes = new JCB[main.length + unit.length + 4];
 
-    private final JBTN back = new JBTN(0, "back");
-
     private final TraitList trait = new TraitList(false);
     private final JScrollPane tlst = new JScrollPane(trait);
 
@@ -48,16 +46,10 @@ public class ComparePage extends Page {
         super(p);
 
         ini();
-        resized();
-    }
-
-    @Override
-    public JButton getBackButton() {
-        return back;
+        resized(true);
     }
 
     private void ini() {
-        add(back);
         add(tlst);
         for (int i = 0; i < boxes.length; i++) {
             boxes[i] = new JCB();
@@ -136,8 +128,6 @@ public class ComparePage extends Page {
     }
 
     private void addListeners() {
-        back.addActionListener(x -> changePanel(getFront()));
-
         for (int i = 0; i < boxes.length; i++) {
             int FI = i;
             boxes[i].addActionListener(x -> {
@@ -219,8 +209,7 @@ public class ComparePage extends Page {
 
     @Override
     protected void resized(int x, int y) {
-        setBounds(0, 0, x, y);
-        set(back, x, y, 0, 0, 200, 50);
+        super.resized(x, y);
         set(addE, x, y, 50, 150, 200, 50);
         set(remE, x, y, 50, 200, 200, 50);
         int width = 600;
@@ -248,7 +237,7 @@ public class ComparePage extends Page {
         set(jsp, x, y, 250, 50, 1825, posY + height - 50);
         for (int i = 0; i < tables.size(); i++) {
             set(tables.get(i), x, y, i * tw, 0, tw, posY + height - 50);
-            tables.get(i).resized();
+            tables.get(i).resized(true);
         }
         cont.setPreferredSize(size(x, y, tables.size() * tw, posY + height - 50).toDimension());
         jsp.getHorizontalScrollBar().setUnitIncrement(size(x, y, 50));
