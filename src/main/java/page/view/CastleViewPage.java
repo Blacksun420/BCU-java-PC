@@ -3,21 +3,17 @@ package page.view;
 import common.pack.Identifier;
 import common.util.stage.CastleImg;
 import common.util.stage.CastleList;
-import page.JBTN;
-import page.JL;
-import page.MainLocale;
-import page.Page;
+import page.*;
 import utilpc.UtilPC;
 
 import javax.swing.*;
 import java.util.Collection;
 import java.util.Vector;
 
-public class CastleViewPage extends Page {
+public class CastleViewPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JList<CastleList> jlsm = new JList<>();
 	private final JScrollPane jspsm = new JScrollPane(jlsm);
 	private final JList<CastleImg> jlst = new JList<>();
@@ -58,14 +54,8 @@ public class CastleViewPage extends Page {
 	}
 
 	@Override
-    public JButton getBackButton() {
-		return back;
-	}
-
-	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(jspsm, x, y, 50, 100, 300, 1100);
 		set(jspst, x, y, 400, 550, 300, 650);
 		set(jl, x, y, 800, 50, 1000, 1000);
@@ -74,8 +64,6 @@ public class CastleViewPage extends Page {
 	}
 
 	private void addListeners() {
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		jlsm.addListSelectionListener(arg0 -> {
 			if (arg0.getValueIsAdjusting())
 				return;
@@ -101,7 +89,6 @@ public class CastleViewPage extends Page {
 	}
 
 	private void ini() {
-		add(back);
 		add(jspsm);
 		add(jspst);
 		add(jl);

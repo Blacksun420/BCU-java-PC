@@ -20,7 +20,7 @@ import utilpc.Interpret;
 import javax.swing.*;
 import java.util.*;
 
-public class ComboEditPage extends Page {
+public class ComboEditPage extends DefaultPage {
 
     private static final long serialVersionUID = 1L;
 
@@ -43,7 +43,6 @@ public class ComboEditPage extends Page {
     private final JComboBox<String> clvls = new JComboBox<>(Interpret.comboLv);
     private final JTF comboname = new JTF();
 
-    private final JBTN back = new JBTN(0, "back");
     private final JBTN addf = new JBTN(0, "addf");
     private final JBTN addc = new JBTN(0, "addc");
     private final JBTN remcf = new JBTN(0, "remcf");
@@ -66,11 +65,6 @@ public class ComboEditPage extends Page {
 
         ini();
         resized(true);
-    }
-
-    @Override
-    public JButton getBackButton() {
-        return back;
     }
 
     @Override
@@ -157,7 +151,6 @@ public class ComboEditPage extends Page {
         add(vuif);
         add(jspf);
 
-        add(back);
         add(addf);
         add(remc);
         
@@ -186,8 +179,6 @@ public class ComboEditPage extends Page {
     }
 
     private void addListeners$0() {
-        back.addActionListener(x -> changePanel(getFront()));
-
         jlp.addListSelectionListener(arg0 -> {
             if (changing || jlp.getValueIsAdjusting())
                 return;
@@ -239,8 +230,6 @@ public class ComboEditPage extends Page {
             updateC();
             changing = false;
         });
-        
-        
     }
 
     private void addListeners$1() {
@@ -320,9 +309,7 @@ public class ComboEditPage extends Page {
 
     @Override
     protected void resized(int x, int y) {
-        setBounds(0, 0, x, y);
-        set(back, x, y, 0, 0, 200, 50);
-
+        super.resized(x, y);
         set(lbp, x, y, 50, 100, 400, 50);
         set(jspp, x, y, 50, 150, 400, 600);
 

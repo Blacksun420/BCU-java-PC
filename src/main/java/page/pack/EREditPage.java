@@ -28,7 +28,7 @@ import java.util.Vector;
 
 import static utilpc.UtilPC.resizeImage;
 
-public class EREditPage extends Page {
+public class EREditPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
@@ -36,7 +36,6 @@ public class EREditPage extends Page {
 		EREditTable.redefine();
 	}
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JBTN veif = new JBTN(0, "veif");
 	private final EREditTable jt;
 	private final JScrollPane jspjt;
@@ -75,11 +74,6 @@ public class EREditPage extends Page {
 	}
 
 	@Override
-    public JButton getBackButton() {
-		return back;
-	}
-
-	@Override
 	protected void mouseClicked(MouseEvent e) {
 		int modifier = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 		if (e.getSource() == jt && (e.getModifiers() & modifier) == 0)
@@ -94,9 +88,7 @@ public class EREditPage extends Page {
 
 	@Override
 	protected synchronized void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
-
+		super.resized(x, y);
 		set(jspst, x, y, 500, 150, 400, 800);
 		set(adds, x, y, 500, 1000, 200, 50);
 		set(rems, x, y, 700, 1000, 200, 50);
@@ -116,9 +108,6 @@ public class EREditPage extends Page {
 	}
 
 	private void addListeners() {
-
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		addl.addActionListener(arg0 -> {
 			int ind = jt.addLine(jle.getSelectedValue());
 			setER(rand);
@@ -218,7 +207,6 @@ public class EREditPage extends Page {
 	}
 
 	private void ini() {
-		add(back);
 		add(veif);
 		add(adds);
 		add(rems);

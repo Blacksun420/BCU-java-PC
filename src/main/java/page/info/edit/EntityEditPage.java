@@ -45,11 +45,9 @@ import java.util.*;
 
 import static common.util.Data.*;
 
-public abstract class EntityEditPage extends Page implements EntSupInt {
+public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 
 	private static final long serialVersionUID = 1L;
-
-	private final JBTN back = new JBTN(0, "back");
 
 	private final JL lhp = new JL(MainLocale.INFO, "HP");
 	private final JL lhb = new JL(MainLocale.INFO, "hb");
@@ -137,11 +135,6 @@ public abstract class EntityEditPage extends Page implements EntSupInt {
 			atkSS[i] = get(MainLocale.PAGE, "atk") + (i + 1);
 		atkSS[atkSS.length - 1] = MainLocale.getLoc(MainLocale.PAGE, "spatk");
 		atkS.setModel(new DefaultComboBoxModel<>(atkSS));
-	}
-
-	@Override
-    public JButton getBackButton() {
-		return back;
 	}
 
 	@Override
@@ -240,7 +233,6 @@ public abstract class EntityEditPage extends Page implements EntSupInt {
 		add(rem);
 		add(copy);
 		add(link);
-		add(back);
 		set(atkn);
 		set(lpst);
 		set(vpst);
@@ -342,8 +334,8 @@ public abstract class EntityEditPage extends Page implements EntSupInt {
 
 	@Override
 	protected void resized(int x, int y) {
-		setSize(x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		//setSize(x, y); ???
+		super.resized(x, y);
 		set(lhp, x, y, 50, 100, 100, 50);
 		set(fhp, x, y, 150, 100, 200, 50);
 		set(lhb, x, y, 50, 150, 100, 50);
@@ -510,9 +502,6 @@ public abstract class EntityEditPage extends Page implements EntSupInt {
 	}
 
 	private void addListeners() {
-
-		back.setLnr(e -> changePanel(getFront()));
-
 		comm.setLnr(e -> {
 			ce.common = comm.isSelected();
 			setData(ce);

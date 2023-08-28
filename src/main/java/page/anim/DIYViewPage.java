@@ -73,11 +73,6 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 	}
 
 	@Override
-    public JButton getBackButton() {
-		return super.getBackButton();
-	}
-
-	@Override
 	public void setSelection(AnimCE ac) {
 
 		DefaultMutableTreeNode selectedNode = agt.findAnimNode(ac, null);

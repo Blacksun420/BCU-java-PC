@@ -24,7 +24,6 @@ public class GLIB extends ImageBuilder<BufferedImage> {
 	public FakeImage build(BufferedImage o, int offsetX, int offsetY) {
 		if (CommonStatic.getConfig().icon)
 			return FIBI.builder.build(o);
-
 		return new AmbImage(o);
 	}
 

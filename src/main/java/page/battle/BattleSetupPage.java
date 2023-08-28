@@ -22,7 +22,6 @@ public class BattleSetupPage extends LubCont {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JBTN strt = new JBTN(0, "start");
 	private final JBTN tmax = new JBTN(0, "tomax");
 	private final JTG rich = new JTG(0, "rich");
@@ -45,11 +44,6 @@ public class BattleSetupPage extends LubCont {
 		conf = confs;
 		ini();
 		resized(true);
-	}
-
-	@Override
-    public JButton getBackButton() {
-		return back;
 	}
 
 	@Override
@@ -93,8 +87,7 @@ public class BattleSetupPage extends LubCont {
 
 	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(jsps, x, y, 50, 100, 200, 200);
 		set(jl, x, y, 50, 350, 200, 50);
 		set(jlu, x, y, 50, 400, 200, 50);
@@ -108,8 +101,6 @@ public class BattleSetupPage extends LubCont {
 	}
 
 	private void addListeners() {
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		jls.addListSelectionListener(arg0 -> {
 			if (arg0.getValueIsAdjusting())
 				return;
@@ -150,7 +141,6 @@ public class BattleSetupPage extends LubCont {
 	}
 
 	private void ini() {
-		add(back);
 		add(jsps);
 		add(jl);
 		add(jlu);

@@ -3,6 +3,7 @@ package page.anim;
 import common.CommonStatic;
 import common.system.P;
 import common.util.anim.*;
+import page.DefaultPage;
 import page.JBTN;
 import page.Page;
 import page.support.AnimTreeRenderer;
@@ -17,13 +18,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Arrays;
 
-public class MaModelEditPage extends Page implements AbEditPage {
+public class MaModelEditPage extends DefaultPage implements AbEditPage {
 
 	private static final long serialVersionUID = 1L;
 
 	private static final double res = 0.95;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JTree jlt = new JTree();
 	private final AnimGroupTree agt = new AnimGroupTree(jlt);
 	private final JScrollPane jspu = new JScrollPane(jlt);
@@ -63,11 +63,6 @@ public class MaModelEditPage extends Page implements AbEditPage {
 		ini();
 		resized(true);
 		agt.renewNodes();
-	}
-
-	@Override
-    public JButton getBackButton() {
-		return back;
 	}
 
 	@Override
@@ -253,9 +248,8 @@ public class MaModelEditPage extends Page implements AbEditPage {
 
 	@Override
 	protected synchronized void resized(int x, int y) {
-		setBounds(0, 0, x, y);
+		super.resized(x, y);
 		set(aep, x, y, 800, 0, 1750, 50);
-		set(back, x, y, 0, 0, 200, 50);
 		set(camres, x, y, 350, 0, 200, 50);
 		set(zomres, x, y, 560, 0, 200, 50);
 		set(jsptr, x, y, 0, 550, 300, 750);
@@ -304,9 +298,6 @@ public class MaModelEditPage extends Page implements AbEditPage {
 	}
 
 	private void addListeners$0() {
-
-		back.setLnr(x -> changePanel(getFront()));
-
 		camres.setLnr(x -> {
 			ModelBox.ori.x = 0;
 			ModelBox.ori.y = 0;
@@ -409,7 +400,6 @@ public class MaModelEditPage extends Page implements AbEditPage {
 
 	private void ini() {
 		add(aep);
-		add(back);
 		add(camres);
 		add(zomres);
 		add(jspu);

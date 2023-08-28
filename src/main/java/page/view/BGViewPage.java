@@ -14,11 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-public class BGViewPage extends Page implements SupPage<Background> {
+public class BGViewPage extends DefaultPage implements SupPage<Background> {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JTG prev = new JTG(MainLocale.PAGE, "preview");
 	private final JList<Background> jlst = new JList<>();
 	private final JScrollPane jspst = new JScrollPane(jlst);
@@ -49,19 +48,13 @@ public class BGViewPage extends Page implements SupPage<Background> {
 	}
 
 	@Override
-    public JButton getBackButton() {
-		return back;
-	}
-
-	@Override
 	public Background getSelected() {
 		return jlst.getSelectedValue();
 	}
 
 	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(prev, x, y, 300, 0, 200, 50);
 		set(jspst, x, y, 50, 100, 300, 1100);
 		set((Canvas) vb, x, y, 400, 50, 1800, 1100);
@@ -69,8 +62,6 @@ public class BGViewPage extends Page implements SupPage<Background> {
 	}
 
 	private void addListeners() {
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		jlst.addListSelectionListener(arg0 -> {
 			if (arg0.getValueIsAdjusting())
 				return;
@@ -84,7 +75,7 @@ public class BGViewPage extends Page implements SupPage<Background> {
 		prev.addActionListener(arg0 -> {
 			remove((Canvas) vb);
 			remove(jl);
-			resized();
+			resized(true);
 			if (prev.isSelected())
 				add((Canvas) vb);
 			else
@@ -93,7 +84,6 @@ public class BGViewPage extends Page implements SupPage<Background> {
 	}
 
 	private void ini() {
-		add(back);
 		add(prev);
 		add(jspst);
 		add(jl);

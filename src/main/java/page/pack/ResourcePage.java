@@ -4,6 +4,7 @@ import common.system.VImg;
 import common.system.files.VFile;
 import common.system.files.VFileRoot;
 import io.BCUWriter;
+import page.DefaultPage;
 import page.JBTN;
 import page.JL;
 import page.Page;
@@ -16,11 +17,10 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.io.File;
 
-public class ResourcePage extends Page {
+public class ResourcePage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JBTN rept = new JBTN(0, "extract");
 	private final JLabel jln = new JLabel();
 	private final JTextArea jt = new JTextArea();
@@ -44,14 +44,8 @@ public class ResourcePage extends Page {
 	}
 
 	@Override
-    public JButton getBackButton() {
-		return back;
-	}
-
-	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(jsps, x, y, 50, 150, 400, 800);
 		set(jspf, x, y, 450, 150, 700, 800);
 		set(jspi, x, y, 1150, 150, 700, 800);
@@ -63,9 +57,6 @@ public class ResourcePage extends Page {
 	}
 
 	private void addListeners() {
-
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		rept.addActionListener(arg0 -> {
 			File f = new Exporter(Exporter.EXP_RES).file;
 			if (f != null)
@@ -75,16 +66,16 @@ public class ResourcePage extends Page {
 		jls.addTreeSelectionListener(arg0 -> {
 			if (changing)
 				return;
-			Object obj = null;
+			changing = true;
+			Object obj;
 			TreePath tp = jls.getSelectionPath();
 			if (tp != null) {
 				obj = tp.getLastPathComponent();
 				if (obj != null)
 					obj = ((DefaultMutableTreeNode) obj).getUserObject();
 				sel = obj instanceof VFile ? (VFile) obj : null;
-			} else {
+			} else
 				sel = null;
-			}
 			if (sel != null && sel.getName().contains(".")) {
 				if (sel.getName().endsWith(".png")) {
 					jln.setIcon(UtilPC.getIcon(new VImg(sel)));
@@ -101,6 +92,7 @@ public class ResourcePage extends Page {
 				jt.setText(null);
 			}
 			setSele();
+			changing = false;
 		});
 
 	}
@@ -125,7 +117,6 @@ public class ResourcePage extends Page {
 	private void ini() {
 		jln.setVerticalAlignment(SwingConstants.TOP);
 		jt.setEditable(false);
-		add(back);
 		add(jsps);
 		add(jspf);
 		add(jspi);

@@ -4,6 +4,7 @@ import common.pack.UserProfile;
 import common.util.unit.Form;
 import common.util.unit.UniRand;
 import common.util.unit.Unit;
+import page.DefaultPage;
 import page.Page;
 import page.info.UnitInfoPage;
 import page.pack.UREditPage;
@@ -11,7 +12,7 @@ import page.pack.UREditPage;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-public abstract class LubCont extends Page {
+public abstract class LubCont extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 

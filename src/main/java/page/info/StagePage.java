@@ -1,6 +1,7 @@
 package page.info;
 
 import common.util.stage.Stage;
+import page.DefaultPage;
 import page.JBTN;
 import page.Page;
 import page.battle.BattleSetupPage;
@@ -9,11 +10,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public class StagePage extends Page {
+public class StagePage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
-	protected final JBTN back = new JBTN(0, "back");
 	protected final JBTN strt = new JBTN(0, "start");
 	private final StageTable jt = new StageTable(this);
 	private final JScrollPane jspjt = new JScrollPane(jt);
@@ -33,11 +33,6 @@ public class StagePage extends Page {
 	}
 
 	@Override
-    public JButton getBackButton() {
-		return back;
-	}
-
-	@Override
 	protected void mouseClicked(MouseEvent e) {
 		if (e.getSource() == jt)
 			jt.clicked(e.getPoint());
@@ -47,8 +42,7 @@ public class StagePage extends Page {
 
 	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(jspinfo, x, y, 800, 50, 1400, 350);
 		set(jspjt, x, y, 800, 400, 1400, 800);
 		jt.setRowHeight(size(x, y, 50));
@@ -67,8 +61,6 @@ public class StagePage extends Page {
 	}
 
 	private void addListeners() {
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		strt.addActionListener(arg0 -> {
 			if (stage == null)
 				return;
@@ -78,7 +70,6 @@ public class StagePage extends Page {
 	}
 
 	private void ini() {
-		add(back);
 		add(jspjt);
 		add(jspinfo);
 		add(strt);

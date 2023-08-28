@@ -5,6 +5,7 @@ import common.pack.PackData.UserPack;
 import common.pack.UserProfile;
 import common.util.stage.CharaGroup;
 import common.util.unit.Form;
+import page.DefaultPage;
 import page.JBTN;
 import page.JL;
 import page.Page;
@@ -15,11 +16,10 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class CharaGroupPage extends Page {
+public class CharaGroupPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JBTN cglr = new JBTN(0, "edit");
 	private final JList<PackData> jlpk = new JList<>(UserProfile.getAllPacks().toArray(new PackData[0]));
 	private final JList<CharaGroup> jlcg = new JList<>();
@@ -65,14 +65,8 @@ public class CharaGroupPage extends Page {
 	}
 
 	@Override
-    public JButton getBackButton() {
-		return back;
-	}
-
-	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(jsppk, x, y, 50, 100, 400, 800);
 		set(cglr, x, y, 50, 950, 400, 50);
 		set(jspcg, x, y, 500, 100, 300, 800);
@@ -81,9 +75,6 @@ public class CharaGroupPage extends Page {
 	}
 
 	private void addListeners() {
-
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		cglr.addActionListener(arg0 -> changePanel(new CGLREditPage(getThis(), (UserPack) pack)));
 
 		jlpk.addListSelectionListener(arg0 -> {
@@ -106,7 +97,6 @@ public class CharaGroupPage extends Page {
 	}
 
 	private void ini() {
-		add(back);
 		add(jsppk);
 		add(jspcg);
 		add(jspus);

@@ -11,10 +11,7 @@ import common.util.stage.LvRestrict;
 import common.util.unit.AbForm;
 import common.util.unit.Form;
 import common.util.unit.Level;
-import page.JBTN;
-import page.JTF;
-import page.MainLocale;
-import page.Page;
+import page.*;
 import page.info.filter.UnitFindPage;
 import page.support.AnimLCR;
 import page.support.ReorderList;
@@ -27,13 +24,12 @@ import java.util.List;
 
 import static utilpc.Interpret.RARITY;
 
-public class CGLREditPage extends Page {
+public class CGLREditPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 	private static final SortedPackSet<CharaGroup> copiedCGs = new SortedPackSet<>();
 	private static final ArrayList<LvRestrict> copiedLRs = new ArrayList<>();
 
-	private final JBTN back = new JBTN(MainLocale.PAGE, "back");
 	private final JList<CharaGroup> jlcg = new JList<>();
 	private final JList<CharaGroup> jlsb = new JList<>();
 	private final JList<LvRestrict> jllr = new JList<>();
@@ -96,11 +92,6 @@ public class CGLREditPage extends Page {
 	}
 
 	@Override
-    public JButton getBackButton() {
-		return back;
-	}
-
-	@Override
 	protected void renew() {
 		if (ufp != null && ufp.getList() != null) {
 			changing = true;
@@ -118,8 +109,7 @@ public class CGLREditPage extends Page {
 
 	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(jspcg, x, y, 50, 100, 300, 800);
 		set(addcg, x, y, 50, 950, 150, 50);
 		set(remcg, x, y, 200, 950, 150, 50);
@@ -154,9 +144,6 @@ public class CGLREditPage extends Page {
 	}
 
 	private void addListeners() {
-
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		vuif.addActionListener(arg0 -> {
 			if (ufp == null)
 				ufp = new UnitFindPage(getThis(), false, pack);
@@ -381,7 +368,6 @@ public class CGLREditPage extends Page {
 	}
 
 	private void ini() {
-		add(back);
 		add(jspcg);
 		add(addcg);
 		add(remcg);

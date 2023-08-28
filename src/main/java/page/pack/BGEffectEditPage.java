@@ -11,10 +11,7 @@ import common.util.pack.bgeffect.BackgroundEffect;
 import common.util.pack.bgeffect.CustomBGEffect;
 import common.util.pack.bgeffect.MixedBGEffect;
 import main.Opts;
-import page.JBTN;
-import page.JTF;
-import page.MainLocale;
-import page.Page;
+import page.*;
 import page.support.AnimLCR;
 import utilpc.Theme;
 
@@ -56,13 +53,12 @@ class EffectList extends JList<BackgroundEffect> {
     }
 }
 
-public class BGEffectEditPage extends Page {
+public class BGEffectEditPage extends DefaultPage {
 
     private static final long serialVersionUID = 1L;
 
     private final EffectList jlbg = new EffectList();
     private final JScrollPane jspbg = new JScrollPane(jlbg);
-    private final JBTN back = new JBTN(MainLocale.PAGE, "back");
     private final JBTN addbg = new JBTN(MainLocale.PAGE, "add");
     private final JBTN rembg = new JBTN(MainLocale.PAGE, "rem");
     private final JTF bgena = new JTF();
@@ -93,14 +89,7 @@ public class BGEffectEditPage extends Page {
         ini();
     }
 
-    @Override
-    public JButton getBackButton() {
-        return back;
-    }
-
     private void addListeners() {
-        back.setLnr(x -> changePanel(getFront()));
-
         jlbg.addListSelectionListener(x -> {
             if (changing || jlbg.getValueIsAdjusting())
                 return;
@@ -199,8 +188,7 @@ public class BGEffectEditPage extends Page {
 
     @Override
     protected void resized(int x, int y) {
-        setBounds(0, 0, x, y);
-        set(back, x, y, 0, 0, 200, 50);
+        super.resized(x, y);
         set(addbg, x, y, 50, 1050, 150, 50);
         set(rembg, x, y, 200, 1050, 150, 50);
         set(jspbg, x, y, 50, 100, 300, 800);
@@ -223,7 +211,6 @@ public class BGEffectEditPage extends Page {
     }
 
     private void ini() {
-        add(back);
         add(addbg);
         add(rembg);
         add(jspbg);

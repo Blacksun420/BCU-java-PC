@@ -8,6 +8,7 @@ import common.util.stage.StageMap;
 import common.util.stage.info.CustomStageInfo;
 import common.util.unit.AbEnemy;
 import common.util.unit.Enemy;
+import page.DefaultPage;
 import page.JBTN;
 import page.JTF;
 import page.Page;
@@ -26,7 +27,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 
-public class StageEditPage extends Page {
+public class StageEditPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
@@ -36,7 +37,6 @@ public class StageEditPage extends Page {
 		SCGroupEditTable.redefine();
 	}
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JBTN strt = new JBTN(0, "start");
 	private final JBTN veif = new JBTN(0, "veif");
 	private final JBTN cpsm = new JBTN(0, "cpsm");
@@ -91,11 +91,6 @@ public class StageEditPage extends Page {
 	}
 
 	@Override
-    public JButton getBackButton() {
-		return back;
-	}
-
-	@Override
 	protected void mouseClicked(MouseEvent e) {
 		if (e.getSource() == jt && !e.isShiftDown())
 			jt.clicked(e);
@@ -115,8 +110,7 @@ public class StageEditPage extends Page {
 
 	@Override
 	protected synchronized void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(info, x, y, 900, 50, 1400, 300);
 		set(addl, x, y, 900, 400, 200, 50);
 		set(reml, x, y, 1100, 400, 200, 50);
@@ -147,9 +141,6 @@ public class StageEditPage extends Page {
 	}
 
 	private void addListeners$0() {
-
-		back.setLnr(x -> changePanel(getFront()));
-
 		strt.setLnr(x -> changePanel(new BattleSetupPage(getThis(), stage, 1)));
 
 		advs.setLnr(x -> changePanel(new AdvStEditPage(getThis(), stage)));
@@ -335,7 +326,6 @@ public class StageEditPage extends Page {
 	}
 
 	private void ini() {
-		add(back);
 		add(veif);
 		add(enam);
 		add(adds);

@@ -34,7 +34,7 @@ import java.util.Vector;
 
 import static utilpc.UtilPC.resizeImage;
 
-public class UREditPage extends Page {
+public class UREditPage extends DefaultPage {
 
     private static final long serialVersionUID = 1L;
 
@@ -43,7 +43,6 @@ public class UREditPage extends Page {
     }
 
     public final BasisSet bas = BasisSet.current();
-    private final JBTN back = new JBTN(0, "back");
     private final JBTN veif = new JBTN(0, "veif");
     private final UREditTable jt;
     private final JScrollPane jspjt;
@@ -86,17 +85,12 @@ public class UREditPage extends Page {
         jt = new UREditTable(this, pac);
         jspjt = new JScrollPane(jt);
         ini();
-        resized();
+        resized(true);
     }
 
     public UREditPage(Page p, UserPack pac, UniRand u) {
         this(p, pac);
         jlu.setSelectedValue(u, true);
-    }
-
-    @Override
-    public JButton getBackButton() {
-        return back;
     }
 
     @Override
@@ -114,8 +108,7 @@ public class UREditPage extends Page {
 
     @Override
     protected synchronized void resized(int x, int y) {
-        setBounds(0, 0, x, y);
-        set(back, x, y, 0, 0, 200, 50);
+        super.resized(x, y);
 
         set(jspst, x, y, 500, 150, 400, 800);
         set(adds, x, y, 500, 1000, 200, 50);
@@ -144,9 +137,6 @@ public class UREditPage extends Page {
     }
 
     private void addListeners() {
-
-        back.addActionListener(arg0 -> changePanel(getFront()));
-
         addl.addActionListener(arg0 -> {
             int ind = jt.addLine(jlu.getSelectedValue());
             setUR(rand);
@@ -283,7 +273,6 @@ public class UREditPage extends Page {
     }
 
     private void ini() {
-        add(back);
         add(veif);
         add(adds);
         add(rems);
@@ -338,7 +327,7 @@ public class UREditPage extends Page {
             }
             jspjt.scrollRectToVisible(new Rectangle(0, 0, 1, 1));
         });
-        resized();
+        resized(true);
     }
 
     private void setES() {

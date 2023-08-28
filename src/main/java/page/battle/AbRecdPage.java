@@ -15,11 +15,10 @@ import page.info.StageViewPage;
 
 import javax.swing.*;
 
-public abstract class AbRecdPage extends Page {
+public abstract class AbRecdPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JBTN rply = new JBTN(0, "rply");
 	private final JBTN recd = new JBTN(-1, "mp4");
 	private final JBTN vsta = new JBTN(0, "vsta");
@@ -46,7 +45,6 @@ public abstract class AbRecdPage extends Page {
 	public abstract Replay getSelection();
 
 	protected void preini() {
-		add(back);
 		add(rply);
 		add(len);
 		add(recd);
@@ -60,11 +58,6 @@ public abstract class AbRecdPage extends Page {
 		add(ista);
 		len.setBorder(BorderFactory.createEtchedBorder());
 		addListeners();
-	}
-
-	@Override
-    public JButton getBackButton() {
-		return back;
 	}
 
 	@Override
@@ -100,8 +93,7 @@ public abstract class AbRecdPage extends Page {
 
 	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(rply, x, y, 600, 100, 300, 50);
 		set(imap, x, y, 950, 100, 300, 50);
 		set(ista, x, y, 1300, 100, 300, 50);
@@ -138,8 +130,6 @@ public abstract class AbRecdPage extends Page {
 	}
 
 	private void addListeners() {
-		back.setLnr(x -> changePanel(getFront()));
-
 		vsta.setLnr(x -> {
 			Stage rStage = getSelection().st == null ? null : getSelection().st.safeGet();
 			changePanel(svp = new StageViewPage(getThis(), MapColc.values(), rStage));

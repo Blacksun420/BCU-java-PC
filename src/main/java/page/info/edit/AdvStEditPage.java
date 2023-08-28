@@ -34,7 +34,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdvStEditPage extends Page {
+public class AdvStEditPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 	private static class LineList extends JList<SCDef.Line> {
@@ -60,8 +60,6 @@ public class AdvStEditPage extends Page {
 			});
 		}
 	}
-
-	private final JBTN back = new JBTN(0, "back");
 	private final JTF sdef = new JTF();
 	private final JTF smax = new JTF();
 	private final JList<SCGroup> jls = new JList<>();
@@ -129,14 +127,8 @@ public class AdvStEditPage extends Page {
 	}
 
 	@Override
-    public JButton getBackButton() {
-		return back;
-	}
-
-	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(groups, x, y, 50, 100, 300, 50);
 		set(jsps, x, y, 50, 150, 300, 950);
 		set(addg, x, y, 50, 1100, 150, 50);
@@ -191,8 +183,6 @@ public class AdvStEditPage extends Page {
 	}
 
 	private void addListeners$0() {
-		back.setLnr(e -> changePanel(getFront()));
-
 		jls.addListSelectionListener(arg0 -> {
 			if (isAdj() || jls.getValueIsAdjusting())
 				return;
@@ -431,7 +421,6 @@ public class AdvStEditPage extends Page {
 	private void ini() {
 		AbEnemy[] aes = data.getSummon().toArray(new AbEnemy[0]);
 		summons = aes.length > 0;
-		add(back);
 		add(groups);
 		add(jsps);
 		add(addg);

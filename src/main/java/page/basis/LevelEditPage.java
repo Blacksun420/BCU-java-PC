@@ -9,10 +9,7 @@ import common.util.unit.Form;
 import common.util.unit.Level;
 import common.util.unit.Trait;
 import main.Opts;
-import page.JBTN;
-import page.JTF;
-import page.MainLocale;
-import page.Page;
+import page.*;
 import utilpc.Interpret;
 import utilpc.UtilPC;
 
@@ -23,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LevelEditPage extends Page {
+public class LevelEditPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
@@ -33,7 +30,6 @@ public class LevelEditPage extends Page {
 	private final Level lv;
 	private final List<int[]> orbs = new ArrayList<>();
 
-	private final JBTN bck = new JBTN(0, "back");
 	private final JLabel pcoin = new JLabel();
 	private final JTF levels = new JTF();
 	private final JList<String> orbList = new JList<>();
@@ -78,15 +74,10 @@ public class LevelEditPage extends Page {
 		resized(true);
 	}
 
-	@Override
-    public JButton getBackButton() {
-		return bck;
-	}
 
 	@Override
 	protected void resized(int x, int y) {
 		setBounds(0, 0, x, y);
-		set(bck, x, y, 0, 0, 200, 50);
 		set(pcoin, x, y, 50, 100, 1200, 50);
 		set(levels, x, y, 50, 150, 700, 50);
 		set(orbScroll, x, y, 50, 225, 350, 600);
@@ -106,8 +97,6 @@ public class LevelEditPage extends Page {
 	}
 
 	private void addListeners() {
-		bck.setLnr(x -> changePanel(getFront()));
-
 		levels.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent e) {
@@ -244,12 +233,12 @@ public class LevelEditPage extends Page {
 				return;
 
 			if (f.orbs.getSlots() != -1) {
-				orbs.replaceAll(ignored -> new int[]{});
+				orbs.replaceAll(ignored -> new int[0]);
 			} else {
 				orbs.clear();
 			}
 
-			orbb.changeOrb(new int[] {});
+			orbb.changeOrb(new int[0]);
 			setLvOrb(lv, generateOrb());
 			orbList.setListData(generateNames());
 		});
@@ -326,7 +315,6 @@ public class LevelEditPage extends Page {
 	}
 
 	private void ini() {
-		add(bck);
 		add(pcoin);
 		add(levels);
 		add(orbb);

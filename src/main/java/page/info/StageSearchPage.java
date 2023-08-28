@@ -179,12 +179,13 @@ public class StageSearchPage extends StagePage {
     }
 
     private void addListeners() {
-
+        JButton back = getBackButton();
         back.removeActionListener(back.getActionListeners()[0]);
         back.addActionListener(l -> {
             if (resultFound) {
                 resultFound = false;
                 jlst.clearSelection();
+                resized(true);
             } else
                 changePanel(getFront());
         });
@@ -399,5 +400,6 @@ public class StageSearchPage extends StagePage {
         jlmc.setListData(maps.toArray(new MapColc[0]));
 
         resultFound = stagesArr.length > 0;
+        resized(true);
     }
 }

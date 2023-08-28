@@ -1,20 +1,17 @@
 package page.anim;
 
-import page.JBTN;
+import page.DefaultPage;
 import page.JL;
 import page.Page;
 import utilpc.Algorithm;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.image.BufferedImage;
 
-public class SpriteEditPage extends Page {
+public class SpriteEditPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JL disp = new JL();
 	private final JScrollPane jsp = new JScrollPane(disp);
 	private final JL jlh = new JL();
@@ -42,14 +39,8 @@ public class SpriteEditPage extends Page {
 	}
 
 	@Override
-    public JButton getBackButton() {
-		return back;
-	}
-
-	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(jsp, x, y, 0, 50, 2000, 1000);
 		set(jslh, x, y, 0, 1100, 300, 100);
 		set(jsls, x, y, 300, 1100, 300, 100);
@@ -60,17 +51,12 @@ public class SpriteEditPage extends Page {
 	}
 
 	private void addListeners() {
-		back.setLnr(e -> changePanel(getFront()));
-
 		jslh.addChangeListener(e -> setColor(jslh.getValue(), s, b));
-
 		jsls.addChangeListener(e -> setColor(h, jsls.getValue(), b));
-
 		jslb.addChangeListener(e -> setColor(h, s, jslb.getValue()));
 	}
 
 	private void ini() {
-		add(back);
 		add(jsp);
 		add(jslh);
 		add(jsls);

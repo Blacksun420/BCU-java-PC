@@ -5,6 +5,7 @@ import common.battle.data.CustomUnit;
 import common.battle.data.PCoin;
 import common.util.Data;
 import common.util.unit.Form;
+import page.DefaultPage;
 import page.JBTN;
 import page.Page;
 
@@ -12,11 +13,10 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PCoinEditPage extends Page {
+public class PCoinEditPage extends DefaultPage {
 
     private static final long serialVersionUID = 1L;
 
-    private final JBTN back = new JBTN(0, "back");
     private final JBTN addP = new JBTN(0, "add");
     private final JBTN remP = new JBTN(0, "rempc");
     private final boolean editable;
@@ -39,20 +39,14 @@ public class PCoinEditPage extends Page {
     }
 
     @Override
-    public JButton getBackButton() {
-        return back;
-    }
-
-    @Override
     protected void resized(int x, int y) {
-        setBounds(0, 0, x, y);
-        set(back, x, y, 0, 0, 200, 50);
+        super.resized(x, y);
         set(addP, x, y, 400, 50, 300, 50);
         set(remP, x, y, 700, 50, 300, 50);
         set(jsp, x, y, 50, 100, 2050, 1100);
         for (int i = 0; i < pCoinEdits.size(); i++) {
             set(pCoinEdits.get(i), x, y, i * 400, 0, 400, 1050);
-            pCoinEdits.get(i).resized();
+            pCoinEdits.get(i).resized(true);
         }
         cont.setPreferredSize(size(x, y, pCoinEdits.size() * 400, 1050).toDimension());
         jsp.getHorizontalScrollBar().setUnitIncrement(size(x, y, 50));
@@ -60,8 +54,6 @@ public class PCoinEditPage extends Page {
     }
 
     private void addListeners() {
-        back.addActionListener(arg0 -> changePanel(getFront()));
-
         addP.addActionListener(arg0 -> {
             if (uni.pcoin == null)
                 uni.pcoin = new PCoin(uni);
@@ -137,7 +129,6 @@ public class PCoinEditPage extends Page {
     }
 
     private void ini() {
-        add(back);
         add(addP);
         add(remP);
         for (PCoinEditTable pce : pCoinEdits)

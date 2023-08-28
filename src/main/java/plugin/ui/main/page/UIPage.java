@@ -1,6 +1,6 @@
 package plugin.ui.main.page;
 
-import page.JBTN;
+import page.DefaultPage;
 import page.Page;
 import plugin.ui.common.config.StaticConfig;
 import plugin.ui.main.UIPlugin;
@@ -8,13 +8,12 @@ import plugin.ui.main.UIPlugin;
 import javax.swing.*;
 
 
-public class UIPage extends Page {
+public class UIPage extends DefaultPage {
 
     private static final long serialVersionUID = 1L;
 
     private final static UIPlugin P = UIPlugin.getInstance();
 
-    protected final JBTN back = new JBTN(0, "back");
     private JSlider opaSlider;
     private JButton removeUI;
     private JButton removeSwingTheme;
@@ -25,15 +24,11 @@ public class UIPage extends Page {
         super(p);
         init();
         addAndListen();
-        resized();
+        resized(true);
     }
 
     @Override
-    public JButton getBackButton() {
-        return back;
-    }
-
-    private void back() {
+    protected void exit() {
         changePanel(getFront());
         P.uninstallOpaqueHandler(opaSlider, opaInput);
     }
@@ -47,7 +42,6 @@ public class UIPage extends Page {
     }
 
     private void init() {
-        add(back);
         removeUI = P.getItem(StaticConfig.JBUTTON, "removeUI");
         int alpha = P.getOpaque();
         opaInput = new JTextField(String.valueOf(alpha));
@@ -58,8 +52,7 @@ public class UIPage extends Page {
 
     @Override
     protected final void resized(int x, int y) {
-        setBounds(0, 0, x, y);
-        set(back, x, y, 0, 0, 200, 50);
+        super.resized(x, y);
         set(removeSwingTheme, x, y, 0, 100, 200, 50);
         set(removeUI, x, y, 300, 0, 200, 50);
         set(opaInput, x, y, 600, 0, 100, 50);
@@ -67,7 +60,6 @@ public class UIPage extends Page {
     }
 
     public void addListeners() {
-        back.addActionListener(e -> back());
         P.installOpaqueHandler(opaInput, opaSlider);
         removeUI.addActionListener(e -> P.removeUI());
         removeSwingTheme.addActionListener(e -> P.removeSwingTheme());

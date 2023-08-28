@@ -4,17 +4,17 @@ import common.CommonStatic;
 import common.util.stage.Limit;
 import common.util.stage.MapColc.PackMapColc;
 import common.util.stage.Stage;
+import page.DefaultPage;
 import page.JBTN;
 import page.JTF;
 import page.Page;
 
 import javax.swing.*;
 
-public class LimitEditPage extends Page {
+public class LimitEditPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JTF star = new JTF();
 	private final JTF stag = new JTF();
 	private final JList<Limit> jll = new JList<>();
@@ -34,11 +34,6 @@ public class LimitEditPage extends Page {
 	}
 
 	@Override
-    public JButton getBackButton() {
-		return back;
-	}
-
-	@Override
 	public void callBack(Object o) {
 		setLimit(jll.getSelectedValue());
 	}
@@ -50,8 +45,7 @@ public class LimitEditPage extends Page {
 
 	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(jspl, x, y, 50, 100, 400, 800);
 		set(addl, x, y, 50, 900, 200, 50);
 		set(reml, x, y, 250, 900, 200, 50);
@@ -61,8 +55,6 @@ public class LimitEditPage extends Page {
 	}
 
 	private void addListeners$0() {
-		back.setLnr(e -> changePanel(getFront()));
-
 		star.setLnr(e -> {
 			if (isAdj())
 				return;
@@ -110,7 +102,6 @@ public class LimitEditPage extends Page {
 	}
 
 	private void ini() {
-		add(back);
 		add(jspl);
 		add(addl);
 		add(reml);

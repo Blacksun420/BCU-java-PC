@@ -28,7 +28,7 @@ import java.util.List;
 
 import static utilpc.UtilPC.resizeImage;
 
-public class TraitEditPage extends Page {
+public class TraitEditPage extends DefaultPage {
 
     private static final long serialVersionUID = 1L;
 
@@ -37,7 +37,6 @@ public class TraitEditPage extends Page {
 
     private final JLabel jl = new JLabel();
 
-    private final JBTN back = new JBTN(MainLocale.PAGE, "back");
     private final JBTN addct = new JBTN(MainLocale.PAGE, "add");
     private final JBTN remct = new JBTN(MainLocale.PAGE, "rem");
     private final JBTN adicn = new JBTN(MainLocale.PAGE, "icon");
@@ -71,11 +70,6 @@ public class TraitEditPage extends Page {
     }
 
     @Override
-    public JButton getBackButton() {
-        return back;
-    }
-
-    @Override
     protected void renew() {
         if (ufp != null && ufp.getList() != null) {
             changing = true;
@@ -99,8 +93,7 @@ public class TraitEditPage extends Page {
 
     @Override
     protected synchronized void resized(int x, int y) {
-        setBounds(0, 0, x, y);
-        set(back, x, y, 0, 0, 200, 50);
+        super.resized(x, y);
         set(addct, x, y, 50, 1000, 150, 50);
         set(remct, x, y, 200, 1000, 150, 50);
         set(jspct, x, y, 50, 100, 300, 800);
@@ -118,9 +111,6 @@ public class TraitEditPage extends Page {
     }
 
     private void addListeners$0() {
-
-        back.setLnr(x -> changePanel(getFront()));
-
         adicn.addActionListener(arg0 -> getFile("Choose your file"));
 
         reicn.addActionListener(arg0 -> {
@@ -272,7 +262,6 @@ public class TraitEditPage extends Page {
     }
 
     private void ini() {
-        add(back);
         add(addct);
         add(remct);
         add(jspct);

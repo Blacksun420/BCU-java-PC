@@ -8,11 +8,10 @@ import javax.swing.event.DocumentListener;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
-public abstract class EntityFindPage<R> extends Page {
+public abstract class EntityFindPage<R> extends DefaultPage {
 
     private static final long serialVersionUID = 1L;
 
-    protected final JBTN back = new JBTN(0, "back");
     protected final JTG show = new JTG(0, "showf");
     protected EntityListTable<R> elt;
     protected EntityFilterBox efb;
@@ -27,15 +26,10 @@ public abstract class EntityFindPage<R> extends Page {
     }
 
     @Override
-    public JButton getBackButton() {
-        return back;
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public void callBack(Object o) {
         elt.setList((List<R>) o);
-        resized();
+        resized(true);
     }
 
     @Override
@@ -55,8 +49,7 @@ public abstract class EntityFindPage<R> extends Page {
 
     @Override
     protected void resized(int x, int y) {
-        setBounds(0, 0, x, y);
-        set(back, x, y, 0, 0, 200, 50);
+        super.resized(x, y);
         set(show, x, y, 250, 0, 150, 50);
         set(advs, x, y, 400, 0, 150, 50);
         set(seatf, x, y, 600, 0, 1050, 50);
@@ -83,8 +76,6 @@ public abstract class EntityFindPage<R> extends Page {
     }
 
     protected void addListeners() {
-        back.addActionListener(arg0 -> changePanel(getFront()));
-
         show.addActionListener(arg0 -> {
             if (show.isSelected())
                 add(efb);
@@ -115,7 +106,6 @@ public abstract class EntityFindPage<R> extends Page {
     }
 
     protected void ini() {
-        add(back);
         add(show);
         add(efb);
         add(jsp);

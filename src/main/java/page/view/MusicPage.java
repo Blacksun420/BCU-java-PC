@@ -5,6 +5,7 @@ import common.pack.PackData;
 import common.pack.UserProfile;
 import common.util.stage.Music;
 import io.BCMusic;
+import page.DefaultPage;
 import page.JBTN;
 import page.Page;
 import page.SupPage;
@@ -14,11 +15,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class MusicPage extends Page implements SupPage<Music> {
+public class MusicPage extends DefaultPage implements SupPage<Music> {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JBTN strt = new JBTN(0, "start");
 
 	private final JList<Music> jlf = new JList<>();
@@ -62,22 +62,13 @@ public class MusicPage extends Page implements SupPage<Music> {
 
 	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(jsp, x, y, 50, 100, 300, 800);
 		set(strt, x, y, 400, 100, 200, 50);
 	}
 
-	@Override
-    public JButton getBackButton() {
-		return back;
-	}
-
 	private void addListeners() {
-		back.addActionListener(arg0 -> {
-			BCMusic.clear();
-			changePanel(getFront());
-		});
+		getBackButton().addActionListener(arg0 -> BCMusic.clear());//There should be the default changePanel list so this is fien
 
 		strt.addActionListener(arg0 -> {
 			if (jlf.getSelectedValue() == null)
@@ -87,7 +78,6 @@ public class MusicPage extends Page implements SupPage<Music> {
 	}
 
 	private void ini() {
-		add(back);
 		add(strt);
 		add(jsp);
 		addListeners();

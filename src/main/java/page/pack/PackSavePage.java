@@ -15,11 +15,10 @@ import javax.swing.*;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PackSavePage extends Page {
+public class PackSavePage extends DefaultPage {
 
     private static final long serialVersionUID = 1L;
 
-    private final JBTN back = new JBTN(MainLocale.PAGE, "back");
     private final JL packJL = new JL(MainLocale.PAGE, "pkstm");
     private final JList<StageMap> packMaps = new JList<>();
     private final JScrollPane jkMaps = new JScrollPane(packMaps);
@@ -60,11 +59,10 @@ public class PackSavePage extends Page {
         pk = pack;
 
         ini();
-        resized();
+        resized(true);
     }
 
     private void addListeners() {
-        back.addActionListener(l -> changePanel(getFront()));
         packMaps.addListSelectionListener(l -> setMap(packMaps.getSelectedValue(), true));
         potMaps.addListSelectionListener(l -> addreq.setEnabled(pk.editable && curMap != null && potMaps.getSelectedIndex() != -1));
         reqMaps.addListSelectionListener(l -> remreq.setEnabled(pk.editable && curMap != null && reqMaps.getSelectedIndex() != -1));
@@ -244,7 +242,6 @@ public class PackSavePage extends Page {
     }
 
     private void ini() {
-        add(back);
         add(packJL);
         add(jkMaps);
         add(potJL);
@@ -280,8 +277,7 @@ public class PackSavePage extends Page {
 
     @Override
     protected void resized(int x, int y) {
-        setBounds(0, 0, x, y);
-        set(back, x, y, 0, 0, 200, 50);
+        super.resized(x, y);
         set(packJL, x, y, 50, 100, 300, 50);
         set(jkMaps, x, y, 50, 150, 300, 950);
 
@@ -308,10 +304,5 @@ public class PackSavePage extends Page {
         set(syncedpar, x, y, 1350, 600, 300, 50);
         set(jsPar, x, y, 1350, 650, 300, 400);
         set(rempar, x, y, 1350, 1050, 300, 50);
-    }
-
-    @Override
-    public JButton getBackButton() {
-        return back;
     }
 }

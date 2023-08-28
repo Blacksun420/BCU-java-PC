@@ -28,11 +28,10 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.*;
 
-public class UnitManagePage extends Page {
+public class UnitManagePage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final Vector<UserPack> vpack = new Vector<>(UserProfile.getUserPacks());
 	private final PackEditPage.PackList jlp = new PackEditPage.PackList(vpack);
 	private final JScrollPane jspp = new JScrollPane(jlp);
@@ -87,11 +86,7 @@ public class UnitManagePage extends Page {
 
 		pac = pack;
 		ini();
-	}
-
-	@Override
-    public JButton getBackButton() {
-		return back;
+		resized(true);
 	}
 
 	@Override
@@ -105,8 +100,7 @@ public class UnitManagePage extends Page {
 
 	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		int w = 50, dw = 150;
 		set(lbp, x, y, w, 100, 400, 50);
 		set(jspp, x, y, w, 150, 400, 600);
@@ -147,9 +141,6 @@ public class UnitManagePage extends Page {
 	}
 
 	private void addListeners() {
-
-		back.addActionListener(arg0 -> changePanel(getFront()));
-
 		jtd.addTreeSelectionListener(arg0 -> {
 			if (changing)
 				return;
@@ -468,7 +459,6 @@ public class UnitManagePage extends Page {
 	}
 
 	private void ini() {
-		add(back);
 		add(jspp);
 		add(jspu);
 		add(jspd);

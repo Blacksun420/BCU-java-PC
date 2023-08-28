@@ -23,9 +23,8 @@ public class FIBI implements FakeImage {
 	}
 
 	protected FIBI(BufferedImage read, int offsetX, int offsetY) {
-		bimg = read;
-
-		//TODO Perform texture offsetting
+		int w = read.getWidth(), h = read.getHeight();
+		bimg = read.getSubimage(offsetX, offsetY, Math.max(1, w - offsetX), Math.max(1, h - offsetY));
 	}
 
 	@Override
@@ -85,9 +84,8 @@ public class FIBI implements FakeImage {
 			WritableRaster wr = ori.copyData(null);
 
 			copy = new FIBI(new BufferedImage(cm, wr, alphaMulti, null));
-		} else {
+		} else
 			copy = new FIBI(null);
-		}
 
 		return copy;
 	}

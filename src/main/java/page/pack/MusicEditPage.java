@@ -22,11 +22,10 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class MusicEditPage extends Page {
+public class MusicEditPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JBTN back = new JBTN(0, "back");
 	private final JList<Music> jlst = new JList<>();
 	private final JScrollPane jspst = new JScrollPane(jlst);
 
@@ -52,8 +51,7 @@ public class MusicEditPage extends Page {
 
 	@Override
 	protected void resized(int x, int y) {
-		setBounds(0, 0, x, y);
-		set(back, x, y, 0, 0, 200, 50);
+		super.resized(x, y);
 		set(jspst, x, y, 50, 100, 400, 1000);
 		set(relo, x, y, 500, 100, 200, 50);
 		set(show, x, y, 500, 200, 200, 50);
@@ -66,18 +64,12 @@ public class MusicEditPage extends Page {
 		set(jtn, x, y, 50, 1100, 400, 50);
 	}
 
-	@Override
-    public JButton getBackButton() {
-		return back;
-	}
-
 	private void addListeners() {
-		back.addActionListener(arg0 -> {
+		getBackButton().addActionListener(arg0 -> { //changepanel should be managed I think
 			if (BCMusic.BG != null && BCMusic.BG.isPlaying()) {
 				BCMusic.BG.stop();
 				BCMusic.clear();
 			}
-			changePanel(getFront());
 		});
 
 		relo.addActionListener(arg0 -> {
@@ -154,7 +146,6 @@ public class MusicEditPage extends Page {
 	}
 
 	private void ini() {
-		add(back);
 		add(jspst);
 		add(show);
 		add(relo);

@@ -35,11 +35,10 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Queue;
 
-public class BackupPage extends Page {
+public class BackupPage extends DefaultPage {
 
     private static final long serialVersionUID = 1L;
 
-    private final JBTN back = new JBTN(0, "back");
     private final JBTN read = new JBTN(0, "read list");
     private final JBTN dele = new JBTN(0, "delete");
     private final JBTN rest = new JBTN(0, "restore");
@@ -69,14 +68,8 @@ public class BackupPage extends Page {
     }
 
     @Override
-    public JButton getBackButton() {
-        return back;
-    }
-
-    @Override
     protected void resized(int x, int y) {
-        setBounds(0, 0, x, y);
-        set(back, x, y, 0, 0, 200, 50);
+        super.resized(x, y);
         set(jspm, x, y, 50, 100, 400, 800);
         set(read, x, y, 500, 100, 200, 50);
         set(rest, x, y, 500, 200, 200, 50);
@@ -95,8 +88,6 @@ public class BackupPage extends Page {
     }
 
     private void addListeners$0() {
-        back.addActionListener(arg0 -> changePanel(getFront()));
-
         read.addActionListener(arg0 -> setList());
 
         dele.setLnr(x -> {
@@ -242,7 +233,6 @@ public class BackupPage extends Page {
     }
 
     private void ini(boolean ntr) {
-        add(back);
         add(jspm);
         add(read);
         add(dele);
