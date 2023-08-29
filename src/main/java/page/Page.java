@@ -84,7 +84,6 @@ public abstract class Page extends JPanel implements RetFunc {
 		}
 
 		needResize = true;
-
 		return super.add(c);
 	}
 
@@ -96,16 +95,17 @@ public abstract class Page extends JPanel implements RetFunc {
 		if (pages == null)
 			return;
 
-		for(int i = 0; i < pages.length; i++) {
-			Page page = pages[i];
-
+		for (Page page : pages) {
 			if (page == null)
 				continue;
 
-			if (!subPages.contains(page)) {
+			if (!subPages.contains(page))
 				subPages.add(page);
-			}
 		}
+	}
+
+	public void removeSubPage(int ind) {
+		subPages.remove(ind);
 	}
 
 	public synchronized final void componentResized(int x, int y) {
@@ -164,16 +164,14 @@ public abstract class Page extends JPanel implements RetFunc {
 
 		if (!needResize && dimension.equals(previousDimension))
 			return;
-
 		needResize = false;
 
 		Point p = dimension.toPoint();
 		componentResized(p.x, p.y);
 		previousDimension = dimension;
 
-		for(int i = 0; i < subPages.size(); i++) {
-			subPages.get(i).resized();
-		}
+		for (Page subPage : subPages)
+			subPage.resized();
 	}
 
 	protected void change(boolean b) {
@@ -250,10 +248,8 @@ public abstract class Page extends JPanel implements RetFunc {
 		//Revalidate components
 		updateTableFromPage(this);
 
-		for(int i = 0; i < subPages.size(); i++) {
-			updateTableFromPage(subPages.get(i));
-		}
-
+		for (Page subPage : subPages)
+			updateTableFromPage(subPage);
 		onTimer(t);
 	}
 
@@ -277,7 +273,6 @@ public abstract class Page extends JPanel implements RetFunc {
 	}
 
 	public synchronized void onTimer(int t) {
-
 	}
 
 	protected void windowActivated() {

@@ -173,7 +173,6 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 	@Override
 	public synchronized void onTimer(int t) {
 		super.onTimer(t);
-
 		SwingUtilities.invokeLater(() -> jlt.setUI(new TreeNodeExpander(jlt)));
 		ib.updateControllerDimension(((Canvas) vb).getWidth(), ((Canvas) vb).getHeight());
 	}

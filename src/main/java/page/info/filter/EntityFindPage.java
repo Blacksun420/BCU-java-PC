@@ -29,7 +29,6 @@ public abstract class EntityFindPage<R> extends DefaultPage {
     @SuppressWarnings("unchecked")
     public void callBack(Object o) {
         elt.setList((List<R>) o);
-        resized(true);
     }
 
     @Override

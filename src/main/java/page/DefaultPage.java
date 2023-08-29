@@ -15,7 +15,7 @@ public class DefaultPage extends Page {
 	}
 
 	@Override
-	protected JButton getBackButton() {
+	public JButton getBackButton() {
 		return back;
 	}
 

@@ -32,7 +32,6 @@ public class LoadPage extends Page {
         add(jl);
         add(jpb);
         lp.jpb.setMaximum(1000);
-        resized(true);
     }
 
     public void accept(double dl) {
@@ -52,7 +51,7 @@ public class LoadPage extends Page {
     }
 
     @Override
-    public void timer(int t) {
+    public void onTimer(int t) {
         if (temp != null) {
             jl.setText(temp);
             temp = null;

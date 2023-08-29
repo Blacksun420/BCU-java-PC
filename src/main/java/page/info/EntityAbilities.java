@@ -78,7 +78,6 @@ public class EntityAbilities extends Page {
 
         for (JLabel jLabel : proc) {
             set(jLabel, x, y, 0, posY, 1200, 50);
-
             posY += 50;
         }
 

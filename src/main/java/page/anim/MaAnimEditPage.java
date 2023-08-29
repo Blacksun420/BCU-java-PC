@@ -303,9 +303,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 	@Override
 	public synchronized void onTimer(int t) {
 		super.onTimer(t);
-
 		SwingUtilities.invokeLater(() -> jta.setUI(new TreeNodeExpander(jta)));
-
 		if (!pause)
 			eupdate();
 

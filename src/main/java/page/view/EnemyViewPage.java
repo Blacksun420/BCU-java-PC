@@ -58,7 +58,6 @@ public class EnemyViewPage extends AbViewPage {
 	@Override
 	protected void resized(int x, int y) {
 		super.resized(x, y);
-
 		if (!larges.isSelected()) {
 			set(jspu, x, y, 50, 100, 300, 1100);
 			set(stat, x, y, 400, 1000, 300, 50);
@@ -66,7 +65,6 @@ public class EnemyViewPage extends AbViewPage {
 			set(jspu, x, y, 50, 800, 300, 400);
 			set(stat, x, y, 150, 1200, 200, 50);
 		}
-
 		jlu.setFixedCellHeight(size(x, y, 50));
 	}
 
