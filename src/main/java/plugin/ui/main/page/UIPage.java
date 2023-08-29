@@ -24,7 +24,6 @@ public class UIPage extends DefaultPage {
         super(p);
         init();
         addAndListen();
-        resized(true);
     }
 
     @Override

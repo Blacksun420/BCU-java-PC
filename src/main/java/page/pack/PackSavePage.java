@@ -59,7 +59,6 @@ public class PackSavePage extends DefaultPage {
         pk = pack;
 
         ini();
-        resized(true);
     }
 
     private void addListeners() {

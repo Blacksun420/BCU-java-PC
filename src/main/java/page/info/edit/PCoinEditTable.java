@@ -373,6 +373,7 @@ class PCoinEditTable extends Page {
         ctypes.setEnabled(pc && editable);
         delet.setEnabled(pc && editable);
         changing = false;
+        fireDimensionChanged();
     }
 
     //Enables or disables text fields, depending on the needed values for the proc

@@ -146,5 +146,6 @@ public class PCoinEditPage extends DefaultPage {
             pct.setData();
         addP.setEnabled(editable && (uni.pcoin == null || uni.pcoin.info.size() < Data.PC_CORRES.length + Data.PC_CUSTOM.length));
         remP.setEnabled(editable && uni.pcoin != null);
+        fireDimensionChanged();
     }
 }

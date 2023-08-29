@@ -43,7 +43,6 @@ public class CompareTable extends Page {
     private final ComparePage par;
     private Character Ent;
     private LevelInterface Lvl;
-    private boolean resize = true;
 
     protected final boolean[] seles = new boolean[main.length + unit.length + 4];
     private SortedPackSet<Trait> trs = new SortedPackSet<>();
@@ -99,8 +98,10 @@ public class CompareTable extends Page {
             byte FI = i;
             swap[i].addActionListener(x -> {
                 Form oldf = (Form) Ent;
-                int fid = oldf.fid;
-                Form f = oldf.uid.get().getForms()[(FI == 1 ? fid + 1 : fid - 1) % oldf.unit.forms.length];
+                int fid = (FI == 1 ? oldf.fid + 1 : oldf.fid - 1) % oldf.unit.forms.length;
+                if (fid == -1)
+                    fid = oldf.unit.forms.length - 1;
+                Form f = oldf.uid.get().getForms()[fid];
 
                 int[] data = CommonStatic.parseIntsN(level.getText());
                 Lvl = f.regulateLv(Level.lvList(f.unit, data, null), (Level) Lvl);
@@ -418,7 +419,7 @@ public class CompareTable extends Page {
         if (!seles[seles.length - 1])
             set(abilityPanes, x, y, 0, 0, 0, 0);
         else {
-            if (resize && abilities != null) {
+            if (abilities != null) {
                 abilities.setPreferredSize(size(x, y, abilities.getPWidth(), abilities.getPHeight()).toDimension());
                 abilityPanes.getHorizontalScrollBar().setUnitIncrement(size(x, y, 20));
                 abilityPanes.getVerticalScrollBar().setUnitIncrement(size(x, y, 50));
@@ -426,11 +427,9 @@ public class CompareTable extends Page {
             }
             set(abilityPanes, x, y, 0, posY, width, height);
         }
-
-        resize = false;
     }
 
     public void requireResize() {
-        resize = true;
+        fireDimensionChanged();
     }
 }

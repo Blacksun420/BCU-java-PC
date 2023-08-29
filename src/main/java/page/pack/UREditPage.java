@@ -85,7 +85,6 @@ public class UREditPage extends DefaultPage {
         jt = new UREditTable(this, pac);
         jspjt = new JScrollPane(jt);
         ini();
-        resized(true);
     }
 
     public UREditPage(Page p, UserPack pac, UniRand u) {
@@ -327,7 +326,6 @@ public class UREditPage extends DefaultPage {
             }
             jspjt.scrollRectToVisible(new Rectangle(0, 0, 1, 1));
         });
-        resized(true);
     }
 
     private void setES() {

@@ -33,7 +33,6 @@ public class LogPage extends DefaultPage {
 
         ini();
         addListeners();
-        resized(true);
     }
 
     @Override

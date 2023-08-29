@@ -167,7 +167,6 @@ public class PackEditPage extends DefaultPage {
 		agt.renewNodes();
 
 		ini();
-		resized(true);
 	}
 
 	@Override

@@ -86,7 +86,6 @@ public class UnitManagePage extends DefaultPage {
 
 		pac = pack;
 		ini();
-		resized(true);
 	}
 
 	@Override

@@ -142,12 +142,14 @@ public class ComparePage extends DefaultPage {
             tables.add(comp);
             cont.add(comp);
             remE.setEnabled(true);
+            requireResize();
         });
         remE.addActionListener(l -> {
             removeSubPage(tables.size() - 1);
             cont.remove(tables.size() - 1);
             tables.remove(tables.size() - 1);
             remE.setEnabled(tables.size() > 2);
+            requireResize();
         });
     }
 
@@ -170,7 +172,6 @@ public class ComparePage extends DefaultPage {
             ct.setTraits(trait.getSelectedValuesList());
             ct.reset();
         }
-
         fireDimensionChanged();
     }
 
@@ -265,5 +266,6 @@ public class ComparePage extends DefaultPage {
         for (CompareTable tab : tables)
             tab.requireResize();
         tlst.revalidate();
+        fireDimensionChanged();
     }
 }

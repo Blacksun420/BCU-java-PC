@@ -18,7 +18,6 @@ public class DocumentationPage extends DefaultPage {
     protected DocumentationPage(Page p) {
         super(p);
         ini();
-        resized(true);
     }
 
     @Override
