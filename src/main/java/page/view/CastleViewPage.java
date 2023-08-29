@@ -36,7 +36,6 @@ public class CastleViewPage extends DefaultPage {
 		Vector<CastleList> vec = new Vector<>(list);
 		jlsm.setListData(vec);
 		ini();
-		resized(true);
 	}
 
 	public CastleViewPage(Page p, Collection<CastleList> defcas, Identifier<CastleImg> id) {

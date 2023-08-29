@@ -41,7 +41,6 @@ public class UnitInfoPage extends DefaultPage {
 			info[i] = new UnitInfoTable(this, n.val.forms[i], lvs, !u.id.pack.equals(Identifier.DEF));
 		trea = new TreaTable(this);
 		ini();
-		resized(true);
 	}
 
 	public UnitInfoPage(Page p, Node<Unit> de) {
@@ -59,7 +58,6 @@ public class UnitInfoPage extends DefaultPage {
 		trea = new TreaTable(this);
 		extr.setSelected(sp);
 		ini();
-		resized(true);
 	}
 
 	@Override
@@ -81,13 +79,17 @@ public class UnitInfoPage extends DefaultPage {
 		for (int i = 0; i < info.length; i++) {
 			int ih = info[i].getH();
 			set(info[i], x, y, 0, h, 1600, ih);
-			info[i].resized(true);
 			h += ih + (n.val.forms[i].getExplanation().length() == 0 ? 50 : 0);
 		}
 		cont.setPreferredSize(size(x, y, 1600, h).toDimension());
 		jsp.getVerticalScrollBar().setUnitIncrement(size(x, y, 50));
-		jsp.revalidate();
 		set(trea, x, y, 1750, 100, 400, 1200);
+	}
+
+	@Override
+	public synchronized void onTimer(int t) {
+		super.onTimer(t);
+		jsp.revalidate();
 	}
 
 	private void addListeners() {
@@ -134,6 +136,7 @@ public class UnitInfoPage extends DefaultPage {
 		prev.setEnabled(n.prev != null);
 		next.setEnabled(n.next != null);
 		addListeners();
+		assignSubPage(info);
 	}
 
 }

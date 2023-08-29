@@ -30,7 +30,6 @@ public class LimitEditPage extends DefaultPage {
 		st = stage;
 		lt = new LimitTable(this, this, ((PackMapColc) stage.getCont().getCont()).pack);
 		ini();
-		resized(true);
 	}
 
 	@Override

@@ -65,7 +65,6 @@ public class EREditPage extends DefaultPage {
 		jt = new EREditTable(this, pac);
 		jspjt = new JScrollPane(jt);
 		ini();
-		resized(true);
 	}
 
 	public EREditPage(Page page, UserPack pac, EneRand e) {
@@ -247,7 +246,6 @@ public class EREditPage extends DefaultPage {
 				type[i].setSelected(i == t);
 			jspjt.scrollRectToVisible(new Rectangle(0, 0, 1, 1));
 		});
-		resized(true);
 	}
 
 	private void setES() {

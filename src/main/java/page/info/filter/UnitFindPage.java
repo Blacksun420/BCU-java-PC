@@ -26,7 +26,6 @@ public class UnitFindPage extends EntityFindPage<AbForm> implements SupPage<AbUn
 		efb = new UnitFilterBox(this, rand, pack);
 		adv = new AdvProcFilterPage(this, true, efb.proc);
 		ini();
-		resized(true);
 	}
 
 	public AbForm getForm() {

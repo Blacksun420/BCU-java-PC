@@ -40,13 +40,11 @@ public class ComparePage extends DefaultPage {
     private EnemyFindPage efp = null;
     private UnitFindPage ufp = null;
     private int s = -1;
-    private boolean resize = true;
 
     public ComparePage(Page p) {
         super(p);
 
         ini();
-        resized(true);
     }
 
     private void ini() {
@@ -99,6 +97,7 @@ public class ComparePage extends DefaultPage {
 
         for (int i = 0; i < 3; i++) {
             CompareTable comp = new CompareTable(this, i, boxes);
+            assignSubPage(comp);
             tables.add(comp);
             cont.add(comp);
         }
@@ -139,11 +138,13 @@ public class ComparePage extends DefaultPage {
 
         addE.addActionListener(l -> {
             CompareTable comp = new CompareTable(this, tables.size(), boxes);
+            assignSubPage(comp);
             tables.add(comp);
             cont.add(comp);
             remE.setEnabled(true);
         });
         remE.addActionListener(l -> {
+            removeSubPage(tables.size() - 1);
             cont.remove(tables.size() - 1);
             tables.remove(tables.size() - 1);
             remE.setEnabled(tables.size() > 2);
@@ -170,7 +171,7 @@ public class ComparePage extends DefaultPage {
             ct.reset();
         }
 
-        requireResize();
+        fireDimensionChanged();
     }
 
     @Override
@@ -237,17 +238,13 @@ public class ComparePage extends DefaultPage {
         set(jsp, x, y, 250, 50, 1825, posY + height - 50);
         for (int i = 0; i < tables.size(); i++) {
             set(tables.get(i), x, y, i * tw, 0, tw, posY + height - 50);
-            tables.get(i).resized(true);
         }
         cont.setPreferredSize(size(x, y, tables.size() * tw, posY + height - 50).toDimension());
         jsp.getHorizontalScrollBar().setUnitIncrement(size(x, y, 50));
         jsp.revalidate();
 
         set(tlst, x, y, 50, posY, 200, height);
-        if (resize)
-            tlst.revalidate();
 
-        resize = false;
     }
 
     public final int resizeJL(final JL jl, final int x, final int y, final int posY, final int check) {
@@ -265,8 +262,8 @@ public class ComparePage extends DefaultPage {
     }
 
     public void requireResize() {
-        resize = true;
         for (CompareTable tab : tables)
             tab.requireResize();
+        tlst.revalidate();
     }
 }

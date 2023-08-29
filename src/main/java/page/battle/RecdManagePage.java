@@ -25,7 +25,6 @@ public class RecdManagePage extends AbRecdPage {
 		super(p, true);
 		preini();
 		ini();
-		resized(true);
 	}
 
 	@Override
@@ -36,6 +35,7 @@ public class RecdManagePage extends AbRecdPage {
 	@Override
 	protected void resized(int x, int y) {
 		super.resized(x, y);
+
 		set(jspr, x, y, 50, 100, 500, 1100);
 		set(dele, x, y, 600, 400, 300, 50);
 		set(rena, x, y, 600, 500, 300, 50);

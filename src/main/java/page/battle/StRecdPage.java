@@ -34,7 +34,6 @@ public class StRecdPage extends AbRecdPage {
 		st = stage;
 		preini();
 		ini();
-		resized(true);
 	}
 
 	@Override

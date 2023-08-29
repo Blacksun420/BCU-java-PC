@@ -133,8 +133,6 @@ public class TreaTable extends Page {
 					} else {
 						close(n);
 					}
-
-					front.resized(true);
 				});
 
 				jcf[J].addFocusListener(new FocusAdapter() {

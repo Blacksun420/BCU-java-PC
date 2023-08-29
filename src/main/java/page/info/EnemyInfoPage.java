@@ -38,7 +38,6 @@ public class EnemyInfoPage extends DefaultPage {
 		trea = new TreaTable(this);
 		ini();
 		extr.setSelected(sp);
-		resized(true);
 	}
 
 	@Override
@@ -60,7 +59,11 @@ public class EnemyInfoPage extends DefaultPage {
 		cont.setPreferredSize(size(x, y, 1600, ih).toDimension());
 		jsp.getVerticalScrollBar().setUnitIncrement(size(x, y, 50));
 		set(info, x, y, 0, 0, 1600, ih);
-		info.resized(true);
+	}
+
+	@Override
+	public synchronized void onTimer(int t) {
+		super.onTimer(t);
 		jsp.revalidate();
 	}
 
@@ -82,6 +85,7 @@ public class EnemyInfoPage extends DefaultPage {
 	}
 
 	private void ini() {
+		assignSubPage(info);
 		cont.add(info);
 		cont.setLayout(null);
 		add(jsp);

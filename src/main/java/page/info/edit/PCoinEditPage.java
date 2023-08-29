@@ -35,7 +35,6 @@ public class PCoinEditPage extends DefaultPage {
                 pCoinEdits.add(new PCoinEditTable(this, uni, i, editable));
 
         ini();
-        resized(true);
     }
 
     @Override
@@ -46,7 +45,6 @@ public class PCoinEditPage extends DefaultPage {
         set(jsp, x, y, 50, 100, 2050, 1100);
         for (int i = 0; i < pCoinEdits.size(); i++) {
             set(pCoinEdits.get(i), x, y, i * 400, 0, 400, 1050);
-            pCoinEdits.get(i).resized(true);
         }
         cont.setPreferredSize(size(x, y, pCoinEdits.size() * 400, 1050).toDimension());
         jsp.getHorizontalScrollBar().setUnitIncrement(size(x, y, 50));
@@ -67,6 +65,7 @@ public class PCoinEditPage extends DefaultPage {
 
             pCoinEdits.add(new PCoinEditTable(this, uni, slot, editable));
             cont.add(pCoinEdits.get(slot));
+            assignSubPage(pCoinEdits.get(slot));
 
             setCoinTypes();
         });
@@ -77,6 +76,7 @@ public class PCoinEditPage extends DefaultPage {
         remP.addActionListener(arg0 -> {
             uni.pcoin = null;
             while (!pCoinEdits.isEmpty()) {
+                removeSubPage(pCoinEdits.size() - 1);
                 cont.remove(pCoinEdits.size() - 1);
                 pCoinEdits.remove(pCoinEdits.size() - 1);
             }

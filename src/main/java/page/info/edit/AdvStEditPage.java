@@ -123,7 +123,6 @@ public class AdvStEditPage extends DefaultPage {
 		sget = new SCGroupEditTable(data);
 		jspt = new JScrollPane(sget);
 		ini();
-		resized(true);
 	}
 
 	@Override

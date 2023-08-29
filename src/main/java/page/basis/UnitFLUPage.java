@@ -35,7 +35,6 @@ public class UnitFLUPage extends LubCont {
 		lub.setLimit(lim, sdat, price);
 		ufb = new UnitFilterBox(this, true, lim, price, sdat);
 		ini();
-		resized(true);
 	}
 
 	@Override
@@ -43,7 +42,6 @@ public class UnitFLUPage extends LubCont {
 	public void callBack(Object o) {
 		if (o instanceof List)
 			ult.setList((List<AbForm>) o);
-		resized(true);
 	}
 
 	public List<AbForm> getList() {

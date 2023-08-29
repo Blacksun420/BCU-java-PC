@@ -32,14 +32,12 @@ public class MusicPage extends DefaultPage implements SupPage<Music> {
 
 		jlf.setListData(mus.toArray(new Music[0]));
 		ini();
-		resized(true);
 	}
 
 	public MusicPage(Page p, Collection<Music> mus) {
 		super(p);
 		jlf.setListData(mus.toArray(new Music[0]));
 		ini();
-		resized(true);
 	}
 
 	public MusicPage(Page p, Identifier<Music> id) {

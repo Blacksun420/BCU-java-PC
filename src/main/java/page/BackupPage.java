@@ -64,7 +64,6 @@ public class BackupPage extends DefaultPage {
         super(p);
 
         ini(ntr);
-        resized(true);
     }
 
     @Override
@@ -84,7 +83,6 @@ public class BackupPage extends DefaultPage {
 
         set(jli, x, y, 1450, 50, 750, 50);
         set(jspf, x, y, 1450, 100, 400, 800);
-
     }
 
     private void addListeners$0() {

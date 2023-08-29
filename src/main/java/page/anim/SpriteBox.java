@@ -27,9 +27,8 @@ class SpriteBox extends JPanel implements KeyListener, MouseInputListener, Mouse
 	protected double size = 1.0;
 	protected double initSize = 1.0;
 
-	protected SpriteBox(Page p) { // TODO: figure out how to make this thing have a damn border
+	protected SpriteBox(Page p) {
 		page = p;
-		this.setBorder(BorderFactory.createEtchedBorder());
 		setIgnoreRepaint(true);
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
@@ -64,6 +63,7 @@ class SpriteBox extends JPanel implements KeyListener, MouseInputListener, Mouse
 		int w = getWidth();
 		int h = getHeight();
 		BufferedImage img = (BufferedImage) createImage(w, h);
+		setSize(w, h);
 		if (img == null)
 			return null;
 		Graphics2D gra = (Graphics2D) img.getGraphics();
@@ -104,7 +104,6 @@ class SpriteBox extends JPanel implements KeyListener, MouseInputListener, Mouse
 					gra.setColor(Color.BLACK);
 					gra.drawRect(sx, sy, sw, sh);
 				}
-
 			}
 		}
 		gra.dispose();
@@ -198,7 +197,7 @@ class SpriteBox extends JPanel implements KeyListener, MouseInputListener, Mouse
 
 		initSize = Math.min(1.0 * w / spriteW, 1.0 * h / spriteH);
 
-		if(first)
+		if(first || size == 0.0)
 			size = initSize;
 	}
 

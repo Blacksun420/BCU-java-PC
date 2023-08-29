@@ -46,7 +46,6 @@ public class FormEditPage extends EntityEditPage {
 		ueb = new UnitEditBox(this, pac, cu);
 		ini();
 		setData((CustomUnit) f.du);
-		resized(true);
 	}
 
 	@Override
@@ -111,9 +110,8 @@ public class FormEditPage extends EntityEditPage {
 				flr.setText(interpretLayer(cu.back, cu.front));
 			} catch (Exception ignored) { }
 		}
-		if (jtf == fli) {
+		if (jtf == fli)
 			cu.limit = v[0];
-		}
 	}
 
 	@Override
@@ -149,6 +147,7 @@ public class FormEditPage extends EntityEditPage {
 			Node<Unit> nu = Node.getList(UserProfile.getAll(cu.getPack().uid.pack, Unit.class), u);
 			changePanel(new UnitInfoPage(this, nu));
 		});
+		assignSubPage(ueb);
 	}
 
 	@Override
@@ -173,7 +172,6 @@ public class FormEditPage extends EntityEditPage {
 		set(impt, x, y, 50, 1150, 200, 50);
 		set(vene, x, y, 250, 1150, 200, 50);
 		set(pcoin, x, y, 450, 1150, 200, 50);
-		ueb.resized(true);
 	}
 
 	@Override

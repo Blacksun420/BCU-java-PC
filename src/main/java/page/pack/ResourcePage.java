@@ -40,7 +40,6 @@ public class ResourcePage extends DefaultPage {
 		super(p);
 
 		ini();
-		resized(true);
 	}
 
 	@Override

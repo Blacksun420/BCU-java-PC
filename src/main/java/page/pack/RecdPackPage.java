@@ -26,7 +26,6 @@ public class RecdPackPage extends AbRecdPage {
 		pac = pack;
 		preini();
 		ini();
-		resized(true);
 	}
 
 	@Override

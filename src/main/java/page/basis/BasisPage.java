@@ -93,7 +93,6 @@ public class BasisPage extends LubCont {
 		st = null;
 
 		ini();
-		resized(true);
 	}
 
 	public BasisPage(Page p, Stage st, Limit lim) {
@@ -102,7 +101,6 @@ public class BasisPage extends LubCont {
 		lub.setLimit(lim, st.getCont().getCont().getSave(false), st.getCont().price);
 
 		ini();
-		resized(true);
 	}
 
 	@Override
@@ -228,13 +226,13 @@ public class BasisPage extends LubCont {
 		trea.resized(x, y);
 		trea.setPreferredSize(size(x, y, trea.getPWidth(), trea.getPHeight()).toDimension());
 		jspt.getVerticalScrollBar().setUnitIncrement(size(x, y, 50));
-		jspt.revalidate();
 	}
 
 	@Override
-    public void timer(int t) {
+	public synchronized void onTimer(int t) {
+		super.onTimer(t);
 		ncb.paint(ncb.getGraphics());
-		super.timer(t);
+		jspt.revalidate();
 	}
 
 	private void addListeners$0() {

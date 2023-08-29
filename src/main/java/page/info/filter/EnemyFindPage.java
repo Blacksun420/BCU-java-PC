@@ -25,7 +25,6 @@ public class EnemyFindPage extends EntityFindPage<AbEnemy> implements SupPage<Ab
 		efb = new EnemyFilterBox(this, rand, pack);
 		adv = new AdvProcFilterPage(this, false, efb.proc);
 		ini();
-		resized(true);
 	}
 
 	@Override

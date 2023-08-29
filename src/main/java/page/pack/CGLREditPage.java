@@ -88,7 +88,6 @@ public class CGLREditPage extends DefaultPage {
 		lcg = pack.groups;
 		llr = pack.lvrs;
 		ini();
-		resized(true);
 	}
 
 	@Override

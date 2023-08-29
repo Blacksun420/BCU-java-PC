@@ -86,7 +86,6 @@ public class ConfigPage extends DefaultPage {
 		super(p);
 
 		ini();
-		resized(true);
 	}
 
 	@Override

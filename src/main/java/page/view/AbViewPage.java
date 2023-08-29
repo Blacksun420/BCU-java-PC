@@ -217,7 +217,8 @@ public abstract class AbViewPage extends DefaultPage {
 	}
 
 	@Override
-    public void timer(int t) {
+    public synchronized void onTimer(int t) {
+		super.onTimer(t);
 		if (!pause)
 			eupdate();
 		vb.paint();
@@ -284,8 +285,8 @@ public abstract class AbViewPage extends DefaultPage {
 
 		larges.setLnr(x -> {
 			remove((Canvas) vb);
-			resized(true);
 			add((Canvas) vb);
+			fireDimensionChanged();
 		});
 
 		manualScale.addFocusListener(new FocusAdapter() {

@@ -99,12 +99,14 @@ public class StageEditPage extends DefaultPage {
 	@Override
 	protected void renew() {
 		info.renew();
+		jt.updateAbEnemy();
+		renewEList();
+	}
 
+	public void renewEList() {
 		Vector<AbEnemy> v = new Vector<>();
 		if (efp.getList() != null)
 			v.addAll(efp.getList());
-		jt.updateAbEnemy();
-
 		jle.setListData(v);
 	}
 
@@ -172,14 +174,17 @@ public class StageEditPage extends DefaultPage {
 		enam.getDocument().addDocumentListener(new DocumentListener() {
 			public void insertUpdate(DocumentEvent e) {
 				efp.search(enam.getText());
+				renewEList();
 			}
 			@Override
 			public void removeUpdate(DocumentEvent e) {
 				efp.search(enam.getText());
+				renewEList();
 			}
 			@Override
 			public void changedUpdate(DocumentEvent e) {
 				efp.search(enam.getText());
+				renewEList();
 			}
 		});
 	}
@@ -460,6 +465,5 @@ public class StageEditPage extends DefaultPage {
 		advs.setEnabled(st != null);
 		elim.setEnabled(st != null && !(st.getCont().getCont() instanceof MapColc.ClipMapColc));
 		jspjt.scrollRectToVisible(new Rectangle(0, 0, 1, 1));
-		resized(true);
 	}
 }

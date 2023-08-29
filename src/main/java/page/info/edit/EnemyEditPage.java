@@ -39,7 +39,6 @@ public class EnemyEditPage extends EntityEditPage {
 		eeb = new EnemyEditBox(this, pack, ce);
 		ini();
 		setData((CustomEnemy) e.de);
-		resized(true);
 	}
 
 	@Override
@@ -63,7 +62,6 @@ public class EnemyEditPage extends EntityEditPage {
 
 	@Override
 	protected void ini() {
-
 		set(ldr);
 		set(fdr);
 		set(fsr);
@@ -78,6 +76,7 @@ public class EnemyEditPage extends EntityEditPage {
 		ArrayList<AbEnemy> l = new ArrayList<>(m);
 		stat.setLnr(x -> changePanel(new EnemyInfoPage(this, ENode.getListE(l, ene))));
 		subListener(impt, vuni, vene, ene);
+		assignSubPage(eeb);
 	}
 
 	@Override
@@ -97,8 +96,6 @@ public class EnemyEditPage extends EntityEditPage {
 			set(vene, x, y, 650, 1000, 200, 50);
 			set(stat, x, y, 850, 1000, 200, 50);
 		}
-		eeb.resized(true);
-
 	}
 
 	@Override

@@ -128,9 +128,10 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 	}
 
 	@Override
-	public synchronized void timer(int t) {
-		resized(false);
+	public synchronized void onTimer(int t) {
+		super.onTimer(t);
 		sb.paint(sb.getGraphics());
+		SwingUtilities.invokeLater(() -> jta.setUI(new TreeNodeExpander(jta)));
 	}
 
 	@Override
@@ -155,11 +156,10 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		set(sb, x, y, 900, 100, 1400, 900);
 		set(ico, x, y, 900, 1050, 200, 50);
 		set(icon, x, y, 1150, 1050, 200, 50);
-		set(uni, x, y, 925, 1100, 200, 200);
+		set(uni, x, y, 900, 1100, 200, 200);
 		set(white, x, y, 1400, 1050, 200, 50);
 		set(save, x, y, 1400, 1150, 200, 50);
 
-		SwingUtilities.invokeLater(() -> jta.setUI(new TreeNodeExpander(jta)));
 		aep.componentResized(x, y);
 		icet.setRowHeight(size(x, y, 50));
 	}
@@ -375,61 +375,85 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 
 		addl.addActionListener(arg0 -> {
 			changing = true;
+
 			ImgCut ic = icet.anim.imgcut;
+
 			int[][] data = ic.cuts;
 			String[] name = ic.strs;
+
 			ic.cuts = new int[++ic.n][];
 			ic.strs = new String[ic.n];
+
 			for (int i = 0; i < data.length; i++) {
 				ic.cuts[i] = data[i];
 				ic.strs[i] = name[i];
 			}
+
 			int ind = icet.getSelectedRow();
+
 			if (ind >= 0)
 				ic.cuts[ic.n - 1] = ic.cuts[ind].clone();
 			else
 				ic.cuts[ic.n - 1] = new int[] { 0, 0, 1, 1 };
+
 			ic.strs[ic.n - 1] = "";
+
 			icet.anim.unSave("imgcut add line");
-			resized(true);
 			lsm.setSelectionInterval(ic.n - 1, ic.n - 1);
+
 			int h = icet.getRowHeight();
+
 			icet.scrollRectToVisible(new Rectangle(0, h * (ic.n - 1), 1, h));
+
 			setB();
+
 			changing = false;
 		});
 
 		reml.addActionListener(arg0 -> {
 			changing = true;
+
 			ImgCut ic = icet.anim.imgcut;
+
 			int ind = sb.sele;
 			int[][] data = ic.cuts;
+
 			String[] name = ic.strs;
+
 			ic.cuts = new int[--ic.n][];
 			ic.strs = new String[ic.n];
+
 			for (int i = 0; i < ind; i++) {
 				ic.cuts[i] = data[i];
 				ic.strs[i] = name[i];
 			}
+
 			for (int i = ind + 1; i < data.length; i++) {
 				ic.cuts[i - 1] = data[i];
 				ic.strs[i - 1] = name[i];
 			}
+
 			for (int[] ints : icet.anim.mamodel.parts)
 				if (ints[2] > ind)
 					ints[2]--;
+
 			for (MaAnim ma : icet.anim.anims)
 				for (Part part : ma.parts)
 					if (part.ints[1] == 2)
 						for (int[] ints : part.moves)
 							if (ints[1] > ind)
 								ints[1]--;
+
 			icet.anim.ICedited();
 			icet.anim.unSave("imgcut remove line");
+
 			if (ind >= ic.n)
 				ind--;
+
 			lsm.setSelectionInterval(ind, ind);
+
 			setB();
+
 			changing = false;
 		});
 
@@ -511,7 +535,6 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 			jta.setModel(new DefaultTreeModel(root));
 		}
 		ini();
-		resized(true);
 	}
 
 	@Override
@@ -544,10 +567,8 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		add(uni);
 		icon.setVerticalAlignment(SwingConstants.CENTER);
 		icon.setHorizontalAlignment(SwingConstants.CENTER);
-		icon.setBorder(BorderFactory.createEtchedBorder());
 		uni.setVerticalAlignment(SwingConstants.CENTER);
 		uni.setHorizontalAlignment(SwingConstants.CENTER);
-		uni.setBorder(BorderFactory.createEtchedBorder());
 		add.setEnabled(aep.focus == null);
 		name.setEnabled(aep.focus == null);
 		relo.setEnabled(aep.focus == null);
@@ -559,7 +580,6 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 	}
 
 	private void setA(AnimCE anim) {
-		System.out.println("Dss");
 		boolean boo = changing;
 		if(anim != null) {
 			anim.check();
@@ -620,7 +640,8 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 	}
 
 	private void setB() {
-		sb.setSprite(icet.getSelectedRow(), false);
+		sb.sele = icet.getSelectedRow();
+
 		reml.setEnabled(sb.sele != -1);
 		if (sb.sele >= 0) {
 			for (int[] ints : icet.anim.mamodel.parts)

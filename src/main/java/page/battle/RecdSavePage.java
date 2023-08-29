@@ -27,7 +27,6 @@ public class RecdSavePage extends DefaultPage {
 		recd = rec;
 
 		ini();
-		resized(true);
 	}
 
 	@Override

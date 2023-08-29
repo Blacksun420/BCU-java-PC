@@ -37,7 +37,6 @@ public class CharaGroupPage extends DefaultPage {
 		super(p);
 
 		ini();
-		resized(true);
 	}
 
 	public CharaGroupPage(Page p, CharaGroup chg) {

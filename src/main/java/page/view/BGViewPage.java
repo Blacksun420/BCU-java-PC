@@ -32,14 +32,12 @@ public class BGViewPage extends DefaultPage implements SupPage<Background> {
 
 		jlst.setListData(bgs.toArray(new Background[0]));
 		ini();
-		resized(true);
 	}
 
 	public BGViewPage(Page p, String pac) {
 		super(p);
 		jlst.setListData(new Vector<>(UserProfile.getAll(pac, Background.class)));
 		ini();
-		resized(true);
 	}
 
 	public BGViewPage(Page front, String pac, Identifier<Background> bg) {
@@ -61,6 +59,19 @@ public class BGViewPage extends DefaultPage implements SupPage<Background> {
 		set(jl, x, y, 400, 50, 1800, 1100);
 	}
 
+	@Override
+	public synchronized void onTimer(int t) {
+		super.onTimer(t);
+		Background s = jlst.getSelectedValue();
+		if (s == null)
+			return;
+		if (prev.isSelected()) {
+			vb.update();
+			vb.paint();
+		} else
+			jl.setIcon(UtilPC.getBg(s, jl.getWidth(), jl.getHeight()));
+	}
+
 	private void addListeners() {
 		jlst.addListSelectionListener(arg0 -> {
 			if (arg0.getValueIsAdjusting())
@@ -75,7 +86,6 @@ public class BGViewPage extends DefaultPage implements SupPage<Background> {
 		prev.addActionListener(arg0 -> {
 			remove((Canvas) vb);
 			remove(jl);
-			resized(true);
 			if (prev.isSelected())
 				add((Canvas) vb);
 			else
@@ -89,13 +99,4 @@ public class BGViewPage extends DefaultPage implements SupPage<Background> {
 		add(jl);
 		addListeners();
 	}
-
-	@Override
-	public void timer(int t) {
-		if (prev.isSelected()) {
-			vb.update();
-			vb.paint();
-		}
-	}
-
 }

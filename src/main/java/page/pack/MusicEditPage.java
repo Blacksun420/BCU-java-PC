@@ -46,7 +46,6 @@ public class MusicEditPage extends DefaultPage {
 		super(p);
 		pack = ac;
 		ini();
-		resized(true);
 	}
 
 	@Override

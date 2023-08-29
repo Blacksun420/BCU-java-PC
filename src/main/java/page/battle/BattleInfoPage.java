@@ -107,7 +107,6 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		jsl.setMaximum(((SBRply) basis).size());
 		ini();
 		rply.setText(0, recd.rl == null ? "save" : "start");
-		resized(true);
 		packData = null;
 	}
 
@@ -126,7 +125,6 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 
 		ini();
 		rply.setText(0, "rply");
-		resized(true);
 		current = this;
 		packData = null;
 	}
@@ -151,7 +149,6 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 
 		ini();
 		rply.setText(0, "rply");
-		resized(true);
 		current = this;
 
 		packData = st.getCont().getCont().getSave(false);
@@ -303,7 +300,8 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 	}
 
 	@Override
-	public synchronized void timer(int t) {
+	public synchronized void onTimer(int t) {
+		super.onTimer(t);
 		StageBasis sb = basis.sb;
 		if (!pause) {
 			upd++;
@@ -461,7 +459,6 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		ecount.setText(sb.entityCount(1) + "/" + sb.st.max);
 		ucount.setText(sb.entityCount(-1) + "/" + sb.max_num);
 		respawn.setText("respawn timer: " + MainBCU.convertTime(sb.respawnTime));
-		resized(true);
 	}
 	private void updateTablesL() {
 		long h = basis.sb.ebase.health;
@@ -475,15 +472,14 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 	}
 
 	private void addListeners() {
-
 		jtb.setLnr(x -> {
 			remove((Canvas) bb);
-			resized(true);
 			add((Canvas) bb);
 			DEF_LARGE = jtb.isSelected();
 			if (!DEF_LARGE)
 				updateTables();
 			updateTablesL();
+			fireDimensionChanged();
 		});
 
 		JBTN back = (JBTN)getBackButton();

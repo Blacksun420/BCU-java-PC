@@ -66,9 +66,10 @@ public abstract class LubCont extends DefaultPage {
 	}
 
 	@Override
-    public void timer(int t) {
+    public synchronized void onTimer(int t) {
+		super.onTimer(t);
+
 		getLub().paint(getLub().getGraphics());
-		resized(false);
 	}
 
 }
