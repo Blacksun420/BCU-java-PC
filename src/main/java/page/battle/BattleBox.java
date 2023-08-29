@@ -1385,7 +1385,6 @@ public interface BattleBox {
 
 	default void drag(Point p) {
 		getPainter().drag(p);
-		paint();
 	}
 
 	int getHeight();

@@ -192,8 +192,11 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 
 	@Override
 	protected void mouseDragged(MouseEvent e) {
-		if (e.getSource() == bb)
+		if (e.getSource() == bb) {
 			bb.drag(e.getPoint());
+			if (pause)
+				bb.paint();
+		}
 	}
 
 	@Override
@@ -305,26 +308,20 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		StageBasis sb = basis.sb;
 		if (!pause) {
 			upd++;
-
 			if (spe < 0)
 				if (upd % (1 - spe) != 0)
 					return;
-
 			basis.update();
-
 			updateKey();
-
 			if (spe > 0)
-				for (int i = 0; i < Math.pow(2, spe); i++)
+				for (int i = 0; i < Math.pow(2, spe) - 1; i++)
 					basis.update();
-
 			if (!jtb.isSelected())
 				updateTables();
 			updateTablesL();
 			BCMusic.flush(spe < 3 && sb.ebase.health > 0 && sb.ubase.health > 0);
 		}
 
-		bb.paint();
 		if (sb.getEBHP() < sb.st.bgh && sb.st.bg1 != null) {
 			if (!changedBG) {
 				changedBG = true;
