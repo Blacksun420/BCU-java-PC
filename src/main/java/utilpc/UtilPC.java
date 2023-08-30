@@ -93,21 +93,17 @@ public class UtilPC {
 
 		int groundHeight = ((BufferedImage) bg.parts[Background.BG].bimg()).getHeight();
 		int skyHeight = bg.top ? ((BufferedImage) bg.parts[Background.TOP].bimg()).getHeight() : 1020 - groundHeight;
-
 		if(skyHeight < 0)
 			skyHeight = 0;
 
 		double r = h / (double) (groundHeight + skyHeight + 408);
-
 		int fw = (int) (768 * r);
 		int sh = (int) (skyHeight * r);
 		int gh = (int) (groundHeight * r);
 		int skyGround = (int) (204 * r);
 
 		BufferedImage temp = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-
 		Graphics2D g = (Graphics2D) temp.getGraphics();
-
 		FG2D fg = new FG2D(g);
 
 		if (bg.top && bg.parts.length > Background.TOP) {
@@ -115,18 +111,15 @@ public class UtilPC {
 				fg.drawImage(bg.parts[Background.TOP], fw * i, skyGround, fw, sh);
 
 			fg.gradRect(0, 0, w, skyGround, 0, 0, bg.cs[0], 0, skyGround, bg.cs[1]);
-		} else {
+		} else
 			fg.gradRect(0, 0, w, sh + skyGround, 0, 0, bg.cs[0], 0, sh + skyGround, bg.cs[1]);
-		}
 
 		for (int i = 0; i * fw < w; i++)
 			fg.drawImage(bg.parts[Background.BG], fw * i, sh + skyGround, fw, gh);
-
 		fg.gradRect(0, sh + gh + skyGround, w, skyGround, 0, sh + gh + skyGround, bg.cs[2], 0, h, bg.cs[3]);
 
-		if(bg.overlay != null) {
+		if(bg.overlay != null)
 			fg.gradRectAlpha(0, 0, w, h, 0, 0, bg.overlayAlpha, bg.overlay[1], 0, h, bg.overlayAlpha, bg.overlay[0]);
-		}
 
 		g.dispose();
 		return new ImageIcon(temp);

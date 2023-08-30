@@ -42,6 +42,8 @@ public class BGViewPage extends DefaultPage implements SupPage<Background> {
 
 	public BGViewPage(Page front, String pac, Identifier<Background> bg) {
 		this(front, pac);
+		Point p = getXY().toPoint();
+		componentResized(p.x, p.y); //Width fucks up
 		jlst.setSelectedValue(Identifier.get(bg), false);
 	}
 
@@ -68,8 +70,7 @@ public class BGViewPage extends DefaultPage implements SupPage<Background> {
 		if (prev.isSelected()) {
 			vb.update();
 			vb.paint();
-		} else
-			jl.setIcon(UtilPC.getBg(s, jl.getWidth(), jl.getHeight()));
+		}
 	}
 
 	private void addListeners() {
@@ -77,7 +78,7 @@ public class BGViewPage extends DefaultPage implements SupPage<Background> {
 			if (arg0.getValueIsAdjusting())
 				return;
 			Background s = jlst.getSelectedValue();
-			if (s == null || jl.getWidth() > 0)
+			if (s == null)
 				return;
 			jl.setIcon(UtilPC.getBg(s, jl.getWidth(), jl.getHeight()));
 			vb.setBackground(s);
