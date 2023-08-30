@@ -77,7 +77,7 @@ public class BGViewPage extends DefaultPage implements SupPage<Background> {
 			if (arg0.getValueIsAdjusting())
 				return;
 			Background s = jlst.getSelectedValue();
-			if (s == null)
+			if (s == null || jl.getWidth() > 0)
 				return;
 			jl.setIcon(UtilPC.getBg(s, jl.getWidth(), jl.getHeight()));
 			vb.setBackground(s);
