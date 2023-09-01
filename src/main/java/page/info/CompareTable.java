@@ -204,7 +204,6 @@ public class CompareTable extends Page {
             me = mu;
             Form f = (Form) Ent;
 
-            abilityPanes.setViewportView(abilities = new EntityAbilities(getFront(), mu, multi));
             mul = f.unit.lv.getMult(multi.getTotalLv());
             mula = b.t().getAtkMulti();
             hp = (int)(Math.round(hp * mul) * b.t().getDefMulti());
@@ -248,7 +247,9 @@ public class CompareTable extends Page {
             for (JBTN btn : swap)
                 btn.setEnabled(f.unit.forms.length > 1);
         }
-        abilityPanes.setViewportView(abilities = new EntityAbilities(getFront(), me, Lvl));
+        detachSubPage(abilities);
+        assignSubPage(abilities = new EntityAbilities(getFront(), me, Lvl));
+        abilityPanes.setViewportView(abilities);
         for (MaskAtk atkDatum : atkData) {
             if (atkString.length() > 0) {
                 atkString.append(" / ");

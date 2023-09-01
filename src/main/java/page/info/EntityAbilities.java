@@ -73,7 +73,6 @@ public class EntityAbilities extends Page {
     @Override
     protected void resized(int x, int y) {
         setBounds(0, 0, x, y);
-
         int posY = 0;
 
         for (JLabel jLabel : proc) {
@@ -82,7 +81,7 @@ public class EntityAbilities extends Page {
         }
 
         if (pcoin != null)
-            set(pcoin, x, y, 0, posY, 750, 50);
+            set(pcoin, x, y, 0, posY, 1200, 50);
     }
 
     public int getPWidth() {
