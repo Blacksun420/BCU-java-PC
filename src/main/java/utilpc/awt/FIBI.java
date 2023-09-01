@@ -22,11 +22,6 @@ public class FIBI implements FakeImage {
 		bimg = read;
 	}
 
-	protected FIBI(BufferedImage read, int offsetX, int offsetY) {
-		int w = read.getWidth(), h = read.getHeight();
-		bimg = read.getSubimage(offsetX, offsetY, Math.max(1, w - offsetX), Math.max(1, h - offsetY));
-	}
-
 	@Override
 	public BufferedImage bimg() {
 		return bimg;

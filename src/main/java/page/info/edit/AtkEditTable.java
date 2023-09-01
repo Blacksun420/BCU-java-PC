@@ -110,16 +110,16 @@ class AtkEditTable extends Page {
 		mul = multi;
 		lvMul = lvMulti;
 
-		fatk.setText("" + (int) (Math.round(adm.atk * lvMul) * mul));
-		fpre.setText("" + MainBCU.convertTime(adm.pre));
+		fatk.setText(String.valueOf((int) (Math.round(adm.atk * lvMul) * mul)));
+		fpre.setText(MainBCU.convertTime(adm.pre));
 		aud.setSelectedItem(adm.audio == null ? null : adm.audio.get());
 		aud1.setSelectedItem(adm.audio1 == null ? null : adm.audio1.get());
-		fp0.setText("" + adm.ld0);
-		fp1.setText("" + adm.ld1);
-		ftp.setText("" + adm.targ);
-		fdr.setText("" + adm.dire);
-		fct.setText("" + adm.count);
-		fmv.setText("" + adm.move);
+		fp0.setText(String.valueOf(adm.ld0));
+		fp1.setText(String.valueOf(adm.ld1));
+		ftp.setText(String.valueOf(adm.targ));
+		fdr.setText(String.valueOf(adm.dire));
+		fct.setText(String.valueOf(adm.count));
+		fmv.setText(String.valueOf(adm.move));
 		apt.setData(adm.ce.common ? adm.ce.rep.proc : adm.proc);
 		int alt = adm.getAltAbi();
 		int i = 0;
@@ -161,6 +161,7 @@ class AtkEditTable extends Page {
 		}
 		aud.setModel(new DefaultComboBoxModel<>(vs));
 		aud1.setModel(new DefaultComboBoxModel<>(vs));
+		fireDimensionChanged();
 	}
 
 	private void ini() {

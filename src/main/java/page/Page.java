@@ -55,7 +55,7 @@ public abstract class Page extends JPanel implements RetFunc {
 	protected final Page front;
 
 	private final List<Page> subPages = new ArrayList<>();
-	private final Set<Field> accumulatedFields = new HashSet<>();
+	private final Set<Field> accumulatedTables = new HashSet<>();
 
 	private boolean resizing = false;
 	public boolean needResize = true;
@@ -66,14 +66,18 @@ public abstract class Page extends JPanel implements RetFunc {
 	protected Page(Page p) {
 		front = p;
 		setLayout(null);
-		accumulateField(this.getClass());
+		accumulateJTable(this.getClass());
 	}
 
-	private void accumulateField(Class<?> cls) {
-		accumulatedFields.addAll(Arrays.asList(cls.getDeclaredFields()));
+	private void accumulateJTable(Class<?> cls) {
+		Field[] fields = cls.getDeclaredFields();
 
-		if (cls.getSuperclass() != null)
-			accumulateField(cls.getSuperclass());
+		for (int i = 0; i < cls.getDeclaredFields().length; i++)
+			if (JTable.class.isAssignableFrom(fields[i].getType()))
+				accumulatedTables.add(fields[i]);
+
+		if (cls.getSuperclass() != null && Page.class.isAssignableFrom(cls.getSuperclass()))
+			accumulateJTable(cls.getSuperclass());
 	}
 
 	@Override
@@ -106,6 +110,18 @@ public abstract class Page extends JPanel implements RetFunc {
 
 	public void removeSubPage(int ind) {
 		subPages.remove(ind);
+	}
+
+	public void detachSubPage(Page... pages) {
+		if (pages == null)
+			return;
+
+		for(int i = 0; i < pages.length; i++) {
+			Page page = pages[i];
+			if (page == null)
+				continue;
+			subPages.remove(page);
+		}
 	}
 
 	public synchronized final void componentResized(int x, int y) {
@@ -157,19 +173,18 @@ public abstract class Page extends JPanel implements RetFunc {
 
 	/**
 	 * When UI components must be resized
-	 * This "must" not be used for updating UI
+	 * Although not private, use it only if absolutely necessary
 	 */
-	private void resized() {
+	protected void resized() {
 		PP dimension = getXY();
 
-		if (!needResize && dimension.equals(previousDimension))
-			return;
-		needResize = false;
+		if (needResize || !dimension.equals(previousDimension)) {
+			needResize = false;
 
-		Point p = dimension.toPoint();
-		componentResized(p.x, p.y);
-		previousDimension = dimension;
-
+			Point p = dimension.toPoint();
+			componentResized(p.x, p.y);
+			previousDimension = dimension;
+		}
 		for (Page subPage : subPages)
 			subPage.resized();
 	}
@@ -255,20 +270,16 @@ public abstract class Page extends JPanel implements RetFunc {
 
 	private synchronized void updateTableFromPage(Page p) {
 		try {
-			for(Field field : accumulatedFields) {
-				if (!field.isAccessible()) {
+			for(Field field : accumulatedTables) {
+				if (!field.isAccessible())
 					field.setAccessible(true);
-				}
 
-				Object result = field.get(p);
+				JTable result = (JTable) field.get(p);
 
-				if (result instanceof JTable) {
-					((JTable) result).revalidate();
-					((JTable) result).repaint();
-				}
+				result.revalidate();
+				result.repaint();
 			}
 		} catch (Exception ignored) {
-
 		}
 	}
 

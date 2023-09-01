@@ -330,10 +330,10 @@ public class PackEditPage extends DefaultPage {
 			@Override
 			public void focusLost(FocusEvent fe) {
 				String str = jtfp.getText().trim();
-				if (pac.desc.names.toString().equals(str))
-					return;
-				pac.desc.names.put(str);
+				boolean nb = pac.desc.names.put(str);
 				jtfp.setText(pac.desc.names.toString());
+				if (nb)
+					fireDimensionChanged();
 			}
 
 		});
@@ -432,8 +432,10 @@ public class PackEditPage extends DefaultPage {
 		});
 
 		jtfe.setLnr(e -> {
-			ene.names.put(jtfe.getText().trim());
+			boolean np = ene.names.put(jtfe.getText().trim());
 			jtfe.setText(ene.names.toString());
+			if (np)
+				fireDimensionChanged();
 		});
 
 		vene.setLnr(() -> new EnemyViewPage(getThis(), pac.getSID()));
@@ -475,8 +477,10 @@ public class PackEditPage extends DefaultPage {
 
 		jtfs.setLnr(x -> {
 			if (sm != null) {
-				sm.names.put(jtfs.getText().trim());
+				boolean nb = sm.names.put(jtfs.getText().trim());
 				jtfs.setText(sm.names.toString());
+				if (nb)
+					fireDimensionChanged();
 			}
 		});
 

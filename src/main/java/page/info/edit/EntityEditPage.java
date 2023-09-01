@@ -96,6 +96,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 	private final JScrollPane jspm;
 	private final CustomEntity ce;
 	protected final UserPack pack;
+	private final JTF entName = new JTF();
 	private final JTA entDesc = new JTA();
 	private final JScrollPane jsDesc = new JScrollPane(entDesc);
 
@@ -129,6 +130,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		jspm = new JScrollPane(mpt);
 		if (!pack.editable)
 			jli.setDragEnabled(false);
+		assignSubPage(mpt, apt);
 
 		String[] atkSS = new String[e.getAtkTypeCount() + 1];
 		for (int i = 0; i < atkSS.length - 1; i++)
@@ -244,6 +246,8 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		jlang.setSelectedIndex(MainLocale.LOC_INDEX[CommonStatic.getConfig().lang]);
 		add(jsDesc);
 		entDesc.setHintText("Description");
+		add(entName);
+		entName.setHintText("Name");
 		add(hbbo);
 		add(bobo);
 		Vector<Soul> vec = new Vector<>();
@@ -291,6 +295,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		atkn.setEnabled(pack.editable);
 		comm.setEnabled(pack.editable);
 		jcbs.setEnabled(pack.editable);
+		entName.setEnabled(pack.editable);
 		entDesc.setEnabled(pack.editable);
 		hbbo.setEnabled(pack.editable);
 		bobo.setEnabled(pack.editable);
@@ -387,7 +392,8 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		set(bobo, x, y, 250, 1200, 200, 50);
 
 		set(jcbs, x, y, 1800, 1050, 400, 50);
-		set(jsDesc, x, y, 1050, 1000, 750, 200);
+		set(entName, x, y, 1050, 1000, 750, 50);
+		set(jsDesc, x, y, 1050, 1050, 750, 150);
 		set(jlang, x, y, 1800, 1150, 400, 50);
 
 		jsp.getVerticalScrollBar().setUnitIncrement(size(x, y, 50));
@@ -417,21 +423,22 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 	protected void setData(CustomEntity data) {
 		changing = true;
 
-		fhp.setText("" + (int) (ce.hp * getDef()));
-		fhb.setText("" + ce.hb);
-		fsp.setText("" + ce.speed);
-		fra.setText("" + ce.range);
-		fwd.setText("" + ce.width);
-		ftb.setText("" + ce.tba);
-		fbs.setText("" + ce.base);
-		vitv.setText((isSp() ? ce.getItv(0) : ce.getItv(getSel())) + "");
-		ftp.setText("" + ce.touch);
-		fct.setText("" + ce.loop);
-		fwp.setText("" + (ce.will + 1));
+		fhp.setText(String.valueOf((int) (ce.hp * getDef())));
+		fhb.setText(String.valueOf(ce.hb));
+		fsp.setText(String.valueOf(ce.speed));
+		fra.setText(String.valueOf(ce.range));
+		fwd.setText(String.valueOf(ce.width));
+		ftb.setText(String.valueOf(ce.tba));
+		fbs.setText(String.valueOf(ce.base));
+		vitv.setText(String.valueOf(isSp() ? ce.getItv(0) : ce.getItv(getSel())));
+		ftp.setText(String.valueOf(ce.touch));
+		fct.setText(String.valueOf(ce.loop));
+		fwp.setText(String.valueOf(ce.will + 1));
 		if (!isSp())
-			cdps.setText("" + (int) ((getLvAtk() * ce.allAtk(getSel())) * getAtk()  * 30 / ce.getItv(getSel())));
+			cdps.setText(String.valueOf((int) ((getLvAtk() * ce.allAtk(getSel())) * getAtk()  * 30 / ce.getItv(getSel()))));
 		else
 			cdps.setText("-");
+		entName.setText(data.getPack().names.get(jlang.getSelectedIndex()));
 		entDesc.setText(data.getPack().description.get(jlang.getSelectedIndex()));
 
 		comm.setSelected(data.common);
@@ -478,6 +485,8 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		hbbo.setSelected(ce.kbBounce);
 		bobo.setSelected(ce.bossBounce);
 		changing = false;
+
+		fireDimensionChanged();
 	}
 
 	protected void subListener(JBTN e, JBTN u, JBTN a, Object o) {
@@ -634,14 +643,18 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 			setData(ce);
 		});
 
-		jlang.addActionListener(act -> entDesc.setText(ce.getPack().description.get(MainLocale.LOC_INDEX[jlang.getSelectedIndex()])));
+		jlang.addActionListener(act -> {
+			entName.setText(ce.getPack().names.get(MainLocale.LOC_INDEX[jlang.getSelectedIndex()]));
+			entDesc.setText(ce.getPack().description.get(MainLocale.LOC_INDEX[jlang.getSelectedIndex()]));
+		});
+
+		entName.setLnr(j -> {
+			ce.getPack().names.put(MainLocale.LOC_INDEX[jlang.getSelectedIndex()], entName.getText());
+			setData(ce);
+		});
 
 		entDesc.setLnr(j -> {
-			String txt = entDesc.assignSplitText(-1);
-			if (txt.isEmpty() || (MainLocale.LOC_INDEX[jlang.getSelectedIndex()] != CommonStatic.getConfig().lang && txt.equals(ce.getPack().description.toString())))
-				ce.getPack().description.remove(MainLocale.LOC_INDEX[jlang.getSelectedIndex()]);
-			else
-				ce.getPack().description.put(MainLocale.LOC_INDEX[jlang.getSelectedIndex()], txt);
+			ce.getPack().description.put(MainLocale.LOC_INDEX[jlang.getSelectedIndex()], entDesc.assignSplitText(1024));
 			setData(ce);
 		});
 

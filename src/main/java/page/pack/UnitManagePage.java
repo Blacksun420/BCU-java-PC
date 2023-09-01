@@ -356,7 +356,8 @@ public class UnitManagePage extends DefaultPage {
 
 			@Override
 			public void focusLost(FocusEvent fe) {
-				frm.names.put(jtff.getText().trim());
+				if (frm.names.put(jtff.getText().trim()))
+					fireDimensionChanged();
 			}
 
 		});
