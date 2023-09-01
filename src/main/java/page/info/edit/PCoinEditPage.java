@@ -92,7 +92,7 @@ public class PCoinEditPage extends DefaultPage {
                 break;
             }
         int[] talent = Data.get_CORRES(slot);
-        if (talent[0] == Data.PC_IMU) {
+        if (talent[0] == Data.PC_IMU || talent[0] == 5 || talent[0] == -1) {
             slot = pCoinEdits.get(0).randomize();
             talent = Data.get_CORRES(slot);
         }
@@ -131,8 +131,10 @@ public class PCoinEditPage extends DefaultPage {
     private void ini() {
         add(addP);
         add(remP);
-        for (PCoinEditTable pce : pCoinEdits)
+        for (PCoinEditTable pce : pCoinEdits) {
             cont.add(pce);
+            assignSubPage(pce);
+        }
         cont.setLayout(null);
         add(jsp);
         addListeners();
