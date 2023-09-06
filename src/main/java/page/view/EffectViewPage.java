@@ -1,9 +1,12 @@
 package page.view;
 
 import common.CommonStatic;
+import common.pack.Source;
 import common.pack.UserProfile;
-import common.util.anim.AnimI;
+import common.util.anim.*;
+import common.util.pack.NyCastle;
 import page.Page;
+import page.anim.ImgCutEditPage;
 
 import javax.swing.*;
 import java.util.Collections;

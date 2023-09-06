@@ -35,6 +35,7 @@ public class AdvProcFilterPage extends Page implements EntSupInt {
     @Override
     public void callBack(Object obj) {
         ((EntityFindPage<?>)getFront()).efb.callBack(obj);
+        fireDimensionChanged();
     }
 
     @Override

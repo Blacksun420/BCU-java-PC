@@ -100,6 +100,8 @@ public class StageEditPage extends DefaultPage {
 	protected void renew() {
 		info.renew();
 		jt.updateAbEnemy();
+		if (efp != null)
+			enam.setText(efp.getName());
 		renewEList();
 	}
 
