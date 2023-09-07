@@ -332,8 +332,10 @@ public class PackEditPage extends DefaultPage {
 				String str = jtfp.getText().trim();
 				boolean nb = pac.desc.names.put(str);
 				jtfp.setText(pac.desc.names.toString());
-				if (nb)
-					fireDimensionChanged();
+				if (nb) {
+					jlp.revalidate();
+					jlp.repaint();
+				}
 			}
 
 		});
@@ -434,8 +436,10 @@ public class PackEditPage extends DefaultPage {
 		jtfe.setLnr(e -> {
 			boolean np = ene.names.put(jtfe.getText().trim());
 			jtfe.setText(ene.names.toString());
-			if (np)
-				fireDimensionChanged();
+			if (np) {
+				jle.revalidate();
+				jle.repaint();
+			}
 		});
 
 		vene.setLnr(() -> new EnemyViewPage(getThis(), pac.getSID()));
@@ -479,8 +483,10 @@ public class PackEditPage extends DefaultPage {
 			if (sm != null) {
 				boolean nb = sm.names.put(jtfs.getText().trim());
 				jtfs.setText(sm.names.toString());
-				if (nb)
-					fireDimensionChanged();
+				if (nb) {
+					jls.revalidate();
+					jls.repaint();
+				}
 			}
 		});
 

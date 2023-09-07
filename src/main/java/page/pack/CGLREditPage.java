@@ -224,9 +224,14 @@ public class CGLREditPage extends DefaultPage {
 
 		jtfna.setLnr(x -> {
 			String str = jtfna.getText();
+
 			if (cg.name.equals(str))
 				return;
+
 			cg.name = str;
+
+			jlcg.revalidate();
+			jlcg.repaint();
 		});
 
 		jcpc.addListSelectionListener(arg0 -> {
@@ -331,9 +336,14 @@ public class CGLREditPage extends DefaultPage {
 
 		jtflr.setLnr(x -> {
 			String str = jtflr.getText();
+
 			if (lr.name.equals(str))
 				return;
+
 			lr.name = str;
+
+			jllr.revalidate();
+			jllr.repaint();
 		});
 
 		jclr.addListSelectionListener(arg0 -> {

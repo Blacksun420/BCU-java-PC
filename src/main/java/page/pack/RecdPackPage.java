@@ -74,6 +74,8 @@ public class RecdPackPage extends AbRecdPage {
 				return;
 			r.rename(Context.validate(rena.getText().trim(), '-'));
 			rena.setText(r.rl.id);
+			jlr.revalidate();
+			jlr.repaint();
 		});
 
 	}

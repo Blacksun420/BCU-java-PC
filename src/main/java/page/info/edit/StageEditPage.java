@@ -91,6 +91,13 @@ public class StageEditPage extends DefaultPage {
 	}
 
 	@Override
+	public void callBack(Object newParam) {
+		super.callBack(newParam);
+		jlst.revalidate();
+		jlst.repaint();
+	}
+
+	@Override
 	protected void mouseClicked(MouseEvent e) {
 		if (e.getSource() == jt && !e.isShiftDown())
 			jt.clicked(e);

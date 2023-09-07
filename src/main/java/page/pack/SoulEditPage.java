@@ -211,7 +211,12 @@ public class SoulEditPage extends AbViewPage {
     }
 
     private void addListeners$2() {
-        jtfs.setLnr(x -> soul.name = jtfs.getText().trim());
+        jtfs.setLnr(x -> {
+            soul.name = jtfs.getText().trim();
+
+            jls.revalidate();
+            jls.repaint();
+        });
 
         jcbm.addActionListener(x -> {
             if (changing || soul == null)

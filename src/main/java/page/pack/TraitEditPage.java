@@ -178,13 +178,19 @@ public class TraitEditPage extends DefaultPage {
 
         ctrna.setLnr(x -> {
             String str = ctrna.getText();
+
             if (t.name.equals(str))
                 return;
+
             if (str.equals("")) {
                 ctrna.setText(t.name);
                 return;
             }
+
             t.name = str;
+
+            jlct.revalidate();
+            jlct.repaint();
         });
 
         addu.addActionListener(arg0 -> {

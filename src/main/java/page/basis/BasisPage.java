@@ -611,6 +611,7 @@ public class BasisPage extends LubCont {
 		lvorb.setEnabled(lub.sf != null);
 		cost.setSelected(true);
 		ufp = new UnitFLUPage(getThis(), st == null ? null : st.getCont().getCont().getSave(false), lub.lim, lub.price);
+		assignSubPage(trea);
 	}
 
 	private LineUp lu() {
