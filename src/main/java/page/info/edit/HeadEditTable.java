@@ -301,13 +301,10 @@ class HeadEditTable extends Page {
 			return;
 		if (jtf == name) {
 			str = str.trim();
-
 			if (str.length() > 0)
 				sta.names.put(str);
-
-			if (front != null)
-				front.callBack(null);
-
+			if (getFront() != null)
+				getFront().callBack(null);
 			return;
 		}
 		int val = CommonStatic.parseIntN(str);

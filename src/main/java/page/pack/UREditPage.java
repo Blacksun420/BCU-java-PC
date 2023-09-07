@@ -212,6 +212,8 @@ public class UREditPage extends DefaultPage {
                     return;
                 rand.name = name.getText().trim();
                 setUR(rand);
+                jlst.revalidate();
+                jlst.repaint();
             }
 
         });
