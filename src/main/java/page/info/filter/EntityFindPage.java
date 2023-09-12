@@ -91,23 +91,24 @@ public abstract class EntityFindPage<R> extends DefaultPage {
 
         seatf.getDocument().addDocumentListener(new DocumentListener() {
             public void insertUpdate(DocumentEvent e) {
-                search(seatf.getText());
+                search(seatf.getText(), false);
             }
             @Override
             public void removeUpdate(DocumentEvent e) {
-                search(seatf.getText());
+                search(seatf.getText(), false);
             }
             @Override
             public void changedUpdate(DocumentEvent e) {
-                search(seatf.getText());
+                search(seatf.getText(), false);
             }
         });
     }
 
-    public void search(String text) {
-        if (efb != null) {
-            efb.name = text;
+    public void search(String text, boolean setText) {
+        if (setText)
             seatf.setText(text);
+        else if (efb != null) {
+            efb.name = text;
             efb.callBack(null);
         }
     }
@@ -123,7 +124,7 @@ public abstract class EntityFindPage<R> extends DefaultPage {
         add(efb);
         add(jsp);
         add(seatf);
-        seatf.setHintText("Search");
+        seatf.setHintText(get(MainLocale.PAGE,"search"));
         add(favs);
         add(advs);
         assignSubPage(adv);

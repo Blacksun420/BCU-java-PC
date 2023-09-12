@@ -8,10 +8,7 @@ import common.util.stage.StageMap;
 import common.util.stage.info.CustomStageInfo;
 import common.util.unit.AbEnemy;
 import common.util.unit.Enemy;
-import page.DefaultPage;
-import page.JBTN;
-import page.JTF;
-import page.Page;
+import page.*;
 import page.battle.BattleSetupPage;
 import page.battle.StRecdPage;
 import page.info.filter.EnemyFindPage;
@@ -182,17 +179,17 @@ public class StageEditPage extends DefaultPage {
 
 		enam.getDocument().addDocumentListener(new DocumentListener() {
 			public void insertUpdate(DocumentEvent e) {
-				efp.search(enam.getText());
+				efp.search(enam.getText(), true);
 				renewEList();
 			}
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				efp.search(enam.getText());
+				efp.search(enam.getText(), true);
 				renewEList();
 			}
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-				efp.search(enam.getText());
+				efp.search(enam.getText(), true);
 				renewEList();
 			}
 		});
@@ -367,6 +364,7 @@ public class StageEditPage extends DefaultPage {
 		setBA(null);
 		jle.setCellRenderer(new AnimLCR());
 		jt.ini();
+		enam.setHintText(get(MainLocale.PAGE,"search"));
 		addListeners$0();
 		addListeners$1();
 		addListeners$2();
