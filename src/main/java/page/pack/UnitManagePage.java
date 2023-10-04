@@ -630,6 +630,7 @@ public class UnitManagePage extends DefaultPage {
 			return;
 		removeMappedAnims(pac);
 		addMappedAnims(pack, false);
+		fireDimensionChanged();
 	}
 	private void addMappedAnims(UserPack pack, boolean unedit) {
 		if (pack != null && (pack.editable || (unedit && pack.desc.allowAnim))) {

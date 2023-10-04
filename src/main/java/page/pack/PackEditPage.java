@@ -872,11 +872,10 @@ public class PackEditPage extends DefaultPage {
 
 		if(pack != null) {
 			pid.setText("ID : "+pack.desc.id);
-			if(pack.desc.getAuthor().isEmpty()) {
+			if(pack.desc.getAuthor().isEmpty())
 				pauth.setText("Author : (None)");
-			} else {
+			else
 				pauth.setText("Author : "+pack.desc.author);
-			}
 		}
 	}
 
@@ -885,6 +884,7 @@ public class PackEditPage extends DefaultPage {
 			return;
 		removeMappedAnims(pac);
 		addMappedAnims(pack, false);
+		fireDimensionChanged();
 	}
 	private void addMappedAnims(UserPack pack, boolean unedit) {
 		if (pack != null && (pack.editable || (unedit && pack.desc.allowAnim))) {

@@ -118,7 +118,9 @@ public class UnitInfoPage extends DefaultPage {
 		extr.addActionListener(arg0 -> {
 			for (UnitInfoTable inf : info) {
 				inf.displaySpecial = extr.isSelected();
+				inf.fireDimensionChanged();
 			}
+			fireDimensionChanged();
 		});
 	}
 

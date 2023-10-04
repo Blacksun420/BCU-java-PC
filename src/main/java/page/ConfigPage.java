@@ -77,6 +77,7 @@ public class ConfigPage extends DefaultPage {
 	private final JTF savetime = new JTF(MainBCU.autoSaveTime > 0 ? MainBCU.autoSaveTime + "min" : get(MainLocale.PAGE, "deactivated"));
 	private final JCB reallv = new JCB(MainLocale.PAGE, "reallv");
 	private final JCB pkprog = new JCB(MainLocale.PAGE, "pkprog");
+	private final JCB stat = new JCB(MainLocale.PAGE, "defstat");
 
 	private final JScrollPane jsps = new JScrollPane(jls);
 
@@ -140,6 +141,7 @@ public class ConfigPage extends DefaultPage {
 
 		set(reallv, x, y, 350, 950, 300, 50);
 		set(pkprog, x, y, 350, 1000, 300, 50);
+		set(stat, x, y, 350, 1050, 300, 50);
 
 		set(jlot, x, y, 650, 900, 300, 50);
 		set(jcbac, x, y, 650, 950, 300, 50);
@@ -204,6 +206,14 @@ public class ConfigPage extends DefaultPage {
 				changePanel(new SavePage());
 			} else
 				jogl.setSelected(MainBCU.USE_JOGL);
+		});
+
+		stat.addActionListener(arg0 -> {
+			if (Opts.conf("This requires restart to apply. Do you want to restart?")) {
+				CommonStatic.getConfig().stat = stat.isSelected();
+				changePanel(new SavePage());
+			} else
+				stat.setSelected(CommonStatic.getConfig().stat);
 		});
 
 		if (!MainBCU.USE_JOGL)
@@ -384,6 +394,7 @@ public class ConfigPage extends DefaultPage {
 		add(shake);
 		add(reallv);
 		add(pkprog);
+		add(stat);
 		excont.setSelected(cfg().exContinuation);
 		prlvmd.setText(String.valueOf(cfg().prefLevel));
 		jls.setSelectedIndex(localeIndexOf(cfg().lang));
@@ -435,6 +446,8 @@ public class ConfigPage extends DefaultPage {
 		reallv.setToolTipText(get(MainLocale.PAGE, "reallvtip"));
 		pkprog.setSelected(cfg().prog);
 		pkprog.setToolTipText(get(MainLocale.PAGE, "pkprogtip"));
+		stat.setSelected(cfg().stat);
+		stat.setToolTipText(get(MainLocale.PAGE, "defstattip"));
 		addListeners();
 	}
 

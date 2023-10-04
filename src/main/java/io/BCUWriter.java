@@ -280,6 +280,7 @@ public class BCUWriter extends DataIO {
 		jo.addProperty("autosavetime", MainBCU.autoSaveTime);
 		jo.addProperty("drawBGEffect", CommonStatic.getConfig().drawBGEffect);
 		jo.addProperty("fps60", CommonStatic.getConfig().fps60);
+		jo.addProperty("stat", CommonStatic.getConfig().stat);
 		String[] exp = new String[Exporter.curs.length];
 		for (int i = 0; i < exp.length; i++)
 			exp[i] = Exporter.curs[i] == null ? null : Exporter.curs[i].toString();

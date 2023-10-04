@@ -100,9 +100,10 @@ public class BCUReader extends DataIO {
 					Importer.curs[i] = imp[i] == null ? null : new File(imp[i]);
 				if (jo.has("fps60"))
 					CommonStatic.getConfig().fps60 = jo.get("fps60").getAsBoolean();
-
 				if (CommonStatic.getConfig().fps60)
 					Timer.fps = 1000 / 60;
+				if (jo.has("stat"))
+					CommonStatic.getConfig().stat = jo.get("stat").getAsBoolean();
 			} catch (Exception e) {
 				CommonStatic.ctx.noticeErr(e, ErrType.WARN, "failed to read config");
 			}
