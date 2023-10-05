@@ -24,7 +24,6 @@ public strictfp class MainLocale {
 	public static final int PAGE = 0;
 	public static final int INFO = 1;
 	public static final int UTIL = 2;
-	public static final int DOCS = 3;
 	public static final Map<String, MainLocale> NAMP = new TreeMap<>();
 	public static final Map<String, TTT> TMAP = new TreeMap<>();
 	public static final String[] LOC_NAME = { "English", "\u4E2D\u6587", "\uD55C\uAD6D\uC5B4", "\u65E5\u672C\u8A9E", "Français", "Italiano", "Español", "Deutsche" };

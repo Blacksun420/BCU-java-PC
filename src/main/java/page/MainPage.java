@@ -55,7 +55,6 @@ public class MainPage extends Page {
 	private final JBTN comp = new JBTN(MainLocale.PAGE, "compare");
 	private final JBTN bckp = new JBTN(MainLocale.PAGE, "backup");
 	private final JBTN logs = new JBTN(MainLocale.PAGE, "logs");
-	private final JBTN docs = new JBTN(MainLocale.DOCS, "docs");
 
 	private final JBTN refr = new JBTN(MainLocale.PAGE, "refrtips");
 	private final JLabel tips = new JLabel();
@@ -116,7 +115,6 @@ public class MainPage extends Page {
 		set(camm, x, y, 1500, 400, 200, 50);
 		set(cama, x, y, 1500, 500, 200, 50);
 		set(ui, x, y, 1500, 600, 200, 50);
-		set(docs, x, y, 1500, 700, 200, 50);
 
 	}
 
@@ -143,7 +141,6 @@ public class MainPage extends Page {
 		allf.setLnr(() -> new ResourcePage(this));
 		bckp.setLnr(() -> new BackupPage(this, true));
 		logs.setLnr(() -> new LogPage(this));
-		docs.setLnr(() -> new DocumentationPage(this));
 		auth.setLnr(e -> {
 			String author = Opts.read("Decide your author name");
 
@@ -253,8 +250,6 @@ public class MainPage extends Page {
 
 		add(ui);
 		ui.setToolTipText(get(MainLocale.PAGE,"ui-tip"));
-
-		add(docs);
 
 		welcome.setVisible(!MainBCU.author.isEmpty());
 
