@@ -12,7 +12,6 @@ import common.util.unit.Form;
 import io.BCMusic;
 import main.MainBCU;
 import main.Opts;
-import main.Timer;
 import page.*;
 import page.awt.BBBuilder;
 import page.battle.BattleBox.OuterBox;
@@ -519,7 +518,9 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 
 		next.addActionListener(arg0 -> {
 			pause = false;
-			timer(Timer.fps);
+			timer(0);
+			if (CommonStatic.getConfig().fps60)
+				timer(0);
 			pause = true;
 		});
 

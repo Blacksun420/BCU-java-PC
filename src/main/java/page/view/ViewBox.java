@@ -23,7 +23,7 @@ public interface ViewBox {
 
 	class Controller {
 		public final P ori = new P(0, 0);
-		public double siz = 0.5;
+		public float siz = 0.5f;
 		protected Point p = null;
 		protected ViewBox cont;
 
@@ -43,7 +43,7 @@ public interface ViewBox {
 			p = null;
 		}
 
-		public void resize(double pow) {
+		public void resize(float pow) {
 			siz *= pow;
 		}
 
@@ -217,7 +217,7 @@ public interface ViewBox {
 
 	default void resetPos() { getCtrl().resetPos(); }
 
-	default void resize(double pow) {
+	default void resize(float pow) {
 		getCtrl().resize(pow);
 	}
 

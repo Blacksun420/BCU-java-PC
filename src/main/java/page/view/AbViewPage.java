@@ -27,7 +27,7 @@ import java.util.Hashtable;
 public abstract class AbViewPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
-	private static final double res = 0.95;
+	private static final float res = 0.95f;
 
 	protected final JBTN copy = new JBTN(MainLocale.PAGE, "copy");
 	private final JList<String> jlt = new JList<>();
@@ -103,8 +103,8 @@ public abstract class AbViewPage extends DefaultPage {
 		if (!(e.getSource() instanceof ViewBox))
 			return;
 		MouseWheelEvent mwe = (MouseWheelEvent) e;
-		double d = mwe.getPreciseWheelRotation();
-		vb.resize(Math.pow(res, d));
+		float d = (float) mwe.getPreciseWheelRotation();
+		vb.resize((float) Math.pow(res, d));
 	}
 
 	protected void preini() {
@@ -303,7 +303,7 @@ public abstract class AbViewPage extends DefaultPage {
 
 				String text = manualScale.getText();
 
-				double value = CommonStatic.parseDoubleN(text) / 100.0;
+				float value = CommonStatic.parseFloatN(text) / 100f;
 
 				if(value > 0) {
 					vb.getCtrl().siz = value;

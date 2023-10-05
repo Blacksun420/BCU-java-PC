@@ -286,7 +286,6 @@ public class PackEditPage extends DefaultPage {
 	}
 
 	private void addListeners$1() {
-
 		addp.addActionListener(arg0 -> {
 			changing = true;
 			String str = Workspace.validateWorkspace(Workspace.generatePackID());

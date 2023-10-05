@@ -357,9 +357,6 @@ public class MainBCU {
 		MainFrame.F.setVisible(true);
 		new Timer().start();
 
-		//if (isBeta && !Opts.conf("This is a beta release. Are you sure you want to continue?"))
-		//	System.exit(0);
-
 		// check Plugin update
 		P.checkUpdate();
 		BCJSON.check();

@@ -26,7 +26,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final double res = 0.95;
+	private static final float res = 0.95f;
 
 	private final JTree jta = new JTree();
 	private final AnimGroupTree agt = new AnimGroupTree(jta);
@@ -202,8 +202,8 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		if (!(e.getSource() instanceof AnimBox))
 			return;
 		MouseWheelEvent mwe = (MouseWheelEvent) e;
-		double d = mwe.getPreciseWheelRotation();
-		ab.setSiz(ab.getSiz() * Math.pow(res, d));
+		float d = (float) mwe.getPreciseWheelRotation();
+		ab.setSiz(ab.getSiz() * (float) Math.pow(res, d));
 	}
 
 	@Override
@@ -328,7 +328,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 			AnimBox.ori.y = 0;
 		});
 
-		zomres.setLnr(x -> ab.setSiz(0.5));
+		zomres.setLnr(x -> ab.setSiz(0.5f));
 
 		jta.addTreeSelectionListener(a -> {
 			if(isAdj())

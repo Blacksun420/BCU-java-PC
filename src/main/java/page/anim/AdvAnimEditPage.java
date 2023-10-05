@@ -22,7 +22,7 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final double res = 0.95;
+	private static final float res = 0.95f;
 
 	private final JTree jlm = new JTree();
 	private final JScrollPane jspm = new JScrollPane(jlm);
@@ -148,8 +148,8 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 		if (!(e.getSource() instanceof AnimBox))
 			return;
 		MouseWheelEvent mwe = (MouseWheelEvent) e;
-		double d = mwe.getPreciseWheelRotation();
-		ab.setSiz(ab.getSiz() * Math.pow(res, d));
+		float d = (float) mwe.getPreciseWheelRotation();
+		ab.setSiz(ab.getSiz() * (float) Math.pow(res, d));
 	}
 
 	@Override

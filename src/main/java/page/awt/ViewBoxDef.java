@@ -39,7 +39,7 @@ class ViewBoxDef extends Canvas implements ViewBox, ViewBox.VBExporter {
 		int w = getWidth();
 		int h = getHeight();
 		dat.draw(gra, w, h);
-		gra.translate(w / 2.0, h * 3 / 4.0);
+		gra.translate(w / 2f, h * 3 / 4f);
 		if (getEnt() != null)
 			getEnt().draw(gra, ctrl.ori.copy().times(-1), ctrl.siz);
 	}

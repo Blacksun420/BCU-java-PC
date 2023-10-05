@@ -68,7 +68,7 @@ class GLIconBox extends GLViewBox implements IconBox {
 			int bw = img.getWidth();
 			int bh = img.getHeight();
 
-			double a = Math.min(1.0 * line[2] / bw, 1.0 * line[3] / bh);
+			float a = Math.min(1f * line[2] / bw, 1f * line[3] / bh);
 
 			Image tmp = clip.getScaledInstance((int) (line[2] / a), (int) (line[3] /a), Image.SCALE_SMOOTH);
 
@@ -181,8 +181,8 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 				} else {
 					int[] c = new int[]{c0.getRed(), c0.getGreen(), c0.getBlue()};
 					int[] f = new int[]{c1.getRed(), c1.getGreen(), c1.getBlue()};
-					g.gradRect(0, 0, w, h / 2, w / 2, 0, c, w / 2, h / 2, f);
-					g.gradRect(0, h / 2, w, h / 2, w / 2, h / 2, f, w / 2, h, c);
+					g.gradRect(0, 0, w, h / 2f, w / 2f, 0, c, w / 2f, h / 2f, f);
+					g.gradRect(0, h / 2f, w, h / 2f, w / 2f, h / 2f, f, w / 2f, h, c);
 				}
 			} else {
 				g.setColor(FakeGraphics.WHITE);
@@ -239,7 +239,7 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 		int w = getWidth();
 		int h = getHeight();
 		dat.draw(g, w, h);
-		g.translate(w / 2.0, h * 3 / 4.0);
+		g.translate(w / 2f, h * 3 / 4f);
 		g.setColor(FakeGraphics.BLACK);
 		if (dat.getEnt() != null)
 			dat.getEnt().draw(g, ctrl.ori.copy().times(-1), ctrl.siz);

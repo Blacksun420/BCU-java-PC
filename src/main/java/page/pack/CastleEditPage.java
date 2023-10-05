@@ -104,9 +104,9 @@ public class CastleEditPage extends DefaultPage {
 				if (jlst.isSelectionEmpty())
 					return;
 				changing = true;
-				double firstDouble = CommonStatic.parseDoubleN(spwn.getText());
+				float firstDouble = CommonStatic.parseFloatN(spwn.getText());
 				int formatDouble = (int) (Interpret.formatDouble(firstDouble, 2) * 100);
-				double result = (25 * Math.floor(formatDouble / 25.0)) / 100;
+				float result = (25 * (float) Math.floor(formatDouble / 25f)) / 100;
 
 				jlst.getSelectedValue().boss_spawn = result;
 				spwn.setText(String.valueOf(result));
@@ -171,7 +171,7 @@ public class CastleEditPage extends DefaultPage {
 
 		if (vimg == null) {
 			CastleImg castle = new CastleImg(cas.getNextID(CastleImg.class), MainBCU.builder.toVImg(bimg));
-			castle.boss_spawn = 828.5;
+			castle.boss_spawn = 828.5f;
 			cas.add(vimg = castle);
 		} else {
 			vimg.img.setImg(MainBCU.builder.build(bimg));
