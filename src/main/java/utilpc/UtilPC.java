@@ -227,10 +227,12 @@ public class UtilPC {
 				str.append(lv.getTalents()[i]);
 			else
 				str.append(0);
-
-			if(pc.getReqLv(i) > 0)
-				str.append("*");
 			lab.append(getPCoinAbilityText(pc, i));
+
+			if(pc.getReqLv(i) > 0) {
+				str.append("*");
+				lab.append("(*").append(pc.getReqLv(i)).append(")");
+			}
 
 			if(i < pc.info.size() - 1) {
 				str.append(", ");

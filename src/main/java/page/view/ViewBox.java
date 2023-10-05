@@ -114,7 +114,7 @@ public interface ViewBox {
 			if (bg != null) {
 				bg.draw(g, new P(w, h), 0, midh, siz, (int) groundHeight);
 				if (bgEffect != null)
-					bgEffect.draw(g, y, siz, midY);
+					bgEffect.draw(g, (float) y, (float) siz, (float) midY);
 				if(bg.overlay != null)
 					g.gradRectAlpha(0, 0, w, h, 0, 0, bg.overlayAlpha, bg.overlay[1], 0, h, bg.overlayAlpha, bg.overlay[0]);
 			}
@@ -123,10 +123,10 @@ public interface ViewBox {
 		public void update() {
 			if (bgEffect != null) {
 				if(!bgi) {
-					bgEffect.initialize(fw, ms, midY, bg);
+					bgEffect.initialize(fw, (float) ms, (float) midY, bg);
 					bgi = true;
 				}
-				bgEffect.update(fw, ms, midY);
+				bgEffect.update(fw, (float) ms, (float) midY);
 			}
 			if (ent != null) {
 				if (ent instanceof EAnimU) {
