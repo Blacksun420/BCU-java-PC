@@ -6,12 +6,14 @@
       <item index="1" class="java.lang.String" itemvalue="common.io.json.JsonField" />
     </list>
   </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
+    <option name="workspaceImportForciblyTurnedOn" value="true" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_14" project-jdk-name="liberica-1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
