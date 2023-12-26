@@ -78,7 +78,7 @@ public class UnitInfoTable extends CharacterInfoTable {
 	@Override
 	protected int getH() {
 		int l = super.getH();
-		if (f.hasEvolveCost())
+		if (f.getEvoCost() != -1)
 			return l + (upgrade.length * 50);
 		return l;
 	}
@@ -118,9 +118,9 @@ public class UnitInfoTable extends CharacterInfoTable {
 		}
 
 		main[0][3].setText(hp + " / " + ef.du.getHb());
-		main[1][1].setText("" + ef.du.getRange());
-		main[1][3].setText("" + (attack * 30 / ef.du.getItv(dispAtk)));
-		main[1][5].setText("" + (int) (ef.du.getSpeed() * (1 + b.getInc(Data.C_SPE) * 0.01)));
+		main[1][1].setText(String.valueOf(ef.du.getRange()));
+		main[1][3].setText(String.valueOf((attack * 30 / ef.du.getItv(dispAtk))));
+		main[1][5].setText(String.valueOf((int) (ef.du.getSpeed() * (1 + b.getInc(Data.C_SPE) * 0.01))));
 		main[1][7].setText(MainBCU.convertTime(ef.du.getItv(dispAtk)));
 		main[2][1].setText(MainBCU.convertTime(ef.du.getTBA()));
 
@@ -156,7 +156,7 @@ public class UnitInfoTable extends CharacterInfoTable {
 	@Override
 	protected void resized(int x, int y) {
 		super.resized(x, y);
-		if (f.hasEvolveCost()) {
+		if (f.getEvoCost() != -1) {
 			int h = 1 + main.length + atks.length + ((proc.length + (proc.length % 2 == 1 ? 1 : 0)) / 2);
 			if (displaySpecial)
 				h += 1 + (isBC ? 0 : atks.length);
@@ -195,7 +195,7 @@ public class UnitInfoTable extends CharacterInfoTable {
 	protected void ini() {
 		super.ini();
 		inis[0].setText(f.getID().pack + "/" + f);
-		if (f.hasEvolveCost()) {
+		if (f.getEvoCost() != -1) {
 			for (int i = 0; i < upgrade.length; i++)
 				for (int j = 0; j < upgrade[i].length; j++) {
 					add(upgrade[i][j] = new JL());
@@ -229,7 +229,7 @@ public class UnitInfoTable extends CharacterInfoTable {
 		else
 			special[9].setText(Math.min(back, front) + " ~ " + Math.max(back, front));
 
-		if (f.hasEvolveCost()) {
+		if (f.getEvoCost() != -1) {
 			for (int i = 0; i < upgrade.length; i++)
 				for (int j = 0; j < upgrade[i].length; j++) {
 					add(upgrade[i][j] = new JL());
@@ -237,7 +237,7 @@ public class UnitInfoTable extends CharacterInfoTable {
 				}
 			add(cfdesc);
 			cfdesc.setBorder(BorderFactory.createEtchedBorder());
-			int[][] evo = f.unit.info.evo;
+			int[][] evo = f.getEvoMaterials();
 			int count = 0;
 			for (int i = 0; i < evo.length; i++) {
 				int id = evo[i][0];
@@ -251,7 +251,7 @@ public class UnitInfoTable extends CharacterInfoTable {
 			}
 			JL xp = upgrade[count / 2][count % 2];
 			xp.setIcon(UtilPC.getScaledIcon(CommonStatic.getBCAssets().XP, 50, 30));
-			xp.setText(f.unit.info.xp + " XP");
+			xp.setText(f.getEvoCost() + " XP");
 			String desc = f.unit.info.getCatfruitExplanation();
 			if (desc != null)
 				cfdesc.setText(desc.replace("<br>", "\n"));

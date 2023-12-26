@@ -180,7 +180,7 @@ public abstract class CharacterInfoTable extends Page {
                 atks[i][4].setText(MainLocale.INFO, "dire");
                 atks[i][5].setText(matk.getDire() == 1 ? get(MainLocale.PAGE, "unit") : matk.getDire() == -1 ? get(MainLocale.PAGE, "enemy") : "N/A");
                 atks[i][6].setText(MainLocale.INFO, "type");
-                atks[i][7].setText(matk.getTarget() + "");
+                atks[i][7].setText(String.valueOf(matk.getTarget()));
                 atks[i][8].setText(MainLocale.INFO, "count");
                 atks[i][9].setText(matk.loopCount() < 0 ? get(MainLocale.UTIL, "inf") : matk.loopCount() + "");
 

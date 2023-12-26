@@ -214,8 +214,8 @@ public class CompareTable extends Page {
             EForm ef = new EForm(f, multi);
             unit[0].setText(MainBCU.convertTime(b.t().getFinRes(mu.getRespawn())));
             unit[1].setText(ef.getPrice(1) + "");
-            if (f.hasEvolveCost()) {
-                int[][] evo = f.unit.info.evo;
+            if (f.getEvoCost() != -1) {
+                int[][] evo = f.getEvoMaterials();
                 int count = 0;
                 for (int j = 0; j < evo.length; j++) {
                     int id = evo[j][0];
@@ -230,8 +230,8 @@ public class CompareTable extends Page {
                 }
                 JL xp = evol[count];
                 xp.setIcon(UtilPC.getScaledIcon(CommonStatic.getBCAssets().XP, 50, 30));
-                xp.setText(f.unit.info.xp + "");
-                xp.setToolTipText(f.unit.info.xp + " XP");
+                xp.setText(f.getEvoCost() + "");
+                xp.setToolTipText(f.getEvoCost() + " XP");
                 for (int j = count + 1; j < 6; j++) {
                     evol[j].setText("-");
                     evol[j].setIcon(null);
