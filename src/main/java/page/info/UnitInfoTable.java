@@ -252,7 +252,7 @@ public class UnitInfoTable extends CharacterInfoTable {
 			JL xp = upgrade[count / 2][count % 2];
 			xp.setIcon(UtilPC.getScaledIcon(CommonStatic.getBCAssets().XP, 50, 30));
 			xp.setText(f.getEvoCost() + " XP");
-			String desc = f.unit.info.getCatfruitExplanation();
+			String desc = f.hasZeroForm() ? f.unit.info.getUltraFormEvolveExplanation() : f.unit.info.getCatfruitExplanation();
 			if (desc != null)
 				cfdesc.setText(desc.replace("<br>", "\n"));
 			cfdesc.setEditable(false);

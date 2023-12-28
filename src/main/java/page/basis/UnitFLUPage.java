@@ -2,11 +2,13 @@ package page.basis;
 
 import common.battle.BasisSet;
 import common.pack.SaveData;
+import common.util.Data;
 import common.util.stage.Limit;
 import common.util.unit.AbForm;
 import page.JTF;
 import page.JTG;
 import page.Page;
+import page.info.filter.AdvProcFilterPage;
 import page.info.filter.UnitFilterBox;
 import page.info.filter.UnitListTable;
 
@@ -26,6 +28,7 @@ public class UnitFLUPage extends LubCont {
 	private final UnitListTable ult = new UnitListTable(this);
 	private final JScrollPane jsp = new JScrollPane(ult);
 	private final UnitFilterBox ufb;
+	private final AdvProcFilterPage adv;
 	private final JTF seatf = new JTF();
 
 	public UnitFLUPage(Page p, SaveData sdat, Limit lim, int price) {
@@ -34,6 +37,7 @@ public class UnitFLUPage extends LubCont {
 		ult.cost = price;
 		lub.setLimit(lim, sdat, price);
 		ufb = new UnitFilterBox(this, true, lim, price, sdat);
+		adv = new AdvProcFilterPage(this, true, Data.Proc.blank());
 		ini();
 	}
 

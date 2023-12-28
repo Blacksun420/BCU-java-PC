@@ -48,6 +48,8 @@ import static common.util.Data.*;
 public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 
 	private static final long serialVersionUID = 1L;
+	private static final String[] spNames = new String[]{"revenge", "resurrection", "burrow", "resurface", "revive", "entrance"};
+	private static final String[] spcNames = new String[]{"Revenge", "Resurrection", "Counterattack", "Burrow", "Resurface", "Revive", "Entrance"};
 
 	private final JL lhp = new JL(MainLocale.INFO, "HP");
 	private final JL lhb = new JL(MainLocale.INFO, "hb");
@@ -676,43 +678,43 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 	private boolean addSpecial(int sel, AtkDataModel adm) {
 		int selection = sel != -1 ? sel : Opts.selection("What kind of special Attack do you want to create?",
 				"Select Attack Type",
-				"Revenge", "Resurrection", "Counterattack", "Burrow", "Resurface", "Revival", "Entry");
+				spcNames);
 		if (selection == -1)
 			return false;
 		switch (selection) {
 			case 0:
 				ce.revs = Arrays.copyOf(ce.revs, ce.revs.length + 1);
 				ce.revs[ce.revs.length - 1] = adm;
-				ce.revs[ce.revs.length - 1].str = "revenge" + (ce.revs.length > 1 ? " " + ce.revs.length : "");
+				ce.revs[ce.revs.length - 1].str = spcNames[selection].toLowerCase() + (ce.revs.length > 1 ? " " + ce.revs.length : "");
 				break;
 			case 1:
 				ce.ress = Arrays.copyOf(ce.ress, ce.ress.length + 1);
 				ce.ress[ce.ress.length - 1] = adm;
-				ce.ress[ce.ress.length - 1].str = "resurrection" + (ce.ress.length > 1 ? " " + ce.ress.length : "");
+				ce.ress[ce.ress.length - 1].str = spcNames[selection].toLowerCase() + (ce.ress.length > 1 ? " " + ce.ress.length : "");
 				break;
 			case 2:
-				ce.cntr = new AtkDataModel(ce);
-				ce.cntr.str = "counterattack";
+				ce.cntr = adm;
+				ce.cntr.str = spcNames[selection].toLowerCase();
 				break;
 			case 3:
 				ce.burs = Arrays.copyOf(ce.burs, ce.burs.length + 1);
 				ce.burs[ce.burs.length - 1] = adm;
-				ce.burs[ce.burs.length - 1].str = "burrow" + (ce.burs.length > 1 ? " " + ce.burs.length : "");
+				ce.burs[ce.burs.length - 1].str = spcNames[selection].toLowerCase() + (ce.burs.length > 1 ? " " + ce.burs.length : "");
 				break;
 			case 4:
 				ce.resus = Arrays.copyOf(ce.resus, ce.resus.length + 1);
 				ce.resus[ce.resus.length - 1] = adm;
-				ce.resus[ce.resus.length - 1].str = "resurface" + (ce.resus.length > 1 ? " " + ce.resus.length : "");
+				ce.resus[ce.resus.length - 1].str = spcNames[selection].toLowerCase() + (ce.resus.length > 1 ? " " + ce.resus.length : "");
 				break;
 			case 5:
 				ce.revis = Arrays.copyOf(ce.revis, ce.revis.length + 1);
 				ce.revis[ce.revis.length - 1] = adm;
-				ce.revis[ce.revis.length - 1].str = "revive" + (ce.revis.length > 1 ? " " + ce.revis.length : "");
+				ce.revis[ce.revis.length - 1].str = spcNames[selection].toLowerCase() + (ce.revis.length > 1 ? " " + ce.revis.length : "");
 				break;
 			case 6:
 				ce.entrs = Arrays.copyOf(ce.entrs, ce.entrs.length + 1);
 				ce.entrs[ce.entrs.length - 1] = adm;
-				ce.entrs[ce.entrs.length - 1].str = "entrance" + (ce.entrs.length > 1 ? " " + ce.entrs.length : "");
+				ce.entrs[ce.entrs.length - 1].str = spcNames[selection].toLowerCase() + (ce.entrs.length > 1 ? " " + ce.entrs.length : "");
 		}
 		return true;
 	}
@@ -763,40 +765,16 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 				return;
 			adm.checkAvail(text);
 
-			switch (text) {
-				case "revenge":
+			for (int i = 0; i < spcNames.length; i++)
+				if (text.equals(spcNames[i].toLowerCase())) {
 					remAtk(adm);
-					addSpecial(0, adm);
+					addSpecial(i, adm);
 					break;
-				case "resurrection":
-					remAtk(adm);
-					addSpecial(1, adm);
-					break;
-				case "counterattack":
-					remAtk(adm);
-					ce.cntr = adm;
-					break;
-				case "burrow":
-					remAtk(adm);
-					addSpecial(3, adm);
-					break;
-				case "resurface":
-					remAtk(adm);
-					addSpecial(4, adm);
-					break;
-				case "revive":
-					remAtk(adm);
-					addSpecial(5, adm);
-					break;
-				case "entrance":
-					remAtk(adm);
-					addSpecial(6, adm);
-					break;
-			}
+				}
 			return;
 		}
 
-		if (text.length() > 0) {
+		if (!text.isEmpty()) {
 			int[] v = CommonStatic.parseIntsN(text);
 			if (v.length > 0) {
 				if (jtf == fhp) {
@@ -888,14 +866,14 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 				for (int i = 0; i < sps.length; i++) {
 					if (sps[i].length == 0)
 						continue;
-					if (rematk.str.contains(sps[i][0].str)) {
+					if (rematk.str.contains(spNames[i].toLowerCase())) {
 						for (int j = 0; j < sps[i].length; j++)
 							if (sps[i][j] == rematk) {
 								if (sps[i].length == 1)
 									sps[i] = new AtkDataModel[0];
 								for (int k = j; k < sps[i].length - 1; k++) {
 									sps[i][k] = sps[i][k + 1];
-									sps[i][k].str = sps[i][k].str.substring(0, sps[i][k].str.length() - 1) + (k == 0 ? "" : " " + k);
+									sps[i][k].str = spNames[i].toLowerCase() + (k == 0 ? "" : " " + (k + 1));
 									sps[i] = Arrays.copyOf(sps[i], sps[i].length - 1);
 								}
 								switch (i) {
@@ -977,12 +955,12 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 			} else if (adm.str.contains("burrow")) {
 				lpst.setText(MainLocale.INFO, "Post-Bury Atk");
 				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[4].len + ce.getPost(true, 2) + 1));
-			} else if (adm.str.contains("revive")) {
-				lpst.setText(MainLocale.INFO, "Post-Revival Atk");
-				vpst.setText(MainBCU.convertTime(effas().A_ZOMBIE.getEAnim(EffAnim.ZombieEff.REVIVE).len() + ce.getPost(true, 3)));
 			} else if (adm.str.contains("resurface")) {
 				lpst.setText(MainLocale.INFO, "Post-Unburrow Atk");
-				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[6].len + ce.getPost(true, 4) + 1));
+				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[6].len + ce.getPost(true, 3) + 1));
+			} else if (adm.str.contains("revive")) {
+				lpst.setText(MainLocale.INFO, "Post-Revival Atk");
+				vpst.setText(MainBCU.convertTime(effas().A_ZOMBIE.getEAnim(EffAnim.ZombieEff.REVIVE).len() + ce.getPost(true, 4)));
 			} else {
 				lpst.setText(MainLocale.INFO, "Post-Entrance Atk");
 				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[7].len + ce.getPost(true, 5) + 1));

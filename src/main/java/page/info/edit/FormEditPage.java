@@ -33,6 +33,8 @@ public class FormEditPage extends EntityEditPage {
 	private final JBTN impt = new JBTN(0, "import");
 	private final JBTN vene = new JBTN(0, "enemy");
 	private final JBTN pcoin = new JBTN(0, "pcoin");
+	private final JBTN pf = new JBTN("<");
+	private final JBTN nf = new JBTN(">");
 	private final UnitEditBox ueb;
 	private final Form form;
 	private final CustomUnit cu;
@@ -138,16 +140,25 @@ public class FormEditPage extends EntityEditPage {
 		add(impt);
 		add(vene);
 		add(pcoin);
-		pcoin.setLnr(x -> changePanel(new PCoinEditPage(getThis(),form, pack.editable)));
+		if (form.fid > 0)
+			add(pf);
+		if (form.fid + 1 < form.unit.forms.length)
+			add(nf);
 
+		addLnrs();
 		subListener(vene, impt, vuni, form.unit);
+		assignSubPage(ueb);
+	}
 
+	private void addLnrs() {
+		pf.setLnr(s -> changePanel(new FormEditPage(getFront(), pack, form.unit.forms[form.fid - 1])));
+		nf.setLnr(s -> changePanel(new FormEditPage(getFront(), pack, form.unit.forms[form.fid + 1])));
+		pcoin.setLnr(x -> changePanel(new PCoinEditPage(getThis(),form, pack.editable)));
 		stat.setLnr(x -> {
 			Unit u = (Unit) Identifier.get(cu.getPack().uid);
 			Node<Unit> nu = Node.getList(UserProfile.getAll(cu.getPack().uid.pack, Unit.class), u);
 			changePanel(new UnitInfoPage(this, nu));
 		});
-		assignSubPage(ueb);
 	}
 
 	@Override
@@ -172,6 +183,16 @@ public class FormEditPage extends EntityEditPage {
 		set(impt, x, y, 50, 1150, 200, 50);
 		set(vene, x, y, 250, 1150, 200, 50);
 		set(pcoin, x, y, 450, 1150, 200, 50);
+
+		short nx = 350, w = 300;
+		if (form.fid > 0)
+			nx += 150;
+		if (form.fid + 1 < form.unit.forms.length) {
+			if (nx == 500)
+				w -= 150;
+			set(nf, x, y, nx, 50, w, 50);
+		}
+		set(pf, x, y, 350, 50, w, 50);
 	}
 
 	@Override
