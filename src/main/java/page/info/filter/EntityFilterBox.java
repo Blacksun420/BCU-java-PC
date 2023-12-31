@@ -60,7 +60,8 @@ public abstract class EntityFilterBox extends Page {
     protected final JScrollPane jat = new JScrollPane(atkt);
     protected final PackBox pks = new PackBox();
     protected final boolean rand;
-    protected final Data.Proc proc = Data.Proc.blank();
+    public final Data.Proc proc = Data.Proc.blank();
+    protected boolean multipacks;
 
     protected EntityFilterBox(Page p, PackData.UserPack pack, boolean rand) {
         super(p);

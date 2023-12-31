@@ -7,6 +7,7 @@ import common.util.stage.Limit;
 import common.util.unit.AbForm;
 import page.JTF;
 import page.JTG;
+import page.MainLocale;
 import page.Page;
 import page.info.filter.AdvProcFilterPage;
 import page.info.filter.UnitFilterBox;
@@ -27,9 +28,10 @@ public class UnitFLUPage extends LubCont {
 	private final JTG show = new JTG(0, "showf");
 	private final UnitListTable ult = new UnitListTable(this);
 	private final JScrollPane jsp = new JScrollPane(ult);
-	private final UnitFilterBox ufb;
-	private final AdvProcFilterPage adv;
+	public final UnitFilterBox ufb;
+	public final AdvProcFilterPage adv;
 	private final JTF seatf = new JTF();
+	private final JTG advs = new JTG(MainLocale.PAGE, "advance");
 
 	public UnitFLUPage(Page p, SaveData sdat, Limit lim, int price) {
 		super(p);
@@ -37,7 +39,7 @@ public class UnitFLUPage extends LubCont {
 		ult.cost = price;
 		lub.setLimit(lim, sdat, price);
 		ufb = new UnitFilterBox(this, true, lim, price, sdat);
-		adv = new AdvProcFilterPage(this, true, Data.Proc.blank());
+		adv = new AdvProcFilterPage(this, true, ufb.proc);
 		ini();
 	}
 
@@ -80,25 +82,28 @@ public class UnitFLUPage extends LubCont {
 	@Override
 	protected void resized(int x, int y) {
 		super.resized(x, y);
-		set(show, x, y, 250, 0, 200, 50);
-		set(seatf, x, y, 550, 0, 1000, 50);
-		int[] end = new int[] { 650, 350 };
+		set(show, x, y, 250, 0, 150, 50);
+		set(advs, x, y, 400, 0, 150, 50);
+		set(seatf, x, y, 600, 0, 1000, 50);
+
+		int[] coords = new int[]{50, 2200, 1150};
 		if (show.isSelected()) {
 			int[] siz = ufb.getSizer();
 			set(ufb, x, y, 50, 100, siz[0], siz[1]);
-			int mx = 50, my = 100, ax = 2200, ay = 1150;
-			if (siz[2] == 0) {
-				mx += siz[3];
-				ax -= siz[3];
-				ay -= end[1 - siz[2]];
-			} else {
-				my += siz[3];
-				ax -= end[1 - siz[2]];
-				ay -= siz[3];
-			}
-			set(jsp, x, y, mx, my, ax, ay);
+			coords[0] += siz[3];
+			coords[1] -= siz[3];
+			coords[2] -= 350;
 		} else
-			set(jsp, x, y, 50, 100, 1550, 1150);
+			coords[1] = 1550;
+		if (advs.isSelected()) {
+			coords[show.isSelected() ? 0 : 1] -= 50;
+
+			set(adv, x, y, coords[0], 100, 350 * 3 + 25, 1150);
+			coords[0] += 350 * 3 + 75;
+			coords[1] -= 350 * 3 + 25;
+		} else if (adv != null)
+			set(adv, 0, 0, 0, 0, 0, 0);
+		set(jsp, x, y, coords[0], 100, coords[1], coords[2]);
 		set(lub, x, y, 1650, 950, 600, 300);
 		ult.setRowHeight(size(x, y, 50));
 	}
@@ -109,6 +114,13 @@ public class UnitFLUPage extends LubCont {
 				add(ufb);
 			else
 				remove(ufb);
+		});
+
+		advs.addActionListener(arg0 -> {
+			if (advs.isSelected())
+				add(adv);
+			else
+				remove(adv);
 		});
 
 		ListSelectionModel lsm = ult.getSelectionModel();
@@ -124,6 +136,7 @@ public class UnitFLUPage extends LubCont {
 			lub.select(f);
 			lsm.clearSelection();
 		});
+
 		seatf.getDocument().addDocumentListener(new DocumentListener() {
 			public void insertUpdate(DocumentEvent e) {
 				search(seatf.getText());
@@ -152,6 +165,9 @@ public class UnitFLUPage extends LubCont {
 		add(jsp);
 		add(lub);
 		add(seatf);
+		seatf.setHintText(get(MainLocale.PAGE,"search"));
+		add(advs);
+		assignSubPage(adv);
 		show.setSelected(true);
 		addListeners();
 	}

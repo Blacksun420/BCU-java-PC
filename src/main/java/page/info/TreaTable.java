@@ -97,6 +97,7 @@ public class TreaTable extends Page {
 			remove(jln[s - 1]);
 			remove(jtf[s - 1]);
 		}
+		fireDimensionChanged();
 	}
 
 	private void expand(Node<Integer> n) {
@@ -106,6 +107,7 @@ public class TreaTable extends Page {
 			add(jtf[s - 1]);
 		}
 		n.adds();
+		fireDimensionChanged();
 	}
 
 	private void ini() {

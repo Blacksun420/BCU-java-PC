@@ -26,7 +26,6 @@ public class EnemyFilterBox extends EntityFilterBox {
 	private final AttList abis = new AttList(-1, EABIIND.length);
 	private final JScrollPane jr = new JScrollPane(rare);
 	private final JScrollPane jab = new JScrollPane(abis);
-	private boolean multipacks;
 
 	protected EnemyFilterBox(Page p, boolean rand, PackData.UserPack pack) {
 		super(p, pack, rand);
@@ -111,14 +110,11 @@ public class EnemyFilterBox extends EntityFilterBox {
 		boolean b2 = unchangeable(1);
 		int len = EABIIND.length;
 		for (int i : abis.getSelectedIndices()) {
-			if (i < len)
-				b2 = processOperator(1, ((a >> EABIIND[i]) & 1) == 1);
-			else
-				b2 = processOperator(1, e.de.getAllProc().getArr(EPROCIND[i - len]).exists());
+			b2 = processOperator(1, i < len ? ((a >> EABIIND[i]) & 1) == 1 : e.de.getAllProc().getArr(EPROCIND[i - len]).exists());
 			if (b2 != unchangeable(1))
 				break;
 		}
-		if (b2 == unchangeable(1) && ((EnemyFindPage)getFront()).adv != null) {
+		if (b2 == unchangeable(1) && ((EnemyFindPage)getFront()).adv != null && !((EnemyFindPage)getFront()).adv.isBlank) {
 			b2 = processOperator(1, ((EnemyFindPage)getFront()).adv.compare(e.de.getAllProc()));
 			if (b2 != unchangeable(1) && !b2)
 				return false;

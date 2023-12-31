@@ -42,17 +42,13 @@ public abstract class EntityFindPage<R> extends DefaultPage {
         return elt.list;
     }
 
-    public void r(int x,int y) {
-        resized(x, y);
-    }
-
     @Override
     protected void resized(int x, int y) {
         super.resized(x, y);
         set(show, x, y, 250, 0, 150, 50);
         set(advs, x, y, 400, 0, 150, 50);
         set(seatf, x, y, 600, 0, 1050, 50);
-        set(favs, x, y, 1700, 0, 550, 50);
+        set(favs, x, y, 1750, 0, 500, 50);
 
         int[] coords = new int[]{50, 2200};
 

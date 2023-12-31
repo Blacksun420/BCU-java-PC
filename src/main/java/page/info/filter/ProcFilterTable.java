@@ -142,7 +142,7 @@ public class ProcFilterTable extends Page {
                             return new IDFilter<>(group, field, f, table::getBGSup, edit);
                         else
                             return new IDFilter<>(group, field, f, table::getMusicSup, edit);
-                    } else if (group.proc.equals("SUMMON"))
+                    } else if (group.proc.equals("SUMMON") || group.proc.equals("SPIRIT"))
                         return new IDFilter<>(group, field, f, table::getEntitySup, edit);
                 }
                 throw new Exception("unexpected class " + fc);

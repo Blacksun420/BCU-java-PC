@@ -93,7 +93,7 @@ public abstract class SwingEditor extends Editor {
 							return new IdEditor<>(group, field, f, table::getBGSup, edit);
 						else
 							return new IdEditor<>(group, field, f, table::getMusicSup, edit);
-					} else if (group.proc.equals("SUMMON"))
+					} else if (group.proc.equals("SUMMON") || group.proc.equals("SPIRIT"))
 						return new IdEditor<>(group, field, f, table::getEntitySup, edit);
 				}
 				throw new Exception("unexpected class " + fc);

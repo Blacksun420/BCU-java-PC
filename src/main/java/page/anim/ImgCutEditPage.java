@@ -194,7 +194,9 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 			else
 				rl = new ResourceLocation(ResourceLocation.LOCAL, "new anim", Source.BasePath.ANIM);
 			Workspace.validate(rl);
+			Source.warn = false;
 			AnimCE ac = new AnimCE(rl);
+			Source.warn = true;
 			ac.setNum(MainBCU.builder.build(bimg));
 			ac.saveImg();
 			ac.createNew();

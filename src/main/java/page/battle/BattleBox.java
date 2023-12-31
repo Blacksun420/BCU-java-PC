@@ -23,6 +23,7 @@ import common.util.pack.EffAnim;
 import common.util.pack.bgeffect.BackgroundEffect;
 import common.util.stage.CastleImg;
 import common.util.unit.AbForm;
+import common.util.unit.EForm;
 import main.MainBCU;
 import page.MainLocale;
 import page.RetFunc;
@@ -465,7 +466,10 @@ public interface BattleBox {
 						continue;
 
 					int pri = sb.elu.price[i][j];
-					if (pri == -1)
+					if (sb.elu.readySpirit(i,j)) {
+						g.colRect(x, y, iw, ih, 128, 225, 255, 100);
+						g.drawImage(StageNamePainter.summon, x - (imw - iw * 1.25f) / 2f, y - (imh - ih / 0.6f) / 2f, imw * 1.5f, imh * 0.6f);
+					} else if (pri == -1 || (sb.elu.validSpirit(i,j)))
 						g.colRect(x, y, iw, ih, 255, 0, 0, 100);
 					int cool = sb.elu.cool[i][j];
 					boolean b = pri > sb.money || cool > 0;
@@ -533,7 +537,10 @@ public interface BattleBox {
 				if (f == null)
 					continue;
 				int pri = sb.elu.price[index][i];
-				if (pri == -1)
+				if (sb.elu.readySpirit(index,i)) {
+					g.colRect(x, y, iw, ih, 128, 225, 255, 100);
+					g.drawImage(StageNamePainter.summon, x - (imw - iw * 1.1f) / 2f, y - (imh - ih / 0.65f) / 2f, imw * 2.2f, imh * 0.575f);
+				} else if (pri == -1 || (sb.elu.validSpirit(index,i)))
 					g.colRect(x, y, iw, ih, 255, 0, 0, 100);
 				int cool = sb.elu.cool[index][i];
 				boolean b = isBehind || pri > sb.money || cool > 0;
@@ -1099,7 +1106,7 @@ public interface BattleBox {
 	}
 
 	class StageNamePainter {
-		private static FakeImage deploy;
+		private static FakeImage deploy, summon;
 		private final FakeImage img;
 		private static Font font;
 		private static final float strokeWidth = 12f;
@@ -1117,6 +1124,7 @@ public interface BattleBox {
 
 				font = Font.createFont(Font.TRUETYPE_FONT, f).deriveFont(102f);
 				deploy = new StageNamePainter(MainLocale.getLoc(MainLocale.UTIL, "nodeploy")).img;
+				summon = new StageNamePainter(MainLocale.getLoc(MainLocale.UTIL, "smn")).img;
 			} catch (Exception e) {
 				System.out.println("Failed to initialize font");
 				e.printStackTrace();

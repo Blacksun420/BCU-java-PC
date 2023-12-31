@@ -175,7 +175,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 
 		SupPage<?> ans;
 		if ((ce.getPack() instanceof Enemy && get(jli.getSelectedIndex()).dire != -1)
-				|| (ce.getPack() instanceof Form && get(jli.getSelectedIndex()).dire == -1)) {
+				|| (ce.getPack() instanceof Form && editor.par.proc.equals("SUMMON") && get(jli.getSelectedIndex()).dire == -1)) {
 			ans = new EnemyFindPage(this, true, pack);
 		} else
 			ans = new UnitFindPage(this, true, pack);
@@ -778,7 +778,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 			int[] v = CommonStatic.parseIntsN(text);
 			if (v.length > 0) {
 				if (jtf == fhp) {
-					v[0] /= getDef();
+					v[0] = (int)Math.round(v[0] / getDef());
 					if (v[0] <= 0)
 						v[0] = 1;
 					ce.hp = v[0];

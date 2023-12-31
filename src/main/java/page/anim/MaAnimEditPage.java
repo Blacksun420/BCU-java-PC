@@ -603,7 +603,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 	private void eupdate() {
 		ab.update();
 		if (ab.getEntity() != null) {
-			change(0, x -> jtl.setValue((int)CommonStatic.fltFpsDiv(ab.getEntity().ind())));
+			change(0, x -> jtl.setValue((int)CommonStatic.fltFpsMul(ab.getEntity().ind())));
 			inft.setText(ab.getEntity() != null ? "frame: " + ab.getEntity().ind() : "");
 		}
 	}

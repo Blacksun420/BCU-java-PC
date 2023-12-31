@@ -1,11 +1,13 @@
 package page.info.filter;
 
-import common.util.Data;
+import static common.util.Data.empty;
+import common.util.Data.Proc;
 import common.util.lang.Editors;
 import common.util.pack.Background;
 import common.util.stage.Music;
 import page.Page;
 import page.SupPage;
+import page.basis.UnitFLUPage;
 import page.info.edit.SwingEditor;
 import page.support.EntSupInt;
 import page.view.BGViewPage;
@@ -19,10 +21,11 @@ public class AdvProcFilterPage extends Page implements EntSupInt {
     private final ProcFilterTable pft;
     private final JScrollPane jat;
 
-    private final Data.Proc proc;
+    private final Proc proc;
     private final boolean isUnit;
+    public boolean isBlank = true;
 
-    public AdvProcFilterPage(Page p, boolean isUnit, Data.Proc proc) {
+    public AdvProcFilterPage(Page p, boolean isUnit, Proc proc) {
         super(p);
         this.isUnit = isUnit;
         Editors.setEditorSupplier(new ProcFilterTable.FilterCtrl(!isUnit, this));
@@ -34,7 +37,11 @@ public class AdvProcFilterPage extends Page implements EntSupInt {
 
     @Override
     public void callBack(Object obj) {
-        ((EntityFindPage<?>)getFront()).efb.callBack(obj);
+        if (getFront() instanceof EntityFindPage)
+            ((EntityFindPage<?>)getFront()).efb.callBack(obj);
+        else
+            ((UnitFLUPage)getFront()).ufb.callBack(obj);
+        isBlank = pft.compare(empty);
         fireDimensionChanged();
     }
 
@@ -74,7 +81,7 @@ public class AdvProcFilterPage extends Page implements EntSupInt {
         return new EnemyFindPage(this, true);
     }
 
-    public boolean compare(Data.Proc proc) {
+    public boolean compare(Proc proc) {
         return pft.compare(proc);
     }
 }

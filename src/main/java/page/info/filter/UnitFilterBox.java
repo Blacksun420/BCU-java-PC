@@ -11,6 +11,7 @@ import common.util.unit.rand.UREnt;
 import page.JTG;
 import page.MainLocale;
 import page.Page;
+import page.basis.UnitFLUPage;
 import utilpc.UtilPC;
 
 import javax.swing.*;
@@ -34,6 +35,8 @@ public class UnitFilterBox extends EntityFilterBox {
 	private final JScrollPane jab = new JScrollPane(abis);
 	private final JTG limbtn = new JTG(0, "usable");
 	private final SaveData sdat;
+	public byte frmf = -1;
+	public boolean rf = false;
 
 	public UnitFilterBox(Page p, boolean rand, Limit limit, int price, SaveData sdat) {
 		super(p, sdat == null ? null : sdat.pack, rand && sdat == null);
@@ -60,8 +63,13 @@ public class UnitFilterBox extends EntityFilterBox {
 		super.resized(x, y);
 
 		set(limbtn, x, y, 0, 300, 200, 50);
-		set(pks, x, y, 0, 0, 200, 50);
-		set(jr, x, y, 0, 50, 200, 250);
+		if (multipacks) {
+			set(pks, x, y, 0, 0, 200, 50);
+			set(jr, x, y, 0, 50, 200, 250);
+		} else {
+			set(pks, x, y, 0, 0, 0, 0);
+			set(jr, x, y, 0, 0, 200, 300);
+		}
 		set(jab, x, y, 250, 50, 200, 1100);
 	}
 
@@ -74,9 +82,17 @@ public class UnitFilterBox extends EntityFilterBox {
 				continue;
 			for (Unit u : p.units.getList())
 				if (validateUnit(u))
-					for (Form f : u.forms)
-						if (validateForm(f))
-							ans.add(f);
+                    if (frmf == -1) {
+                        for (Form f : u.forms)
+                            if (validateForm(f))
+                                ans.add(f);
+                    } else {
+						if (rf && u.forms.length <= frmf)
+							continue;
+                        Form f = u.forms[Math.min(u.forms.length - 1, frmf)];
+                        if (validateForm(f))
+                            ans.add(f);
+                    }
 			if (rand)
 				for(UniRand rand : p.randUnits.getList()) {
 					int diff = UtilPC.damerauLevenshteinDistance(rand.name.toLowerCase(), name.toLowerCase());
@@ -134,6 +150,7 @@ public class UnitFilterBox extends EntityFilterBox {
 					pkv.add(UserProfile.getUserPack(s));
 			}
 		}
+		multipacks = pkv.size() > 2;
 		pks.setModel(new DefaultComboBoxModel<>(pkv));
 
 		if (lim != null) {
@@ -176,17 +193,17 @@ public class UnitFilterBox extends EntityFilterBox {
 		boolean b1 = unchangeable(1);
 		int len = SABIS.length;
 		for (int i : abis.getSelectedIndices()) {
-			if (i < len)
-				b1 = processOperator(1, ((a >> i) & 1) == 1);
-			else
-				b1 = processOperator(1, du.getAllProc().getArr(UPROCIND[i - len]).exists());
+			b1 = processOperator(1, i < len ? ((a >> i) & 1) == 1 : du.getAllProc().getArr(UPROCIND[i - len]).exists());
 			if (b1 != unchangeable(1))
 				break;
 		}
-		if (b1 == unchangeable(1) && getFront() instanceof UnitFindPage && ((UnitFindPage)getFront()).adv != null) {
-			b1 = processOperator(1, ((UnitFindPage)getFront()).adv.compare(du.getAllProc()));
-			if (b1 != unchangeable(1) && !b1)
-				return false;
+		if (b1 == unchangeable(1)) {
+			AdvProcFilterPage adv = getFront() instanceof UnitFindPage ? ((UnitFindPage)getFront()).adv : ((UnitFLUPage)getFront()).adv;
+			if (adv != null && !adv.isBlank) {
+				b1 = processOperator(1, adv.compare(du.getAllProc()));
+				if (b1 != unchangeable(1) && !b1)
+					return false;
+			}
 		}
 
 		boolean b2 = unchangeable(2);

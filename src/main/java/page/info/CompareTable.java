@@ -181,6 +181,8 @@ public class CompareTable extends Page {
         List<Trait> DefTraits = UserProfile.getBCData().traits.getList();
         SortedPackSet<Trait> traits = new SortedPackSet<>(trs), spTraits = new SortedPackSet<>();
         traits.retainAll(me.getTraits());
+        if (Ent instanceof Form)
+            traits.addIf(trs, t -> !t.BCTrait() && t.others.contains((Form)Ent));
 
         if (isEnemy) {
             MaskEnemy enemy = (MaskEnemy)me;
