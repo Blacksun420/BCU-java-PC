@@ -34,6 +34,7 @@ public class UnitFilterBox extends EntityFilterBox {
 	private final JScrollPane jr = new JScrollPane(rare);
 	private final JScrollPane jab = new JScrollPane(abis);
 	private final JTG limbtn = new JTG(0, "usable");
+	private final boolean hideSpirits;
 	private final SaveData sdat;
 	public byte frmf = -1;
 	public boolean rf = false;
@@ -43,6 +44,7 @@ public class UnitFilterBox extends EntityFilterBox {
 		lim = limit;
 		this.price = price;
 		this.sdat = sdat;
+		hideSpirits = true;
 
 		ini();
 		confirm();
@@ -53,6 +55,7 @@ public class UnitFilterBox extends EntityFilterBox {
 		lim = null;
 		price = 1;
 		sdat = null;
+		hideSpirits = false;
 
 		ini();
 		confirm();
@@ -168,7 +171,7 @@ public class UnitFilterBox extends EntityFilterBox {
 	protected boolean validateForm(Form f) {
 		if (rare.isSelectedIndex(rare.getModel().getSize() - 1) && !CommonStatic.getFaves().units.contains(f))
 			return false;
-		if (sdat != null && sdat.locked(f))
+		if ((sdat != null && sdat.locked(f)) || (hideSpirits && f.anim.getAtkCount() == 0))
 			return false;
 
 		String fname = MultiLangCont.getStatic().FNAME.getCont(f);

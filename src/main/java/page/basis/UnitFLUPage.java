@@ -5,10 +5,7 @@ import common.pack.SaveData;
 import common.util.Data;
 import common.util.stage.Limit;
 import common.util.unit.AbForm;
-import page.JTF;
-import page.JTG;
-import page.MainLocale;
-import page.Page;
+import page.*;
 import page.info.filter.AdvProcFilterPage;
 import page.info.filter.UnitFilterBox;
 import page.info.filter.UnitListTable;
@@ -32,6 +29,9 @@ public class UnitFLUPage extends LubCont {
 	public final AdvProcFilterPage adv;
 	private final JTF seatf = new JTF();
 	private final JTG advs = new JTG(MainLocale.PAGE, "advance");
+
+	private final JBTN fbtn = new JBTN("Any Form");
+	private final JTF ffrm = new JTF("4");
 
 	public UnitFLUPage(Page p, SaveData sdat, Limit lim, int price) {
 		super(p);
@@ -84,7 +84,7 @@ public class UnitFLUPage extends LubCont {
 		super.resized(x, y);
 		set(show, x, y, 250, 0, 150, 50);
 		set(advs, x, y, 400, 0, 150, 50);
-		set(seatf, x, y, 600, 0, 1000, 50);
+		set(seatf, x, y, 600, 0, 750, 50);
 
 		int[] coords = new int[]{50, 2200, 1150};
 		if (show.isSelected()) {
@@ -106,6 +106,16 @@ public class UnitFLUPage extends LubCont {
 		set(jsp, x, y, coords[0], 100, coords[1], coords[2]);
 		set(lub, x, y, 1650, 950, 600, 300);
 		ult.setRowHeight(size(x, y, 50));
+
+		if (ufb == null)
+			return;
+		if (ufb.frmf == -1) {
+			set(fbtn, x, y, 1350, 0, 300, 50);
+			set(ffrm, x, y, 0, 0, 0, 0);
+		} else {
+			set(fbtn, x, y, 1350, 0, 200, 50);
+			set(ffrm, x, y, 1550, 0, 100, 50);
+		}
 	}
 
 	private void addListeners() {

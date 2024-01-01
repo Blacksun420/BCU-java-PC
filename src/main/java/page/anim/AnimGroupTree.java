@@ -37,28 +37,7 @@ public class AnimGroupTree implements TreeExpansionListener {
     public void renewNodes() {
         nodes.removeAllChildren();
 
-        for(String key : AnimGroup.workspaceGroup.groups.keySet()) {
-            if(key.equals(""))
-                continue;
-            DefaultMutableTreeNode container = new DefaultMutableTreeNode(key);
-            ArrayList<AnimCE> anims = AnimGroup.workspaceGroup.groups.get(key);
-            if(anims == null)
-                continue;
-
-            for(AnimCE anim : anims)
-                if (required == null || anim.id.base.equals(required))
-                    container.add(new DefaultMutableTreeNode(anim));
-            nodes.add(container);
-        }
-        ArrayList<AnimCE> baseGroup = AnimGroup.workspaceGroup.groups.get("");
-        if(baseGroup != null && !baseGroup.isEmpty())
-            for(AnimCE anim : baseGroup) {
-                if (required != null && !anim.id.base.equals(required))
-                    continue;
-                DefaultMutableTreeNode animNode = new DefaultMutableTreeNode(anim);
-
-                nodes.add(animNode);
-            }
+        addPathNodes(required, true);
         if (required == null) {
             for (PackData.UserPack pack : UserProfile.getUserPacks())
                 if (pack.editable) {
@@ -75,6 +54,39 @@ public class AnimGroupTree implements TreeExpansionListener {
         }
         animTree.setModel(new DefaultTreeModel(nodes));
         animTree.setRowHeight(0);
+    }
+
+    public void addPathNodes(Source.BasePath path, boolean init) {
+        for(String key : AnimGroup.workspaceGroup.groups.keySet()) {
+            if(key.equals(""))
+                continue;
+            DefaultMutableTreeNode container = new DefaultMutableTreeNode(key);;
+            if (!init) {
+                for (int i = 0; i < nodes.getChildCount(); i++)
+                    if (((DefaultMutableTreeNode)nodes.getChildAt(i)).getUserObject().equals(key)) {
+                        container = (DefaultMutableTreeNode)nodes.getChildAt(i);
+                        break;
+                    }
+            }
+            ArrayList<AnimCE> anims = AnimGroup.workspaceGroup.groups.get(key);
+            if(anims == null)
+                continue;
+
+            for(AnimCE anim : anims)
+                if (path == null || anim.id.base.equals(path))
+                    container.add(new DefaultMutableTreeNode(anim));
+            if (init)
+                nodes.add(container);
+        }
+        ArrayList<AnimCE> baseGroup = AnimGroup.workspaceGroup.groups.get("");
+        if(baseGroup != null && !baseGroup.isEmpty())
+            for(AnimCE anim : baseGroup) {
+                if (path != null && !anim.id.base.equals(path))
+                    continue;
+                DefaultMutableTreeNode animNode = new DefaultMutableTreeNode(anim);
+
+                nodes.add(animNode);
+            }
     }
 
     public void addNode(DefaultMutableTreeNode node) {

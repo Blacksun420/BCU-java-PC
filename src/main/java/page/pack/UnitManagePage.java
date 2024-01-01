@@ -83,6 +83,7 @@ public class UnitManagePage extends DefaultPage {
 		super(p);
 		agt = new AnimGroupTree(jtd, Source.BasePath.ANIM);
 		agt.renewNodes();
+		agt.addPathNodes(Source.BasePath.SOUL, false);
 
 		pac = pack;
 		ini();
@@ -636,6 +637,8 @@ public class UnitManagePage extends DefaultPage {
 		if (pack != null && (pack.editable || (unedit && pack.desc.allowAnim))) {
 			DefaultMutableTreeNode container = new DefaultMutableTreeNode(pack.getSID());
 			for (AnimCI anim : pack.source.getAnims(Source.BasePath.ANIM))
+				container.add(new DefaultMutableTreeNode(anim));
+			for (AnimCI anim : pack.source.getAnims(Source.BasePath.SOUL))
 				container.add(new DefaultMutableTreeNode(anim));
 			if (container.getChildCount() > 0)
 				agt.addNode(container);
