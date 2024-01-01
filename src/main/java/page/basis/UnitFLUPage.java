@@ -1,8 +1,8 @@
 package page.basis;
 
+import common.CommonStatic;
 import common.battle.BasisSet;
 import common.pack.SaveData;
-import common.util.Data;
 import common.util.stage.Limit;
 import common.util.unit.AbForm;
 import page.*;
@@ -160,6 +160,26 @@ public class UnitFLUPage extends LubCont {
 				search(seatf.getText());
 			}
 		});
+
+		fbtn.setLnr(e -> {
+			if (ufb.frmf == -1) {
+				ufb.frmf = (byte) (CommonStatic.parseIntN(ffrm.getText()) - 1);
+				fbtn.setText("Max Form #");
+			} else {
+				ufb.frmf = ufb.rf ? -1 : ufb.frmf;
+				ufb.rf = !ufb.rf;
+				fbtn.setText(ufb.frmf == -1 ? "Any Form" : "Form #");
+			}
+			ufb.callBack(null);
+			fireDimensionChanged();
+		});
+
+		ffrm.setLnr(e -> {
+			byte ind = (byte) (Math.max(Math.min(128, CommonStatic.parseIntN(ffrm.getText())), 1) - 1);
+			ufb.frmf = ind;
+			ffrm.setText(String.valueOf(ind + 1));
+			ufb.callBack(null);
+		});
 	}
 
 	protected void search(String text) {
@@ -175,6 +195,8 @@ public class UnitFLUPage extends LubCont {
 		add(jsp);
 		add(lub);
 		add(seatf);
+		add(fbtn);
+		add(ffrm);
 		seatf.setHintText(get(MainLocale.PAGE,"search"));
 		add(advs);
 		assignSubPage(adv);
