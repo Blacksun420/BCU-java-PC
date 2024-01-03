@@ -441,40 +441,51 @@ public class GLGraphics implements GeoAuto {
 			return;
 		int mode = comp.mode;
 		comp.done = true;
-		if (mode == DEF) {
-			// sC *sA + dC *(1-sA)
-			g.glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-			g.glUniform1i(tm.mode, 0);
-		}
-		if (mode == TRANS) {
-			g.glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-			g.glUniform1i(tm.mode, 1);
-			g.glUniform1f(tm.para, comp.p0 * 1f / 256);
-		}
-		if (mode == BLEND) {
-			g.glUniform1f(tm.para, comp.p0 * 1f / 256);
-			if(comp.p1 == -1) {
-				g.glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
-			}
-			if (comp.p1 == 0) {
+		switch (mode) {
+			case DEF:
+				// sC *sA + dC *(1-sA)
+				g.glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+				g.glUniform1i(tm.mode, 0);
+				break;
+			case TRANS:
 				g.glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 				g.glUniform1i(tm.mode, 1);
-			} else if (comp.p1 == 1) {// d+s*a
-				g.glBlendFunc(GL_ONE, GL_ONE);
-				g.glUniform1i(tm.mode, 1);// sA=sA*p
-			} else if (comp.p1 == 2) {// d*(1-a+s*a)
-				g.glBlendFunc(GL_ZERO, GL_SRC_COLOR);
-				g.glUniform1i(tm.mode, 2);// sA=sA*p, sC=1-sA+sC*sA
-			} else if (comp.p1 == 3) {// d+(1-d)*s*a
-				g.glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
-				g.glUniform1i(tm.mode, 1);// sA=sA*p
-			} else if (comp.p1 == -1) {// d-s*a
-				g.glBlendFunc(GL_ONE, GL_ONE);
-				g.glUniform1i(tm.mode, 1);// sA=-sA*p
-			} else if (comp.p1 == -2) {
-				g.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-				g.glUniform1i(tm.mode, 1);
-			}
+				g.glUniform1f(tm.para, comp.p0 * 1f / 256);
+				break;
+			case BLEND:
+				g.glUniform1f(tm.para, comp.p0 * 1f / 256);
+				switch (comp.p1) {
+					case 0:
+						g.glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+						g.glUniform1i(tm.mode, 1);
+						break;
+					case 1:// d+s*a
+						g.glBlendFunc(GL_ONE, GL_ONE);
+						g.glUniform1i(tm.mode, 1);// sA=sA*p
+						break;
+					case 2:// d*(1-a+s*a)
+						g.glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+						g.glUniform1i(tm.mode, 2);// sA=sA*p, sC=1-sA+sC*sA
+						break;
+					case 3:// d+(1-d)*s*a
+						g.glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
+						g.glUniform1i(tm.mode, 1);// sA=sA*p
+						break;
+					case -1:// d-s*a
+						g.glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
+						g.glBlendFunc(GL_ONE, GL_ONE);
+						g.glUniform1i(tm.mode, 1);// sA=-sA*p
+						break;
+					case -2:// sA=-sA*p
+						g.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+						g.glUniform1i(tm.mode, 1);
+						break;
+				}
+				break;
+			case MASK:
+				g.glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+				g.glUniform1i(tm.mode, 4);
+				g.glUniform4f(tm.solid, 0f, 0f, 0f, comp.p0 / 256f);
 		}
 	}
 

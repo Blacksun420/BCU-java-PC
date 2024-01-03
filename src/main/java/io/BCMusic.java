@@ -316,14 +316,8 @@ public class BCMusic extends Data {
 	}
 
 	private static void loadSound(int ind, byte[] bytes) throws Exception {
-		ArrayDeque<BCPlayer> clips = sounds.get(ind);
-
-		if (clips == null) {
-			clips = new ArrayDeque<>();
-			sounds.put(ind, clips);
-		}
-
-		BCPlayer player = clips.poll();
+        ArrayDeque<BCPlayer> clips = sounds.computeIfAbsent(ind, k -> new ArrayDeque<>());
+        BCPlayer player = clips.poll();
 
 		if (player != null) {
 			player.rewind();

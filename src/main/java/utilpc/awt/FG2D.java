@@ -136,15 +136,23 @@ public class FG2D implements FakeGraphics {
 
 	@Override
 	public void setComposite(int mode, int p0, int p1) {
-		if (mode == DEF)
-			g.setComposite(comp);
-		if (mode == TRANS)
-			g.setComposite(AlphaComposite.getInstance(SRC_OVER, (float) (p0 / 256.0)));
-		if (mode == BLEND)
-			g.setComposite(new Blender(p0, p1));
-		if (mode == GRAY)
-			g.setComposite(new Converter(p0));
-
+		switch (mode) {
+			case DEF:
+				g.setComposite(comp);
+				break;
+			case TRANS:
+				g.setComposite(AlphaComposite.getInstance(SRC_OVER, (float) (p0 / 256.0)));
+				break;
+			case BLEND:
+				g.setComposite(new Blender(p0, p1));
+				break;
+			case GRAY:
+				g.setComposite(new Converter(p0));
+				break;
+			case MASK:
+				g.setComposite(new Masker(p0));
+				break;
+		}
 	}
 
 	@Override

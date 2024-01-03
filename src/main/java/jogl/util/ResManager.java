@@ -10,6 +10,7 @@ import jogl.GLStatic;
 import main.MainBCU;
 import org.apache.commons.io.IOUtils;
 
+import java.io.InputStream;
 import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.charset.Charset;
@@ -34,14 +35,18 @@ public class ResManager {
 
 	private static String load(String name) throws IOException {
 		String path = (MainBCU.WRITE ? "src/" : "") + "jogl/util/shader/" + name;
-		List<String> ls = IOUtils.readLines(ClassLoader.getSystemResourceAsStream(path), Charset.defaultCharset());
-		String source = "";
+		InputStream stream = ClassLoader.getSystemResourceAsStream(path);
+		if (stream == null)
+			throw new IOException("Failed to get resource : " + path);
+		List<String> ls = IOUtils.readLines(stream, Charset.defaultCharset());
+
+		StringBuilder source = new StringBuilder();
 		for (String str : ls)
-			source += str;
-		return source;
+			source.append(str);
+		return source.toString();
 	}
 
-	protected int mode, para, prog;
+	protected int mode, para, prog, solid;
 
 	private final GL2 gl;
 
@@ -123,6 +128,8 @@ public class ResManager {
 		gl.glLinkProgram(prog);
 		mode = gl.glGetUniformLocation(prog, "mode");
 		para = gl.glGetUniformLocation(prog, "para");
+		solid = gl.glGetUniformLocation(prog, "solid");
+
 	}
 
 	private void readShader$1() {
@@ -140,6 +147,7 @@ public class ResManager {
 		prog = sp0.program();
 		mode = gl.glGetUniformLocation(prog, "mode");
 		para = gl.glGetUniformLocation(prog, "para");
+		solid = gl.glGetUniformLocation(prog, "solid");
 	}
 
 	private void setupShader(GL2 gl) {

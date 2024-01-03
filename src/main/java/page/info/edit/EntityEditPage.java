@@ -20,6 +20,7 @@ import common.util.pack.Background;
 import common.util.pack.EffAnim;
 import common.util.pack.Soul;
 import common.util.stage.Music;
+import common.util.unit.AbUnit;
 import common.util.unit.Enemy;
 import common.util.unit.Form;
 import common.util.unit.Unit;
@@ -180,6 +181,15 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		} else
 			ans = new UnitFindPage(this, true, pack);
 
+		sup = ans;
+		return ans;
+	}
+
+	@Override
+	public SupPage<AbUnit> getUnitSup(IdEditor<?> edi) {
+		editor = edi;
+
+		SupPage<AbUnit> ans = new UnitFindPage(this, true, pack);
 		sup = ans;
 		return ans;
 	}

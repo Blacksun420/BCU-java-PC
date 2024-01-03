@@ -23,7 +23,6 @@ import common.util.pack.EffAnim;
 import common.util.pack.bgeffect.BackgroundEffect;
 import common.util.stage.CastleImg;
 import common.util.unit.AbForm;
-import common.util.unit.EForm;
 import main.MainBCU;
 import page.MainLocale;
 import page.RetFunc;
@@ -163,7 +162,7 @@ public interface BattleBox {
 				sb.registerBattleDimension(midY, h / minSiz);
 
 			if(CommonStatic.getConfig().twoRow)
-				midY += (h * 0.75 / 10.0);
+				midY += (h * 0.75f / 10.0f);
 
 			if(CommonStatic.getConfig().drawBGEffect && sb.bgEffect != null) {
 				sb.bgEffect.preDraw(g, setP(sb.pos, y), bf.sb.siz, midY);
@@ -234,9 +233,9 @@ public interface BattleBox {
 			midh = h + (int) (groundHeight * (bf.sb.siz - maxSiz) / (maxSiz - minSiz));
 
 			if(CommonStatic.getConfig().twoRow)
-				midh -= h * 0.75 / 10.0;
+				midh -= (int) (h * 0.75f / 10.0f);
 
-			midh += sb.shakeOffset;
+			midh = (int) (midh + sb.shakeOffset);
 		}
 
 		public void reset() {
@@ -249,7 +248,7 @@ public interface BattleBox {
 
 			sb.pos += w;
 
-			bf.sb.siz *= Math.pow(exp, s);
+			bf.sb.siz = (float) (bf.sb.siz * Math.pow(exp, s));
 
 			if(bf.sb.siz * minH > h)
 				bf.sb.siz = maxSiz;
@@ -314,7 +313,7 @@ public interface BattleBox {
 			corr = hr = Math.min(r, hr);
 			int ih = (int) (hr * left.getHeight());
 			int iw = (int) (hr * left.getWidth());
-			h += (box.getHeight() * 0.02 * bf.endFrames);
+			h += (int) (box.getHeight() * 0.02 * bf.endFrames);
 			g.drawImage(left, - BOTTOM_GAP * hr, h - ih, iw, ih);
 			iw = (int) (hr * right.getWidth());
 			ih = (int) (hr * right.getHeight());
@@ -377,9 +376,9 @@ public interface BattleBox {
 			if (sb.unitRespawnTime <= 1 || (!CommonStatic.getConfig().twoRow && sb.changeFrame != -1))
 				return;
 			if (termh == -1)
-				g.colRect((w - iw * 5) / 2 + (int)(term * -2 - term / 2), (int)(h - ih * 1.15), (int) (iw * 5 + term * 5), (int) (ih * 1.3), 255, 0, 0, 128);
+				g.colRect((w - iw * 5) / 2f + (int)(term * -2 - term / 2), (int)(h - ih * 1.15), (int) (iw * 5 + term * 5), (int) (ih * 1.3), 255, 0, 0, 128);
 			else
-				g.colRect((w - iw * 5) / 2 + (int)(term * -2 - term / 2), (int)(h - 2 * (ih + termh) - termh / 2), (int) (iw * 5 + term * 5), (int) (ih * 2 + termh * 2), 255, 0, 0, 128);
+				g.colRect((w - iw * 5) / 2f + (int)(term * -2 - term / 2), (int)(h - 2 * (ih + termh) - termh / 2), (int) (iw * 5 + term * 5), (int) (ih * 2 + termh * 2), 255, 0, 0, 128);
 			//Draw remaining time
 			FakeImage separator = aux.timer[10].getImg();
 			FakeImage m;
@@ -391,12 +390,12 @@ public interface BattleBox {
 			int mw = w / 2;
 			for(int i = 0; i < time.length(); i++) {
 				if((time.charAt(i)) == '.' || (time.charAt(i)) == ',') {
-					mw -= separator.getWidth() * hr / 2;
+					mw = (int) (mw - separator.getWidth() * hr / 2);
 				} else {
 					int index = Character.getNumericValue(time.charAt(i));
 					if (index == -1)
 						throw new IllegalStateException("Invalid index : " + index + " | Tried to convert char : " + time.charAt(i));
-					mw -= aux.timer[index].getImg().getWidth() * hr / 2;
+					mw = (int) (mw - aux.timer[index].getImg().getWidth() * hr / 2);
 				}
 			}
 			P p = P.newP(mw, termh == -1 ? (int)(h - ih * 0.85) : (int)(h - 1.5 * (ih + termh / 2)));
@@ -448,12 +447,12 @@ public interface BattleBox {
 					if(sb.selectedUnit[0] != -1 && sb.selectedUnit[0] == i && sb.selectedUnit[1] == j) {
 						switch (sb.buttonDelay) {
 							case 3:
-								imw *= 0.95;
-								imh *= 0.95;
+								imw = (int) (imw * 0.95);
+								imh = (int) (imw * 0.95);
 								break;
 							case 4:
-								imw *= 1.05;
-								imh *= 1.05;
+								imw = (int) (imw * 1.05);
+								imh = (int) (imw * 1.05);
 						}
 					}
 
@@ -466,11 +465,27 @@ public interface BattleBox {
 						continue;
 
 					int pri = sb.elu.price[i][j];
-					if (sb.elu.readySpirit(i,j)) {
-						g.colRect(x, y, iw, ih, 128, 225, 255, 100);
-						g.drawImage(StageNamePainter.summon, x - (imw - iw * 1.25f) / 2f, y - (imh - ih / 0.6f) / 2f, imw * 1.5f, imh * 0.6f);
-					} else if (pri == -1 || (sb.elu.validSpirit(i,j)))
+					if (pri == -1)
 						g.colRect(x, y, iw, ih, 255, 0, 0, 100);
+					else if (sb.elu.readySpirit(i,j)) {
+						if (sb.time - sb.elu.sGlow[i][j] % 8 < 4)
+							g.colRect((int) (x - (imw - iw) / 2.0), (int) (y - (imh - ih) / 2.0), imw, imh, 30, 92, 123, 100);
+						else
+							g.colRect((int) (x - (imw - iw) / 2.0), (int) (y - (imh - ih) / 2.0), imw, imh, 50, 153, 205, 100);
+
+						FakeImage summonText = aux.spiritSummon[Res.decideLocale()].getImg();
+						int stw = (int) (summonText.getWidth() * hr);
+						int sth = (int) (summonText.getHeight() * hr);
+
+						g.drawImage(summonText, (int) (x + (iw - stw) / 2.0), (int) (y + (ih - sth) / 2.0), stw, sth);
+						int alpha = (int) (64 * (-0.5 * Math.cos(Math.PI / 15 * (sb.elu.sGlow[i][j] - sb.time)) + 0.5));
+
+						g.setComposite(FakeGraphics.MASK, alpha, 0);
+						g.drawImage(summonText, (int) (x + (iw - stw) / 2.0), (int) (y + (ih - sth) / 2.0), stw, sth);
+						g.setComposite(FakeGraphics.DEF, 0, 0);
+					} else if (sb.elu.validSpirit(i,j))
+						g.colRect((int) (x - (imw - iw) / 2.0), (int) (y - (imh - ih) / 2.0), imw, imh, 64, 0, 0, 160);
+
 					int cool = sb.elu.cool[i][j];
 					boolean b = pri > sb.money || cool > 0;
 					if (b)
@@ -484,8 +499,8 @@ public interface BattleBox {
 						int xw = (int) (cd * (iw - dw * 2));
 						g.colRect(x + iw - dw - xw, y + ih - dh * 2, xw, dh, 0, 0, 0, -1);
 						g.colRect(x + dw, y + ih - dh * 2, iw - dw * 2 - xw, dh, 100, 212, 255, -1);
-					} else
-						Res.getCost(pri == -1 ? -1 : pri / 100, !b, setSym(g, hr, x + iw * 1.05f, y + ih * 1.05f, 3));
+					} else if (pri != -1 && !(sb.elu.validSpirit(i,j) && !sb.elu.readySpirit(i,j)))
+						Res.getCost(pri / 100, !b, setSym(g, hr, x + iw * 1.05f, y + ih * 1.05f, 3));
 				}
 			}
 		}
@@ -508,12 +523,12 @@ public interface BattleBox {
 				if(sb.selectedUnit[0] != -1 && sb.selectedUnit[0] == index && sb.selectedUnit[1] == i) {
 					switch (sb.buttonDelay) {
 						case 3:
-							imw *= 0.95;
-							imh *= 0.95;
+							imw = (int) (imw * 0.95);
+							imh = (int) (imh * 0.95);
 							break;
 						case 4:
-							imw *= 1.05;
-							imh *= 1.05;
+							imw = (int) (imw * 1.05);
+							imh = (int) (imh * 1.05);
 					}
 				}
 
@@ -524,12 +539,10 @@ public interface BattleBox {
 				if(sb.changeFrame != -1) {
 					if(sb.changeFrame >= sb.changeDivision) {
 						float dis = isBehind ? ih * 0.5f : sb.goingUp ? ih * 0.4f : ih * 0.6f;
-
-						y += (dis / sb.changeDivision) * (sb.changeDivision * 2 - sb.changeFrame) * (isBehind ? 1 : -1) * (sb.goingUp ? 1 : -1);
+						y = (int) (y + (dis / sb.changeDivision) * (sb.changeDivision * 2 - sb.changeFrame) * (isBehind ? 1 : -1) * (sb.goingUp ? 1 : -1));
 					} else {
 						float dis = isBehind ? ih * 0.5f : sb.goingUp ? ih * 0.6f : ih * 0.4f;
-
-						y +=  (dis - (dis / sb.changeDivision) * (sb.changeDivision - sb.changeFrame)) * (isBehind ? -1 : 1) * (sb.goingUp ? 1 : -1);
+						y = (int) (y + (dis - (dis / sb.changeDivision) * (sb.changeDivision - sb.changeFrame)) * (isBehind ? -1 : 1) * (sb.goingUp ? 1 : -1));
 					}
 				}
 
@@ -537,11 +550,27 @@ public interface BattleBox {
 				if (f == null)
 					continue;
 				int pri = sb.elu.price[index][i];
-				if (sb.elu.readySpirit(index,i)) {
-					g.colRect(x, y, iw, ih, 128, 225, 255, 100);
-					g.drawImage(StageNamePainter.summon, x - (imw - iw * 1.1f) / 2f, y - (imh - ih / 0.65f) / 2f, imw * 2.2f, imh * 0.575f);
-				} else if (pri == -1 || (sb.elu.validSpirit(index,i)))
+				if (pri == -1)
 					g.colRect(x, y, iw, ih, 255, 0, 0, 100);
+				else if (sb.elu.readySpirit(index,i)) {
+					if (sb.time - sb.elu.sGlow[index][i] % 8 < 4)
+						g.colRect((int) (x - (imw - iw) / 2.0), (int) (y - (imh - ih) / 2.0), imw, imh, 30, 92, 123, 100);
+					else
+						g.colRect((int) (x - (imw - iw) / 2.0), (int) (y - (imh - ih) / 2.0), imw, imh, 50, 153, 205, 100);
+
+					FakeImage summonText = aux.spiritSummon[Res.decideLocale()].getImg();
+					int stw = (int) (summonText.getWidth() * hr);
+					int sth = (int) (summonText.getHeight() * hr);
+
+					g.drawImage(summonText, (int) (x + (iw - stw) / 2.0), (int) (y + (ih - sth) / 2.0), stw, sth);
+					int alpha = (int) (64 * (-0.5 * Math.cos(Math.PI / 15 * (sb.elu.sGlow[index][i] - sb.time)) + 0.5));
+
+					g.setComposite(FakeGraphics.MASK, alpha, 0);
+					g.drawImage(summonText, (int) (x + (iw - stw) / 2.0), (int) (y + (ih - sth) / 2.0), stw, sth);
+					g.setComposite(FakeGraphics.DEF, 0, 0);
+				} else if (sb.elu.validSpirit(index,i))
+					g.colRect((int) (x - (imw - iw) / 2.0), (int) (y - (imh - ih) / 2.0), imw, imh, 64, 0, 0, 160);
+
 				int cool = sb.elu.cool[index][i];
 				boolean b = isBehind || pri > sb.money || cool > 0;
 				if (b)
@@ -556,8 +585,8 @@ public interface BattleBox {
 						int xw = (int) (cd * (iw - dw * 2));
 						g.colRect(x + iw - dw - xw, y + ih - dh * 2, xw, dh, 0, 0, 0, -1);
 						g.colRect(x + dw, y + ih - dh * 2, iw - dw * 2 - xw, dh, 100, 212, 255, -1);
-					} else
-						Res.getCost(pri == -1 ? -1 : pri / 100, !b, setSym(g, hr, x + iw, y + ih, 3));
+					} else if (pri != -1 && !(sb.elu.validSpirit(index,i) && !sb.elu.readySpirit(index,i)))
+						Res.getCost(pri / 100, !b, setSym(g, hr, x + iw, y + ih, 3));
 				}
 			}
 		}
@@ -645,16 +674,16 @@ public interface BattleBox {
 			int posx = (int) ((sb.ebase.pos * ratio + off) * bf.sb.siz + sb.pos);
 
 			if (sb.ebase instanceof Entity && ((Entity) sb.ebase).data instanceof DataEnemy) {
-				posx -= castw * bf.sb.siz / 2;
+				posx = (int) (posx - castw * bf.sb.siz / 2);
 
 				AnimU<?> anim = ((Entity) sb.ebase).data.getPack().anim;
 				if(anim != null && anim.mamodel.confs.length > 1) {
-					posx += anim.mamodel.confs[1][2] * 2.5 * anim.mamodel.parts[0][8] / anim.mamodel.ints[0] * bf.sb.siz * ratio;
-					posy += anim.mamodel.confs[1][3] * 2.5 * anim.mamodel.parts[0][9] / anim.mamodel.ints[0] * bf.sb.siz * ratio;
+					posx = (int) (posx + anim.mamodel.confs[1][2] * 2.5 * anim.mamodel.parts[0][8] / anim.mamodel.ints[0] * bf.sb.siz * ratio);
+					posy = (int) (posy + anim.mamodel.confs[1][3] * 2.5 * anim.mamodel.parts[0][9] / anim.mamodel.ints[0] * bf.sb.siz * ratio);
 				}
 			} else {
-				posx -= castw * bf.sb.siz * 1.15;
-				posy -= casth * bf.sb.siz * 0.95 + aux.num[5][0].getImg().getHeight() * bf.sb.siz;
+				posx = (int) (posx - castw * bf.sb.siz * 1.15);
+				posy = (int) (posy - casth * bf.sb.siz * 0.95 + aux.num[5][0].getImg().getHeight() * bf.sb.siz);
 			}
 
 			Res.getBase(sb.ebase, setSym(gra, bf.sb.siz * 0.8f, posx, posy, 0), bf.sb.st.trail);
@@ -683,7 +712,7 @@ public interface BattleBox {
 
 				int dep = e.layer * DEP;
 
-				while(efList.size() > 0) {
+				while(!efList.isEmpty()) {
 					ContAb wc = efList.getFirst();
 
 					if(wc.layer + 1 <= e.layer) {
@@ -785,7 +814,7 @@ public interface BattleBox {
 				}
 			}
 
-			while(efList.size() > 0) {
+			while(!efList.isEmpty()) {
 				drawEff(gra, efList.getFirst(), at, psiz);
 				efList.pop();
 			}
@@ -1000,7 +1029,7 @@ public interface BattleBox {
 
 			int min = (int) timeLeft / 60;
 
-			timeLeft -= min * 60.0;
+			timeLeft = (float) (timeLeft - (min * 60.0));
 
 			FakeImage separator = aux.timer[10].getImg();
 			FakeImage zero = aux.timer[0].getImg();
@@ -1106,7 +1135,7 @@ public interface BattleBox {
 	}
 
 	class StageNamePainter {
-		private static FakeImage deploy, summon;
+		private static FakeImage deploy;
 		private final FakeImage img;
 		private static Font font;
 		private static final float strokeWidth = 12f;
@@ -1124,7 +1153,6 @@ public interface BattleBox {
 
 				font = Font.createFont(Font.TRUETYPE_FONT, f).deriveFont(102f);
 				deploy = new StageNamePainter(MainLocale.getLoc(MainLocale.UTIL, "nodeploy")).img;
-				summon = new StageNamePainter(MainLocale.getLoc(MainLocale.UTIL, "smn")).img;
 			} catch (Exception e) {
 				System.out.println("Failed to initialize font");
 				e.printStackTrace();
@@ -1132,7 +1160,7 @@ public interface BattleBox {
 		}
 
 		public StageNamePainter(String str) {
-			BufferedImage result = font != null && str.length() != 0 ? generateImage(str) : null;
+			BufferedImage result = font != null && !str.isEmpty() ? generateImage(str) : null;
 			if (result != null)
 				img = MainBCU.builder.build(result);
 			else
@@ -1308,7 +1336,7 @@ public interface BattleBox {
 
 				GlyphVector glyph = font.createGlyphVector(frc, str);
 
-				w += glyph.getVisualBounds().getWidth() + 4;
+				w = (float) (w + glyph.getVisualBounds().getWidth() + 4);
 			}
 
 			return w - 4;
@@ -1330,7 +1358,7 @@ public interface BattleBox {
 				res[1] = Math.min(res[1], result[1]);
 			}
 
-			res[1] *= -1.0;
+			res[1] *= -1f;
 
 			return res;
 		}

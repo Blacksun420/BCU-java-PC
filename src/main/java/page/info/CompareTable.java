@@ -211,7 +211,7 @@ public class CompareTable extends Page {
             hp = (int)(Math.round(hp * mul) * b.t().getDefMulti());
             if (mu.getPCoin() != null)
                 hp = (int) (hp * mu.getPCoin().getStatMultiplication(Data.PC2_HP, multi.getTalents()));
-            spTraits.addIf(DefTraits.subList(Data.TRAIT_EVA, Data.TRAIT_BEAST + 1), e -> trs.contains(e));
+            spTraits.addIf(DefTraits.subList(Data.TRAIT_EVA, Data.TRAIT_INFH), e -> trs.contains(e));
 
             EForm ef = new EForm(f, multi);
             unit[0].setText(MainBCU.convertTime(b.t().getFinRes(mu.getRespawn())));
@@ -264,7 +264,7 @@ public class CompareTable extends Page {
             preString.append(MainBCU.convertTime(atkDatum.getPre()));
 
             int effectiveDMG = att;
-            if (traits.size() > 0 && me.getProc().DMGINC.mult != 0)
+            if (!traits.isEmpty() && me.getProc().DMGINC.mult != 0)
                 effectiveDMG *= isEnemy ? me.getProc().DMGINC.mult/100.0 : b.t().getATK(me.getProc().DMGINC.mult, traits);
 
             if (spTraits.contains(DefTraits.get(Data.TRAIT_WITCH)) && (me.getAbi() & Data.AB_WKILL) > 0)
@@ -275,13 +275,15 @@ public class CompareTable extends Page {
                 effectiveDMG *= 1.6;
             if (spTraits.contains(DefTraits.get(Data.TRAIT_BEAST)) && me.getProc().BSTHUNT.type.active)
                 effectiveDMG *= 2.5;
+            if (spTraits.contains(DefTraits.get(Data.TRAIT_SAGE)) && (me.getAbi() & Data.AB_SKILL) > 0)
+                effectiveDMG = (int)(effectiveDMG * Data.SUPER_SAGE_HUNTER_ATTACK);
             if (effectiveDMG != att)
                 atkString.append(" (").append(effectiveDMG).append(")");
             atk += att;
             eatk += effectiveDMG;
         }
         int effectiveHP = hp;
-        if (traits.size() > 0 && me.getProc().DEFINC.mult != 0)
+        if (!traits.isEmpty() && me.getProc().DEFINC.mult != 0)
             effectiveHP /= isEnemy ? 100.0/me.getProc().DEFINC.mult : b.t().getDEF(me.getProc().DEFINC.mult, traits, traits, null, (Level) Lvl);
 
         if (spTraits.contains(DefTraits.get(Data.TRAIT_WITCH)) && (me.getAbi() & Data.AB_WKILL) > 0)
@@ -292,6 +294,8 @@ public class CompareTable extends Page {
             effectiveHP /= 0.7;
         if (spTraits.contains(DefTraits.get(Data.TRAIT_BEAST)) && me.getProc().BSTHUNT.type.active)
             effectiveHP /= 0.6;
+        if (spTraits.contains(DefTraits.get(Data.TRAIT_SAGE)) && (me.getAbi() & Data.AB_SKILL) > 0)
+            effectiveHP = (int)(effectiveHP * Data.SUPER_SAGE_HUNTER_HP);
 
         if (effectiveHP > hp)
             main[0].setText(hp + " (" + effectiveHP + ")");

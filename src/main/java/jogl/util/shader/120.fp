@@ -5,6 +5,8 @@ uniform sampler2D tex;
 uniform int mode;
 uniform float para;
 
+uniform vec4 solid;
+
 void main() {
 	vec4 c = texture2D(tex,texp);
 	if(mode == 1) {
