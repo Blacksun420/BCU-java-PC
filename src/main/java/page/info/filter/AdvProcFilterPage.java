@@ -5,6 +5,7 @@ import common.util.Data.Proc;
 import common.util.lang.Editors;
 import common.util.pack.Background;
 import common.util.stage.Music;
+import common.util.unit.AbUnit;
 import page.Page;
 import page.SupPage;
 import page.basis.UnitFLUPage;
@@ -79,6 +80,11 @@ public class AdvProcFilterPage extends Page implements EntSupInt {
         if (isUnit)
             return new UnitFindPage(this, true);
         return new EnemyFindPage(this, true);
+    }
+
+    @Override
+    public SupPage<AbUnit> getUnitSup(SwingEditor.IdEditor<?> edi) {
+        return new UnitFindPage(this, true);
     }
 
     public boolean compare(Proc proc) {

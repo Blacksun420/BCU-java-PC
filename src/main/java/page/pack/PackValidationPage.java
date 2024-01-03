@@ -5,26 +5,19 @@ import common.util.Data;
 import common.util.anim.AnimCI;
 import common.util.anim.AnimD;
 import common.util.pack.Soul;
-import common.util.unit.AbEnemy;
-import common.util.unit.Enemy;
-import common.util.unit.Form;
-import common.util.unit.Unit;
+import common.util.unit.*;
 import kotlin.Pair;
-import page.JBTN;
-import page.JL;
-import page.MainLocale;
-import page.Page;
+import page.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.Vector;
 
-public class PackValidationPage extends Page {
+public class PackValidationPage extends DefaultPage {
     private static final long serialVersionUID = 1L;
 
     private final List<Pair<Object, List<String>>> data;
-    private final JBTN back = new JBTN(MainLocale.PAGE, "back");
 
     private final JL animationTitle = new JL();
 
@@ -36,7 +29,6 @@ public class PackValidationPage extends Page {
 
     protected PackValidationPage(Page p, List<Pair<Object, List<String>>> data) {
         super(p);
-
         this.data = data;
 
         initialize();
@@ -44,29 +36,22 @@ public class PackValidationPage extends Page {
 
     @Override
     protected void resized(int x, int y) {
-        setBounds(0, 0, x, y);
+        super.resized(x, y);
 
-        set(back, x, y, 0, 0, 200, 50);
         set(scroll, x, y, 50, 100, 300, 1100);
         set(animationTitle, x, y, 400, 100, 600, 50);
         set(fileScroll, x, y, 400, 150, 600, 1050);
     }
 
-    @Override
-    protected JButton getBackButton() {
-        return back;
-    }
-
     private void initialize() {
-        add(back);
         add(scroll);
         add(animationTitle);
         add(fileScroll);
 
         Vector<Object> containerData = new Vector<>();
 
-        for (int i = 0; i < data.size(); i++) {
-            containerData.add(data.get(i).getFirst());
+        for (Pair<Object, List<String>> datum : data) {
+            containerData.add(datum.getFirst());
         }
 
         list.setListData(containerData);
@@ -84,7 +69,7 @@ public class PackValidationPage extends Page {
                     String name = ((Form) value).names.toString();
 
                     if (name.isEmpty() && ((Form) value).unit != null) {
-                        Identifier<Unit> id = ((Form) value).unit.id;
+                        Identifier<AbUnit> id = ((Form) value).unit.id;
 
                         name = id.pack + " - " + Data.trio(id.id) + " - " + Data.trio(((Form) value).fid);
                     }
@@ -123,8 +108,6 @@ public class PackValidationPage extends Page {
         });
 
         list.addListSelectionListener(event -> setPair(findPair(list.getSelectedValue())));
-
-        back.setLnr(x -> changePanel(getFront()));
     }
 
     private void setPair(Pair<Object, List<String>> pair) {
@@ -179,9 +162,9 @@ public class PackValidationPage extends Page {
         if (key == null)
             return null;
 
-        for (int i = 0; i < data.size(); i++) {
-            if (data.get(i).getFirst().equals(key))
-                return data.get(i);
+        for (Pair<Object, List<String>> datum : data) {
+            if (datum.getFirst().equals(key))
+                return datum;
         }
 
         return null;
