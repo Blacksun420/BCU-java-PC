@@ -568,5 +568,4 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 			mmt.renew();
 		});
 	}
-
 }

@@ -17,5 +17,9 @@ void main() {
 	}
 	else if(mode == 3)
 		c.a*=para;
+    else if (mode == 4) {
+        c.xyz = solid.xyz * solid.a * c.a;
+        c.a *= solid.a;
+    }
 	gl_FragColor=c;
 }

@@ -25,5 +25,9 @@ void main() {
 	}
 	else if(mode == 3)
 		c.a*=para;
+    else if (mode == 4) {
+        c.xyz = solid.xyz * c.a;
+        c.a *= solid.a;
+    }
 	mgl_FragColor=c;
 }

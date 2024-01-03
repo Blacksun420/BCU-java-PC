@@ -146,5 +146,4 @@ public abstract class ProcTable extends Page {
 		setFocusTraversalPolicy(ljp);
 		setFocusCycleRoot(true);
 	}
-
 }
