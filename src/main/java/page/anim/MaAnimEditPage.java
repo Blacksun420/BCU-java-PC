@@ -3,11 +3,13 @@ package page.anim;
 import common.CommonStatic;
 import common.pack.PackData;
 import common.pack.UserProfile;
+import common.system.P;
 import common.util.anim.*;
 import main.Opts;
 import page.*;
 import page.support.AnimTreeRenderer;
 import page.support.TreeNodeExpander;
+import plugin.ui.main.util.MenuBarHandler;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -141,43 +143,87 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		});
 	}
 
-	/*private P realScale(int[] part, boolean ignoreFirst) { // this is kinda finicky, but it works enough
-		P scale = ignoreFirst ? new P(1.0, 1.0) : new P(part[8] / 1000.0, part[9] / 1000.0);
+	private P realScale(int[] part, boolean ignoreFirst) { // this is kinda finicky, but it works enough
+		P scale = ignoreFirst ? new P(1f, 1f) : new P(part[8] / 1000f, part[9] / 1000f);
 		if (part[0] != -1)
 			scale.times(realScale(maet.anim.mamodel.parts[part[0]], false));
 		return scale;
 	}
 
-	private int getAngle(int[] part, boolean ignoreDef) {
-		int a = ignoreDef ? 0 : part[10];
-		if (part[0] != -1)
-			a += getAngle(maet.anim.mamodel.parts[part[0]], false);
+	private int getAngle(EPart part, boolean ignoreDef) {
+		int a = ignoreDef ? 0 : (int)part.getVal(11);
+		if (part.getPar() != -1)
+			a += getAngle(part.getParts()[part.getPar()], false);
 		return a;
-	}*/
+	}
 
 	@Override
 	protected void mouseDragged(MouseEvent e) {
 		if (p == null)
 			return;
-		AnimBox.ori.x += p.x - e.getX();
-		AnimBox.ori.y += p.y - e.getY();
-		p = e.getPoint();
-		int row = maet.getSelectedRow();
-		int[] parts = mpet.getSelectedRows();
-		int index = 0;
-		int mod = row == -1 ? -1 : maet.ma.parts[row].ints[1];
-		if (mod == 4 || mod == 5 || mod == 6 || mod == 7)
-			index = mod;
-		if (!e.isShiftDown() && index != 0 && parts.length != 0) {
-			dragged = true;
-			Point p0 = ab.getPoint(p);
-			Point p1 = ab.getPoint(p = e.getPoint());
 
-			int[][] cells = mpet.part.moves;
-		} else {
+		int[] rows = maet.getSelectedRows();
+		boolean undraggable = !pause || rows.length == 0 || e.isShiftDown();
+		if (!undraggable) {
+			for (int i = 0; i < rows.length; i++)
+				if (maet.ma.parts[i].ints[1] < 4 || (maet.ma.parts[i].ints[1] >= 8 && maet.ma.parts[i].ints[1] != 11))
+					rows[i] = -1;
+			undraggable = true;
+			for (int ind : rows)
+				if (ind != -1) {
+					undraggable = false;
+					break;
+				}
+		}
+		if (undraggable) {
 			AnimBox.ori.x += p.x - e.getX();
 			AnimBox.ori.y += p.y - e.getY();
 			p = e.getPoint();
+		} else {
+			Point p0 = ab.getPoint(p);
+			Point p1 = ab.getPoint(p = e.getPoint());
+
+			int currow = mpet.getSelectedRow();
+			int t = (int)ab.getEntity().ind();
+			for (int ind : rows) {
+				if (ind == -1)
+					continue;
+				Part pt = maet.ma.parts[ind];
+				if (pt.moves.length == 0 || pt.moves[0][0] > t || pt.moves[pt.n - 1][0] < t) {
+					currow = pt.moves.length == 0 || pt.moves[0][0] > t ? 0 : pt.n;
+					addLine(pt);
+				} else
+					for (int i = 0; i < pt.n; i++)
+						if (pt.moves[i][0] >= t) {
+							currow = i;
+							if (pt.moves[i][0] > t)
+								addLine(pt);
+							break;
+						}
+
+				dragged = true;
+				if (pt.ints[1] == 11) {
+					int x = getRootPane().getWidth();
+					int y = getRootPane().getHeight() - MenuBarHandler.getBar().getHeight();
+					Point p2 = ab.getPoint(new Point(size(x, y, 400), size(x, y, 250))); // pivot placeholder
+					double sA = Math.atan2(p0.y - p2.y, p0.x - p2.x);
+					double sB = Math.atan2(p1.y - p2.y, p1.x - p2.x);
+					pt.moves[currow][1] += (int) ((sB - sA) * 1800 / Math.PI);
+					pt.moves[currow][1] %= 3600;
+				} else {
+					boolean pivot = pt.ints[1] >= 6; // note: do NOT use for right mouse check
+
+					P scale = pivot ? ab.getEntity().ent[pt.ints[0]].getSize() : realScale(maet.anim.mamodel.parts[pt.ints[0]], true);
+					double angle = getAngle(ab.getEntity().ent[pt.ints[0]], pivot) / 1800.0 * Math.PI;
+					double sin = Math.sin(angle);
+					double cos = Math.cos(angle);
+					int x = pivot ? p0.x - p1.x : p1.x - p0.x;
+					int y = pivot ? p0.y - p1.y : p1.y - p0.y;
+					pt.moves[currow][1] += pt.ints[1] % 2 == 0 ? (int) (((x * cos) + (y * sin)) / scale.x) : (int) (((y * cos) - (x * sin)) / scale.y);
+				}
+			}
+			ab.getEntity().organize();
+			ab.getEntity().setTime(t, false);
 		}
 	}
 
@@ -203,7 +249,30 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 			return;
 		MouseWheelEvent mwe = (MouseWheelEvent) e;
 		float d = (float) mwe.getPreciseWheelRotation();
-		ab.setSiz(ab.getSiz() * (float) Math.pow(res, d));
+		Part pt = mpet.part;
+		boolean undraggable = pt == null || pt.ints[1] < 8 || pt.ints[1] >= 11;
+		if (!pause || undraggable || e.isShiftDown())
+			ab.setSiz(ab.getSiz() * (float) Math.pow(res, d));
+		else {
+			int currow = mpet.getSelectedRow();
+			int t = (int)ab.getEntity().ind();
+			if (pt.moves.length == 0 || pt.moves[0][0] > t || pt.moves[pt.n - 1][0] < t) {
+				currow = pt.moves.length == 0 || pt.moves[0][0] > t ? 0 : pt.n;
+				addLine(pt);
+			} else
+				for (int i = 0; i < pt.n; i++)
+					if (pt.moves[i][0] >= t) {
+						currow = i;
+						if (pt.moves[i][0] > t)
+							addLine(pt);
+						break;
+					}
+
+			dragged = true;
+			pt.moves[currow][1] = (int)(pt.moves[currow][1] * Math.pow(res, d));
+			ab.getEntity().organize();
+			ab.getEntity().setTime(t, false);
+		}
 	}
 
 	@Override
@@ -516,7 +585,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		inft.setLnr(j -> {
 			if (changing || isAdj())
 				return;
-			int l = CommonStatic.parseIntN(inft.getText());
+			int l = (int)CommonStatic.fltFpsMul(CommonStatic.parseFloatN(inft.getText()));
 			if (l < 0)
 				return;
 			changing = true;
@@ -536,19 +605,8 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		});
 
 		addl.addActionListener(arg0 -> {
-			Part p = mpet.part;
-			int[][] data = p.moves;
-			p.moves = new int[++p.n][];
-			System.arraycopy(data, 0, p.moves, 0, data.length);
-			p.moves[p.n - 1] = new int[4];
-			p.validate();
-			maet.ma.validate();
-			callBack(null);
+			addLine(mpet.part);
 			maet.anim.unSave("maanim add line");
-			change(p.n - 1, i -> lsm.setSelectionInterval(i, i));
-			setD(p.n - 1);
-			int h = mpet.getRowHeight();
-			mpet.scrollRectToVisible(new Rectangle(0, h * (p.n - 1), 1, h));
 		});
 
 		reml.addActionListener(arg0 -> {
@@ -799,4 +857,31 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		}
 	}
 
+	private void addLine(Part p) {
+		int[][] data = p.moves;
+		p.moves = new int[++p.n][];
+		System.arraycopy(data, 0, p.moves, 0, data.length);
+
+		int[] newPart = new int[]{(int)ab.getEntity().ind(), (int)p.vd, 0, 0};
+		boolean added = false;
+		for (int i = p.n - 2; i >= 0; i--) {
+			if (p.moves[i][0] <= newPart[0]) {
+				p.moves[i + 1] = newPart;
+				added = true;
+				break;
+			}
+			p.moves[i + 1] = p.moves[i];
+		}
+		if (!added)
+			p.moves[0] = newPart;
+
+		p.validate();
+		maet.ma.validate();
+		callBack(null);
+		change(p.n - 1, i -> mpet.getSelectionModel().setSelectionInterval(i, i));
+		setD(p.n - 1);
+		setJTL();
+		int h = mpet.getRowHeight();
+		mpet.scrollRectToVisible(new Rectangle(0, h * (p.n - 1), 1, h));
+	}
 }

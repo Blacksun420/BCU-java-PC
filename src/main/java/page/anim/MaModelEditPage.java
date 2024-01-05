@@ -17,6 +17,7 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Arrays;
+import java.util.LinkedList;
 
 public class MaModelEditPage extends DefaultPage implements AbEditPage {
 
@@ -151,7 +152,7 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 					Point p2 = mb.getPoint(new Point(size(x, y, 400), size(x, y, 250))); // pivot placeholder
 					double sA = Math.atan2(p0.y - p2.y, p0.x - p2.x);
 					double sB = Math.atan2(p1.y - p2.y, p1.x - p2.x);
-					part[10] += (sB - sA) * 1800 / Math.PI;
+					part[10] += (int)((sB - sA) * 1800 / Math.PI);
 					part[10] %= 3600;
 				}
 			else {
@@ -163,8 +164,8 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 					double cos = Math.cos(angle);
 					int x = isCtrlDown && i != 0 ? p0.x - p1.x : p1.x - p0.x;
 					int y = isCtrlDown && i != 0 ? p0.y - p1.y : p1.y - p0.y;
-					part[isCtrlDown ? 6 : 4] += ((x * cos) + (y * sin)) / scale.x;
-					part[isCtrlDown ? 7 : 5] += ((y * cos) - (x * sin)) / scale.y;
+					part[isCtrlDown || i == 0 ? 6 : 4] += (int)(((x * cos) + (y * sin)) / scale.x);
+					part[isCtrlDown || i == 0 ? 7 : 5] += (int)(((y * cos) - (x * sin)) / scale.y);
 				}
 			}
 			mb.getEntity().organize();
@@ -193,7 +194,17 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 			return;
 		MouseWheelEvent mwe = (MouseWheelEvent) e;
 		float d = (float) mwe.getPreciseWheelRotation();
-		mb.setSiz(mb.getSiz() * (float) Math.pow(res, d));
+		int[] rows = mmet.getSelectedRows();
+		if (rows.length == 0 || !e.isShiftDown()) {
+			mb.setSiz(mb.getSiz() * (float) Math.pow(res, d));
+		} else {
+			dragged = true;
+			for (int i : rows) {
+				mmet.mm.parts[i][8] = (int)(mmet.mm.parts[i][8] * Math.pow(res, d));
+				mmet.mm.parts[i][9] = (int)(mmet.mm.parts[i][9] * Math.pow(res, d));
+			}
+			mb.getEntity().organize();
+		}
 	}
 
 	@Override
@@ -541,18 +552,24 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 			change(ind, i -> mmt.select(i));
 		int val = mmet.mm.parts[ind][2];
 		jlp.setSelectedIndex(val);
+		LinkedList<Integer> pars = new LinkedList<>();
+		LinkedList<String> anims = new LinkedList<>();
 		for (int row : mmet.getSelectedRows()) {
-			for (int[] ints : mmet.mm.parts)
-				if (ints[0] == row) {
+			for (int i = 0; i < mmet.mm.parts.length; i++)
+				if (mmet.mm.parts[i][0] == row) {
 					reml.setEnabled(false);
-					reml.setToolTipText("part is parent of another");
+					pars.add(i);
 				}
-			for (MaAnim ma : mmet.anim.anims)
-				for (Part p : ma.parts)
+			for (int i = 0; i < mmet.anim.anims.length; i++)
+				for (Part p : mmet.anim.anims[i].parts)
 					if (p.ints[0] == row) {
 						reml.setEnabled(false);
-						reml.setToolTipText("part is used in animation");
+						anims.add(mmet.anim.anim.types[i].toString());
+						break;
 					}
+			if (pars.size() + anims.size() != 0)
+				reml.setToolTipText("This part is " + (!pars.isEmpty() ? "parent of these parts: " + pars +
+						(!anims.isEmpty() ? ", and " : "") : "") + (!anims.isEmpty() ? "used in these animations: " + anims : ""));
 		}
 	}
 
