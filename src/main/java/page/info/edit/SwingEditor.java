@@ -171,9 +171,9 @@ public abstract class SwingEditor extends Editor {
 
 			if(obj instanceof Identifier<?>)
 				if(((Identifier<?>) obj).cls == EneRand.class)
-					jl.setText(field.get() + " [Random]");
+					jl.setText(((Identifier<?>) obj).get() + " [Random]");
 				else
-					jl.setText(String.valueOf(field.get()));
+					jl.setText(String.valueOf(((Identifier<?>) obj).get()));
 			else
 				jl.setText(String.valueOf(field.get()));
 

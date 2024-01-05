@@ -863,22 +863,22 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		System.arraycopy(data, 0, p.moves, 0, data.length);
 
 		int[] newPart = new int[]{(int)ab.getEntity().ind(), (int)p.vd, 0, 0};
-		boolean added = false;
+		int si = 0;
 		for (int i = p.n - 2; i >= 0; i--) {
 			if (p.moves[i][0] <= newPart[0]) {
-				p.moves[i + 1] = newPart;
-				added = true;
+				p.moves[si = i + 1] = newPart;
 				break;
 			}
 			p.moves[i + 1] = p.moves[i];
 		}
-		if (!added)
+		if (si == 0)
 			p.moves[0] = newPart;
 
 		p.validate();
 		maet.ma.validate();
 		callBack(null);
-		change(p.n - 1, i -> mpet.getSelectionModel().setSelectionInterval(i, i));
+		if (p == mpet.part)
+			change(si, i -> mpet.getSelectionModel().setSelectionInterval(i, i));
 		setD(p.n - 1);
 		setJTL();
 		int h = mpet.getRowHeight();
