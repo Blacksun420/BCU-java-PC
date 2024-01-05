@@ -331,16 +331,15 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 			ce.importData(e.de);
 			ce.traits.removeIf(t -> !(t.BCTrait() || pack.desc.dependency.contains(t.id.pack) || pack.desc.id.equals(t.id.pack)));
 			setData(ce);
-		}
-		if (ufp != null && ufp.getForm() != null
+		} else if (ufp != null && ufp.getForm() != null
 				&& Opts.conf("do you want to overwrite stats? This operation cannot be undone")) {
 			Form f = (Form) ufp.getForm();
 			ce.importData(f.du);
 			ce.traits.removeIf(t -> !(t.BCTrait() || pack.desc.dependency.contains(t.id.pack) || pack.desc.id.equals(t.id.pack)));
 			setData(ce);
-		}
-		if (sup != null && editor != null && sup.getSelected() != null) {
-			Identifier val = sup.getSelected().getID();
+		} else if (sup != null && editor != null && ((sup.getSelected() == null && editor.field.get() != null) || (sup.getSelected() != null && !sup.getSelected().getID().equals(editor.field.get())))
+				&& (editor.field.get() == null || (Opts.conf("Replace " + ((Identifier<?>)editor.field.get()).get() + " with " + sup.getSelected() + "?")))) {
+			Identifier val = sup.getSelected() == null ? null : sup.getSelected().getID();
 			editor.callback(val);
 		}
 		sup = null;

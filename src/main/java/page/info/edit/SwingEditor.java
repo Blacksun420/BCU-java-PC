@@ -183,7 +183,6 @@ public abstract class SwingEditor extends Editor {
 		private void edit(ActionEvent fe) {
 			MainFrame.changePanel(page.get(this).getThisPage());
 		}
-
 	}
 
 	public static class IntEditor extends SwingEditor {
