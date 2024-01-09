@@ -162,7 +162,7 @@ public class UnitViewPage extends AbViewPage {
 		if (ei == null || !(ei.anim() instanceof AnimD))
 			return;
 		AnimD<?, ?> eau = (AnimD<?, ?>) ei.anim();
-		Source.ResourceLocation rl = new Source.ResourceLocation(Source.ResourceLocation.LOCAL, "new anim", Source.BasePath.ANIM);
+		Source.ResourceLocation rl = new Source.ResourceLocation(Source.ResourceLocation.LOCAL, eau.toString(), Source.BasePath.ANIM);
 		Source.Workspace.validate(rl);
 		new AnimCE(rl, eau);
 		changePanel(new ImgCutEditPage(getThis()));

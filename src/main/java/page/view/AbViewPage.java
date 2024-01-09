@@ -323,11 +323,11 @@ public abstract class AbViewPage extends DefaultPage {
 			ResourceLocation rl;
 
 			if (eau.types[0].equals(AnimU.SOUL[0]))
-				rl = new ResourceLocation(ResourceLocation.LOCAL, "new soul anim", Source.BasePath.SOUL);
+				rl = new ResourceLocation(ResourceLocation.LOCAL, eau.toString(), Source.BasePath.SOUL);
 			else if (eau.types[0].equals(AnimU.BGEFFECT[0]))
-				rl = new ResourceLocation(ResourceLocation.LOCAL, "new background effect", Source.BasePath.BGEffect);
+				rl = new ResourceLocation(ResourceLocation.LOCAL, eau.toString(), Source.BasePath.BGEffect);
 			else
-				rl = new ResourceLocation(ResourceLocation.LOCAL, "new anim", Source.BasePath.ANIM);
+				rl = new ResourceLocation(ResourceLocation.LOCAL, eau.toString(), Source.BasePath.ANIM);
 
 			Workspace.validate(rl);
 			AnimCE ac = new AnimCE(rl, eau);

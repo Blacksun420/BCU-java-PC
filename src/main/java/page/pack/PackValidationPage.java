@@ -50,10 +50,8 @@ public class PackValidationPage extends DefaultPage {
 
         Vector<Object> containerData = new Vector<>();
 
-        for (Pair<Object, List<String>> datum : data) {
+        for (Pair<Object, List<String>> datum : data)
             containerData.add(datum.getFirst());
-        }
-
         list.setListData(containerData);
         list.setCellRenderer(new DefaultListCellRenderer() {
             @Override
@@ -70,7 +68,6 @@ public class PackValidationPage extends DefaultPage {
 
                     if (name.isEmpty() && ((Form) value).unit != null) {
                         Identifier<AbUnit> id = ((Form) value).unit.id;
-
                         name = id.pack + " - " + Data.trio(id.id) + " - " + Data.trio(((Form) value).fid);
                     }
 
@@ -82,7 +79,6 @@ public class PackValidationPage extends DefaultPage {
 
                     if (name.isEmpty()) {
                         Identifier<AbEnemy> id = ((Enemy) value).id;
-
                         name = id.pack + " - " + Data.trio(id.id);
                     }
 
@@ -151,7 +147,6 @@ public class PackValidationPage extends DefaultPage {
             } else {
                 animationName = "UNKNOWN TYPE";
             }
-
             animationTitle.setText(animationName);
         }
 

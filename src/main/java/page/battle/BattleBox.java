@@ -448,11 +448,11 @@ public interface BattleBox {
 						switch (sb.buttonDelay) {
 							case 3:
 								imw = (int) (imw * 0.95);
-								imh = (int) (imw * 0.95);
+								imh = (int) (imh * 0.95);
 								break;
 							case 4:
 								imw = (int) (imw * 1.05);
-								imh = (int) (imw * 1.05);
+								imh = (int) (imh * 1.05);
 						}
 					}
 
@@ -469,9 +469,9 @@ public interface BattleBox {
 						g.colRect(x, y, iw, ih, 255, 0, 0, 100);
 					else if (sb.elu.readySpirit(i,j)) {
 						if (sb.time - sb.elu.sGlow[i][j] % 8 < 4)
-							g.colRect((int) (x - (imw - iw) / 2.0), (int) (y - (imh - ih) / 2.0), imw, imh, 30, 92, 123, 100);
+							g.colRect(x - (imw - iw) / 2f,y - (imh - ih) / 2f, imw, imh, 30, 92, 123, 100);
 						else
-							g.colRect((int) (x - (imw - iw) / 2.0), (int) (y - (imh - ih) / 2.0), imw, imh, 50, 153, 205, 100);
+							g.colRect(x - (imw - iw) / 2f,y - (imh - ih) / 2f, imw, imh, 50, 153, 205, 100);
 
 						FakeImage summonText = aux.spiritSummon[Res.decideLocale()].getImg();
 						int stw = (int) (summonText.getWidth() * hr);
@@ -554,9 +554,9 @@ public interface BattleBox {
 					g.colRect(x, y, iw, ih, 255, 0, 0, 100);
 				else if (sb.elu.readySpirit(index,i)) {
 					if (sb.time - sb.elu.sGlow[index][i] % 8 < 4)
-						g.colRect((int) (x - (imw - iw) / 2.0), (int) (y - (imh - ih) / 2.0), imw, imh, 30, 92, 123, 100);
+						g.colRect(x - (imw - iw) / 2f,y - (imh - ih) / 2f, imw, imh, 30, 92, 123, 100);
 					else
-						g.colRect((int) (x - (imw - iw) / 2.0), (int) (y - (imh - ih) / 2.0), imw, imh, 50, 153, 205, 100);
+						g.colRect(x - (imw - iw) / 2f,y - (imh - ih) / 2f, imw, imh, 50, 153, 205, 100);
 
 					FakeImage summonText = aux.spiritSummon[Res.decideLocale()].getImg();
 					int stw = (int) (summonText.getWidth() * hr);
