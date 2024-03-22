@@ -7,6 +7,7 @@ import common.util.lang.ProcLang;
 import common.util.unit.AbEnemy;
 import common.util.unit.EneRand;
 import common.util.unit.Enemy;
+import main.MainBCU;
 import page.Page;
 import utilpc.UtilPC;
 
@@ -51,7 +52,7 @@ public class EnemyFilterBox extends EntityFilterBox {
 
 	@Override
 	protected void confirm() {
-		minDiff = 5;
+		minDiff = MainBCU.searchTolerance;
 		List<AbEnemy> ans = new ArrayList<>();
 		for(PackData p : UserProfile.getAllPacks())
 			if ((pks.getSelectedItem() == null || processOperator(3, p.equals(pks.getSelectedItem()))) && validatePack(p)) {

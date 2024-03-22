@@ -6,6 +6,7 @@ import common.util.stage.SCDef.Line;
 import common.util.stage.Stage;
 import common.util.stage.StageMap;
 import common.util.unit.AbEnemy;
+import main.MainBCU;
 import page.*;
 import page.info.filter.EnemyFindPage;
 import page.support.AnimLCR;
@@ -137,11 +138,25 @@ public class StageSearchPage extends StagePage {
     private List<StageMap> searchSubchapter() {
         String str = mapName.getText().toLowerCase();
         List<StageMap> chaptersFound = new ArrayList<>();
+        List<Integer> diffs = new ArrayList<>();
+        int minDiff = MainBCU.searchTolerance ;
 
         for (MapColc mc : MapColc.values())
-            for (StageMap sm : mc.maps)
-                if (UtilPC.damerauLevenshteinDistance(sm.toString().toLowerCase(),str) < 5)
+            for (StageMap sm : mc.maps) {
+                int diff = UtilPC.damerauLevenshteinDistance(sm.toString().toLowerCase(),str);
+                if (diff <= minDiff) {
                     chaptersFound.add(sm);
+                    diffs.add(diff);
+                    minDiff = diff;
+                }
+            }
+        for (int i = 0; i < diffs.size(); i++) {
+            if (diffs.get(i) <= minDiff)
+                continue;
+            diffs.remove(i);
+            chaptersFound.remove(i);
+            i--;
+        }
         return chaptersFound;
     }
 
@@ -149,7 +164,7 @@ public class StageSearchPage extends StagePage {
         String str = stageName.getText().toLowerCase();
         List<Stage> stagesFound = new ArrayList<>();
         List<Integer> diffs = new ArrayList<>();
-        int minDiff = 5;
+        int minDiff = MainBCU.searchTolerance + 1;
 
         if (mapsFound.isEmpty()) {
             for (MapColc mc : MapColc.values())

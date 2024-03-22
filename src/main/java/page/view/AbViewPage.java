@@ -355,5 +355,4 @@ public abstract class AbViewPage extends DefaultPage {
 		}
 		changingtl = false;
 	}
-
 }

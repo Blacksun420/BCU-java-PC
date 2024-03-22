@@ -237,7 +237,5 @@ public class CastleEditPage extends DefaultPage {
 			cen.setEnabled(false);
 			spwn.setText("Boss Spawn: ");
 		}
-
 	}
-
 }

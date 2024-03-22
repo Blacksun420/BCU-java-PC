@@ -1,6 +1,5 @@
 package page.info.edit;
 
-
 import common.battle.data.CustomUnit;
 import common.battle.data.PCoin;
 import common.util.Data;

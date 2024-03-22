@@ -94,7 +94,7 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 	private void selectAnimNode(AnimCE ac) {
 		DefaultMutableTreeNode selectedNode = agt.findAnimNode(ac, null);
 
-		if(selectedNode != null) {
+		if (selectedNode != null) {
 			agt.expandCurrentAnimNode(selectedNode);
 			jlt.setSelectionPath(new TreePath(selectedNode.getPath()));
 		} else {
@@ -152,7 +152,7 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 					Point p2 = mb.getPoint(new Point(size(x, y, 400), size(x, y, 250))); // pivot placeholder
 					double sA = Math.atan2(p0.y - p2.y, p0.x - p2.x);
 					double sB = Math.atan2(p1.y - p2.y, p1.x - p2.x);
-					part[10] += (int)((sB - sA) * 1800 / Math.PI);
+					part[10] += (int) ((sB - sA) * 1800 / Math.PI);
 					part[10] %= 3600;
 				}
 			else {
@@ -164,8 +164,8 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 					double cos = Math.cos(angle);
 					int x = isCtrlDown && i != 0 ? p0.x - p1.x : p1.x - p0.x;
 					int y = isCtrlDown && i != 0 ? p0.y - p1.y : p1.y - p0.y;
-					part[isCtrlDown || i == 0 ? 6 : 4] += (int)(((x * cos) + (y * sin)) / scale.x);
-					part[isCtrlDown || i == 0 ? 7 : 5] += (int)(((y * cos) - (x * sin)) / scale.y);
+					part[isCtrlDown || i == 0 ? 6 : 4] += (int) (((x * cos) + (y * sin)) / scale.x);
+					part[isCtrlDown || i == 0 ? 7 : 5] += (int) (((y * cos) - (x * sin)) / scale.y);
 				}
 			}
 			mb.getEntity().organize();
@@ -200,8 +200,8 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 		} else {
 			dragged = true;
 			for (int i : rows) {
-				mmet.mm.parts[i][8] = (int)(mmet.mm.parts[i][8] * Math.pow(res, d));
-				mmet.mm.parts[i][9] = (int)(mmet.mm.parts[i][9] * Math.pow(res, d));
+				mmet.mm.parts[i][8] = (int) (mmet.mm.parts[i][8] * Math.pow(res, d));
+				mmet.mm.parts[i][9] = (int) (mmet.mm.parts[i][9] * Math.pow(res, d));
 			}
 			mb.getEntity().organize();
 		}
@@ -212,15 +212,15 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 		change(this, page -> {
 			TreePath path = jlt.getSelectionPath();
 
-			if(path == null)
+			if (path == null)
 				return;
 
-			if(!(path.getLastPathComponent() instanceof DefaultMutableTreeNode))
+			if (!(path.getLastPathComponent() instanceof DefaultMutableTreeNode))
 				return;
 
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 
-			if(!(node.getUserObject() instanceof AnimCE))
+			if (!(node.getUserObject() instanceof AnimCE))
 				return;
 
 			AnimCE da = (AnimCE) node.getUserObject();
@@ -316,17 +316,17 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 		zomres.setLnr(x -> mb.setSiz(0.5f));
 
 		jlt.addTreeSelectionListener(a -> {
-			if(isAdj())
+			if (isAdj())
 				return;
 
 			TreePath path = jlt.getSelectionPath();
 
-			if(path == null || !(path.getLastPathComponent() instanceof DefaultMutableTreeNode))
+			if (path == null || !(path.getLastPathComponent() instanceof DefaultMutableTreeNode))
 				return;
 
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 
-			if(!(node.getUserObject() instanceof AnimCE))
+			if (!(node.getUserObject() instanceof AnimCE))
 				return;
 
 			change((AnimCE) node.getUserObject(), this::setA);

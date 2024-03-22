@@ -1,11 +1,14 @@
 package io;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import common.CommonStatic;
 import common.battle.BasisSet;
 import common.io.Backup;
 import common.io.DataIO;
 import common.io.OutStream;
+import common.io.json.JsonDecoder;
 import common.io.json.JsonEncoder;
 import common.pack.Context;
 import common.pack.Context.ErrType;
@@ -281,6 +284,8 @@ public class BCUWriter extends DataIO {
 		jo.addProperty("drawBGEffect", CommonStatic.getConfig().drawBGEffect);
 		jo.addProperty("fps60", CommonStatic.getConfig().fps60);
 		jo.addProperty("stat", CommonStatic.getConfig().stat);
+		jo.addProperty("searchtype", MainBCU.searchPerKey);
+		jo.addProperty("tolerance", MainBCU.searchTolerance);
 		String[] exp = new String[Exporter.curs.length];
 		for (int i = 0; i < exp.length; i++)
 			exp[i] = Exporter.curs[i] == null ? null : Exporter.curs[i].toString();
@@ -291,6 +296,15 @@ public class BCUWriter extends DataIO {
 		jo.add("import_paths", JsonEncoder.encode(imp));
 		try (java.io.Writer w = new OutputStreamWriter(Files.newOutputStream(f.toPath()), StandardCharsets.UTF_8)) {
 			w.write(jo.toString());
+		} catch (Exception e) {
+			CommonStatic.ctx.noticeErr(e, ErrType.ERROR, "failed to write config");
+		}
+
+		File fd = new File(CommonStatic.ctx.getBCUFolder(), "./user/hashes.json");
+		Data.err(() -> Context.check(f));
+		JsonObject jdo = JsonEncoder.encode(CommonStatic.getDataMaps()).getAsJsonObject();
+		try (java.io.Writer w = new OutputStreamWriter(Files.newOutputStream(fd.toPath()), StandardCharsets.UTF_8)) {
+			w.write(jdo.toString());
 		} catch (Exception e) {
 			CommonStatic.ctx.noticeErr(e, ErrType.ERROR, "failed to write config");
 		}

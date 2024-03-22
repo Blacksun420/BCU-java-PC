@@ -8,6 +8,7 @@ import common.util.stage.StageMap;
 import common.util.stage.info.CustomStageInfo;
 import common.util.unit.AbEnemy;
 import common.util.unit.Enemy;
+import main.MainBCU;
 import page.*;
 import page.battle.BattleSetupPage;
 import page.battle.StRecdPage;
@@ -177,22 +178,26 @@ public class StageEditPage extends DefaultPage {
 
 		veif.setLnr(x -> changePanel(efp));
 
-		enam.getDocument().addDocumentListener(new DocumentListener() {
-			public void insertUpdate(DocumentEvent e) {
-				efp.search(enam.getText(), true);
-				renewEList();
-			}
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				efp.search(enam.getText(), true);
-				renewEList();
-			}
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				efp.search(enam.getText(), true);
-				renewEList();
-			}
-		});
+		if (MainBCU.searchPerKey) {
+			enam.getDocument().addDocumentListener(new DocumentListener() {
+				public void insertUpdate(DocumentEvent e) {
+					efp.search(enam.getText(), true);
+					renewEList();
+				}
+
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					efp.search(enam.getText(), true);
+					renewEList();
+				}
+
+				@Override
+				public void changedUpdate(DocumentEvent e) {
+					efp.search(enam.getText(), true);
+					renewEList();
+				}
+			});
+		}
 	}
 
 	private void addListeners$1() {

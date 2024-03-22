@@ -27,8 +27,8 @@ public class EnemyListTable extends EntityListTable<AbEnemy> {
 	}
 
 	public static void redefine() {
-		tit = new String[] { "ID", "", Page.get(MainLocale.INFO, "HP"), Page.get(MainLocale.INFO, "hb"), Page.get(MainLocale.INFO, "atk"), Page.get(MainLocale.INFO, "range"), Page.get(MainLocale.INFO, "atkf"),
-				Page.get(MainLocale.INFO, "speed"), Page.get(MainLocale.INFO, "drop"), Page.get(MainLocale.INFO, "preaa"), "dps", Page.get(MainLocale.INFO, "minpos"), Page.get(MainLocale.INFO, "will"), Page.get(MainLocale.INFO,"hphb") };
+		tit = new String[]{"ID", "", Page.get(MainLocale.INFO, "HP"), Page.get(MainLocale.INFO, "hb"), Page.get(MainLocale.INFO, "atk"), Page.get(MainLocale.INFO, "range"), Page.get(MainLocale.INFO, "atkf"),
+				Page.get(MainLocale.INFO, "speed"), Page.get(MainLocale.INFO, "drop"), Page.get(MainLocale.INFO, "preaa"), "dps", Page.get(MainLocale.INFO, "minpos"), Page.get(MainLocale.INFO, "will"), Page.get(MainLocale.INFO, "hphb")};
 	}
 
 	private final Basis b = BasisSet.current();
@@ -57,9 +57,9 @@ public class EnemyListTable extends EntityListTable<AbEnemy> {
 			return;
 		AbEnemy e = list.get(r);
 
-		if(e instanceof Enemy)
+		if (e instanceof Enemy)
 			MainFrame.changePanel(new EnemyInfoPage(page, ENode.getListE(list, e)));
-		else if(e instanceof EneRand)
+		else if (e instanceof EneRand)
 			MainFrame.changePanel(new EREditPage(page, UserProfile.getUserPack(e.getID().pack)));
 	}
 

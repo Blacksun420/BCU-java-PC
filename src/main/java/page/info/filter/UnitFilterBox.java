@@ -8,6 +8,7 @@ import common.util.lang.ProcLang;
 import common.util.stage.Limit;
 import common.util.unit.*;
 import common.util.unit.rand.UREnt;
+import main.MainBCU;
 import page.JTG;
 import page.MainLocale;
 import page.Page;
@@ -79,7 +80,7 @@ public class UnitFilterBox extends EntityFilterBox {
 	@Override
 	protected void confirm() {
 		List<AbForm> ans = new ArrayList<>();
-		minDiff = 5;
+		minDiff = MainBCU.searchTolerance;
 		for(PackData p : UserProfile.getAllPacks()) {
 			if(pks.getSelectedItem() != null && !(p.equals(pks.getSelectedItem())) || !validatePack(p))
 				continue;

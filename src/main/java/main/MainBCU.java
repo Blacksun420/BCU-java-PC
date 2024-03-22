@@ -305,10 +305,10 @@ public class MainBCU {
 
 	public static final int ver = 60112;
 	private static final DecimalFormat df = new DecimalFormat("#.##");
-	public static int autoSaveTime = 0;
+	public static int autoSaveTime = 0, searchTolerance = 4;
 	public static final boolean WRITE = !new File("./.idea").exists();
 	public static boolean preload = false, trueRun = true, loaded = false, USE_JOGL = false;
-	public static boolean seconds = false, buttonSound = false;
+	public static boolean seconds = false, buttonSound = false, searchPerKey = false;
 	public static String author = "";
 	public static ImageBuilder<BufferedImage> builder;
 	public static AutoSaveTimer ast;
