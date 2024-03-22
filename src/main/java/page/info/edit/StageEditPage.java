@@ -197,7 +197,8 @@ public class StageEditPage extends DefaultPage {
 					renewEList();
 				}
 			});
-		}
+		} else
+			enam.setLnr(e -> efp.search(enam.getText(), true));
 	}
 
 	private void addListeners$1() {

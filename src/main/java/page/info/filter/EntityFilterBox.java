@@ -5,6 +5,7 @@ import common.pack.PackData;
 import common.pack.UserProfile;
 import common.util.Data;
 import common.util.unit.Trait;
+import main.MainBCU;
 import page.JBTN;
 import page.MainLocale;
 import page.Page;
@@ -47,7 +48,7 @@ public abstract class EntityFilterBox extends Page {
     private static final long serialVersionUID = 1L;
 
     public String name = ""; //Keeps all data for all filter pages. Consider rare and abis are the only difference between unit and enemy filters, as well as confirm function
-    protected static int minDiff = 5;
+    protected static int minDiff = MainBCU.searchTolerance;
 
     protected final PackData.UserPack pack;
 

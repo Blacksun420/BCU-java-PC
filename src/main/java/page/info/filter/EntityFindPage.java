@@ -1,5 +1,6 @@
 package page.info.filter;
 
+import main.MainBCU;
 import page.*;
 
 import javax.swing.*;
@@ -85,19 +86,24 @@ public abstract class EntityFindPage<R> extends DefaultPage {
                 remove(adv);
         });
 
-        seatf.getDocument().addDocumentListener(new DocumentListener() {
-            public void insertUpdate(DocumentEvent e) {
-                search(seatf.getText(), false);
-            }
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                search(seatf.getText(), false);
-            }
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                search(seatf.getText(), false);
-            }
-        });
+        if (MainBCU.searchPerKey) {
+            seatf.getDocument().addDocumentListener(new DocumentListener() {
+                public void insertUpdate(DocumentEvent e) {
+                    search(seatf.getText(), false);
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    search(seatf.getText(), false);
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    search(seatf.getText(), false);
+                }
+            });
+        } else
+            seatf.setLnr(e -> search(seatf.getText(), false));
     }
 
     public void search(String text, boolean setText) {

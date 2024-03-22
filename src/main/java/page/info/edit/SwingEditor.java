@@ -12,8 +12,6 @@ import common.util.lang.Editors.EditorGroup;
 import common.util.lang.Editors.EditorSupplier;
 import common.util.lang.Formatter;
 import common.util.lang.ProcLang;
-import common.util.pack.Background;
-import common.util.stage.Music;
 import common.util.unit.EneRand;
 import page.*;
 import utilpc.UtilPC;
@@ -70,15 +68,9 @@ public abstract class SwingEditor extends Editor {
 	}
 
 	public static class EditCtrl implements EditorSupplier {
-		public interface Supplier {
-			SupPage<Background> getBGSup(IdEditor<Background> edi);
-			SupPage<Music> getMusicSup(IdEditor<Music> edi);
-			SupPage<?> getEntitySup(IdEditor<?> edi);
-			SupPage<?> getUnitSup(IdEditor<?> edi);
-		}
 
 		private final boolean isEnemy;
-		private final Supplier table;
+		private final EntityEditPage table;
 
 		public EditCtrl(boolean isEnemy, EntityEditPage table) {
 			this.isEnemy = isEnemy;

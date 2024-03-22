@@ -46,6 +46,18 @@ public class BCUReader extends DataIO {
 	}
 
 	public static void readInfo() {
+		File fd = new File(CommonStatic.ctx.getBCUFolder(), "./user/hashes.json");
+		if (fd.exists()) {
+			try (Reader r = new InputStreamReader(Files.newInputStream(fd.toPath()), StandardCharsets.UTF_8)) {
+				JsonElement je = JsonParser.parseReader(r);
+				r.close();
+				CommonStatic.LocalMaps cfg = CommonStatic.getDataMaps();
+				JsonDecoder.inject(je, CommonStatic.LocalMaps.class, cfg);
+			} catch (Exception e) {
+				CommonStatic.ctx.noticeErr(e, ErrType.WARN, "failed to read config");
+			}
+		}
+
 		File f = new File(CommonStatic.ctx.getBCUFolder(), "./user/config.json");
 		if (f.exists()) {
 			try (Reader r = new InputStreamReader(Files.newInputStream(f.toPath()), StandardCharsets.UTF_8)) {
@@ -59,45 +71,34 @@ public class BCUReader extends DataIO {
 				MainBCU.preload = jo.get("preload").getAsBoolean();
 				ViewBox.Conf.white = jo.get("transparent").getAsBoolean();
 				MainBCU.USE_JOGL = jo.get("JOGL").getAsBoolean();
-				if(jo.has("seconds")) {
+				if(jo.has("seconds"))
 					MainBCU.seconds = jo.get("seconds").getAsBoolean();
-				}
-				if(jo.has("prefLV")) {
+				if(jo.has("prefLV"))
 					CommonStatic.getConfig().prefLevel = jo.get("prefLv").getAsInt();
-				}
-				if(jo.has("buttonSound")) {
+				if(jo.has("buttonSound"))
 					MainBCU.buttonSound = jo.get("buttonSound").getAsBoolean();
-				}
-				if (jo.has("drawBGEffect")) {
+				if (jo.has("drawBGEffect"))
 					CommonStatic.getConfig().drawBGEffect = jo.get("drawBGEffect").getAsBoolean();
-				}
 				BCMusic.play = jo.get("play_sound").getAsBoolean();
 				BCMusic.VOL_BG = jo.get("volume_BG").getAsInt();
 				BCMusic.VOL_SE = jo.get("volume_SE").getAsInt();
-				if(jo.has("volume_UI")) {
+				if(jo.has("volume_UI"))
 					BCMusic.VOL_UI = jo.get("volume_UI").getAsInt();
-				}
 				BattleInfoPage.DEF_LARGE = jo.get("large_screen").getAsBoolean();
-				if(jo.has("author")) {
+				if(jo.has("author"))
 					MainBCU.author = jo.get("author").getAsString();
-				}
-				if(jo.has("rowlayout")) {
+				if(jo.has("rowlayout"))
 					CommonStatic.getConfig().twoRow = jo.get("rowlayout").getAsBoolean();
-				}
 				if(jo.has("backup_file")) {
 					String value = jo.get("backup_file").getAsString();
-
 					CommonStatic.getConfig().backupFile = value.equals("None") ? null : value;
 				}
-				if (jo.has("autosavetime")) {
+				if (jo.has("autosavetime"))
 					MainBCU.autoSaveTime = jo.get("autosavetime").getAsInt();
-				}
-				if (jo.has("searchtype")) {
+				if (jo.has("searchtype"))
 					MainBCU.searchPerKey = jo.get("searchtype").getAsBoolean();
-				}
-				if (jo.has("tolerance")) {
+				if (jo.has("tolerance"))
 					MainBCU.searchTolerance = jo.get("tolerance").getAsInt();
-				}
 				String[] exp = JsonDecoder.decode(jo.get("export_paths"), String[].class);
 				String[] imp = JsonDecoder.decode(jo.get("import_paths"), String[].class);
 				for (int i = 0; i < Math.min(Exporter.curs.length, exp.length); i++)
@@ -342,7 +343,5 @@ public class BCUReader extends DataIO {
 			e.printStackTrace();
 			return null;
 		}
-
 	}
-
 }

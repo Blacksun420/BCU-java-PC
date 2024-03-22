@@ -41,6 +41,11 @@ public class ConfigPage extends DefaultPage {
 	private final JCB perfo = new JCB("60 FPS");
 	private final JL preflv = new JL(MainLocale.PAGE, "preflv");
 	private final JCB shake = new JCB(MainLocale.PAGE, "shake");
+	private final JCB search = new JCB(MainLocale.PAGE, "searchkey");
+	private final JL jtol = new JL(MainLocale.PAGE, "tolerance");
+	private final JTF tole = new JTF(String.valueOf(MainBCU.searchTolerance));
+
+
 	private final JTF prlvmd = new JTF();
 	private final JBTN[] left = new JBTN[4];
 	private final JBTN[] right = new JBTN[4];
@@ -148,6 +153,7 @@ public class ConfigPage extends DefaultPage {
 		set(jcmus, x, y, 650, 1000, 300, 50);
 		set(jcsnd, x, y, 650, 1050, 300, 50);
 		set(jcraw, x, y, 650, 1100, 300, 50);
+		set(search, x, y, 650, 1150, 300, 50);
 
 		set(jlfi, x, y, 1225, 100, 200, 50);
 		set(jlti, x, y, 1225, 175, 200, 50);
@@ -164,6 +170,9 @@ public class ConfigPage extends DefaultPage {
 		set(rlpk, x, y, 1225, 625, 400, 50);
 		set(vcol, x, y, 1225, 700, 400, 50);
 		set(vres, x, y, 1225, 775, 400, 50);
+		set(jtol, x, y, 1225, 850, 200, 50);
+		set(tole, x, y, 1425, 850, 200, 50);
+
 
 		set(jlla, x, y, 1750, 100, 300, 50);
 		set(jsps, x, y, 1750, 150, 300, 300);
@@ -187,6 +196,14 @@ public class ConfigPage extends DefaultPage {
 			MainBCU.seconds = !MainBCU.seconds;
 			secs.setText(0, MainBCU.seconds ? "secs" : "frame");
 		});
+
+		search.addActionListener(a -> MainBCU.searchPerKey = search.isSelected());
+
+		tole.setLnr(c -> {
+			MainBCU.searchTolerance = Math.max(0, CommonStatic.parseIntN(tole.getText()));
+			tole.setText(String.valueOf(MainBCU.searchTolerance));
+		});
+
 
 		prel.addActionListener(arg0 -> MainBCU.preload = prel.isSelected());
 
@@ -345,6 +362,9 @@ public class ConfigPage extends DefaultPage {
 	}
 
 	private void ini() {
+		add(search);
+		add(jtol);
+		add(tole);
 		add(jogl);
 		add(prel);
 		add(refe);
@@ -448,6 +468,8 @@ public class ConfigPage extends DefaultPage {
 		pkprog.setToolTipText(get(MainLocale.PAGE, "pkprogtip"));
 		stat.setSelected(cfg().stat);
 		stat.setToolTipText(get(MainLocale.PAGE, "defstattip"));
+		search.setSelected(MainBCU.searchPerKey);
+		tole.setText(String.valueOf(MainBCU.searchTolerance));
 		addListeners();
 	}
 
