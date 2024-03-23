@@ -163,10 +163,10 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 			return;
 
 		int[] rows = maet.getSelectedRows();
-		boolean undraggable = !pause || rows.length == 0 || !e.isShiftDown();
+		boolean undraggable = !pause || rows.length == 0 || e.isShiftDown();
 		if (!undraggable) {
 			for (int i = 0; i < rows.length; i++)
-				if (maet.ma.parts[i].ints[1] < 4 || (maet.ma.parts[i].ints[1] >= 8 && maet.ma.parts[i].ints[1] != 11))
+				if (maet.ma.parts[rows[i]].ints[1] < 4 || (maet.ma.parts[rows[i]].ints[1] >= 8 && maet.ma.parts[rows[i]].ints[1] != 11))
 					rows[i] = -1;
 			undraggable = true;
 			for (int ind : rows)
@@ -249,29 +249,47 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 			return;
 		MouseWheelEvent mwe = (MouseWheelEvent) e;
 		float d = (float) mwe.getPreciseWheelRotation();
-		Part pt = mpet.part;
-		boolean undraggable = pt == null || pt.ints[1] < 8 || pt.ints[1] >= 11;
-		if (!pause || undraggable || e.isShiftDown())
+
+		int[] rows = maet.getSelectedRows();
+		boolean undraggable = !pause || rows.length == 0 || !e.isShiftDown();
+		if (!undraggable) {
+			for (int i = 0; i < rows.length; i++)
+				if (maet.ma.parts[rows[i]].ints[1] < 8 || (maet.ma.parts[rows[i]].ints[1] >= 11))
+					rows[i] = -1;
+			undraggable = true;
+			for (int ind : rows)
+				if (ind != -1) {
+					undraggable = false;
+					break;
+				}
+		}
+		if (undraggable)
 			ab.setSiz(ab.getSiz() * (float) Math.pow(res, d));
 		else {
 			int currow = mpet.getSelectedRow();
 			int t = (int)ab.getEntity().ind();
-			if (pt.moves.length == 0 || pt.moves[0][0] > t || pt.moves[pt.n - 1][0] < t) {
-				currow = pt.moves.length == 0 || pt.moves[0][0] > t ? 0 : pt.n;
-				addLine(pt);
-			} else
-				for (int i = 0; i < pt.n; i++)
-					if (pt.moves[i][0] >= t) {
-						currow = i;
-						if (pt.moves[i][0] > t)
-							addLine(pt);
-						break;
-					}
+			for (int r : rows) {
+				if (r == -1)
+					continue;
+				Part pt = maet.ma.parts[r];
 
-			dragged = true;
-			pt.moves[currow][1] = (int)(pt.moves[currow][1] * Math.pow(res, d));
-			ab.getEntity().organize();
-			ab.getEntity().setTime(t, false);
+				if (pt.moves.length == 0 || pt.moves[0][0] > t || pt.moves[pt.n - 1][0] < t) {
+					currow = pt.moves.length == 0 || pt.moves[0][0] > t ? 0 : pt.n;
+					addLine(pt);
+				} else
+					for (int i = 0; i < pt.n; i++)
+						if (pt.moves[i][0] >= t) {
+							currow = i;
+							if (pt.moves[i][0] > t)
+								addLine(pt);
+							break;
+						}
+
+				dragged = true;
+				pt.moves[currow][1] = (int) (pt.moves[currow][1] * Math.pow(res, d));
+				ab.getEntity().organize();
+				ab.getEntity().setTime(t, false);
+			}
 		}
 	}
 
