@@ -294,7 +294,12 @@ public class StageSearchPage extends StagePage {
 
         jlst.addListSelectionListener(l -> setData(jlst.getSelectedValue()));
 
-        initSearch.addActionListener(l -> startSearch());
+        initSearch.addActionListener(l -> {
+            startSearch();
+
+            fireDimensionChanged();
+        });
+
     }
 
     @Override
@@ -343,12 +348,12 @@ public class StageSearchPage extends StagePage {
         List<StageMap> chapters = new ArrayList<>();
         List<Stage> stages = new ArrayList<>();
 
-        if (mapName.getText().length() > 0) {
+        if (!mapName.getText().isEmpty()) {
             chapters.addAll(searchSubchapter());
             if (chapters.isEmpty())
                 return;
         }
-        if (stageName.getText().length() > 0) {
+        if (!stageName.getText().isEmpty()) {
             stages.addAll(searchStage(chapters));
             if (stages.isEmpty())
                 return;
@@ -359,7 +364,7 @@ public class StageSearchPage extends StagePage {
         } else
             for (StageMap sm : chapters)
                 stages.addAll(sm.list.getList());
-        if (chapters.size() > 0)
+        if (!chapters.isEmpty())
             stages.removeIf(st -> !chapters.contains(st.getCont()));
 
         final int BHP = CommonStatic.parseIntN(HPCount.getText());
@@ -387,7 +392,7 @@ public class StageSearchPage extends StagePage {
                 final AbEnemy ene = eList.get(i);
                 stages.removeIf(st -> !st.contains(ene));
             }
-        else if (eList.size() != 0) {
+        else if (!eList.isEmpty()) {
             stages.removeIf(st -> {
                 boolean b = false;
                 for (int i = 0; i < eList.size(); i++)

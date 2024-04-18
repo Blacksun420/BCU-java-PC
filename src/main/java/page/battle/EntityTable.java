@@ -117,5 +117,4 @@ class EntityTable extends SortTable<Entity> {
 
 		return null;
 	}
-
 }

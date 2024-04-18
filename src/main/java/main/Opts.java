@@ -8,6 +8,7 @@ import common.util.stage.info.DefStageInfo;
 import page.*;
 import page.battle.BattleInfoPage;
 import page.pack.DescPage;
+import utilpc.UtilPC;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -98,8 +99,23 @@ public class Opts {
 	}
 
 	private static boolean warning(String text, String title) {
+		if (text.length() > 512)
+			return warningLong(text, title);
+
 		int opt = JOptionPane.OK_CANCEL_OPTION;
 		int val = JOptionPane.showConfirmDialog(null, text, title, opt);
+		return val == JOptionPane.OK_OPTION;
+	}
+
+	public static boolean warningLong(String text, String title) {
+		JTextArea txt = new JTextArea(text);
+		JScrollPane scroll = new JScrollPane(txt);
+		txt.setLineWrap(true);
+		txt.setWrapStyleWord(true);
+		txt.setEditable(false);
+		scroll.setPreferredSize(UtilPC.size(1000, 500));
+		int opt = JOptionPane.OK_CANCEL_OPTION;
+		int val = JOptionPane.showConfirmDialog(null, scroll, title, opt);
 		return val == JOptionPane.OK_OPTION;
 	}
 
