@@ -287,4 +287,10 @@ public class UtilPC {
 
 		return table[src.length()][compare.length()];
 	}
+
+	public static Dimension size(int a, int v) {
+		int x = MainFrame.F.getRootPane().getWidth();
+		int y = MainFrame.F.getRootPane().getHeight() - MenuBarHandler.getBar().getHeight();
+		return new Dimension(a * x / 2300, v * y / 1300);
+	}
 }
