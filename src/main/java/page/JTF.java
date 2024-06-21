@@ -46,7 +46,7 @@ public class JTF extends JTextField implements CustomComp {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        if (getText().length() == 0 && hint != null && !isFocusOwner()) {
+        if (getText().isEmpty() && hint != null && !isFocusOwner()) {
             int h = getHeight();
             ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             Insets ins = getInsets();

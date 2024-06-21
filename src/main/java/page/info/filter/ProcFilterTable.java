@@ -59,6 +59,45 @@ public class ProcFilterTable extends Page {
         }
     }
 
+    public static class DoubleFilter extends SwingEditor.DoubleEditor {
+
+        private int filter = 0;
+        private final JBTN btn = new JBTN(">=");
+
+        public DoubleFilter(Editors.EditorGroup eg, Editors.EdiField field, String f, boolean edit) {
+            super(eg, field, f, edit);
+            btn.setLnr(l -> {
+                cycle();
+                if (par.callback != null)
+                    par.callback.run();
+            });
+        }
+
+        private void cycle() {
+            filter = (filter + 1) % 5;
+            btn.setText((filter % 3 == 0 ? ">" : filter == 1 ? "=" : "<") + (filter < 3 ? "=" : ""));
+        }
+
+        @Override
+        public void setVisible(boolean res) {
+            super.setVisible(res);
+            btn.setVisible(res);
+        }
+
+        @Override
+        public void resize(int x, int y, int x0, int y0, int w0, int h0) {
+            set(label, x, y, x0, y0, 100, h0);
+            set(input, x, y, x0 + 100, y0, w0 - 185, h0);
+            set(btn, x, y, x0 + w0 - 85, y0, 85, h0);
+        }
+
+        @Override
+        public void add(Consumer<JComponent> con) {
+            super.add(con);
+            con.accept(btn);
+        }
+    }
+
     public static class BoolFilter extends SwingEditor.BoolEditor {
         private final JTG btn = new JTG("!");
 
@@ -134,6 +173,8 @@ public class ProcFilterTable extends Page {
                 Class<?> fc = field.getType();
                 if (fc == int.class)
                     return new IntFilter(group, field, f, edit);
+                if (fc == float.class || fc == double.class)
+                    return new DoubleFilter(group, field, f, edit);
                 if (fc == boolean.class)
                     return new BoolFilter(group, field, f, edit);
                 if (fc == Identifier.class) {

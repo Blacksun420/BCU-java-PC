@@ -31,7 +31,7 @@ public class OggTimeReader {
 		return res[0];
 	}
 
-	private double getNextDouble() {
+	/*private double getNextDouble() {
 		byte[] res = new byte[8];
 		try {
 			fis.read(res);
@@ -40,7 +40,7 @@ public class OggTimeReader {
 			return -1;
 		}
 		return ByteBuffer.wrap(res).getDouble();
-	}
+	}*/
 
 	private int getNextInt() {
 		byte[] res = new byte[4];

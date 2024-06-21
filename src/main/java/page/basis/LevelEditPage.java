@@ -369,8 +369,8 @@ public class LevelEditPage extends DefaultPage {
 			for(Form form : f.unit.forms) {
 				MaskUnit mu = form.du.getPCoin() != null ? form.du.getPCoin().improve(lv.getTalents()) : form.du;
 
-				int atk = mu.getProc().DMGINC.mult;
-				int def = mu.getProc().DEFINC.mult;
+				int atk = (int) mu.getProc().DMGINC.mult;
+				int def = (int) mu.getProc().DEFINC.mult;
 				str |= (atk > 100 && atk < 300) || (def > 100 && def < 400);
 				mas |= atk >= 300 && atk < 500;
 				res |= def >= 400 && def < 600;
@@ -378,8 +378,8 @@ public class LevelEditPage extends DefaultPage {
 		} else {
 			MaskUnit mu = f.du.getPCoin() != null ? f.du.getPCoin().improve(lv.getTalents()) : f.du;
 
-			int atk = mu.getProc().DMGINC.mult;
-			int def = mu.getProc().DEFINC.mult;
+			int atk = (int) mu.getProc().DMGINC.mult;
+			int def = (int) mu.getProc().DEFINC.mult;
 			str = (atk > 100 && atk < 300) || (def > 100 && def < 400);
 			mas = atk >= 300 && atk < 500;
 			res = def >= 400 && def < 600;
@@ -566,8 +566,8 @@ public class LevelEditPage extends DefaultPage {
 			for(Form form : f.unit.forms) {
 				MaskUnit mu = form.du.getPCoin() != null ? form.du.getPCoin().improve(lv.getTalents()) : form.du;
 
-				int atk = mu.getProc().DMGINC.mult;
-				int def = mu.getProc().DEFINC.mult;
+				int atk = (int) mu.getProc().DMGINC.mult;
+				int def = (int) mu.getProc().DEFINC.mult;
 				str |= (atk > 100 && atk < 300) || (def > 100 && def < 400);
 				mas |= atk >= 300 && atk < 500;
 				res |= def >= 400 && def < 600;
@@ -583,8 +583,8 @@ public class LevelEditPage extends DefaultPage {
 		} else {
 			MaskUnit mu = f.du.getPCoin() != null ? f.du.getPCoin().improve(lv.getTalents()) : f.du;
 
-			int atk = mu.getProc().DMGINC.mult;
-			int def = mu.getProc().DEFINC.mult;
+			int atk = (int) mu.getProc().DMGINC.mult;
+			int def = (int) mu.getProc().DEFINC.mult;
 			str = (atk > 100 && atk < 300) || (def > 100 && def < 400);
 			mas = atk >= 300 && atk < 500;
 			res = def >= 400 && def < 600;

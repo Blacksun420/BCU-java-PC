@@ -1,14 +1,11 @@
 package io;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import common.CommonStatic;
 import common.battle.BasisSet;
 import common.io.Backup;
 import common.io.DataIO;
 import common.io.OutStream;
-import common.io.json.JsonDecoder;
 import common.io.json.JsonEncoder;
 import common.pack.Context;
 import common.pack.Context.ErrType;

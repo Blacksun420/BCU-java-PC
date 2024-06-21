@@ -82,9 +82,10 @@ public abstract class SwingEditor extends Editor {
 			try {
 				Editors.EdiField field = ctrl.getField(f);
 				Class<?> fc = field.getType();
-				if (fc == int.class) {
+				if (fc == int.class)
 					return new IntEditor(group, field, f, edit);
-				}
+				if (fc == float.class || fc == double.class)
+					return new DoubleEditor(group, field, f, edit);
 				if (fc == boolean.class)
 					return new BoolEditor(group, field, f, edit);
 				if (fc == Identifier.class) {
@@ -231,6 +232,61 @@ public abstract class SwingEditor extends Editor {
 		@SuppressWarnings("ConstantConditions")
 		private void edit(FocusEvent fe) {
 			field.setInt(Data.ignore(() -> CommonStatic.parseIntN(input.getText())));
+			update();
+		}
+	}
+
+	public static class DoubleEditor extends SwingEditor {
+		public final JL label;
+		public final JTF input = new JTF();
+
+		public DoubleEditor(EditorGroup eg, Editors.EdiField field, String f, boolean edit) {
+			super(eg, field, f, edit);
+			label = new JL(ProcLang.get().get(eg.proc).get(f));
+			input.setLnr(this::edit);
+		}
+
+		@Override
+		public void setVisible(boolean res) {
+			label.setVisible(res);
+			input.setVisible(res);
+		}
+
+		@Override
+		public boolean isInvisible() {
+			return !label.isVisible();
+		}
+
+		@Override
+		public void resize(int x, int y, int x0, int y0, int w0, int h0) {
+			Page.set(label, x, y, x0, y0, 150, h0);
+			Page.set(input, x, y, x0 + 150, y0, w0 - 150, h0);
+		}
+
+		@Override
+		public void setData() {
+			field.setData(par.obj);
+			if (field.obj == null)
+				input.setText("");
+			else if (field.getType() == float.class)
+				input.setText(String.valueOf(field.getFloat()));
+			else
+				input.setText(String.valueOf(field.getDouble()));
+			input.setEnabled(edit && field.obj != null);
+		}
+
+		@Override
+		public void add(Consumer<JComponent> con) {
+			con.accept(label);
+			con.accept(input);
+		}
+
+		@SuppressWarnings("ConstantConditions")
+		private void edit(FocusEvent fe) {
+			if (field.getType() == float.class) {
+				field.set(Data.ignore(() -> CommonStatic.parseFloatN(input.getText())));
+			} else
+				field.set(Data.ignore(() -> CommonStatic.parseDoubleN(input.getText())));
 			update();
 		}
 	}
