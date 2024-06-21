@@ -497,8 +497,10 @@ public interface BattleBox {
 						int dh = (int) (hr * 12);
 						float cd = 1f * cool / sb.elu.maxC[i][j];
 						int xw = (int) (cd * (iw - dw * 2));
-						g.colRect(x + iw - dw - xw, y + ih - dh * 2, xw, dh, 0, 0, 0, -1);
-						g.colRect(x + dw, y + ih - dh * 2, iw - dw * 2 - xw, dh, 100, 212, 255, -1);
+						int xw2 = iw - dw * 2;
+
+						g.colRect(x + iw - dw - xw2, y + ih - dh * 2, xw2, dh, 0, 0, 0, -1);
+						g.colRect((x + dw + 2f), (y + ih - dh * 2) + 2f, (iw - dw * 2 - xw) - 4, dh - 4, 100, 212, 255, -1);
 					} else if (pri != -1 && !(sb.elu.validSpirit(i,j) && !sb.elu.readySpirit(i,j)))
 						Res.getCost(pri / 100, !b, setSym(g, hr, x + iw * 1.05f, y + ih * 1.05f, 3));
 				}
