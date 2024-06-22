@@ -115,6 +115,7 @@ public class HeadTable extends AbJTable {
 		bas[4] = Page.get(MainLocale.INFO, "mus") + ":";
 		bas[5] = st.mus0;
 		bas[6] = "<" + st.mush + "%:";
+		bas[7] = st.mus1;
 		bas2[0] = Page.get(MainLocale.INFO, "minspawn");
 		if(st.minSpawn == st.maxSpawn)
 			bas2[1] = st.minSpawn + "f";
@@ -131,7 +132,8 @@ public class HeadTable extends AbJTable {
 			bas2[4] = Page.get(MainLocale.INFO, "time");
 			bas2[5] = st.timeLimit +" secs";
 		}
-		bas[7] = st.mus1;
+		if (st.bossBarrier)
+			bas[6] = Page.get(MainLocale.INFO, "bossBarrier");
 		img[0] = infs[4];
 		img[1] = st.bg;
 		img[2] = "<" + st.bgh + "%";

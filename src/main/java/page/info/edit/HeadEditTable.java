@@ -49,6 +49,7 @@ class HeadEditTable extends Page {
 	private final JTF jures = new JTF();
 	private final JTF cos = new JTF();
 	private final JTG dojo = new JTG(MainLocale.PAGE,"dojo");
+	private final JTG bbrr = new JTG(MainLocale.INFO, "bossBarrier");
 	private final LimitTable lt;
 
 	private Stage sta;
@@ -147,6 +148,7 @@ class HeadEditTable extends Page {
 		set(jbg1, x, y, w * 3, 100, w, 50);
 		set(cas, x, y, w * 4, 100, w, 50);
 		set(jcas, x, y, w * 5, 100, w, 50);
+		set(bbrr, x, y, w * 6, 100, w, 50);
 		set(mus, x, y, 0, 150, w, 50);
 		set(jm0, x, y, w, 150, w, 50);
 		set(jmh, x, y, w * 2, 150, w, 50);
@@ -185,6 +187,9 @@ class HeadEditTable extends Page {
 		cos.setText(String.valueOf(st.getCont().price + 1));
 		con.setSelected(!st.non_con);
 		dojo.setSelected(st.trail);
+		bbrr.setSelected(st.bossBarrier);
+		barrierAbler();
+
 		String str = get(MainLocale.INFO, "star") + ": ";
 		for (int i = 0; i < 4; i++)
 			if (i < st.getCont().stars.length)
@@ -199,6 +204,19 @@ class HeadEditTable extends Page {
 		jres.setText(generateMinRespawn(st.minSpawn, st.maxSpawn));
 		jures.setEnabled(true);
 		jures.setText(generateMinRespawn(sta.minUSpawn, sta.maxUSpawn));
+	}
+
+	void barrierAbler() {
+		boolean bar = false;
+		if (sta != null)
+			for (SCDef.Line l : sta.data.datas)
+				if (l.boss >= 1) {
+					bar = true;
+					break;
+				}
+		bbrr.setEnabled(bar);
+		if (!bar && sta != null)
+			sta.bossBarrier = false;
 	}
 
 	private void abler(boolean b) {
@@ -259,6 +277,7 @@ class HeadEditTable extends Page {
 			}
 		});
 
+		bbrr.setLnr(a -> sta.bossBarrier = bbrr.isSelected());
 	}
 
 	private void ini() {
@@ -289,6 +308,8 @@ class HeadEditTable extends Page {
 		set(cost);
 		set(cos);
 		con.setSelected(true);
+		add(bbrr);
+		bbrr.setEnabled(false);
 
 		for (int i = 0; i < 4; i++)
 			set(star[i] = new JTF());

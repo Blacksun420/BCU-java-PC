@@ -639,6 +639,9 @@ public interface BattleBox {
 				int bh = (int) (bimg.getHeight() * sca);
 				int centr = (int) (cast.center * ratio * sca);
 				gra.drawImage(bimg, posx - bw + shake + centr, posy - bh, bw, bh);
+
+				if (((ECastle) sb.ebase).guard != null && !((ECastle) sb.ebase).guard.done())
+					((ECastle) sb.ebase).guard.draw(gra, setP(posx + (int)(cast.center * ratio), posy), bf.sb.siz);
 			} else {
 				if(sb.temp_inten == 0 || (sb.ebase.getAbi() & Data.AB_TIMEI) == 0) {
 					posx = (int) getX(sb.ebase.pos);

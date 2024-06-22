@@ -47,14 +47,14 @@ public class StageEditTable extends AbJTable implements Reorderable {
 	}
 
 	private SCDef stage;
-	private final Page page;
+	private final StageEditPage page;
 	private EnemyFindPage efp;
 	private final UserPack pack;
 
 	private boolean changing = false;
 	protected int findIndex = -1;
 
-	protected StageEditTable(Page p, UserPack pac) {
+	protected StageEditTable(StageEditPage p, UserPack pac) {
 		super(title);
 
 		page = p;
@@ -207,6 +207,7 @@ public class StageEditTable extends AbJTable implements Reorderable {
 
 				set(r, c, i > 0 ? 1 : 0, 0);
 			}
+			page.info.barrierAbler();
 		} else if (c == 2) {
 			int[] data = CommonStatic.parseIntsN((String) arg0);
 
@@ -417,9 +418,8 @@ public class StageEditTable extends AbJTable implements Reorderable {
 			if(pack != null) {
 				Enemy e = pack.enemies.get(para);
 
-				if(e != null) {
+				if(e != null)
 					data.enemy = e.id;
-				}
 			}
 		}
 		else if (c == 2) {

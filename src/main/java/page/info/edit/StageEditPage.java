@@ -66,7 +66,7 @@ public class StageEditPage extends DefaultPage {
 	private final JList<AbEnemy> jle = new JList<>();
 	private final JScrollPane jspe = new JScrollPane(jle);
 
-	private final HeadEditTable info;
+	final HeadEditTable info;
 
 	private final MapColc mc;
 	private final UserPack pack;
