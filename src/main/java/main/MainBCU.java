@@ -303,7 +303,7 @@ public class MainBCU {
 		}
 	}
 
-	public static final int ver = 60113;
+	public static final int ver = 60114;
 	private static final DecimalFormat df = new DecimalFormat("#.##");
 	public static int autoSaveTime = 0, searchTolerance = 4;
 	public static final boolean WRITE = !new File("./.idea").exists();
@@ -311,7 +311,7 @@ public class MainBCU {
 	public static boolean seconds = false, buttonSound = false, searchPerKey = false;
 	public static String author = "";
 	public static ImageBuilder<BufferedImage> builder;
-	public static AutoSaveTimer ast;
+	private static AutoSaveTimer ast;
 
 	public static void restartAutoSaveTimer() {
 		if (ast != null)
