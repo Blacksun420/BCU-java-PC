@@ -86,7 +86,7 @@ public class UtilPC {
 		}
 	}
 
-	public static final byte iconSize = 41;
+	public static final byte iconSize = 40;
 
 	public static ImageIcon getBg(Background bg, int w, int h) {
 		bg.check();
