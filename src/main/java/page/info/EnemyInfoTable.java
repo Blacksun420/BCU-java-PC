@@ -136,7 +136,7 @@ public class EnemyInfoTable extends CharacterInfoTable {
 		String eDesc = e.getExplanation();
 		if (eDesc.replace("\n", "").length() > 0)
 			add(desc);
-		descr.setText(e.toString().replace(Data.trio(e.id.id) + " - ", "") + (e.de.getTraits().size() > 0 && !e.de.getTraits().contains(UserProfile.getBCData().traits.get(Data.TRAIT_WHITE)) ? " (" + Interpret.getTrait(TraitBox, 0) + ")" : "") + (e.de.getStar() > 2 ? " (Cool Dude)" : "") + "\n" + eDesc);
+		descr.setText(e.toString().replace(Data.trio(e.id.id) + " - ", "") + (e.de.getStar() > 2 ? " (Cool Dude)" : "") + "\n" + eDesc);
 		descr.setEditable(false);
 		resetAtk();
 		addListeners();
