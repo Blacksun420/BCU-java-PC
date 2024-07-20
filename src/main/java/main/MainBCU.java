@@ -69,13 +69,10 @@ public class MainBCU {
 
 		@Override
 		public InputStream getLangFile(String file) {
-			int l = CommonStatic.getConfig().lang;
-			for (int i = 0; i < CommonStatic.Lang.LOC_CODE.length; i++) {
-				int pref = i < CommonStatic.Lang.LOC_CODE[l].length() ? CommonStatic.Lang.pref[l][i] : i;
-				File f = new File(getBCUFolder(),"./assets/lang/" + CommonStatic.Lang.LOC_CODE[pref] + "/" + file);
-				if (f.exists())
-					return Data.err(() -> new FileInputStream(f));
-			}
+			File f = new File(getBCUFolder(),"./assets/lang/" + CommonStatic.getConfig().lang.code + "/" + file);
+			if (f.exists())
+				return Data.err(() -> new FileInputStream(f));
+
 			String path = "common/util/lang/assets/" + file;
 			return ClassLoader.getSystemResourceAsStream(path);
 		}
@@ -303,7 +300,7 @@ public class MainBCU {
 		}
 	}
 
-	public static final int ver = 60114;
+	public static final int ver = 60115;
 	private static final DecimalFormat df = new DecimalFormat("#.##");
 	public static int autoSaveTime = 0, searchTolerance = 4;
 	public static final boolean WRITE = !new File("./.idea").exists();
@@ -311,6 +308,9 @@ public class MainBCU {
 	public static boolean seconds = false, buttonSound = false, searchPerKey = false;
 	public static String author = "";
 	public static ImageBuilder<BufferedImage> builder;
+
+	public static int[] dynamicTolerance = {0,0,0,0,1,1,1,2,2,2,3};
+	public static boolean useDynamic = false;
 	private static AutoSaveTimer ast;
 
 	public static void restartAutoSaveTimer() {

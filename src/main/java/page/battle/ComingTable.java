@@ -102,7 +102,7 @@ class ComingTable extends AbJTable {
 			if (!eList.contains(f)) {
 				int[] d = CommonStatic.parseIntsN((String) data[i][2]);
 				eList.add(f);
-				muls.add(new int[]{d[0],d[1]});
+				muls.add(new int[]{d[0], d[1]});
 			}
 		}
 		MainFrame.changePanel(new EnemyInfoPage(page, ENode.getListE(eList, e, muls)));
@@ -156,5 +156,4 @@ class ComingTable extends AbJTable {
 			tem[i] = data[i];
 		data = tem;
 	}
-
 }

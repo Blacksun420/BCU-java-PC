@@ -185,5 +185,4 @@ public class StageTable extends AbJTable {
 
 		}
 	}
-
 }

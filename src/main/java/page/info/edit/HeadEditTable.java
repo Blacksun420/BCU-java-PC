@@ -48,7 +48,7 @@ class HeadEditTable extends Page {
 	private final JTF jres = new JTF();
 	private final JTF jures = new JTF();
 	private final JTF cos = new JTF();
-	private final JTG dojo = new JTG(MainLocale.PAGE,"dojo");
+	private final JTG dojo = new JTG(MainLocale.PAGE, "dojo");
 	private final JTG bbrr = new JTG(MainLocale.INFO, "bossBarrier");
 	private final LimitTable lt;
 
@@ -69,7 +69,7 @@ class HeadEditTable extends Page {
 	}
 
 	@Override
-    public JButton getBackButton() {
+	public JButton getBackButton() {
 		return null;
 	}
 
@@ -187,7 +187,7 @@ class HeadEditTable extends Page {
 		cos.setText(String.valueOf(st.getCont().price + 1));
 		con.setSelected(!st.non_con);
 		dojo.setSelected(st.trail);
-		bbrr.setSelected(st.bossBarrier);
+		bbrr.setSelected(st.bossGuard);
 		barrierAbler();
 
 		String str = get(MainLocale.INFO, "star") + ": ";
@@ -216,7 +216,7 @@ class HeadEditTable extends Page {
 				}
 		bbrr.setEnabled(bar);
 		if (!bar && sta != null)
-			sta.bossBarrier = false;
+			sta.bossGuard = false;
 	}
 
 	private void abler(boolean b) {
@@ -277,7 +277,7 @@ class HeadEditTable extends Page {
 			}
 		});
 
-		bbrr.setLnr(a -> sta.bossBarrier = bbrr.isSelected());
+		bbrr.setLnr(a -> sta.bossGuard = bbrr.isSelected());
 	}
 
 	private void ini() {

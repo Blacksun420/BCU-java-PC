@@ -292,7 +292,7 @@ public class StageSearchPage extends StagePage {
             }
         });
 
-        jlst.addListSelectionListener(l -> setData(jlst.getSelectedValue()));
+        jlst.addListSelectionListener(l -> setData(jlst.getSelectedValue(), 0));
 
         initSearch.addActionListener(l -> {
             startSearch();

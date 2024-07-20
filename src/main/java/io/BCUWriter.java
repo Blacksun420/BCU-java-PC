@@ -283,6 +283,7 @@ public class BCUWriter extends DataIO {
 		jo.addProperty("stat", CommonStatic.getConfig().stat);
 		jo.addProperty("searchtype", MainBCU.searchPerKey);
 		jo.addProperty("tolerance", MainBCU.searchTolerance);
+		jo.addProperty("usedynamic", MainBCU.useDynamic);
 		String[] exp = new String[Exporter.curs.length];
 		for (int i = 0; i < exp.length; i++)
 			exp[i] = Exporter.curs[i] == null ? null : Exporter.curs[i].toString();

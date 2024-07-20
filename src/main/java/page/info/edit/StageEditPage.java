@@ -32,6 +32,7 @@ public class StageEditPage extends DefaultPage {
 	public static void redefine() {
 		StageEditTable.redefine();
 		LimitTable.redefine();
+		StageLimitTable.redefine();
 		SCGroupEditTable.redefine();
 	}
 
@@ -81,7 +82,9 @@ public class StageEditPage extends DefaultPage {
 		pack = pac;
 		jt = new StageEditTable(this, pac);
 		jspjt = new JScrollPane(jt);
-		info = new HeadEditTable(this, pac);
+		hinf = new HeadEditTable(this, pac);
+		linf = new LimitTable(this, pac);
+		sinf = new StageLimitTable(this, pac);
 		jlsm.setListData(mc, mc.maps);
 		jle.setListData(UserProfile.getAll(pack.getSID(), Enemy.class).toArray(new Enemy[0]));
 		efp = new EnemyFindPage(getThis(), true, pac);
@@ -93,6 +96,8 @@ public class StageEditPage extends DefaultPage {
 		super.callBack(newParam);
 		jlst.revalidate();
 		jlst.repaint();
+
+		setData(stage);
 	}
 
 	@Override
@@ -311,6 +316,11 @@ public class StageEditPage extends DefaultPage {
 
 		rems.setLnr(jlst::deleteItem);
 
+		data.setLnr(x -> {
+			headEdit = (headEdit + 1) % 2;
+			data.setText(MainLocale.PAGE, "head" + headEdit);
+			needResize = true;
+		});
 	}
 
 	private void checkPtsm() {
@@ -335,8 +345,8 @@ public class StageEditPage extends DefaultPage {
 			ptst.setEnabled(false);
 		else {
 			Set<String> set = st.isSuitable(pack);
-			ptst.setEnabled(set.size() == 0);
-			if (set.size() > 0)
+			ptst.setEnabled(set.isEmpty());
+			if (!set.isEmpty())
 				ptst.setToolTipText("requires: " + set);
 		}
 		rmst.setEnabled(st != null);
@@ -348,7 +358,9 @@ public class StageEditPage extends DefaultPage {
 		add(adds);
 		add(rems);
 		add(jspjt);
-		add(info);
+		add(hinf);
+		add(linf);
+		add(sinf);
 		add(strt);
 		add(jspsm);
 		add(jspst);
@@ -366,6 +378,7 @@ public class StageEditPage extends DefaultPage {
 		add(recd);
 		add(advs);
 		add(elim);
+		add(data);
 		setAA(null);
 		setBA(null);
 		jle.setCellRenderer(new AnimLCR());
@@ -471,7 +484,9 @@ public class StageEditPage extends DefaultPage {
 
 	private void setData(Stage st) {
 		stage = st;
-		info.setData(st);
+		hinf.setData(st);
+		linf.setLimit(st != null ? st.lim : null);
+		sinf.setData(st);
 		jt.setData(st);
 		strt.setEnabled(st != null);
 		recd.setEnabled(st != null);

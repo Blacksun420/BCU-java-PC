@@ -190,7 +190,7 @@ public class CompareTable extends Page {
                 Lvl = new Magnification(100, 100);
             hp *= (((Magnification) Lvl).hp * enemy.multi(b)) / 100.0;
             mul = (((Magnification) Lvl).atk * enemy.multi(b)) / 100.0;
-            enem.setText(Math.floor(enemy.getDrop() * b.t().getDropMulti()) / 100 + "");
+            enem.setText(Math.floor(enemy.getDrop() * b.t().getDropMulti(false)) / 100 + "");
             for (JL jls : unit)
                 jls.setText("-");
             for (JL jls : evol) {

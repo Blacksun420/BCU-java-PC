@@ -30,7 +30,10 @@ import page.view.ViewBox;
 import utilpc.Interpret;
 
 import java.awt.*;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
@@ -99,6 +102,8 @@ public class BCUReader extends DataIO {
 					MainBCU.searchPerKey = jo.get("searchtype").getAsBoolean();
 				if (jo.has("tolerance"))
 					MainBCU.searchTolerance = jo.get("tolerance").getAsInt();
+				if (jo.has("usedynamic"))
+					MainBCU.useDynamic = jo.get("usedynamic").getAsBoolean();
 				String[] exp = JsonDecoder.decode(jo.get("export_paths"), String[].class);
 				String[] imp = JsonDecoder.decode(jo.get("import_paths"), String[].class);
 				for (int i = 0; i < Math.min(Exporter.curs.length, exp.length); i++)
@@ -148,6 +153,17 @@ public class BCUReader extends DataIO {
 					continue;
 				if (ni.length() != 2)
 					continue;
+				CommonStatic.Lang.Locale locale = null;
+				for (CommonStatic.Lang.Locale l : CommonStatic.Lang.Locale.values()) {
+					if (l.code.equals(ni)) {
+						locale = l;
+						break;
+					}
+				}
+				if (locale == null) {
+					System.out.println("unregistered locale: " + ni);
+					continue;
+				}
 
 				File[] fls = fi.listFiles();
 
@@ -167,17 +183,17 @@ public class BCUReader extends DataIO {
 
 											for (String id : ids) {
 												if (CommonStatic.isInteger(id)) {
-													MultiLangCont.getStatic().RWNAME.put(ni, Integer.parseInt(id), str[1]);
+													MultiLangCont.getStatic().RWNAME.put(locale, Integer.parseInt(id), str[1]);
 												} else if (id.startsWith("S")) {
 													String realID = id.replace("S", "");
 
 													if (CommonStatic.isInteger(realID))
-														MultiLangCont.getStatic().RWSTNAME.put(ni, Integer.parseInt(realID), str[1]);
+														MultiLangCont.getStatic().RWSTNAME.put(locale, Integer.parseInt(realID), str[1]);
 												} else if (id.startsWith("I")) {
 													String realID = id.replace("I", "");
 
 													if (CommonStatic.isInteger(realID))
-														MultiLangCont.getStatic().RWSVNAME.put(ni, Integer.parseInt(realID), str[1]);
+														MultiLangCont.getStatic().RWSVNAME.put(locale, Integer.parseInt(realID), str[1]);
 												}
 											}
 										}
@@ -192,7 +208,7 @@ public class BCUReader extends DataIO {
 												.filter(c -> c.name.equals(str[0]))
 												.collect(Collectors.toList());
 										if (combo.size() > 0)
-											MultiLangCont.getStatic().COMNAME.put(ni, combo.get(0), str[1]);
+											MultiLangCont.getStatic().COMNAME.put(locale, combo.get(0), str[1]);
 									}
 								}
 								continue;
@@ -229,7 +245,7 @@ public class BCUReader extends DataIO {
 											if (mc == null)
 												continue;
 											if (ids.length == 1) {
-												MultiLangCont.getStatic().MCNAME.put(ni, mc, name);
+												MultiLangCont.getStatic().MCNAME.put(locale, mc, name);
 												continue;
 											}
 											int id1 = CommonStatic.parseIntN(ids[1]);
@@ -239,14 +255,14 @@ public class BCUReader extends DataIO {
 											if (sm == null)
 												continue;
 											if (ids.length == 2) {
-												MultiLangCont.getStatic().SMNAME.put(ni, sm, name);
+												MultiLangCont.getStatic().SMNAME.put(locale, sm, name);
 												continue;
 											}
 											int id2 = CommonStatic.parseIntN(ids[2]);
 											if (id2 >= sm.list.size() || id2 < 0)
 												continue;
 											Stage st = sm.list.get(id2);
-											MultiLangCont.getStatic().STNAME.put(ni, st, name);
+											MultiLangCont.getStatic().STNAME.put(locale, st, name);
 										}
 									}
 								continue;
@@ -260,7 +276,7 @@ public class BCUReader extends DataIO {
 										if (u == null)
 											continue;
 										for (int i = 0; i < Math.min(u.forms.length, strs.length - 1); i++)
-											MultiLangCont.getStatic().FNAME.put(ni, u.forms[i], strs[i + 1].trim());
+											MultiLangCont.getStatic().FNAME.put(locale, u.forms[i], strs[i + 1].trim());
 									}
 								continue;
 							}
@@ -272,7 +288,7 @@ public class BCUReader extends DataIO {
 										Enemy e = UserProfile.getBCData().enemies.get(CommonStatic.parseIntN(strs[0]));
 										if (e == null || strs.length < 2)
 											continue;
-										MultiLangCont.getStatic().ENAME.put(ni, e, strs[1].trim());
+										MultiLangCont.getStatic().ENAME.put(locale, e, strs[1].trim());
 									}
 								continue;
 							}
@@ -285,7 +301,7 @@ public class BCUReader extends DataIO {
 										if (u == null)
 											continue;
 										for (int i = 0; i < Math.min(u.forms.length, strs.length - 1); i++)
-											MultiLangCont.getStatic().FEXP.put(ni, u.forms[i], strs);
+											MultiLangCont.getStatic().FEXP.put(locale, u.forms[i], strs);
 									}
 								continue;
 							}
@@ -298,9 +314,9 @@ public class BCUReader extends DataIO {
 											continue;
 										Unit u = UserProfile.getBCData().units.get(CommonStatic.parseIntN(strs[0]));
 										if (u != null) {
-											MultiLangCont.getStatic().CFEXP.put(ni, u.info, strs[1]);
+											MultiLangCont.getStatic().CFEXP.put(locale, u.info, strs[1]);
 											if (strs.length == 3 && !strs[2].equals("<br><br>"))
-												MultiLangCont.getStatic().UFEXP.put(ni, u.info, strs[2]);
+												MultiLangCont.getStatic().UFEXP.put(locale, u.info, strs[2]);
 										}
 									}
 							}
@@ -312,7 +328,7 @@ public class BCUReader extends DataIO {
 										Enemy e = UserProfile.getBCData().enemies.get(CommonStatic.parseIntN(strs[0]));
 										if (e == null || strs.length < 2)
 											continue;
-										MultiLangCont.getStatic().EEXP.put(ni, e, strs);
+										MultiLangCont.getStatic().EEXP.put(locale, e, strs);
 									}
 								continue;
 							}

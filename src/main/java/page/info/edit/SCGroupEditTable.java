@@ -153,5 +153,4 @@ class SCGroupEditTable extends AbJTable {
 			v = 0;
 		scd.smap.put(data.getKey(), v);
 	}
-
 }

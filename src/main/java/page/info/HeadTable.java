@@ -132,7 +132,7 @@ public class HeadTable extends AbJTable {
 			bas2[4] = Page.get(MainLocale.INFO, "time");
 			bas2[5] = st.timeLimit +" secs";
 		}
-		if (st.bossBarrier)
+		if (st.bossGuard)
 			bas[6] = Page.get(MainLocale.INFO, "bossBarrier");
 		img[0] = infs[4];
 		img[1] = st.bg;

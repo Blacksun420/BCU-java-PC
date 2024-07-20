@@ -67,7 +67,7 @@ public class EnemyInfoTable extends CharacterInfoTable {
 		double mul = multi * e.de.multi(b) / 100;
 		double mula = mulatk * e.de.multi(b) / 100;
 		main[0][3].setText("" + (int) (e.de.getHp() * mul));
-		main[0][7].setText("" + Math.floor(e.de.getDrop() * b.t().getDropMulti()) / 100);
+		main[0][7].setText("" + Math.floor(e.de.getDrop() * b.t().getDropMulti(false)) / 100);
 		main[1][3].setText("" + (int) (e.de.allAtk(dispAtk) * mula * 30 / e.de.getItv(dispAtk)));
 		MaskAtk[] atkData = e.de.getAtks(dispAtk);
 		for (int i = 0; i < atks.length; i++)

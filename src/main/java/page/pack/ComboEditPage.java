@@ -53,7 +53,7 @@ public class ComboEditPage extends DefaultPage {
     private final JL lbf = new JL(0, "forms");
 
     private UnitFindPage ufp;
-    private final JBTN vuif = new JBTN(0,"vuif");
+    private final JBTN vuif = new JBTN(0, "vuif");
 
     private boolean changing = false, unsorted = true;
 
@@ -72,8 +72,8 @@ public class ComboEditPage extends DefaultPage {
             changing = true;
             List<Unit> list = new ArrayList<>();
             for (AbForm f : ufp.getList())
-                if (!list.contains((Unit)f.unit()))
-                    list.add((Unit)f.unit());
+                if (!list.contains((Unit) f.unit()))
+                    list.add((Unit) f.unit());
             jlu.setListData(list.toArray(new Unit[0]));
             jlu.clearSelection();
             if (list.size() > 0) {
@@ -88,7 +88,7 @@ public class ComboEditPage extends DefaultPage {
         } else {
             jlf.allowDrag(pac.editable);
             List<Unit> unis = new ArrayList<>();
-            for(PackData p : UserProfile.getAllPacks())
+            for (PackData p : UserProfile.getAllPacks())
                 for (Unit u : p.units.getList())
                     if (u.id.pack.equals(Identifier.DEF) || u.id.pack.equals(pac.getSID()) || pac.desc.dependency.contains(u.id.pack))
                         unis.add(u);
@@ -152,7 +152,7 @@ public class ComboEditPage extends DefaultPage {
 
         add(addf);
         add(remc);
-        
+
         add(lbp);
         add(lbu);
         add(lbf);
@@ -303,7 +303,7 @@ public class ComboEditPage extends DefaultPage {
             }
             combo.name = str;
         });
-        
+
     }
 
     @Override

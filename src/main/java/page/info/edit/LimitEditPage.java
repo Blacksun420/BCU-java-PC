@@ -127,5 +127,4 @@ public class LimitEditPage extends DefaultPage {
 			l = null;
 		setLimit(l);
 	}
-
 }

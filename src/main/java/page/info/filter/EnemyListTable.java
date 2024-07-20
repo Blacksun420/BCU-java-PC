@@ -101,7 +101,7 @@ public class EnemyListTable extends EntityListTable<AbEnemy> {
 			else if (c == 7)
 				return e.de.getSpeed();
 			else if (c == 8)
-				return Math.floor(e.de.getDrop() * b.t().getDropMulti()) / 100;
+				return Math.floor(e.de.getDrop() * b.t().getDropMulti(false)) / 100;
 			else if (c == 9)
 				return e.de.getAtkModel(e.de.firstAtk(), 0).getPre();
 			else if (c == 10)

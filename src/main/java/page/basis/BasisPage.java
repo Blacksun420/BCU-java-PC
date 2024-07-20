@@ -99,7 +99,8 @@ public class BasisPage extends LubCont {
 		super(p);
 		this.st = st;
 		lub.setLimit(lim, st.getCont().getCont().getSave(false), st.getCont().price);
-
+		if (st.getCont().stageLimit != null)
+			jlcn.setBanned(st.getCont().stageLimit.bannedCatCombo);
 		ini();
 	}
 
@@ -716,14 +717,12 @@ public class BasisPage extends LubCont {
 	}
 
 	private void updateSetC() {
-		Combo com = jlc.list.size() > 0 && jlc.getSelectedRow() != -1 ? jlc.list.get(jlc.getSelectedRow()) : null;
+		Combo com = !jlc.list.isEmpty() && jlc.getSelectedRow() != -1 ? jlc.list.get(jlc.getSelectedRow()) : null;
 		setc.setEnabled(com != null && !lu().contains(com));
 		boolean b = false;
 		if (com != null)
 			b = lu().willRem(com);
 		setc.setForeground(b ? Color.RED : Color.BLACK);
 		setc.setText(0, "set" + (b ? "1" : "0"));
-		jlc.revalidate();
-		jlc.repaint();
 	}
 }

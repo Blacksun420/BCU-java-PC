@@ -112,7 +112,7 @@ public class UnitListTable extends EntityListTable<AbForm> {
 			else if (c == 9)
 				return du.getAtkModel(du.firstAtk(), 0).getPre();
 			else if (c == 10)
-				return b.t().getFinRes(du.getRespawn());
+				return b.t().getFinRes(du.getRespawn(), false);
 			else if (c == 11)
 				return (int) (du.getPrice() * (1 + cost * 0.5));
 			else if (c == 12)
@@ -127,7 +127,7 @@ public class UnitListTable extends EntityListTable<AbForm> {
 			else if(c == 2)
 				return "Random Unit";
 			else if (c == 10)
-				return b.t().getFinRes(((UniRand)f).cooldown);
+				return b.t().getFinRes(((UniRand)f).cooldown, false);
 			else if (c == 11)
 				return (int) (((UniRand)f).price * (1 + cost * 0.5));
 		}

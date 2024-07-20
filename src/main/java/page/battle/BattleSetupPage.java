@@ -14,6 +14,7 @@ import page.Page;
 import page.basis.BasisPage;
 import page.basis.LineUpBox;
 import page.basis.LubCont;
+import page.basis.ModifierList;
 
 import javax.swing.*;
 import java.util.Vector;
@@ -33,6 +34,8 @@ public class BattleSetupPage extends LubCont {
 	private final JLabel jl = new JLabel();
 	private final JBTN jlu = new JBTN(0, "line");
 	private final LineUpBox lub = new LineUpBox(this);
+	private final ModifierList mod = new ModifierList();
+	private final JScrollPane jmod = new JScrollPane(mod);
 
 	private final Stage st;
 
@@ -82,6 +85,10 @@ public class BattleSetupPage extends LubCont {
 		BasisSet b = BasisSet.current();
 		callBack(null);
 		lub.setLU(b.sele.lu);
+
+		mod.setBasis(BasisSet.current());
+		mod.setComboList(BasisSet.current().sele.lu.coms);
+		mod.setBanned(st.getCont().stageLimit != null ? st.getCont().stageLimit.bannedCatCombo : null);
 	}
 
 	@Override
@@ -95,6 +102,7 @@ public class BattleSetupPage extends LubCont {
 		set(snip, x, y, 300, 200, 200, 50);
 		set(tmax, x, y, 300, 500, 200, 50);
 		set(lub, x, y, 550, 50, 600, 300);
+		set(jmod, x, y, 550, 350, 600, 200);
 		set(plus, x, y, 1200, 100, 200, 50);
 		set(lvlim, x, y, 1200, 200, 200, 50);
 	}
@@ -148,6 +156,7 @@ public class BattleSetupPage extends LubCont {
 		add(snip);
 		add(tmax);
 		add(lub);
+		add(jmod);
 		tmax.setEnabled(st.lim != null && st.lim.lvr != null);
 		if(st.isAkuStage()) {
 			add(plus);

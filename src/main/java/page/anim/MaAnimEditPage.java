@@ -254,7 +254,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		boolean undraggable = !pause || rows.length == 0 || !e.isShiftDown();
 		if (!undraggable) {
 			for (int i = 0; i < rows.length; i++)
-				if (maet.ma.parts[rows[i]].ints[1] < 8 || (maet.ma.parts[rows[i]].ints[1] >= 11))
+				if (maet.ma.parts[rows[i]].ints[1] < 8 || (maet.ma.parts[rows[i]].ints[1] >= 11 && maet.ma.parts[rows[i]].ints[1] != 53))
 					rows[i] = -1;
 			undraggable = true;
 			for (int ind : rows)

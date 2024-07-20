@@ -3,6 +3,7 @@ package page;
 import common.CommonStatic;
 import common.CommonStatic.Config;
 import common.io.Backup;
+import common.io.assets.AssetLoader;
 import common.pack.UserProfile;
 import common.util.ImgCore;
 import common.util.Res;
@@ -14,8 +15,10 @@ import main.Opts;
 import main.Timer;
 import page.support.ColorPicker;
 import page.view.ViewBox;
+import utilpc.Interpret;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class ConfigPage extends DefaultPage {
 
@@ -73,16 +76,19 @@ public class ConfigPage extends DefaultPage {
 	private final JSlider jsse = new JSlider(0, 100);
 	private final JSlider jsui = new JSlider(0, 100);
 	private final JSlider jsba = new JSlider(0, 50);
-	private final JList<String> jls = new JList<>(MainLocale.LOC_NAME);
+	private final JList<CommonStatic.Lang.Locale> jls = new JList<>(Interpret.getLocales()); // TODO: reorderlist for custom priority
 	private final JBTN row = new JBTN(MainLocale.PAGE, CommonStatic.getConfig().twoRow ? "tworow" : "onerow");
 	private final JBTN vcol = new JBTN(MainLocale.PAGE, "viewcolor");
 	private final JBTN vres = new JBTN(MainLocale.PAGE, "viewreset");
 	private final JCB excont = new JCB(MainLocale.PAGE, "excont");
 	private final JL autosave = new JL(MainLocale.PAGE, "autosave");
 	private final JTF savetime = new JTF(MainBCU.autoSaveTime > 0 ? MainBCU.autoSaveTime + "min" : get(MainLocale.PAGE, "deactivated"));
+	private final JTG dyna = new JTG(MainLocale.PAGE, "dynamic");
 	private final JCB reallv = new JCB(MainLocale.PAGE, "reallv");
 	private final JCB pkprog = new JCB(MainLocale.PAGE, "pkprog");
 	private final JCB stat = new JCB(MainLocale.PAGE, "defstat");
+
+	private final JL comv = new JL(Page.get(MainLocale.PAGE, "CORE Ver: ") + AssetLoader.CORE_VER);
 
 	private final JScrollPane jsps = new JScrollPane(jls);
 
@@ -172,7 +178,7 @@ public class ConfigPage extends DefaultPage {
 		set(vres, x, y, 1225, 775, 400, 50);
 		set(jtol, x, y, 1225, 850, 200, 50);
 		set(tole, x, y, 1425, 850, 200, 50);
-
+		set(dyna, x, y, 1425, 550, 200, 50);
 
 		set(jlla, x, y, 1750, 100, 300, 50);
 		set(jsps, x, y, 1750, 150, 300, 300);
@@ -302,10 +308,9 @@ public class ConfigPage extends DefaultPage {
 			if (changing)
 				return;
 			changing = true;
-			if (jls.getSelectedIndex() == -1) {
-				jls.setSelectedIndex(localeIndexOf(cfg().lang));
-			}
-			cfg().lang = MainLocale.LOC_INDEX[jls.getSelectedIndex()];
+			if (jls.getSelectedIndex() == -1)
+				jls.setSelectedIndex(0);
+			cfg().lang = jls.getSelectedValue();
 			Res.langIcons();
 			Page.renewLoc(getThis());
 			changing = false;
@@ -359,6 +364,10 @@ public class ConfigPage extends DefaultPage {
 		shake.addActionListener(c -> CommonStatic.getConfig().shake = shake.isSelected());
 		reallv.addActionListener(c -> CommonStatic.getConfig().realLevel = reallv.isSelected());
 		pkprog.addActionListener(c -> CommonStatic.getConfig().prog = pkprog.isSelected());
+		dyna.setLnr(c -> {
+			MainBCU.useDynamic = dyna.isSelected();
+			tole.setEnabled(!dyna.isSelected());
+		});
 	}
 
 	private void ini() {
@@ -415,9 +424,10 @@ public class ConfigPage extends DefaultPage {
 		add(reallv);
 		add(pkprog);
 		add(stat);
+		add(dyna);
 		excont.setSelected(cfg().exContinuation);
 		prlvmd.setText(String.valueOf(cfg().prefLevel));
-		jls.setSelectedIndex(localeIndexOf(cfg().lang));
+		jls.setSelectedValue(cfg().lang, true);
 		jsmin.setValue(cfg().deadOpa);
 		jsmax.setValue(cfg().fullOpa);
 		jsbg.setValue(BCMusic.VOL_BG);
@@ -470,6 +480,16 @@ public class ConfigPage extends DefaultPage {
 		stat.setToolTipText(get(MainLocale.PAGE, "defstattip"));
 		search.setSelected(MainBCU.searchPerKey);
 		tole.setText(String.valueOf(MainBCU.searchTolerance));
+		dyna.setSelected(MainBCU.useDynamic);
+		jls.setCellRenderer(new DefaultListCellRenderer() {
+			@Override
+			public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean s, boolean f) {
+				JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
+				jl.setText(MainLocale.LOC_NAME[((CommonStatic.Lang.Locale) o).ordinal()]);
+				return jl;
+			}
+		});
+		comv.setBorder(null);
 		addListeners();
 	}
 
@@ -490,12 +510,5 @@ public class ConfigPage extends DefaultPage {
 		sl.setMinorTickSpacing(5);
 		sl.setPaintTicks(true);
 		sl.setPaintLabels(true);
-	}
-
-	private int localeIndexOf(int elem) {
-		for(byte i = 0; i < MainLocale.LOC_INDEX.length; i++)
-			if(MainLocale.LOC_INDEX[i] == elem)
-				return i;
-		return -1;
 	}
 }
