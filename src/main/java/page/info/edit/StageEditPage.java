@@ -67,7 +67,9 @@ public class StageEditPage extends DefaultPage {
 	private final JList<AbEnemy> jle = new JList<>();
 	private final JScrollPane jspe = new JScrollPane(jle);
 
-	final HeadEditTable info;
+	final HeadEditTable hinf;
+	final StageLimitTable sinf;
+	private final JTG data = new JTG(0, "head1");
 
 	private final MapColc mc;
 	private final UserPack pack;
@@ -83,7 +85,6 @@ public class StageEditPage extends DefaultPage {
 		jt = new StageEditTable(this, pac);
 		jspjt = new JScrollPane(jt);
 		hinf = new HeadEditTable(this, pac);
-		linf = new LimitTable(this, pac);
 		sinf = new StageLimitTable(this, pac);
 		jlsm.setListData(mc, mc.maps);
 		jle.setListData(UserProfile.getAll(pack.getSID(), Enemy.class).toArray(new Enemy[0]));
@@ -108,7 +109,7 @@ public class StageEditPage extends DefaultPage {
 
 	@Override
 	protected void renew() {
-		info.renew();
+		hinf.renew();
 		jt.updateAbEnemy();
 		if (efp != null)
 			enam.setText(efp.getName());
@@ -125,7 +126,13 @@ public class StageEditPage extends DefaultPage {
 	@Override
 	protected synchronized void resized(int x, int y) {
 		super.resized(x, y);
-		set(info, x, y, 900, 50, 1400, 300);
+		if (data.isSelected()) {
+			set(sinf, x, y, 900, 50, 1400, 300);
+			set(hinf, x, y, 900, 50, 0, 0);
+		} else {
+			set(sinf, x, y, 900, 50, 0, 0);
+			set(hinf, x, y, 900, 50, 1400, 300);
+		}
 		set(addl, x, y, 900, 400, 200, 50);
 		set(reml, x, y, 1100, 400, 200, 50);
 		set(elim, x, y, 1600, 400, 200, 50);
@@ -133,6 +140,7 @@ public class StageEditPage extends DefaultPage {
 		set(advs, x, y, 2100, 400, 200, 50);
 		set(jspjt, x, y, 900, 450, 1400, 850);
 
+		set(data, x, y, 1425, 0, 175, 50);
 		set(jspsm, x, y, 0, 50, 300, 800);
 		set(cpsm, x, y, 0, 850, 300, 50);
 		set(ptsm, x, y, 0, 900, 300, 50);
@@ -317,8 +325,7 @@ public class StageEditPage extends DefaultPage {
 		rems.setLnr(jlst::deleteItem);
 
 		data.setLnr(x -> {
-			headEdit = (headEdit + 1) % 2;
-			data.setText(MainLocale.PAGE, "head" + headEdit);
+			data.setText(MainLocale.PAGE, "head" + (data.isSelected() ? "0" : "1"));
 			needResize = true;
 		});
 	}
@@ -359,7 +366,6 @@ public class StageEditPage extends DefaultPage {
 		add(rems);
 		add(jspjt);
 		add(hinf);
-		add(linf);
 		add(sinf);
 		add(strt);
 		add(jspsm);
@@ -418,6 +424,7 @@ public class StageEditPage extends DefaultPage {
 	private void finishRemoving(Object obj) {
 		if (obj instanceof StageMap) {
 			StageMap stm = (StageMap)obj;
+			stm.getCont().getSave(true).cSt.remove(stm);
 			for (Stage s : stm.list)
 				if (s.info != null)
 					((CustomStageInfo)s.info).destroy(false);
@@ -426,9 +433,15 @@ public class StageEditPage extends DefaultPage {
 					si.remove(s);
 		} else {
 			Stage st = (Stage)obj;
+			MapColc.PackMapColc pmc = (MapColc.PackMapColc)mc;
+			if (st.getCont().list.size() == 1)
+				pmc.getSave(true).cSt.remove(st.getCont());
+			if (pmc.getSave(true).cSt.containsKey(st.getCont()))
+				pmc.getSave(true).cSt.put(st.getCont(), pmc.getSave(true).cSt.get(st.getCont()) - 1);
+
 			if (st.info != null)
 				((CustomStageInfo)st.info).destroy(false);
-			for (CustomStageInfo si : ((MapColc.PackMapColc)mc).si)
+			for (CustomStageInfo si : pmc.si)
 				si.remove(st);
 		}
 	}
@@ -485,7 +498,6 @@ public class StageEditPage extends DefaultPage {
 	private void setData(Stage st) {
 		stage = st;
 		hinf.setData(st);
-		linf.setLimit(st != null ? st.lim : null);
 		sinf.setData(st);
 		jt.setData(st);
 		strt.setEnabled(st != null);

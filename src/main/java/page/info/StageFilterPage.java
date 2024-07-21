@@ -35,7 +35,7 @@ public class StageFilterPage extends StagePage {
 			Stage s = jlst.getSelectedValue();
 			if (s == null)
 				return;
-			setData(s);
+			setData(s, 0);
 		});
 
 	}

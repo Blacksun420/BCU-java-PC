@@ -72,7 +72,7 @@ public class ModifierList extends JList<Object> {
         setListData(list.toArray(new Object[0]));
     }
 
-    protected void setComboList(SortedPackSet<Combo> lf) {
+    public void setComboList(SortedPackSet<Combo> lf) {
         combos = lf;
         reset();
     }

@@ -207,7 +207,7 @@ public class StageEditTable extends AbJTable implements Reorderable {
 
 				set(r, c, i > 0 ? 1 : 0, 0);
 			}
-			page.info.barrierAbler();
+			page.hinf.barrierAbler();
 		} else if (c == 2) {
 			int[] data = CommonStatic.parseIntsN((String) arg0);
 

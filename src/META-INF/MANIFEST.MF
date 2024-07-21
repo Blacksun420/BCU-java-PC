@@ -19,4 +19,4 @@ Class-Path: ./BCU_lib/kotlin-stdlib-jdk8-1.9.23.jar ./BCU_lib/httpcore-4.4.16.ja
  gluegen-rt-2.5.0-natives-macosx-universal.jar ./BCU_lib/google-http-client-apache-v2-1.44.1.jar ./BCU_lib/jogl-all-2.5.
  0-natives-windows-amd64.jar ./BCU_lib/httpmime-4.5.14.jar ./BCU_lib/jorbis-0.0.17.4.jar ./BCU_lib/google-auth-library-c
  redentials-1.23.0.jar ./BCU_lib/antlr-2.7.7.jar ./BCU_lib/google-auth-library-oauth2-http-1.23.0.jar ./BCU_lib/jsr305-3
- .0.2.jar ./BCU_lib/httpclient-4.5.14.jar
+ .0.2.jar ./BCU_lib/httpclient-4.5.14.jar BCU_lib/flatlaf-2.3.jar BCU_lib/flatlaf-intellij-themes-2.3.jar

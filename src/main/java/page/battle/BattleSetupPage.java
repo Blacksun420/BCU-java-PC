@@ -15,6 +15,7 @@ import page.basis.BasisPage;
 import page.basis.LineUpBox;
 import page.basis.LubCont;
 import page.basis.ModifierList;
+import page.info.StageTable;
 
 import javax.swing.*;
 import java.util.Vector;
@@ -38,11 +39,15 @@ public class BattleSetupPage extends LubCont {
 	private final JScrollPane jmod = new JScrollPane(mod);
 
 	private final Stage st;
+	private final StageTable sttb;
+	private final JScrollPane jstt;
 
 	private final int conf;
 
 	public BattleSetupPage(Page p, Stage s, int confs) {
 		super(p);
+		sttb = new StageTable(this);
+		jstt = new JScrollPane(sttb);
 		st = s;
 		conf = confs;
 		ini();
@@ -105,6 +110,8 @@ public class BattleSetupPage extends LubCont {
 		set(jmod, x, y, 550, 350, 600, 200);
 		set(plus, x, y, 1200, 100, 200, 50);
 		set(lvlim, x, y, 1200, 200, 200, 50);
+		set(jstt, x, y, 50, 600, 1400, 650);
+		sttb.setRowHeight(size(x, y, 50));
 	}
 
 	private void addListeners() {
@@ -114,6 +121,8 @@ public class BattleSetupPage extends LubCont {
 			if (jls.getSelectedIndex() == -1)
 				jls.setSelectedIndex(0);
 			lub.setLimit(st.getLim(jls.getSelectedIndex()), st.getCont().getCont().getSave(false), st.getCont().price);
+
+			sttb.setData(st, jls.getSelectedIndex());
 		});
 
 		jlu.addActionListener(arg0 -> changePanel(new BasisPage(getThis(), st, st.getLim(conf == 1 ? jls.getSelectedIndex() : -1))));
@@ -157,6 +166,8 @@ public class BattleSetupPage extends LubCont {
 		add(tmax);
 		add(lub);
 		add(jmod);
+		add(jstt);
+		sttb.setData(st, 0);
 		tmax.setEnabled(st.lim != null && st.lim.lvr != null);
 		if(st.isAkuStage()) {
 			add(plus);

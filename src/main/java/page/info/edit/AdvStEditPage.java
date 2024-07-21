@@ -310,6 +310,8 @@ public class AdvStEditPage extends DefaultPage {
 			for (Form f : jrwd.getSelectedValuesList())
 				csi.rewards.remove(f);
 			setRwd(csi);
+			if (st.getCont().getCont().getSave(true).cSt.getOrDefault(st.getCont(), -1) > st.getCont().list.indexOf(st))
+				st.getCont().getCont().getSave(true).resetUnlockedUnits();
 		});
 
 		ubaslv.addActionListener(l -> {
@@ -636,24 +638,62 @@ public class AdvStEditPage extends DefaultPage {
 
 			if (rewUni) {
 				Form fr = (Form)ufp.getForm();
-				csi.rewards.removeIf(f -> f.unit.equals(fr.unit));
-				csi.rewards.add(fr);
-				csi.destroy(true);
-				setRwd(csi);
-			} else {
-				if (csi.ubase != ufp.getForm() && (csi.ubase == null || Opts.conf("Replace base " + csi.ubase + " with " + ufp.getForm() + "?"))) {
-					csi.ubase = (Form) ufp.getForm();
-					if (csi.ubase != null)
-						csi.lv = csi.ubase.unit().getPrefLvs();
-					else {
-						csi.lv = null;
+				if (fr != null && fr.fid > ((MapColc.PackMapColc)st.getCont().getCont()).pack.defULK.getOrDefault(fr.unit, -1)) {
+					String pr = unlockedPrior(fr);
+					if (pr.isEmpty()) {
+						csi.rewards.removeIf(f -> f.unit.equals(fr.unit));
+						csi.rewards.add(fr);
 						csi.destroy(true);
-					}
-					setUBase(csi);
+						setRwd(csi);
+						if (st.getCont().getCont().getSave(true).cSt.getOrDefault(st.getCont(), -1) > st.getCont().list.indexOf(st))
+							st.getCont().getCont().getSave(true).resetUnlockedUnits();
+					} else
+						Opts.pop(fr + " is already unlocked at " + pr, "Failed to add");
+				} else if (fr != null)
+					Opts.pop(fr + " is already unlocked by default", "Failed to add");
+			} else if (csi.ubase != ufp.getForm() && (csi.ubase == null || Opts.conf("Replace base " + csi.ubase + " with " + ufp.getForm() + "?"))) {
+				csi.ubase = (Form) ufp.getForm();
+				if (csi.ubase != null)
+					csi.lv = csi.ubase.unit().getPrefLvs();
+				else {
+					csi.lv = null;
+					csi.destroy(true);
 				}
-				ufp = null;
+				setUBase(csi);
 			}
+			ufp = null;
 		}
 	}
 
+	private String unlockedPrior(Form fr) {
+		for (int i = st.getCont().list.indexOf(st) - 1; i >= 0; i--)
+			if (st.getCont().list.get(i).info instanceof CustomStageInfo) {
+				CustomStageInfo csi = (CustomStageInfo)st.getCont().list.get(i).info;
+				for (Form f : csi.rewards)
+					if (f.unit == fr.unit && f.fid >= fr.fid)
+						return st.getCont().list.get(i).toString();
+			}
+		for (StageMap uchp : st.getCont().unlockReq) {
+			String res = locRec(fr, uchp);
+			if (!res.isEmpty())
+				return res;
+		}
+		return "";
+	}
+
+	private String locRec(Form fr, StageMap chp) {
+		for (int i = chp.list.size() - 1; i >= 0; i--)
+			if (chp.list.get(i).info instanceof CustomStageInfo) {
+				CustomStageInfo csi = (CustomStageInfo)chp.list.get(i).info;
+				for (Form f : csi.rewards)
+					if (f.unit == fr.unit && f.fid >= fr.fid)
+						return chp.list.get(i).toString();
+			}
+		for (StageMap uchp : chp.unlockReq) {
+			String res = locRec(fr, uchp);
+			if (!res.isEmpty())
+				return res;
+		}
+		return "";
+	}
 }

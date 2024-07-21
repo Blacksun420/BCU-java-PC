@@ -90,7 +90,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 	private final JL vitv = new JL();
 	private final JComboBox<AnimCI> jcba = new JComboBox<>();
 	private final JComboBox<Soul> jcbs = new JComboBox<>();
-	private final JComboBox<String> jlang = new JComboBox<>(MainLocale.LOC_NAME);
+	private final JComboBox<CommonStatic.Lang.Locale> jlang = new JComboBox<>(MainLocale.LOC_LIST);
 	private final JTG hbbo = new JTG(MainLocale.INFO, "kbbounce");
 	private final JTG bobo = new JTG(MainLocale.INFO, "bossbounce");
 	private final ListJtfPolicy ljp = new ListJtfPolicy();
@@ -255,7 +255,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		add(comm);
 		add(jcbs);
 		add(jlang);
-		jlang.setSelectedIndex(MainLocale.LOC_INDEX[CommonStatic.getConfig().lang]);
+		jlang.setSelectedItem(CommonStatic.getConfig().lang);
 		add(jsDesc);
 		entDesc.setHintText("Description");
 		add(entName);
@@ -449,8 +449,8 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 			cdps.setText(String.valueOf((int) ((getLvAtk() * ce.allAtk(getSel())) * getAtk()  * 30 / ce.getItv(getSel()))));
 		else
 			cdps.setText("-");
-		entName.setText(data.getPack().names.get(jlang.getSelectedIndex()));
-		entDesc.setText(data.getPack().description.get(jlang.getSelectedIndex()));
+		entName.setText(data.getPack().names.get((CommonStatic.Lang.Locale) jlang.getSelectedItem()));
+		entDesc.setText(data.getPack().description.get((CommonStatic.Lang.Locale) jlang.getSelectedItem()));
 
 		comm.setSelected(data.common);
 		if (!comm.isSelected())
@@ -655,17 +655,17 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		});
 
 		jlang.addActionListener(act -> {
-			entName.setText(ce.getPack().names.get(MainLocale.LOC_INDEX[jlang.getSelectedIndex()]));
-			entDesc.setText(ce.getPack().description.get(MainLocale.LOC_INDEX[jlang.getSelectedIndex()]));
+			entName.setText(ce.getPack().names.get((CommonStatic.Lang.Locale) jlang.getSelectedItem()));
+			entDesc.setText(ce.getPack().description.get((CommonStatic.Lang.Locale) jlang.getSelectedItem()));
 		});
 
 		entName.setLnr(j -> {
-			ce.getPack().names.put(MainLocale.LOC_INDEX[jlang.getSelectedIndex()], entName.getText());
+			ce.getPack().names.put(MainLocale.LOC_LIST[jlang.getSelectedIndex()], entName.getText());
 			setData(ce);
 		});
 
 		entDesc.setLnr(j -> {
-			ce.getPack().description.put(MainLocale.LOC_INDEX[jlang.getSelectedIndex()], entDesc.assignSplitText(1024));
+			ce.getPack().description.put(MainLocale.LOC_LIST[jlang.getSelectedIndex()], entDesc.assignSplitText(1024));
 			setData(ce);
 		});
 

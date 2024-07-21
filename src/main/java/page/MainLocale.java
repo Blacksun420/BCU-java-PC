@@ -26,8 +26,7 @@ public strictfp class MainLocale {
 	public static final int UTIL = 2;
 	public static final Map<String, MainLocale> NAMP = new TreeMap<>();
 	public static final Map<String, TTT> TMAP = new TreeMap<>();
-	public static final String[] LOC_NAME = { "English", "\u4E2D\u6587", "\uD55C\uAD6D\uC5B4", "\u65E5\u672C\u8A9E", "Français", "Italiano", "Español", "Deutsche" };
-	public static final int[] LOC_INDEX = {0, 1, 2, 3, 6, 9, 8, 5};
+	public static final Lang.Locale[] LOC_LIST = { Lang.Locale.EN, Lang.Locale.ZH, Lang.Locale.KR, Lang.Locale.JP, Lang.Locale.FR, Lang.Locale.IT, Lang.Locale.ES, Lang.Locale.DE };
 	public static final String[] RENN = { "page", "info", "util", "docs" };
 	private static final ResourceBundle[] RENS = new ResourceBundle[4];
 
@@ -99,7 +98,7 @@ public strictfp class MainLocale {
 			ans = TMAP.get(loc).getTTT(page, text);
 		if (ans != null)
 			return ans;
-		loc = Lang.LOC_CODE[0];
+		loc = Lang.Locale.EN.code;
 		if (TMAP.containsKey(loc))
 			return TMAP.get(loc).getTTT(page, text);
 		return null;
@@ -134,7 +133,7 @@ public strictfp class MainLocale {
 	}
 
 	private static String langCode() {
-		return CommonStatic.Lang.LOC_CODE[CommonStatic.getConfig().lang];
+		return CommonStatic.getConfig().lang.code;
 	}
 
 	public final Map<String, String> res = new TreeMap<>();

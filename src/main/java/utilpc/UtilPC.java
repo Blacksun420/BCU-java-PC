@@ -280,7 +280,7 @@ public class UtilPC {
 				table[i][j] = Math.min(Math.min(table[i - 1][j] + 1, table[i][j - 1] + 1), table[i - 1][j - 1] + cost);
 
 				if (i > 1 && j > 1 && src.charAt(i - 1) == compare.charAt(j - 2) && src.charAt(i - 2) == compare.charAt(j - 1)) {
-					table[i][j] = Math.min(table[i][j], table[i - 2][j - 2]);
+					table[i][j] = Math.min(table[i][j], table[i - 2][j - 2]) + 1;
 				}
 			}
 		}

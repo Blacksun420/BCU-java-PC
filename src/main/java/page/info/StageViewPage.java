@@ -1,5 +1,6 @@
 package page.info;
 
+import common.pack.SaveData;
 import common.util.stage.MapColc;
 import common.util.stage.RandStage;
 import common.util.stage.Stage;
@@ -9,12 +10,46 @@ import page.JBTN;
 import page.Page;
 import page.battle.BattleSetupPage;
 import page.battle.StRecdPage;
+import utilpc.UtilPC;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
+
+class StageMapList extends JList<StageMap> {
+
+	public StageMapList() {
+		super();
+		setCellRenderer(new DefaultListCellRenderer() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean s, boolean f) {
+				JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
+				StageMap sm = (StageMap)o;
+				SaveData sv = sm.getCont().getSave(false);
+				if (sv == null || !sv.nearUnlock(sm)) {
+					jl.setToolTipText(null);
+					if (sv != null && sv.cSt.getOrDefault(sm,-1) >= sm.list.size())
+						jl.setText("<html><strong>" + sm + "</strong></html>");
+					return jl;
+				}
+				jl.setText("<html><strike>" + sm + "</strike></html>");
+				StringBuilder sbl = new StringBuilder("<html><table><tr><th>Requires clearing:</th></tr>");
+				for (StageMap lsm : sv.requirements(sm))
+					sbl.append("<tr><td>").append(lsm).append("</td></tr>");
+				sbl.append("</html>");
+				jl.setToolTipText(sbl.toString());
+				jl.setEnabled(false);
+
+				return jl;
+			}
+		});
+	}
+}
 
 public class StageViewPage extends StagePage {
 
@@ -22,7 +57,7 @@ public class StageViewPage extends StagePage {
 
 	private final JList<MapColc> jlmc = new JList<>();
 	private final JScrollPane jspmc = new JScrollPane(jlmc);
-	private final JList<StageMap> jlsm = new JList<>();
+	private final StageMapList jlsm = new StageMapList();
 	private final JScrollPane jspsm = new JScrollPane(jlsm);
 	private final JList<Stage> jlst = new JList<>();
 	private final JScrollPane jspst = new JScrollPane(jlst);
@@ -35,6 +70,7 @@ public class StageViewPage extends StagePage {
 
 	public StageViewPage(Page p, Collection<MapColc> collection) {
 		super(p);
+		collection.removeIf(mc -> mc.getStageCount() == 0);
 		jlmc.setListData(new Vector<>(collection));
 
 		ini();
@@ -65,82 +101,67 @@ public class StageViewPage extends StagePage {
 	}
 
 	@Override
-	protected void setData(Stage st) {
-		super.setData(st);
-		info.setEnabled(st != null && (st.info != null || st.getCont().getCont().getSave(true) != null));
+	protected void setData(Stage st, int starId) {
+		super.setData(st, starId);
+		info.setEnabled(st != null && getInfo().length() > 6);
 		cpst.setEnabled(st != null);
 		recd.setEnabled(st != null);
 	}
 
+	@Override
+	public void callBack(Object v) {
+		if (v instanceof Integer)
+			setData(stage, (int) v);
+	}
+
 	private void addListeners() {
 
-		info.setLnr(x -> {
-			StringBuilder str = new StringBuilder();
-			if (stage.info != null)
-				str = new StringBuilder(stage.info.getHTML());
-			if (stage.getCont().getCont().getSave(true) != null && stage.getCont().list.indexOf(stage) == stage.getCont().list.size() - 1) {
-				if (stage.info == null)
-					str.append("<html>");
-				LinkedList<StageMap> newUnlocks = stage.getCont().getCont().getSave(true).getUnlockableMaps(stage.getCont());
-				if (!newUnlocks.isEmpty()) {
-					str.append("<table><tr><th>Chapters that require clearing this chapter to be unlocked:</th></tr> ");
-					for (StageMap newUnlock : newUnlocks)
-						str.append("<tr><td>").append(newUnlock).append("</td></tr>");
-				}
-			}
-			if (str.length() <= 6) {
-				info.setEnabled(false);
-				return;
-			}
-			Opts.pop(str.toString(), stage + " info");
-		});
+		info.setLnr(x -> Opts.pop(getInfo(), stage + " info"));
 
 		recd.setLnr(x -> changePanel(new StRecdPage(this, stage, false)));
 
 		jlmc.addListSelectionListener(arg0 -> {
 			if (arg0.getValueIsAdjusting())
 				return;
-			MapColc mc = jlmc.getSelectedValue();
-			if (mc == null)
+			List<MapColc> mcs = jlmc.getSelectedValuesList();
+			if (mcs.isEmpty())
 				return;
-
-			if (mc.getSave(false) != null) {
-				Vector<StageMap> sms = new Vector<>();
-				for (StageMap sm : mc.maps)
-					if (sm.unlockReq.isEmpty() || mc.getSave(false).cSt.containsKey(sm))
-						sms.add(sm);
-				jlsm.setListData(sms);
-			} else
-				jlsm.setListData(mc.maps.toArray());
+			Vector<StageMap> sms = new Vector<>();
+			for (MapColc mc : mcs)
+				if (mc.getSave(false) != null) {
+					for (StageMap sm : mc.maps)
+						if (sm.unlockReq.isEmpty() || mc.getSave(false).cSt.containsKey(sm) || mc.getSave(false).nearUnlock(sm))
+							sms.add(sm);
+				} else
+					sms.addAll(mc.maps.getList());
+			jlsm.setListData(sms);
 			jlsm.setSelectedIndex(0);
 		});
 
 		jlsm.addListSelectionListener(arg0 -> {
 			if (arg0.getValueIsAdjusting())
 				return;
-			StageMap sm = jlsm.getSelectedValue();
+			List<StageMap> sms = jlsm.getSelectedValuesList();
 			cpsm.setEnabled(false);
-			if (sm == null)
+			if (sms.isEmpty())
 				return;
 			cpsm.setEnabled(true);
+			Vector<Stage> sts = new Vector<>();
 
-			if (sm.getCont().getSave(false) != null) {
-				Integer stInds = sm.getCont().getSave(false).cSt.get(sm);
-				if (stInds == null) {
-					if (sm.list.size() > 0 && sm.unlockReq.isEmpty())
-						jlst.setListData(new Stage[]{sm.list.get(0)});
+			for (StageMap sm : sms)
+				if (sm.getCont().getSave(false) != null) {
+					Integer stInds = sm.getCont().getSave(false).cSt.get(sm);
+					if (stInds == null) {
+						if (sm.list.size() > 0 && sm.unlockReq.isEmpty())
+							sts.add(sm.list.get(0));
+					} else if (stInds >= sm.list.size() - 1)
+						sts.addAll(sm.list.getList());
 					else
-						jlst.setListData(sm.list.toArray());
-				} else if (stInds >= sm.list.size() - 1)
-					jlst.setListData(sm.list.toArray());
-				else {
-					Vector<Stage> sts = new Vector<>(stInds + 1);
-					for (int i = 0; i <= stInds; i++)
-						sts.add(sm.list.get(i));
-					jlst.setListData(sts);
-				}
-			} else
-				jlst.setListData(sm.list.toArray());
+						for (int i = 0; i <= stInds; i++)
+							sts.add(sm.list.get(i));
+				} else
+					sts.addAll(sm.list.getList());
+			jlst.setListData(sts);
 			jlst.setSelectedIndex(0);
 		});
 
@@ -151,23 +172,26 @@ public class StageViewPage extends StagePage {
 			cpst.setEnabled(false);
 			if (s == null)
 				return;
-			setData(s);
+			setData(s, 0);
 		});
 
 		cpsm.addActionListener(arg0 -> {
-			StageMap sm = jlsm.getSelectedValue();
-			if (sm == null)
+			List<StageMap> sms = jlsm.getSelectedValuesList();
+			if (sms.isEmpty())
 				return;
 			MapColc mc = Stage.CLIPMC;
-			StageMap copy = sm.copy(mc);
-			mc.maps.add(copy);
+			for (StageMap sm : sms) {
+				StageMap copy = sm.copy(mc);
+				mc.maps.add(copy);
+			}
 		});
 
 		cpst.addActionListener(arg0 -> {
-			Stage stage = jlst.getSelectedValue();
-			if (stage == null)
+			List<Stage> stages = jlst.getSelectedValuesList();
+			if (stages.isEmpty())
 				return;
-			Stage.CLIPSM.add(stage.copy(Stage.CLIPSM));
+			for (Stage stage : stages)
+				Stage.CLIPSM.add(stage.copy(Stage.CLIPSM));
 		});
 
 		dgen.setLnr(x -> {
@@ -181,7 +205,32 @@ public class StageViewPage extends StagePage {
 		});
 
 		search.setLnr(x -> changePanel(new StageSearchPage(getThis())));
+	}
 
+	private String getInfo() {
+		StringBuilder str = new StringBuilder();
+		if (stage.info != null)
+			str = new StringBuilder(stage.info.getHTML());
+		else if (stage.getCont().stageLimit != null)
+			str = new StringBuilder("<html>").append(stage.getCont().stageLimit.getHTML());
+
+		if (stage.getCont().list.indexOf(stage) == stage.getCont().list.size() - 1) {
+			if (stage.info == null && stage.getCont().stageLimit == null)
+				str.append("<html>");
+			LinkedList<StageMap> newUnlocks = stage.getCont().getUnlockableMaps();
+			if (!newUnlocks.isEmpty()) {
+				str.append("<table><tr><th>Chapters that require clearing this chapter to be unlocked:</th></tr> ");
+				for (StageMap newUnlock : newUnlocks)
+					str.append("<tr><td>").append(newUnlock).append("</td></tr>");
+			}
+		} else if (stage.getCont().list.indexOf(stage) == 0 && !stage.getCont().unlockReq.isEmpty()) {
+			if (stage.info == null && stage.getCont().stageLimit == null)
+				str.append("<html>");
+			str.append("<table><tr><th>Unlock Chapter Clear requirements:</th></tr> ");
+			for (StageMap newUnlock : stage.getCont().unlockReq)
+				str.append("<tr><td>").append(newUnlock).append("</td></tr>");
+		}
+		return str.toString();
 	}
 
 	private void ini() {
@@ -198,6 +247,16 @@ public class StageViewPage extends StagePage {
 		cpst.setEnabled(false);
 		recd.setEnabled(false);
 		info.setEnabled(false);
+		jlmc.setCellRenderer(new DefaultListCellRenderer() {
+			@Override
+			public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean s, boolean f) {
+				JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
+				if (!(o instanceof MapColc.PackMapColc))
+					return jl;
+				jl.setIcon(UtilPC.resizeIcon(((MapColc.PackMapColc)o).pack.icon, UtilPC.iconSize, UtilPC.iconSize));
+				return jl;
+			}
+		});
 		addListeners();
 	}
 
@@ -213,7 +272,7 @@ public class StageViewPage extends StagePage {
 
 		Vector<StageMap> sms = new Vector<>();
 		for (StageMap sm : mc.maps)
-			if (sm.unlockReq.isEmpty() || mc.getSave(false).cSt.containsKey(sm))
+			if (sm.unlockReq.isEmpty() || mc.getSave(false).cSt.containsKey(sm) || mc.getSave(false).nearUnlock(sm))
 				sms.add(sm);
 		jlsm.setListData(sms);
 

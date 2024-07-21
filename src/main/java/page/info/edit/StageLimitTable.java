@@ -134,7 +134,7 @@ public class StageLimitTable extends Page {
     }
 
     @Override
-    protected JButton getBackButton() {
+    public JButton getBackButton() {
         return null;
     }
 }

@@ -214,7 +214,7 @@ public class CompareTable extends Page {
             spTraits.addIf(DefTraits.subList(Data.TRAIT_EVA, Data.TRAIT_INFH), e -> trs.contains(e));
 
             EForm ef = new EForm(f, multi);
-            unit[0].setText(MainBCU.convertTime(b.t().getFinRes(mu.getRespawn())));
+            unit[0].setText(MainBCU.convertTime(b.t().getFinRes(mu.getRespawn(), false)));
             unit[1].setText(ef.getPrice(1) + "");
             if (f.getEvoCost() != -1) {
                 int[][] evo = f.getEvoMaterials();
@@ -265,12 +265,12 @@ public class CompareTable extends Page {
 
             int effectiveDMG = att;
             if (!traits.isEmpty() && me.getProc().DMGINC.mult != 0)
-                effectiveDMG *= isEnemy ? me.getProc().DMGINC.mult/100.0 : b.t().getATK(me.getProc().DMGINC.mult, traits);
+                effectiveDMG *= isEnemy ? me.getProc().DMGINC.mult/100.0 : b.t().getATK(me.getProc().DMGINC.mult, traits, false);
 
             if (spTraits.contains(DefTraits.get(Data.TRAIT_WITCH)) && (me.getAbi() & Data.AB_WKILL) > 0)
-                effectiveDMG *= b.t().getWKAtk();
+                effectiveDMG *= b.t().getWKAtk(false);
             if (spTraits.contains(DefTraits.get(Data.TRAIT_EVA)) && (me.getAbi() & Data.AB_EKILL) > 0)
-                effectiveDMG *= b.t().getEKAtk();
+                effectiveDMG *= b.t().getEKAtk(false);
             if (spTraits.contains(DefTraits.get(Data.TRAIT_BARON)) && (me.getAbi() & Data.AB_BAKILL) > 0)
                 effectiveDMG *= 1.6;
             if (spTraits.contains(DefTraits.get(Data.TRAIT_BEAST)) && me.getProc().BSTHUNT.type.active)
@@ -284,12 +284,12 @@ public class CompareTable extends Page {
         }
         int effectiveHP = hp;
         if (!traits.isEmpty() && me.getProc().DEFINC.mult != 0)
-            effectiveHP /= isEnemy ? 100.0/me.getProc().DEFINC.mult : b.t().getDEF(me.getProc().DEFINC.mult, traits, traits, null, (Level) Lvl);
+            effectiveHP /= isEnemy ? 100.0/me.getProc().DEFINC.mult : b.t().getDEF(me.getProc().DEFINC.mult, traits, traits, null, (Level) Lvl, false);
 
         if (spTraits.contains(DefTraits.get(Data.TRAIT_WITCH)) && (me.getAbi() & Data.AB_WKILL) > 0)
-            effectiveHP /= b.t().getWKDef();
+            effectiveHP /= b.t().getWKDef(false);
         if (spTraits.contains(DefTraits.get(Data.TRAIT_EVA)) && (me.getAbi() & Data.AB_EKILL) > 0)
-            effectiveHP /= b.t().getEKDef();
+            effectiveHP /= b.t().getEKDef(false);
         if (spTraits.contains(DefTraits.get(Data.TRAIT_BARON)) && (me.getAbi() & Data.AB_BAKILL) > 0)
             effectiveHP /= 0.7;
         if (spTraits.contains(DefTraits.get(Data.TRAIT_BEAST)) && me.getProc().BSTHUNT.type.active)

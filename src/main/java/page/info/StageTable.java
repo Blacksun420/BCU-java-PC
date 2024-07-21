@@ -41,7 +41,7 @@ public class StageTable extends AbJTable {
 
 	private final Page page;
 
-	protected StageTable(Page p) {
+	public StageTable(Page p) {
 		super(title);
 
 		page = p;
@@ -144,7 +144,7 @@ public class StageTable extends AbJTable {
 		}
 	}
 
-	protected void setData(Stage st) {
+	public void setData(Stage st, int starId) {
 		Line[] info = st.data.getSimple();
 
 		data = new Object[info.length][11];
@@ -153,7 +153,8 @@ public class StageTable extends AbJTable {
 			int ind = info.length - i - 1;
 			data[ind][1] = Identifier.get(info[i].enemy);
 			data[ind][0] = info[i].boss >= 1 ? MainLocale.getLoc(MainLocale.INFO,"b" + info[i].boss) : "";
-			data[ind][2] = info[i].multiple == info[i].mult_atk ? info[i].multiple+"" : CommonStatic.toArrayFormat(info[i].multiple, info[i].mult_atk);
+			data[ind][2] = info[i].multiple == info[i].mult_atk ? info[i].multiple * st.getCont().stars[starId] / 100 +""
+					: CommonStatic.toArrayFormat(info[i].multiple * st.getCont().stars[starId] / 100, info[i].mult_atk * st.getCont().stars[starId] / 100);
 			data[ind][3] = info[i].number == 0 ? MainLocale.getLoc(MainLocale.UTIL, "inf") : info[i].number;
 
 			if (info[i].castle_0 >= info[i].castle_1)

@@ -324,7 +324,7 @@ public class UREditPage extends DefaultPage {
                 type[i].setSelected(i == t);
             if (t != -1) {
                 jost.setText("" + st.price * 1.5);
-                jd.setText("" + bas.t().getFinRes(st.cooldown));
+                jd.setText("" + bas.t().getFinRes(st.cooldown, false));
             }
             jspjt.scrollRectToVisible(new Rectangle(0, 0, 1, 1));
         });

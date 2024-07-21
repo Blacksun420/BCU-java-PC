@@ -158,11 +158,11 @@ public class Interpret extends Data {
 
 	public static void loadCannonMax() {
 		for (int i = 1; i <= Treasure.curveData.size(); i++)
-			TMAX[29 + i] = Treasure.curveData.get(i).max;
+			TMAX[29 + i] = Treasure.curveData.get(i).getMax();
 		for (int i = 1; i <= Treasure.baseData.size(); i++)
-			TMAX[36 + i] = Treasure.baseData.get(i).max;
+			TMAX[36 + i] = Treasure.baseData.get(i).getMax();
 		for (int i = 1; i <= Treasure.decorationData.size(); i++)
-			TMAX[43 + i] = Treasure.decorationData.get(i).max;
+			TMAX[43 + i] = Treasure.decorationData.get(i).getMax();
 	}
 
 	public static String comboInfo(Combo c, BasisSet b) {
@@ -834,14 +834,14 @@ public class Interpret extends Data {
 		StringBuilder builder = new StringBuilder("[");
 		String suffix;
 		switch (CommonStatic.getConfig().lang) {
-			case 1:
+			case ZH:
 				builder.append("第 ");
 				suffix = " 次攻擊]";
 				break;
-			case 2:
+			case KR:
 				suffix = " 번째 공격]";
 				break;
-			case 3:
+			case JP:
 				suffix = " 回目の攻撃]";
 				break;
 			default:
@@ -865,7 +865,7 @@ public class Interpret extends Data {
 		StringBuilder ans = new StringBuilder();
 		int[] times = CommonStatic.parseIntsN(date);
 		//English, also used for placeholder
-		if (CommonStatic.getConfig().lang == 3) { //Japanese
+		if (CommonStatic.getConfig().lang == CommonStatic.Lang.Locale.JP) { //Japanese
 			ans.append(times[0]).append('月').append(times[1]).append('日').append(times[2]).append("年、")
 					.append(times[3] >= 12 ? "午後" : "午前").append((times[3] - 1) % 12 + 1).append('時');
 		} else {
@@ -878,11 +878,11 @@ public class Interpret extends Data {
 
 	public static String getExtension(int i) {
 		switch (CommonStatic.getConfig().lang) {
-			case 1:
+			case ZH:
 				return ("第 " + i);
-			case 2:
+			case KR:
 				return (i + " 번째");
-			case 3:
+			case JP:
 				return (i + " 回目");
 			default:
 				return getNumberExtension(i);

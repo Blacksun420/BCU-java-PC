@@ -5,6 +5,7 @@ import common.pack.Identifier;
 import common.pack.PackData.UserPack;
 import common.pack.UserProfile;
 import common.util.stage.StageMap;
+import common.util.stage.info.CustomStageInfo;
 import common.util.unit.AbUnit;
 import common.util.unit.Unit;
 import page.*;
@@ -124,8 +125,14 @@ public class PackSavePage extends DefaultPage {
                 return;
             changing = true;
             List<AbUnit> units = locUnits.getSelectedValuesList();
-            for (AbUnit u : units)
+            for (AbUnit u : units) {
                 pk.defULK.put(u, u.getForms().length - 1);
+                for (CustomStageInfo csi : pk.mc.si) {
+                    csi.rewards.removeIf(f -> f.unit == u);
+                    csi.destroy(true);
+                }
+                pk.save.ulkUni.remove(u);
+            }
             setUnits();
             changing = false;
         });
