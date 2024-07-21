@@ -190,7 +190,7 @@ public class CompareTable extends Page {
                 Lvl = new Magnification(100, 100);
             hp *= (((Magnification) Lvl).hp * enemy.multi(b)) / 100.0;
             mul = (((Magnification) Lvl).atk * enemy.multi(b)) / 100.0;
-            enem.setText(Math.floor(enemy.getDrop() * b.t().getDropMulti(false)) / 100 + "");
+            enem.setText(Math.floor(enemy.getDrop() * b.t().getDropMulti(b.getInc(Data.C_MEAR))) / 100 + "");
             for (JL jls : unit)
                 jls.setText("-");
             for (JL jls : evol) {
@@ -214,7 +214,7 @@ public class CompareTable extends Page {
             spTraits.addIf(DefTraits.subList(Data.TRAIT_EVA, Data.TRAIT_INFH), e -> trs.contains(e));
 
             EForm ef = new EForm(f, multi);
-            unit[0].setText(MainBCU.convertTime(b.t().getFinRes(mu.getRespawn(), false)));
+            unit[0].setText(MainBCU.convertTime(b.t().getFinRes(mu.getRespawn(), b.getInc(Data.C_RESP))));
             unit[1].setText(ef.getPrice(1) + "");
             if (f.getEvoCost() != -1) {
                 int[][] evo = f.getEvoMaterials();
@@ -265,12 +265,12 @@ public class CompareTable extends Page {
 
             int effectiveDMG = att;
             if (!traits.isEmpty() && me.getProc().DMGINC.mult != 0)
-                effectiveDMG *= isEnemy ? me.getProc().DMGINC.mult/100.0 : b.t().getATK(me.getProc().DMGINC.mult, traits, false);
+                effectiveDMG *= isEnemy ? me.getProc().DMGINC.mult/100.0 : b.t().getATK(me.getProc().DMGINC.mult, traits);
 
             if (spTraits.contains(DefTraits.get(Data.TRAIT_WITCH)) && (me.getAbi() & Data.AB_WKILL) > 0)
-                effectiveDMG *= b.t().getWKAtk(false);
+                effectiveDMG *= b.t().getWKAtk(b.getInc(Data.C_WKILL));
             if (spTraits.contains(DefTraits.get(Data.TRAIT_EVA)) && (me.getAbi() & Data.AB_EKILL) > 0)
-                effectiveDMG *= b.t().getEKAtk(false);
+                effectiveDMG *= b.t().getEKAtk(b.getInc(Data.C_EKILL));
             if (spTraits.contains(DefTraits.get(Data.TRAIT_BARON)) && (me.getAbi() & Data.AB_BAKILL) > 0)
                 effectiveDMG *= 1.6;
             if (spTraits.contains(DefTraits.get(Data.TRAIT_BEAST)) && me.getProc().BSTHUNT.type.active)
@@ -284,12 +284,12 @@ public class CompareTable extends Page {
         }
         int effectiveHP = hp;
         if (!traits.isEmpty() && me.getProc().DEFINC.mult != 0)
-            effectiveHP /= isEnemy ? 100.0/me.getProc().DEFINC.mult : b.t().getDEF(me.getProc().DEFINC.mult, traits, traits, null, (Level) Lvl, false);
+            effectiveHP /= isEnemy ? 100.0/me.getProc().DEFINC.mult : b.t().getDEF(me.getProc().DEFINC.mult, traits, traits, null, (Level) Lvl, b.getInc(me.getProc().DEFINC.mult < 400 ? Data.C_GOOD : Data.C_RESIST));
 
         if (spTraits.contains(DefTraits.get(Data.TRAIT_WITCH)) && (me.getAbi() & Data.AB_WKILL) > 0)
-            effectiveHP /= b.t().getWKDef(false);
+            effectiveHP /= b.t().getWKDef(b.getInc(Data.C_WKILL));
         if (spTraits.contains(DefTraits.get(Data.TRAIT_EVA)) && (me.getAbi() & Data.AB_EKILL) > 0)
-            effectiveHP /= b.t().getEKDef(false);
+            effectiveHP /= b.t().getEKDef(b.getInc(Data.C_EKILL));
         if (spTraits.contains(DefTraits.get(Data.TRAIT_BARON)) && (me.getAbi() & Data.AB_BAKILL) > 0)
             effectiveHP /= 0.7;
         if (spTraits.contains(DefTraits.get(Data.TRAIT_BEAST)) && me.getProc().BSTHUNT.type.active)

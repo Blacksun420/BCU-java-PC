@@ -6,6 +6,7 @@ import common.battle.data.CustomEntity;
 import common.pack.PackData;
 import common.pack.UserProfile;
 import common.system.ENode;
+import common.util.Data;
 import common.util.unit.AbEnemy;
 import common.util.unit.Enemy;
 import org.jcodec.common.tools.MathUtil;
@@ -52,7 +53,7 @@ public class EnemyEditPage extends EntityEditPage {
 			fli.setText(String.valueOf(result));
 		}
 		if (jtf == fdr) {
-			ce.drop = Math.round(v[0] / bas.t().getDropMulti(false));
+			ce.drop = Math.round(v[0] / bas.t().getDropMulti(bas.getInc(Data.C_MEAR)));
 		}
 		if (jtf == fsr) {
 			v[0] = MathUtil.clip(v[0], 0, 4);
@@ -102,7 +103,7 @@ public class EnemyEditPage extends EntityEditPage {
 	protected void setData(CustomEntity data) {
 		super.setData(data);
 		fsr.setText("star: " + ce.star);
-		fdr.setText(String.valueOf(Math.floor(ce.getDrop() * bas.t().getDropMulti(false)) / 100));
+		fdr.setText(String.valueOf(Math.floor(ce.getDrop() * bas.t().getDropMulti(bas.getInc(Data.C_MEAR))) / 100));
 		fli.setText(String.valueOf(ce.getLimit()));
 		fli.setToolTipText("<html>"
 				+ "This enemy will stay at least "

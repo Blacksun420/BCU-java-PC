@@ -639,8 +639,8 @@ public class AdvStEditPage extends DefaultPage {
 			if (rewUni) {
 				Form fr = (Form)ufp.getForm();
 				if (fr != null && fr.fid > ((MapColc.PackMapColc)st.getCont().getCont()).pack.defULK.getOrDefault(fr.unit, -1)) {
-					String pr = unlockedPrior(fr);
-					if (pr.isEmpty()) {
+					Stage pr = st.getCont().getCont().getSave(true).getUnlockedsBeforeStage(st, false).get(fr);
+					if (pr == null) {
 						csi.rewards.removeIf(f -> f.unit.equals(fr.unit));
 						csi.rewards.add(fr);
 						csi.destroy(true);
@@ -663,37 +663,5 @@ public class AdvStEditPage extends DefaultPage {
 			}
 			ufp = null;
 		}
-	}
-
-	private String unlockedPrior(Form fr) {
-		for (int i = st.getCont().list.indexOf(st) - 1; i >= 0; i--)
-			if (st.getCont().list.get(i).info instanceof CustomStageInfo) {
-				CustomStageInfo csi = (CustomStageInfo)st.getCont().list.get(i).info;
-				for (Form f : csi.rewards)
-					if (f.unit == fr.unit && f.fid >= fr.fid)
-						return st.getCont().list.get(i).toString();
-			}
-		for (StageMap uchp : st.getCont().unlockReq) {
-			String res = locRec(fr, uchp);
-			if (!res.isEmpty())
-				return res;
-		}
-		return "";
-	}
-
-	private String locRec(Form fr, StageMap chp) {
-		for (int i = chp.list.size() - 1; i >= 0; i--)
-			if (chp.list.get(i).info instanceof CustomStageInfo) {
-				CustomStageInfo csi = (CustomStageInfo)chp.list.get(i).info;
-				for (Form f : csi.rewards)
-					if (f.unit == fr.unit && f.fid >= fr.fid)
-						return chp.list.get(i).toString();
-			}
-		for (StageMap uchp : chp.unlockReq) {
-			String res = locRec(fr, uchp);
-			if (!res.isEmpty())
-				return res;
-		}
-		return "";
 	}
 }

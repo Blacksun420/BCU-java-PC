@@ -7,6 +7,7 @@ import common.pack.Identifier;
 import common.pack.PackData.UserPack;
 import common.pack.UserProfile;
 import common.system.Node;
+import common.util.Data;
 import common.util.unit.Form;
 import common.util.unit.Unit;
 import page.JBTN;
@@ -199,7 +200,7 @@ public class FormEditPage extends EntityEditPage {
 	protected void setData(CustomEntity data) {
 		super.setData(data);
 		flv.setText(String.valueOf(lv));
-		frs.setText(String.valueOf(bas.t().getFinRes(cu.getRespawn(), false)));
+		frs.setText(String.valueOf(bas.t().getFinRes(cu.getRespawn(), bas.getInc(Data.C_RESP))));
 		fdr.setText(String.valueOf((int) Math.round(cu.getPrice() * 1.5)));
 		flr.setText(interpretLayer(cu.back, cu.front));
 		fli.setText(String.valueOf(cu.getLimit()));

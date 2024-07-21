@@ -4,9 +4,12 @@ import common.CommonStatic;
 import common.battle.BasisLU;
 import common.battle.BasisSet;
 import common.pack.SortedPackSet;
+import common.pack.UserProfile;
 import common.util.stage.RandStage;
 import common.util.stage.Stage;
 import common.util.unit.Form;
+import common.util.unit.UniRand;
+import common.util.unit.Unit;
 import page.JBTN;
 import page.JTG;
 import page.MainLocale;
@@ -16,8 +19,11 @@ import page.basis.LineUpBox;
 import page.basis.LubCont;
 import page.basis.ModifierList;
 import page.info.StageTable;
+import page.info.UnitInfoPage;
+import page.pack.UREditPage;
 
 import javax.swing.*;
+import java.awt.event.MouseEvent;
 import java.util.Vector;
 
 public class BattleSetupPage extends LubCont {
@@ -29,10 +35,12 @@ public class BattleSetupPage extends LubCont {
 	private final JTG rich = new JTG(0, "rich");
 	private final JTG snip = new JTG(0, "sniper");
 	private final JTG plus = new JTG(MainLocale.PAGE, "plusunlock");
+	private final JTG testMode = new JTG(MainLocale.PAGE, "testMode");
 	private final JComboBox<String> lvlim = new JComboBox<>();
 	private final JList<String> jls = new JList<>();
 	private final JScrollPane jsps = new JScrollPane(jls);
 	private final JLabel jl = new JLabel();
+	private final JLabel ulock = new JLabel();
 	private final JBTN jlu = new JBTN(0, "line");
 	private final LineUpBox lub = new LineUpBox(this);
 	private final ModifierList mod = new ModifierList();
@@ -111,7 +119,19 @@ public class BattleSetupPage extends LubCont {
 		set(plus, x, y, 1200, 100, 200, 50);
 		set(lvlim, x, y, 1200, 200, 200, 50);
 		set(jstt, x, y, 50, 600, 1400, 650);
+		set(testMode, x, y, 300, 400, 200, 50);
+		set(ulock, x, y, 550, 550, 600, 50);
 		sttb.setRowHeight(size(x, y, 50));
+	}
+
+	@Override
+	protected void mouseClicked(MouseEvent e) {
+		super.mouseClicked(e);
+		if (lub.unusable() == 2 && lub.getSelected() instanceof Form) {
+			Stage sta = st.getCont().getCont().getSave(true).unlockedAt((Form)lub.getSelected());
+			ulock.setText(sta == null ? "Forever Locked" : "Clear " + sta + " to unlock");
+		} else
+			ulock.setText("");
 	}
 
 	private void addListeners() {
@@ -125,21 +145,25 @@ public class BattleSetupPage extends LubCont {
 			sttb.setData(st, jls.getSelectedIndex());
 		});
 
-		jlu.addActionListener(arg0 -> changePanel(new BasisPage(getThis(), st, st.getLim(conf == 1 ? jls.getSelectedIndex() : -1))));
+		jlu.addActionListener(arg0 -> changePanel(new BasisPage(getThis(), st, st.getLim(conf == 1 ? jls.getSelectedIndex() : -1), testMode.isSelected())));
 
 		strt.addActionListener(arg0 -> {
 			int star = jls.getSelectedIndex();
-			int[] ints = new int[1];
+			int cfg = 0;
 			if (rich.isSelected())
-				ints[0] |= 1;
+				cfg |= 1;
 			if (snip.isSelected())
-				ints[0] |= 2;
+				cfg |= 2;
 			BasisLU b = BasisSet.current().sele;
 			if (conf == 0) {
 				b = RandStage.getLU(star);
 				star = 0;
 			}
-			changePanel(new BattleInfoPage(getThis(), st, star, b, ints));
+			byte[] bans = new byte[10];
+			for (byte i = 0; i < bans.length; i++)
+				bans[i] = lub.unusable(i);
+
+			changePanel(new BattleInfoPage(getThis(), st, star, b, cfg, bans));
 		});
 
 		tmax.addActionListener(arg0 -> {
@@ -154,6 +178,8 @@ public class BattleSetupPage extends LubCont {
 
 			plus.setEnabled(CommonStatic.getConfig().levelLimit != 0);
 		});
+
+		testMode.addActionListener(l -> lub.setTest(testMode.isSelected() ? st.getCont().getCont().getSave(true).getUnlockedsBeforeStage(st, true).keySet() : null));
 	}
 
 	private void ini() {
@@ -167,8 +193,11 @@ public class BattleSetupPage extends LubCont {
 		add(lub);
 		add(jmod);
 		add(jstt);
+		add(testMode);
+		add(ulock);
 		sttb.setData(st, 0);
 		tmax.setEnabled(st.lim != null && st.lim.lvr != null);
+		testMode.setEnabled(st.getCont().getCont().getSave(true) != null);
 		if(st.isAkuStage()) {
 			add(plus);
 			add(lvlim);

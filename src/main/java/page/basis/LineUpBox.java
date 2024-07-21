@@ -36,6 +36,7 @@ public class LineUpBox extends Canvas {
 	protected Limit lim;
 	protected int price = 1;
 	protected SaveData sdat;
+	private Set<AbForm> testL = null;
 
 	protected AbForm sf;
 
@@ -74,8 +75,9 @@ public class LineUpBox extends Canvas {
 						gra.drawImage(slot[2].getImg(), 120 * j, 100 * i);
 				if (sf == null || sf != f || relative == null) {
 					IForm ef = i != 2 ? lu.efs[i][j] : IForm.newIns(f, lu.getLv(f));
-					if (lim != null && ((lim.line > 0 && 2 - (lim.line - i) != 1) || unusable(f, ef))) {
-						gra.colRect(120 * j, 100 * i, img.getImg().getWidth(), img.getImg().getHeight(), 255, 0, 0, 100);
+					if (lim != null && ((lim.line > 0 && 2 - (lim.line - i) != 1) || unusable(f, ef) != 0)) {
+						byte unuse = unusable(f, ef);
+						gra.colRect(120 * j, 100 * i, img.getImg().getWidth(), img.getImg().getHeight(), 255 / unuse, 0, 0, 100 * unuse);
 						Res.getCost(-1, false,
 							new SymCoord(gra, 1, 120 * j, 100 * i + img.getImg().getHeight(), 2));
 					} else if (swap) {
@@ -96,8 +98,9 @@ public class LineUpBox extends Canvas {
 			FakeImage uni = sf.getDeployIcon().getImg();
 			gra.drawImage(uni, p.x, p.y);
 			IForm ef = IForm.newIns(sf, lu.getLv(sf));
-			if (unusable(sf, ef)) {
-				gra.colRect(p.x, p.y, uni.getWidth(), uni.getHeight(), 255, 0, 0, 100);
+			byte unuse = unusable(sf, ef);
+			if (unuse != 0) {
+				gra.colRect(p.x, p.y, uni.getWidth(), uni.getHeight(), 255 / unuse, 0, 0, 100 * unuse);
 				Res.getCost(-1, true, new SymCoord(gra, 1, p.x, p.y + uni.getHeight(), 2));
 			} else if (swap) {
 				Res.getCost((int) ef.getPrice(price), true,
@@ -118,10 +121,28 @@ public class LineUpBox extends Canvas {
 		pt %= 5;
 	}
 
-	public boolean unusable(AbForm f, IForm ef) {
+	public AbForm getSelected() {
+		return sf;
+	}
+	public byte unusable() {
+		if (sf == null)
+			return 1;
+		return unusable((byte)getPos(sf));
+	}
+	public byte unusable(byte slot) {
+		AbForm f = slot >= 10 ? backup[slot - 10] : lu.fs[slot / 5][slot % 5];
+		if (f == null)
+			return 1;
+		IForm ef = slot >= 10 ? IForm.newIns(f, lu.getLv(f)) : lu.efs[slot / 5][slot % 5];
+		return unusable(f, ef);
+	}
+
+	public byte unusable(AbForm f, IForm ef) {
 		if (lim != null && ef instanceof EForm && lim.unusable(((EForm)ef).du, price))
-			return true;
-		return sdat != null && sdat.locked(f);
+			return 1;
+		if (isTest())
+			return (byte)(testL.contains(f) ? 0 : 2);
+		return (byte)(sdat != null && sdat.locked(f) ? 2 : 0);
 	}
 
 	public void setLU(LineUp l) {
@@ -134,6 +155,15 @@ public class LineUpBox extends Canvas {
 		this.price = price;
 		sdat = data;
 		paint(getGraphics());
+	}
+
+	public void setTest(Set<AbForm> units) {
+		testL = units;
+		paint(getGraphics());
+	}
+
+	public boolean isTest() {
+		return testL != null;
 	}
 
 	protected void adjForm() {

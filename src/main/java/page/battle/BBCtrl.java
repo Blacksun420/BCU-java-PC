@@ -83,7 +83,7 @@ public class BBCtrl extends BBPainter {
 		if (!new PP(p).out(new P(w - iw, h - ih), new P(w, h), 0))
 			sbc.action.add(-2);
 
-		if ((sbc.sb.conf[0] & 2) > 0) {
+		if ((sbc.sb.conf & 2) > 0) {
 			FakeImage bimg = aux.battle[2][1].getImg();
 			int cw = bimg.getWidth();
 			int ch = bimg.getHeight();

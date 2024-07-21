@@ -6,6 +6,7 @@ import common.pack.Context;
 import common.pack.PackData.UserPack;
 import common.pack.Source;
 import common.pack.UserProfile;
+import common.util.Data;
 import common.util.unit.AbForm;
 import common.util.unit.Form;
 import common.util.unit.UniRand;
@@ -324,7 +325,7 @@ public class UREditPage extends DefaultPage {
                 type[i].setSelected(i == t);
             if (t != -1) {
                 jost.setText("" + st.price * 1.5);
-                jd.setText("" + bas.t().getFinRes(st.cooldown, false));
+                jd.setText("" + bas.t().getFinRes(st.cooldown, bas.getInc(Data.C_RESP)));
             }
             jspjt.scrollRectToVisible(new Rectangle(0, 0, 1, 1));
         });

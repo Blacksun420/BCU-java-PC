@@ -699,6 +699,7 @@ public class PackEditPage extends DefaultPage {
 			ene.anim = anim;
 			edit.setEnabled(pac.editable);
 			edit.setToolTipText(null);
+			fireDimensionChanged();
 		}
 		changing = false;
 	}

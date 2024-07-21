@@ -124,7 +124,7 @@ public class UnitInfoTable extends CharacterInfoTable {
 		main[1][7].setText(MainBCU.convertTime(ef.du.getItv(dispAtk)));
 		main[2][1].setText(MainBCU.convertTime(ef.du.getTBA()));
 
-		int respawn = b.t().getFinRes(ef.du.getRespawn(), false);
+		int respawn = b.t().getFinRes(ef.du.getRespawn(), b.getInc(Data.C_RESP));
 		main[0][5].setText(MainBCU.convertTime(respawn));
 
 		main[0][7].setText("" + ef.getPrice(1));

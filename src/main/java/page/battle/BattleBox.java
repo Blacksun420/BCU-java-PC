@@ -465,8 +465,8 @@ public interface BattleBox {
 						continue;
 
 					int pri = sb.elu.price[i][j];
-					if (pri == -1)
-						g.colRect(x, y, iw, ih, 255, 0, 0, 100);
+					if (pri == -1 || pri == -2)
+						g.colRect(x, y, iw, ih, 255 / -pri, 0, 0, 100 * -pri);
 					else if (sb.elu.readySpirit(i,j)) {
 						if (sb.time - sb.elu.sGlow[i][j] % 8 < 4)
 							g.colRect(x - (imw - iw) / 2f,y - (imh - ih) / 2f, imw, imh, 30, 92, 123, 100);
@@ -501,7 +501,7 @@ public interface BattleBox {
 
 						g.colRect(x + iw - dw - xw2, y + ih - dh * 2, xw2, dh, 0, 0, 0, -1);
 						g.colRect((x + dw + 2f), (y + ih - dh * 2) + 2f, (iw - dw * 2 - xw) - 4, dh - 4, 100, 212, 255, -1);
-					} else if (pri != -1 && !(sb.elu.validSpirit(i,j) && !sb.elu.readySpirit(i,j)))
+					} else if (pri != -1 && pri != -2 && !(sb.elu.validSpirit(i,j) && !sb.elu.readySpirit(i,j)))
 						Res.getCost(pri / 100, !b, setSym(g, hr, x + iw * 1.05f, y + ih * 1.05f, 3));
 				}
 			}
@@ -552,8 +552,8 @@ public interface BattleBox {
 				if (f == null)
 					continue;
 				int pri = sb.elu.price[index][i];
-				if (pri == -1)
-					g.colRect(x, y, iw, ih, 255, 0, 0, 100);
+				if (pri == -1 || pri == -2)
+					g.colRect(x, y, iw, ih, 255 / -pri, 0, 0, 100 * -pri);
 				else if (sb.elu.readySpirit(index,i)) {
 					if (sb.time - sb.elu.sGlow[index][i] % 8 < 4)
 						g.colRect(x - (imw - iw) / 2f,y - (imh - ih) / 2f, imw, imh, 30, 92, 123, 100);
@@ -587,7 +587,7 @@ public interface BattleBox {
 						int xw = (int) (cd * (iw - dw * 2));
 						g.colRect(x + iw - dw - xw, y + ih - dh * 2, xw, dh, 0, 0, 0, -1);
 						g.colRect(x + dw, y + ih - dh * 2, iw - dw * 2 - xw, dh, 100, 212, 255, -1);
-					} else if (pri != -1 && !(sb.elu.validSpirit(index,i) && !sb.elu.readySpirit(index,i)))
+					} else if (pri != -1 && pri != -2 && !(sb.elu.validSpirit(index,i) && !sb.elu.readySpirit(index,i)))
 						Res.getCost(pri / 100, !b, setSym(g, hr, x + iw, y + ih, 3));
 				}
 			}
@@ -1001,13 +1001,13 @@ public interface BattleBox {
 			FakeImage bimg = aux.battle[2][1].getImg();
 			int ow = (int) (aux.num[0][0].getImg().getHeight() * 0.2);
 			int cw = (int) (bimg.getWidth() * 1.1);
-			if ((sb.conf[0] & 2) > 0 && sb.sniper != null) {
+			if ((sb.conf & 2) > 0 && sb.sniper != null) {
 				bimg = aux.battle[2][sb.sniper.enabled ? 2 : 4].getImg();
 				g.drawImage(bimg, w - cw - ow, ih);
 				n++;
 			}
 			bimg = aux.battle[2][1].getImg();
-			if ((sb.conf[0] & 1) > 0) {
+			if ((sb.conf & 1) > 0) {
 				g.drawImage(bimg, w - cw * (n + 1) - ow, ih);
 				n++;
 			}

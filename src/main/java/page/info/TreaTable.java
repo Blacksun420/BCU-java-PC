@@ -98,6 +98,7 @@ public class TreaTable extends Page {
 			remove(jtf[s - 1]);
 		}
 		fireDimensionChanged();
+		getFront().fireDimensionChanged();
 	}
 
 	private void expand(Node<Integer> n) {
@@ -108,6 +109,7 @@ public class TreaTable extends Page {
 		}
 		n.adds();
 		fireDimensionChanged();
+		getFront().fireDimensionChanged();
 	}
 
 	private void ini() {
