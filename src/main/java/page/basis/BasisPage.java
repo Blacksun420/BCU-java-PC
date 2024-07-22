@@ -85,12 +85,14 @@ public class BasisPage extends LubCont {
 	private final TreaTable trea = new TreaTable(this);
 	private final JScrollPane jspt = new JScrollPane(trea);
 	private AbUnit cunit;
+	private final boolean test;
 
 	private String comboName = "";
 
 	public BasisPage(Page p) {
 		super(p);
 		st = null;
+		test = false;
 
 		ini();
 	}
@@ -101,6 +103,7 @@ public class BasisPage extends LubCont {
 		lub.setLimit(lim, st.getCont().getCont().getSave(false), st.getCont().price);
 		if (st.getCont().stageLimit != null)
 			jlcn.setBanned(st.getCont().stageLimit.bannedCatCombo);
+		this.test = test;
 		if (test)
 			lub.setTest(st.getCont().getCont().getSave(true).getUnlockedsBeforeStage(st, true).keySet());
 		ini();
@@ -613,7 +616,8 @@ public class BasisPage extends LubCont {
 		addListeners$2();
 		lvorb.setEnabled(lub.sf != null);
 		cost.setSelected(true);
-		ufp = new UnitFLUPage(getThis(), st == null ? null : st.getCont().getCont().getSave(false), lub.lim, lub.price);
+		ufp = new UnitFLUPage(getThis(), st == null ? null : st.getCont().getCont().getSave(false), lub.lim, lub.price,
+				test && st != null ? st.getCont().getCont().getSave(true).getUnlockedsBeforeStage(st, true).keySet() : null);
 		assignSubPage(trea);
 	}
 

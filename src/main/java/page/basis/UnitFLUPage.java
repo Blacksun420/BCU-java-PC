@@ -16,6 +16,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.Set;
 
 public class UnitFLUPage extends LubCont {
 
@@ -33,12 +34,14 @@ public class UnitFLUPage extends LubCont {
 	private final JBTN fbtn = new JBTN("Any Form");
 	private final JTF ffrm = new JTF("4");
 
-	public UnitFLUPage(Page p, SaveData sdat, Limit lim, int price) {
+	public UnitFLUPage(Page p, SaveData sdat, Limit lim, int price, Set<AbForm> ulk) {
 		super(p);
 
 		ult.cost = price;
 		lub.setLimit(lim, sdat, price);
-		ufb = new UnitFilterBox(this, true, lim, price, sdat);
+		if (ulk != null)
+			lub.setTest(ulk);
+		ufb = new UnitFilterBox(this, true, lim, price, sdat, ulk);
 		adv = new AdvProcFilterPage(this, true, ufb.proc);
 		ini();
 	}

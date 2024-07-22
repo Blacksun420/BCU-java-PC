@@ -40,6 +40,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public interface BattleBox {
 
@@ -682,7 +683,8 @@ public interface BattleBox {
 				if(anim != null && anim.mamodel.confs.length > 1) {
 					posx = (int) (posx + anim.mamodel.confs[1][2] * 2.5 * anim.mamodel.parts[0][8] / anim.mamodel.ints[0] * bf.sb.siz * ratio);
 					posy = (int) (posy + anim.mamodel.confs[1][3] * 2.5 * anim.mamodel.parts[0][9] / anim.mamodel.ints[0] * bf.sb.siz * ratio);
-				}
+				} else
+					posy = (int) (posy - casth * bf.sb.siz * 0.95 + aux.num[5][0].getImg().getHeight() * bf.sb.siz);
 			} else {
 				posx = (int) (posx - castw * bf.sb.siz * 1.15);
 				posy = (int) (posy - casth * bf.sb.siz * 0.95 + aux.num[5][0].getImg().getHeight() * bf.sb.siz);

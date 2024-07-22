@@ -16,10 +16,7 @@ import page.basis.UnitFLUPage;
 import utilpc.UtilPC;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 import static utilpc.Interpret.*;
 
@@ -37,14 +34,16 @@ public class UnitFilterBox extends EntityFilterBox {
 	private final JTG limbtn = new JTG(0, "usable");
 	private final boolean hideSpirits;
 	private final SaveData sdat;
+	private final Set<AbForm> unlk;
 	public byte frmf = -1;
 	public boolean rf = false;
 
-	public UnitFilterBox(Page p, boolean rand, Limit limit, int price, SaveData sdat) {
+	public UnitFilterBox(Page p, boolean rand, Limit limit, int price, SaveData sdat, Set<AbForm> ulk) {
 		super(p, sdat == null ? null : sdat.pack, rand && sdat == null);
 		lim = limit;
 		this.price = price;
 		this.sdat = sdat;
+		unlk = ulk;
 		hideSpirits = true;
 
 		ini();
@@ -56,6 +55,7 @@ public class UnitFilterBox extends EntityFilterBox {
 		lim = null;
 		price = 1;
 		sdat = null;
+		unlk = null;
 		hideSpirits = false;
 
 		ini();
@@ -172,7 +172,7 @@ public class UnitFilterBox extends EntityFilterBox {
 	protected boolean validateForm(Form f) {
 		if (rare.isSelectedIndex(rare.getModel().getSize() - 1) && !CommonStatic.getFaves().units.contains(f))
 			return false;
-		if ((sdat != null && sdat.locked(f)) || (hideSpirits && f.anim.getAtkCount() == 0))
+		if ((sdat != null && sdat.locked(f)) || (hideSpirits && f.anim.getAtkCount() == 0) || (unlk != null && !unlk.contains(f)))
 			return false;
 
 		String fname = MultiLangCont.getStatic().FNAME.getCont(f);
