@@ -31,11 +31,7 @@ public class UnitEditBox extends Page {
 	public UnitEditBox(Page p, UserPack pack, CustomUnit cun) {
 		super(p);
 		editable = pack.editable;
-		trait.list.addAll(UserProfile.getBCData().traits.getList().subList(TRAIT_RED,TRAIT_EVA));
-		trait.list.addAll(pack.traits.getList());
-		for (UserPack pacc : UserProfile.getUserPacks())
-			if (pack.desc.dependency.contains(pacc.desc.id))
-				trait.list.addAll(pacc.traits.getList());
+		trait.setup(pack, false);
 		jt = new JScrollPane(trait);
 
 		cu = cun;

@@ -247,14 +247,17 @@ public class BasisPage extends LubCont {
 		ujtf.getDocument().addDocumentListener(new DocumentListener() {
 			public void insertUpdate(DocumentEvent e) {
 				ufp.search(ujtf.getText());
+				renew();
 			}
 			@Override
 			public void removeUpdate(DocumentEvent e) {
 				ufp.search(ujtf.getText());
+				renew();
 			}
 			@Override
 			public void changedUpdate(DocumentEvent e) {
 				ufp.search(ujtf.getText());
+				renew();
 			}
 		});
 

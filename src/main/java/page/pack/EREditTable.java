@@ -5,10 +5,12 @@ import common.pack.Identifier;
 import common.pack.PackData;
 import common.pack.UserProfile;
 import common.system.ENode;
+import common.util.unit.AbForm;
 import common.util.unit.rand.EREnt;
 import common.util.unit.AbEnemy;
 import common.util.unit.EneRand;
 import common.util.unit.Enemy;
+import common.util.unit.rand.UREnt;
 import page.MainFrame;
 import page.MainLocale;
 import page.Page;
@@ -135,16 +137,16 @@ class EREditTable extends AbJTable implements Reorderable {
 		}
 	}
 
-	protected synchronized int addLine(AbEnemy enemy) {
-		if (rand == null)
+	protected synchronized int addLines(List<AbEnemy> enemies) {
+		if (rand == null || enemies.isEmpty())
 			return -1;
-		int ind = getSelectedRow();
-		if (ind == -1)
-			ind = rand.list.size();
-		EREnt er = new EREnt();
-		rand.list.add(ind, er);
-		er.ent = enemy == null ? null : enemy.getID();
-		return rand.list.size() - 1;
+		int ind = getSelectedRow() + 1;
+		for (AbEnemy e : enemies) {
+			EREnt er = new EREnt();
+			er.ent = e.getID();
+			rand.list.add(ind++, er);
+		}
+		return ind - 1;
 	}
 
 	protected synchronized void clicked(Point p) {

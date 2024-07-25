@@ -108,7 +108,7 @@ public class EREditPage extends DefaultPage {
 
 	private void addListeners() {
 		addl.addActionListener(arg0 -> {
-			int ind = jt.addLine(jle.getSelectedValue());
+			int ind = jt.addLines(jle.getSelectedValuesList());
 			setER(rand);
 			if (ind < 0)
 				jt.clearSelection();

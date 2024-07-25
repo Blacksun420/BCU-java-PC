@@ -46,7 +46,6 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 	private final JBTN addl = new JBTN(0, "addl");
 	private final JBTN reml = new JBTN(0, "reml");
 	private final JBTN relo = new JBTN(0, "relo");
-	private final JBTN save = new JBTN(0, "saveimg");
 	private final JBTN impt = new JBTN(0, "import");
 	private final JBTN expt = new JBTN(0, "export");
 	private final JBTN ico = new JBTN(0, "icondi");
@@ -54,7 +53,6 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 	private final JBTN merg = new JBTN(0, "merge");
 	private final JBTN spri = new JBTN(0, "sprite");
 	private final JBTN white = new JBTN(0, "whiteBG");
-	private final JLabel icon = new JLabel();
 	private final JLabel uni = new JLabel();
 	private final JTree jta = new JTree();
 	private final AnimGroupTree agt;
@@ -140,25 +138,23 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		set(aep, x, y, 800, 0, 1750, 50);
 		set(relo, x, y, 250, 0, 200, 50);
 		set(jspu, x, y, 50, 100, 300, 450);
-		set(add, x, y, 400, 200, 200, 50);
-		set(rem, x, y, 650, 200, 200, 50);
-		set(impt, x, y, 400, 250, 200, 50);
-		set(expt, x, y, 650, 250, 200, 50);
-		set(resz, x, y, 400, 300, 200, 50);
-		set(loca, x, y, 650, 300, 200, 50);
-		set(merg, x, y, 400, 350, 200, 50);
-		set(spri, x, y, 650, 350, 200, 50);
 		set(name, x, y, 400, 100, 200, 50);
 		set(copy, x, y, 650, 100, 200, 50);
-		set(addl, x, y, 400, 500, 200, 50);
-		set(reml, x, y, 650, 500, 200, 50);
+		set(add, x, y, 400, 150, 200, 50);
+		set(rem, x, y, 650, 150, 200, 50);
+		set(impt, x, y, 400, 200, 200, 50);
+		set(expt, x, y, 650, 200, 200, 50);
+		set(resz, x, y, 400, 250, 200, 50);
+		set(loca, x, y, 650, 250, 200, 50);
+		set(merg, x, y, 400, 300, 200, 50);
+		set(spri, x, y, 650, 300, 200, 50);
+		set(addl, x, y, 400, 350, 200, 50);
+		set(reml, x, y, 650, 350, 200, 50);
+		set(ico, x, y, 400, 400, 200, 50);
+		set(white, x, y, 650, 400, 200, 50);
+		set(uni, x, y, 450, 450, 400, 150);
 		set(jspic, x, y, 50, 600, 800, 650);
-		set(sb, x, y, 900, 100, 1400, 900);
-		set(ico, x, y, 900, 1050, 200, 50);
-		set(icon, x, y, 1150, 1050, 200, 50);
-		set(uni, x, y, 900, 1100, 200, 200);
-		set(white, x, y, 1400, 1050, 200, 50);
-		set(save, x, y, 1400, 1150, 200, 50);
+		set(sb, x, y, 900, 100, 1400, 1150);
 
 		aep.componentResized(x, y);
 		icet.setRowHeight(size(x, y, 50));
@@ -332,8 +328,6 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 			icet.anim.ICedited();
 		});
 
-		save.addActionListener(arg0 -> icet.anim.saveImg());
-
 		ico.addActionListener(arg0 -> {
 			BufferedImage bimg = new Importer("select icon image", Importer.IMP_IMG).getImg();
 			int selection = Opts.selection("What icon is this for?",
@@ -343,8 +337,6 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 			if (selection == 0) {
 				icet.anim.setEdi(MainBCU.builder.toVImg(bimg));
 				icet.anim.saveIcon();
-				if (icet.anim.getEdi() != null)
-					icon.setIcon(UtilPC.getIcon(icet.anim.getEdi()));
 			} else if (selection == 1) {
 				icet.anim.setUni(MainBCU.builder.toVImg(bimg));
 				icet.anim.saveUni();
@@ -560,15 +552,12 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		add(sb);
 		add(impt);
 		add(expt);
-		add(icon);
 		add(loca);
 		add(ico);
 		add(merg);
 		add(spri);
 		add(white);
 		add(uni);
-		icon.setVerticalAlignment(SwingConstants.CENTER);
-		icon.setHorizontalAlignment(SwingConstants.CENTER);
 		uni.setVerticalAlignment(SwingConstants.CENTER);
 		uni.setHorizontalAlignment(SwingConstants.CENTER);
 		add.setEnabled(aep.focus == null);
@@ -589,7 +578,6 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		changing = true;
 		aep.setAnim(anim);
 		addl.setEnabled(anim != null);
-		save.setEnabled(anim != null);
 		resz.setEnabled(anim != null);
 		relo.setEnabled(anim != null);
 		white.setEnabled(anim != null);
@@ -631,12 +619,8 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		}
 
 		merg.setEnabled(mergeEnabled);
-		if (anim != null) {
-			if (anim.getEdi() != null)
-				icon.setIcon(UtilPC.getIcon(anim.getEdi()));
-			if (anim.getUni() != null)
-				uni.setIcon(UtilPC.getIcon(anim.getUni()));
-		}
+		if (anim != null && anim.getUni() != null)
+			uni.setIcon(UtilPC.getIcon(anim.getUni()));
 		setB();
 		changing = boo;
 	}

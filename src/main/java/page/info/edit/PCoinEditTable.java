@@ -2,9 +2,11 @@ package page.info.edit;
 
 import common.CommonStatic;
 import common.battle.data.CustomUnit;
+import common.pack.Identifier;
 import common.pack.UserProfile;
 import common.util.Data;
 import common.util.lang.ProcLang;
+import common.util.unit.AbUnit;
 import org.jcodec.common.tools.MathUtil;
 import page.*;
 import utilpc.Interpret;
@@ -13,6 +15,7 @@ import utilpc.UtilPC;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -74,6 +77,195 @@ class PCoinEditTable extends Page {
         }
     }
 
+    static class TalentTable extends Page {
+
+        private final PCoinEditTable par;
+        private final ArrayList<JL> chance = new ArrayList<>();
+        private final ArrayList<Component> tchance = new ArrayList<>(); //Holds JBTN for ID, JTG for booleans, and JTF for int/double
+        private int[] curData = null;
+
+        private int cind = -1;
+        protected JBTN btn;
+
+        protected TalentTable(PCoinEditTable p) {
+            super(p);
+            par = p;
+        }
+
+        @Override
+        protected void resized(int x, int y) {
+            for (int i = 0; i < chance.size(); i++) {
+                set(chance.get(i), x, y, 0, i * 50, par.getW() / 2, 50);
+                set(tchance.get(i), x, y, par.getW() / 2, i * 50, (par.getW() / 2) - 15, 50);
+            }
+            setPreferredSize(size(x, y, par.getW(), getH()).toDimension());
+        }
+
+        public void setTalent(int[] pdata, boolean check) {
+            if (check && curData != null && pdata != null && curData[0] == pdata[0] && curData[1] == pdata[1])
+                return;
+            curData = pdata;
+
+            while (!chance.isEmpty()) {
+                int s = chance.size() - 1;
+                remove(chance.get(s));
+                remove(tchance.get(s));
+                chance.remove(s);
+                tchance.remove(s);
+            }
+            if (curData == null || curData[0] == -1)
+                return;
+
+            int maxLv = par.unit.pcoin.info.get(par.talent)[1];
+            if (pdata[0] == Data.PC_BASE) {
+                String text = par.ctypes.getSelectedValue().toString()
+                        + (pdata[1] <= Data.PC2_SPEED || pdata[1] == Data.PC2_HB || pdata[1] == Data.PC2_RNG ? "+ " : "")
+                        + (pdata[1] == Data.PC2_TBA ? "- " : "")
+                        + (pdata[1] <= Data.PC2_ATK || pdata[1] == Data.PC2_TBA ? "%" : "");
+                JL[] stTxts = new JL[]{new JL(text + " (Lv1)"), new JL(text + " (Lv" + maxLv + ")")};
+                for (int i = 0; i < stTxts.length; i++) {
+                    JL stTxt = stTxts[i];
+                    add(stTxt);
+                    chance.add(stTxt);
+                    JTF num = new JTF("" + (int)(par.unit.pcoin.info.get(par.talent)[2 + i] * (pdata[1] == Data.PC2_COST ? 1.5 : 1.0)));
+                    int fi = i + 2;
+                    num.setLnr(c -> {
+                        int[] v = CommonStatic.parseIntsN(num.getText().trim());
+                        if (v.length == 0 || v[0] < 0) {
+                            num.setText("" + par.unit.pcoin.info.get(par.talent)[fi]);
+                            return;
+                        }
+                        int ind = fi % 2 == 0 ? 1 : -1;
+                        int w = maxLv > 1 ? v.length > 1 && v[1] >= 0 ? v[1] : par.unit.pcoin.info.get(par.talent)[fi+ind] : v[0];
+                        if (pdata[1] == Data.PC2_COST) {
+                            v[0] = (int) (v[0] / 1.5);
+                            if (v.length > 1)
+                                w = (int) (w / 1.5);
+                        } else if (pdata[1] == Data.PC2_TBA) {
+                            v[0] = Math.min(v[0], 100);
+                            w = Math.min(w, 100);
+                        }
+                        par.unit.pcoin.info.get(par.talent)[fi + (ind == 1 ? 0 : ind)] = Math.min(v[0], w);
+                        par.unit.pcoin.info.get(par.talent)[fi + (ind != 1 ? 0 : ind)] = Math.max(v[0], w);
+                        num.setText("" + par.unit.pcoin.info.get(par.talent)[fi]);
+                        if (maxLv > 1)
+                            ((JTF)tchance.get(fi-2+ind)).setText("" + par.unit.pcoin.info.get(par.talent)[fi+ind]);
+                    });
+                    add(num);
+                    tchance.add(num);
+                }
+            } else if (pdata[0] == Data.PC_P) {
+                int fieldTOT = par.unit.pcoin.info.get(par.talent).length - 3;
+                ProcLang.ItemLang lang = ProcLang.get().get(pdata[1]);
+                String[] langText = lang.list();
+                int offset = pdata.length >= 3 ? pdata[2] * 2 : 0, penalty = 0;
+                Field[] pfs = par.unit.getProc().getArr(pdata[1]).getAllFields();
+
+                for (int i = 0; i < fieldTOT; i++) {
+                    if (i % 2 == 1 && maxLv == 1)
+                        continue;
+
+                    int ri = (i + offset) / 2;
+                    JL stTxt = new JL(lang.get(langText[ri]).getNameValue());
+                    add(stTxt);
+                    chance.add(stTxt);
+
+                    int fi = (i + offset) + 2, val = par.unit.pcoin.info.get(par.talent)[fi];
+                    try {
+                        Field f = pfs[ri];
+                        if (f.getType().equals(int.class) || f.getType().equals(float.class) || f.getType().equals(double.class)) {
+                            if (maxLv > 1)
+                                stTxt.setText(stTxt.getText() + " (Lv" + (i % 2 == 1 ? maxLv : "1") + ")");
+                            JTF num = new JTF("" + val);
+                            add(num);
+                            tchance.add(num);
+                            int fpen = penalty;
+                            num.setLnr(c -> {
+                                int[] v = CommonStatic.parseIntsN(num.getText().trim());
+                                if (v.length == 0 || par.unit.pcoin.info.get(par.talent).length <= fi) {
+                                    num.setText("" + val);
+                                    return;
+                                }
+                                int ind = fi % 2 == 0 ? 1 : -1;
+                                par.unit.pcoin.info.get(par.talent)[fi + (ind == 1 ? 0 : ind)] = v[0];
+                                if (maxLv > 1 && v.length > 1)
+                                    par.unit.pcoin.info.get(par.talent)[fi + (ind != 1 ? 0 : ind)] = v[1];
+                                par.unit.pcoin.info.set(par.talent, par.unit.getProc().getArr(pdata[1]).setTalent(par.unit.pcoin.info.get(par.talent)));
+                                num.setText("" + par.unit.pcoin.info.get(par.talent)[fi]);
+                                if (maxLv > 1 && v.length > 1)
+                                    ((JTF) tchance.get(fi - 2 + ind - fpen)).setText("" + par.unit.pcoin.info.get(par.talent)[fi + ind]);
+                            });
+                        } else if (f.getType().equals(boolean.class)) {
+                            JTG tgl = new JTG("Apply");
+                            tgl.setSelected(val != 0);
+                            add(tgl);
+                            tchance.add(tgl);
+                            tgl.setLnr(r -> par.unit.pcoin.info.get(par.talent)[fi] = par.unit.pcoin.info.get(par.talent)[fi + 1] = tgl.isSelected() ? 1 : 0);
+                            penalty++;
+                            i++;
+                        } else {
+                            JBTN jid = new JBTN();
+                            if (val != 0)
+                                jid.setText((val > 0 ? UserProfile.getBCData() : par.unit.getPack().getPack()).units.get(Math.abs(val)-1).toString());
+                            else
+                                jid.setText("(N/A)");
+                            add(jid);
+                            tchance.add(jid);
+                            jid.setLnr(l -> {
+                                cind = fi;
+                                btn = jid;
+                                par.pcedit.tab = this;
+                                changePanel(par.pcedit.ufp);
+                            });
+                            penalty++;
+                            i++;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        chance.remove(stTxt);
+                        remove(stTxt);
+                        penalty++;
+                        i++;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public JButton getBackButton() {
+            return null;
+        }
+
+        private int getH() {
+            return chance.size() * 50;
+        }
+
+        /**
+         * 0 is int, 1 is boolean, 2 is Identifier
+         * @param ind
+         * @return
+         */
+        private byte getFieldType(int ind) {
+            return (byte)(tchance.get(ind) instanceof JTF ? 0 : tchance.get(ind) instanceof JTG ? 1 : 2);
+        }
+
+        protected void renew(AbUnit su) {
+            if (su != null) {
+                Identifier<AbUnit> s = su.getID();
+                par.unit.pcoin.info.get(par.talent)[cind] = (s.id+1) * (s.pack.equals(Identifier.DEF) ? 1 : -1);
+                btn.setText(su.toString());
+            } else {
+                par.unit.pcoin.info.get(par.talent)[cind] = 0;
+                btn.setText("(N/A)");
+            }
+            par.unit.pcoin.info.get(par.talent)[cind + 1] = par.unit.pcoin.info.get(par.talent)[cind];
+            par.unit.pcoin.update();
+            cind = -1;
+            btn = null;
+        }
+    }
+
+    private static final int MAX_TABLE_H = 400;
     private final CustomUnit unit;
     private final NPList ctypes = new NPList();
     private final JScrollPane stypes = new JScrollPane(ctypes);
@@ -85,12 +277,13 @@ class PCoinEditTable extends Page {
     private final JBTN delet = new JBTN(0,"rem");
     private final PCoinEditPage pcedit;
     private final boolean editable;
-    private final JL[] chance = new JL[8]; //TODO: Restructure to allow custom talents
-    private final JTF[] tchance = new JTF[8];
+
+    private final TalentTable slots = new TalentTable(this);
+    private final JScrollPane sslot = new JScrollPane(slots);
+
     protected int talent;
 
     private boolean changing;
-    private int cTypesY = 600;
 
     protected PCoinEditTable(PCoinEditPage p, CustomUnit u, int ind, boolean edi) {
         super(p);
@@ -109,17 +302,21 @@ class PCoinEditTable extends Page {
 
     @Override
     protected void resized(int x, int y) {
-        set(pCoin, x, y, 0, 0, 400, 50);
-        set(delet, x, y, 0, 50, 400, 50);
-        set(jPCLV, x, y, 0, 100, 200, 50);
-        set(PCoinLV, x, y, 200, 100, 200, 50);
-        set(jSpLv, x, y, 0, 150, 200, 50);
-        set(superLv, x, y, 200, 150, 200, 50);
-        for (int i = 0; i < chance.length; i++) {
-            set(chance[i], x, y, 0, 200 + i * 50, 200, 50);
-            set(tchance[i], x, y, 200, 200 + i * 50, 200, 50);
-        }
-        set(stypes, x, y, 0, cTypesY, 400, 1050 - cTypesY);
+        set(pCoin, x, y, 0, 0, getW(), 50);
+        set(delet, x, y, 0, 50, getW(), 50);
+        set(jPCLV, x, y, 0, 100, getW() / 2, 50);
+        set(PCoinLV, x, y, getW() / 2, 100, getW() / 2, 50);
+        set(jSpLv, x, y, 0, 150, getW() / 2, 50);
+        set(superLv, x, y, getW() / 2, 150, getW() / 2, 50);
+
+        int sh = Math.min(MAX_TABLE_H, slots.getH());
+        set(sslot, x, y, 0, 200, getW(), sh);
+        slots.resized(x, y);
+        set(stypes, x, y, 0, 200 + sh, getW(), 900 - sh);
+    }
+
+    protected int getW() {
+        return pcedit.getPTableWidth();
     }
 
     private void addListeners() {
@@ -127,6 +324,7 @@ class PCoinEditTable extends Page {
             String txt = PCoinLV.getText().trim();
             int v = CommonStatic.parseIntN(txt);
             unit.pcoin.info.get(talent)[1] = MathUtil.clip(v, 1, 10);
+            slots.setTalent(Data.get_CORRES(unit.pcoin.info.get(talent)[0]), false);
             setData();
         });
 
@@ -169,21 +367,11 @@ class PCoinEditTable extends Page {
             int[] neww;
 
             if (vals[0] == Data.PC_P) {
-                int tots = unit.getProc().getArr(vals[1]).getDeclaredFields().length;
+                int tots = unit.getProc().getArr(vals[1]).getAllFields().length;
                 neww = Arrays.copyOf(old, 3 + (tots - (vals.length >= 3 ? vals[2] : 0)) * 2);
 
-                int low = unit.getProc().getArr(vals[1]).get(0) == 0 ? 1 : 0;
-                neww[2] = Math.max(low, neww[2]);
-                neww[3] = Math.max(low, neww[3]);
-                if (tots >= 2 && !(vals[1] == Data.P_SATK || vals[1] == Data.P_VOLC || vals[1] == Data.P_CRIT)) {
-                    int min = unit.getProc().getArr(vals[1]).get(1) == 0 ? 1 : 0;
-                    neww[4] = Math.max(min, neww[4]);
-                    neww[5] = Math.max(min, neww[5]);
-                }
-                if (vals[1] == Data.P_VOLC || vals[1] == Data.P_MINIVOLC) {
-                    neww[8] = Math.max(1, neww[8] / Data.VOLC_ITV) * Data.VOLC_ITV;
-                    neww[9] = Math.max(1, neww[9] / Data.VOLC_ITV) * Data.VOLC_ITV;
-                }
+                Data.Proc.ProcItem itm = unit.getProc().getArr(vals[1]);
+                neww = itm.setTalent(neww);
             } else
                 neww = Arrays.copyOf(old, vals[0] == Data.PC_BASE ? 5 : 3);
 
@@ -192,63 +380,6 @@ class PCoinEditTable extends Page {
             pcedit.setCoinTypes();
             changing = false;
         });
-
-        for (int i = 0; i < tchance.length; i++) {
-            int finalI = i + 2;
-            tchance[i].setLnr(arg0 -> {
-                if (changing)
-                    return;
-                changing = true;
-                String txt = tchance[finalI - 2].getText().trim();
-                int[] v = CommonStatic.parseIntsN(txt);
-                int[] vals = Data.get_CORRES(unit.pcoin.info.get(talent)[0]);
-
-                if (v.length == 0) {
-                    tchance[finalI - 2].setText("" + unit.pcoin.info.get(talent)[finalI]);
-                    changing = false;
-                    return;
-                }
-                int ind = finalI % 2 == 0 ? 1 : -1;
-                int w = v.length > 1 ? v[1] : unit.pcoin.info.get(talent)[finalI + ind];
-
-                if (vals[0] == Data.PC_BASE) {
-                    if (vals[1] == Data.PC2_COST) {
-                        v[0] = (int) (v[0] / 1.5);
-                        if (v.length > 1)
-                            w = (int) (w / 1.5);
-                    } else if (vals[1] == Data.PC2_HB) {
-                        v[0] = Math.min(v[0], unit.hp - unit.hb);
-                        w = Math.min(w, unit.hp - unit.hb);
-                    } else if (vals[1] == Data.PC2_TBA) {
-                        v[0] = Math.min(v[0], 100);
-                        w = Math.min(w, 100);
-                    }
-                }
-
-                if (finalI < 6 && !(vals[1] == Data.P_SATK || vals[1] == Data.P_VOLC || vals[1] == Data.P_CRIT || vals[1] == Data.P_ARMOR || vals[1] == Data.P_SPEED)) {
-                    v[0] = Math.max(0, v[0]);
-                    w = Math.max(0, w);
-                } else if (finalI >= 8 && (vals[1] == Data.P_VOLC || vals[1] == Data.P_MINIVOLC)) {
-                    v[0] = Math.max(1, v[0] / Data.VOLC_ITV) * Data.VOLC_ITV;
-                    w = Math.max(1, w / Data.VOLC_ITV) * Data.VOLC_ITV;
-                }
-
-                if (tchance[finalI - 2 + ind].isEnabled())
-                    if (ind == 1) {
-                        unit.pcoin.info.get(talent)[finalI] = Math.min(v[0], w);
-                        unit.pcoin.info.get(talent)[finalI + ind] = Math.max(v[0], w);
-                    } else {
-                        unit.pcoin.info.get(talent)[finalI] = Math.max(v[0], w);
-                        unit.pcoin.info.get(talent)[finalI + ind] = Math.min(v[0], w);
-                    }
-                else {
-                    unit.pcoin.info.get(talent)[finalI] = v[0];
-                    unit.pcoin.info.get(talent)[finalI + ind] = v[0];
-                }
-                setData();
-                changing = false;
-            });
-        }
     }
 
     public void shiftDown() {
@@ -263,20 +394,19 @@ class PCoinEditTable extends Page {
         add(superLv);
         add(stypes);
         add(PCoinLV);
+        add(sslot);
+        sslot.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        sslot.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         setCTypes(unit.pcoin != null && unit.pcoin.info.size() > talent);
-        for (int i = 0; i < chance.length; i++) {
-            add(chance[i] = new JL(0,i % 2 == 0 ? "Lv1 Value " + (1 + i / 2) : "Max Value " + (1 + i / 2)));
-            add(tchance[i] = new JTF());
-        }
         addListeners();
     }
 
     protected void setCTypes(boolean coin) {
         ArrayList<talentData> available = new ArrayList<>();
         if (coin) {
-            for (int i = 0; i < Data.PC_CORRES.length; i++) {
+            for (int i = 1; i < Data.PC_CORRES.length; i++) {
                 int[] type = Data.PC_CORRES[i];
-                if (type[0] == -1 || type[0] == Data.PC_IMU || type[0] == 5)
+                if (type[0] == -1 || type[0] == Data.PC_IMU || (type[0] == 5 && i != 5))
                     continue;
                 talentData dat = new talentData(Interpret.PCTX[i], i);
                 if (available.contains(dat))
@@ -296,7 +426,11 @@ class PCoinEditTable extends Page {
                 } else if (type[0] == Data.PC_AB)
                     add = (unit.abi & type[1]) == 0;
                 else if (type[0] == Data.PC_TRAIT)
-                    add = !(unit.getTraits().contains(UserProfile.getBCData().traits.get(type[1])));
+                    add = !(unit.getTraits().contains(UserProfile.getBCData().traits.get(type[1])) || unit.pcoin.trait.contains(UserProfile.getBCData().traits.get(type[1])));
+                else if (type[0] == 5) {
+                    Data.Proc p = unit.getPack().maxu() == null ? unit.getProc() : unit.getPack().maxu().getProc();
+                    add = p.getArr(type[1]).exists() && p.DEFINC.mult != 0; //Also check talents for this one
+                }
                 if (add && unused)
                     available.add(dat);
             }
@@ -356,19 +490,13 @@ class PCoinEditTable extends Page {
                     ctypes.setSelectedIndex(i);
                     break;
                 }
-            enableSecondaries(type);
-            for (int i = 0; i < getMax(); i++)
-                if (i >= 2 || !(type[0] == Data.PC_BASE && type[1] == Data.PC2_COST))
-                    tchance[i].setText("" + unit.pcoin.info.get(talent)[2 + i]);
-                else
-                    tchance[i].setText("" + (int)(unit.pcoin.info.get(talent)[2 + i] * 1.5));
-        }
-        else {
+            slots.setTalent(Data.get_CORRES(unit.pcoin.info.get(talent)[0]), true);
+            setIcon(type);
+        } else {
             ctypes.clearSelection();
-            enableSecondaries(type);
+            slots.setTalent(null, false);
+            setIcon(type);
             PCoinLV.setText("");
-            for (JTF t : tchance)
-                t.setText("");
         }
         ctypes.setEnabled(pc && editable);
         delet.setEnabled(pc && editable);
@@ -376,92 +504,34 @@ class PCoinEditTable extends Page {
         fireDimensionChanged();
     }
 
-    //Enables or disables text fields, depending on the needed values for the proc
-    private void enableSecondaries(int[] pdata) {
-        cTypesY = 600;
-        int maxlv = pdata[0] != -1 ? unit.pcoin.info.get(talent)[1] : 0;
-        if (pdata[0] == -1 || pdata[0] == Data.PC_AB || pdata[0] == Data.PC_TRAIT || pdata[0] == Data.PC_IMU || pdata[0] == 5) {
-            for (JTF jtf : tchance)
-                jtf.setVisible(false);
-            for (JL jl : chance)
-                jl.setVisible(false);
-            cTypesY -= 400;
-            if (pdata[0] != -1)
-                if (pdata[0] == Data.PC_IMU || pdata[0] == 5) {
-                    pCoin.setText(ProcLang.get().get(pdata[1]).full_name);
-                    pCoin.setIcon(UtilPC.getIcon(1, pdata[1]));
-                } else if (pdata[0] == Data.PC_AB) {
-                    for (int i = 0; i < Data.ABI_TOT; i++) {
-                        if (((pdata[1] >> i) & 1) == 1) {
-                            pCoin.setText(Interpret.SABIS[i]);
-                            pCoin.setIcon(UtilPC.getIcon(0, i));
-                            break;
-                        }
-                    }
-                } else {
-                    pCoin.setText(Interpret.TRAIT[pdata[1]]);
-                    pCoin.setIcon(UtilPC.getIcon(3,pdata[1]));
+    private void setIcon(int[] pdata) {
+        if (pdata[0] == -1) {
+            pCoin.setText("(None)");
+            pCoin.setIcon(null);
+        } else if (pdata[0] == Data.PC_IMU || pdata[0] == 5) {
+            pCoin.setText(ProcLang.get().get(pdata[1]).full_name);
+            pCoin.setIcon(UtilPC.getIcon(1, pdata[1]));
+        } else if (pdata[0] == Data.PC_AB) {
+            for (int i = 0; i < Data.ABI_TOT; i++) {
+                if (((pdata[1] >> i) & 1) == 1) {
+                    pCoin.setText(Interpret.SABIS[i]);
+                    pCoin.setIcon(UtilPC.getIcon(0, i));
+                    break;
                 }
-            else {
-                pCoin.setText("(None)");
-                pCoin.setIcon(null);
             }
-        }
-        if (pdata[0] == Data.PC_BASE) {
-            for (int i = 0; i < tchance.length; i++) {
-                chance[i].setVisible(i < 2);
-                tchance[i].setVisible(i < 2);
-            }
-            cTypesY -= 300;
+        } else if (pdata[0] == Data.PC_BASE) {
             String text = ctypes.getSelectedValue().toString()
                     + (pdata[1] <= Data.PC2_SPEED || pdata[1] == Data.PC2_HB || pdata[1] == Data.PC2_RNG ? "+ " : "")
                     + (pdata[1] == Data.PC2_TBA ? "- " : "")
                     + (pdata[1] <= Data.PC2_ATK || pdata[1] == Data.PC2_TBA ? "%" : "");
-            chance[0].setText(text + " (Lv1)");
-            chance[1].setText(text + " (Lv" + maxlv + ")");
             pCoin.setText(text);
             pCoin.setIcon(UtilPC.getIcon(4, pdata[1]));
-        }
-        if (pdata[0] == Data.PC_P) {
-            int procChance = unit.getProc().getArr(pdata[1]).get(0);
-            unit.pcoin.info.get(talent)[2] = Math.min(unit.pcoin.info.get(talent)[2], 100 - procChance);
-            unit.pcoin.info.get(talent)[3] = Math.min(unit.pcoin.info.get(talent)[3], 100 - procChance);
-            //This ensures raw proc chance + talent proc chance doesn't goes above 100%
-
-            ProcLang.ItemLang lang = ProcLang.get().get(pdata[1]);
-            String[] langText = lang.list();
-            pCoin.setText(lang.full_name);
+        } else if (pdata[0] == Data.PC_P) {
+            pCoin.setText(ProcLang.get().get(pdata[1]).full_name);
             pCoin.setIcon(UtilPC.getIcon(1, pdata[1]));
-
-            int offset = pdata.length >= 3 ? pdata[2] : 0;
-            for (int i = 0; i < 4; i++) {
-                boolean Field = langText.length > i + offset;
-                chance[i * 2].setVisible(Field);
-                chance[i * 2 + 1].setVisible(Field);
-                tchance[i * 2].setVisible(Field);
-                tchance[i * 2 + 1].setVisible(Field);
-                if (Field) {
-                    chance[i * 2].setText(lang.get(langText[i + offset]).getNameValue() + "(Lv1)");
-                    chance[i * 2 + 1].setText(lang.get(langText[i + offset]).getNameValue() + "(Lv" + maxlv + ")");
-                } else
-                    cTypesY -= 100;
-            }
+        } else {
+            pCoin.setText(Interpret.TRAIT[pdata[1]]);
+            pCoin.setIcon(UtilPC.getIcon(3, pdata[1]));
         }
-        for (int i = 0; i < tchance.length; i++) {
-            if (!tchance[i].isVisible())
-                break;
-            tchance[i].setEnabled(editable && (i % 2 == 0 || maxlv != 1));
-        }
-        if (pdata[0] != -1 && editable) {
-            for (int i = 0; i < getMax(); i++)
-                if (!tchance[i].isEnabled())
-                    unit.pcoin.info.get(talent)[2 + i] = unit.pcoin.info.get(talent)[1 + i];
-                else if (i != 4 && i != 5 && pdata[1] != Data.P_ARMOR && pdata[1] != Data.P_SPEED)
-                    unit.pcoin.info.get(talent)[2 + i] = Math.max(0, unit.pcoin.info.get(talent)[2 + i]);
-        }
-    }
-
-    private int getMax() {
-        return Math.min(unit.pcoin.info.get(talent).length - 2, tchance.length);
     }
 }

@@ -52,7 +52,7 @@ public class LineUpBox extends Canvas {
 		if (bimg == null)
 			return;
 		FakeGraphics gra = new FG2D(bimg.getGraphics());
-		for (int i = 0; i < 3; i++)
+		for (byte i = 0; i < 3; i++)
 			for (int j = 0; j < 5; j++) {
 				AbForm f = getForm(i, j);
 				VImg img;
@@ -75,8 +75,8 @@ public class LineUpBox extends Canvas {
 						gra.drawImage(slot[2].getImg(), 120 * j, 100 * i);
 				if (sf == null || sf != f || relative == null) {
 					IForm ef = i != 2 ? lu.efs[i][j] : IForm.newIns(f, lu.getLv(f));
-					if (lim != null && ((lim.line > 0 && 2 - (lim.line - i) != 1) || unusable(f, ef) != 0)) {
-						byte unuse = unusable(f, ef);
+					byte unuse = unusable(f, ef, i);
+					if (unuse != 0) {
 						gra.colRect(120 * j, 100 * i, img.getImg().getWidth(), img.getImg().getHeight(), 255 / unuse, 0, 0, 100 * unuse);
 						Res.getCost(-1, false,
 							new SymCoord(gra, 1, 120 * j, 100 * i + img.getImg().getHeight(), 2));
@@ -98,7 +98,7 @@ public class LineUpBox extends Canvas {
 			FakeImage uni = sf.getDeployIcon().getImg();
 			gra.drawImage(uni, p.x, p.y);
 			IForm ef = IForm.newIns(sf, lu.getLv(sf));
-			byte unuse = unusable(sf, ef);
+			byte unuse = unusable(sf, ef, (byte)(getPos(sf)/5));
 			if (unuse != 0) {
 				gra.colRect(p.x, p.y, uni.getWidth(), uni.getHeight(), 255 / unuse, 0, 0, 100 * unuse);
 				Res.getCost(-1, true, new SymCoord(gra, 1, p.x, p.y + uni.getHeight(), 2));
@@ -134,11 +134,10 @@ public class LineUpBox extends Canvas {
 		if (f == null)
 			return 1;
 		IForm ef = slot >= 10 ? IForm.newIns(f, lu.getLv(f)) : lu.efs[slot / 5][slot % 5];
-		return unusable(f, ef);
+		return unusable(f, ef, (byte)(slot/5));
 	}
-
-	public byte unusable(AbForm f, IForm ef) {
-		if (lim != null && ef instanceof EForm && lim.unusable(((EForm)ef).du, price))
+	public byte unusable(AbForm f, IForm ef, byte row) {
+		if (lim != null && ef instanceof EForm && lim.unusable(((EForm)ef).du, price, row))
 			return 1;
 		if (isTest())
 			return (byte)(testL.contains(f) ? 0 : 2);

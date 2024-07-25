@@ -112,7 +112,7 @@ public class StageEditPage extends DefaultPage {
 		hinf.renew();
 		jt.updateAbEnemy();
 		if (efp != null)
-			enam.setText(efp.getName());
+			enam.setText(efp.getSearch());
 		renewEList();
 	}
 
@@ -121,6 +121,7 @@ public class StageEditPage extends DefaultPage {
 		if (efp.getList() != null)
 			v.addAll(efp.getList());
 		jle.setListData(v);
+		fireDimensionChanged();
 	}
 
 	@Override
@@ -211,7 +212,10 @@ public class StageEditPage extends DefaultPage {
 				}
 			});
 		} else
-			enam.setLnr(e -> efp.search(enam.getText(), true));
+			enam.setLnr(e -> {
+				efp.search(enam.getText(), true);
+				renewEList();
+			});
 	}
 
 	private void addListeners$1() {

@@ -321,6 +321,52 @@ public class ProcFilterTable extends Page {
                                 if ((int)pf0 >= (int)pf1)
                                     return false;
                         }
+                    } else if (f.getType().equals(double.class)) {
+                        int fil = ((DoubleFilter)group.list[j]).filter;
+                        switch (fil) {
+                            case 0:
+                                if ((double)pf0 < (double)pf1)
+                                    return false;
+                                break;
+                            case 1:
+                                if ((double)pf0 != (double)pf1)
+                                    return false;
+                                break;
+                            case 2:
+                                if ((double)pf0 > (double)pf1)
+                                    return false;
+                                break;
+                            case 3:
+                                if ((double)pf0 <= (double)pf1)
+                                    return false;
+                                break;
+                            default:
+                                if ((double)pf0 >= (double)pf1)
+                                    return false;
+                        }
+                    } else if (f.getType().equals(float.class)) {
+                        int fil = ((DoubleFilter)group.list[j]).filter;
+                        switch (fil) {
+                            case 0:
+                                if ((float)pf0 < (float)pf1)
+                                    return false;
+                                break;
+                            case 1:
+                                if ((float)pf0 != (float)pf1)
+                                    return false;
+                                break;
+                            case 2:
+                                if ((float)pf0 > (float)pf1)
+                                    return false;
+                                break;
+                            case 3:
+                                if ((float)pf0 <= (float)pf1)
+                                    return false;
+                                break;
+                            default:
+                                if ((float)pf0 >= (float)pf1)
+                                    return false;
+                        }
                     } else if (f.getType().equals(boolean.class)) {
                         if (!((BoolFilter)group.list[j]).btn.isSelected() && (boolean)pf0 != (boolean)pf1)
                             return false;

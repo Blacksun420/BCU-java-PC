@@ -122,14 +122,11 @@ public abstract class EntityFilterBox extends Page {
         if (pack == null) {
             for (PackData.UserPack pacc : UserProfile.getUserPacks())
                 if (pks.containsPack(pacc))
-                    pacc.traits.forEach(t -> trait.list.add(t));
+                    trait.list.addAll(pacc.traits.getList());
         } else {
             trait.list.addAll(pack.traits.getList());
-            for (String s : pack.desc.dependency) {
-                PackData.UserPack up = UserProfile.getUserPack(s);
-                if (up != null && pks.containsPack(up))
-                    up.traits.forEach(t -> trait.list.add(t));
-            }
+            for (String dep : pack.desc.dependency)
+                trait.list.addAll(UserProfile.getUserPack(dep).traits.getList());
         }
         trait.setListData();
     }

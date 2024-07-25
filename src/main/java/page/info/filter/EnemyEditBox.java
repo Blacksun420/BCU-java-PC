@@ -31,11 +31,7 @@ public class EnemyEditBox extends Page {
 	public EnemyEditBox(Page p, UserPack pack, CustomEnemy cen) {
 		super(p);
 		editable = pack.editable;
-		trait.list.addAll(UserProfile.getBCData().traits.getList().subList(TRAIT_RED,TRAIT_TOT));
-		trait.list.addAll(pack.traits.getList());
-		for (UserPack pacc : UserProfile.getUserPacks())
-			if (pack.desc.dependency.contains(pacc.desc.id))
-				trait.list.addAll(pacc.traits.getList());
+		trait.setup(pack, true);
 		jt = new JScrollPane(trait);
 		ce = cen;
 		ini();

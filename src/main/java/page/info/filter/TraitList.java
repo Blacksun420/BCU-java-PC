@@ -1,6 +1,8 @@
 package page.info.filter;
 
 import common.CommonStatic;
+import common.pack.PackData.UserPack;
+import common.pack.UserProfile;
 import common.util.unit.Trait;
 import utilpc.Interpret;
 import utilpc.Theme;
@@ -9,6 +11,8 @@ import utilpc.UtilPC;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Vector;
+
+import static common.util.Data.*;
 
 public class TraitList extends JList<Trait> {
 
@@ -42,6 +46,17 @@ public class TraitList extends JList<Trait> {
                 return jl;
             }
         });
+    }
+
+    public void setup(UserPack pack, boolean allTraits) {
+        list.addAll(UserProfile.getBCData().traits.getList().subList(TRAIT_RED,allTraits ? TRAIT_TOT : TRAIT_EVA));
+        if (pack == null)
+            return;
+
+        list.addAll(pack.traits.getList());
+        for (String dep : pack.desc.dependency)
+            list.addAll(UserProfile.getUserPack(dep).traits.getList());
+        setListData();
     }
 
     public void setListData() {

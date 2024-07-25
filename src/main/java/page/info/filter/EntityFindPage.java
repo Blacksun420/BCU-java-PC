@@ -115,10 +115,10 @@ public abstract class EntityFindPage<R> extends DefaultPage {
         }
     }
 
-    public String getName() {
+    public String getSearch() {
         if (efb != null)
             return efb.name;
-        return "";
+        return seatf.getText();
     }
 
     protected void ini() {

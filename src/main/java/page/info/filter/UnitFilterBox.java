@@ -185,7 +185,7 @@ public class UnitFilterBox extends EntityFilterBox {
 		MaskUnit du = f.maxu();
 		int a = du.getAbi();
 
-		if (limbtn.isSelected() && lim != null && lim.unusable(du, price))
+		if (limbtn.isSelected() && lim != null && lim.unusable(du, price, (byte)0))
 			return false;
 
 		boolean b0 = unchangeable(0);
@@ -227,7 +227,7 @@ public class UnitFilterBox extends EntityFilterBox {
 		return true;
 	}
 
-	private boolean checkTraitComp(SortedPackSet<Trait> targets, Trait t, Form f) {
+	protected boolean checkTraitComp(SortedPackSet<Trait> targets, Trait t, Form f) {
 		if (targets.contains(t))
 			return true;
 		if (t.BCTrait())

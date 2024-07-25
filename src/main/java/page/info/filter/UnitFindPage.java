@@ -33,6 +33,16 @@ public class UnitFindPage extends EntityFindPage<AbForm> implements SupPage<AbUn
 		ini();
 	}
 
+	public UnitFindPage(Page p, UserPack pack) {
+		super(p);
+
+		elt = new UnitListTable(this);
+		jsp = new JScrollPane(elt);
+		efb = new USummonFilterBox(this, pack);
+		adv = new AdvProcFilterPage(this, true, efb.proc);
+		ini();
+	}
+
 	public AbForm getForm() {
 		if (elt.getSelectedRow() == -1 || elt.getSelectedRow() > elt.list.size() - 1)
 			return null;

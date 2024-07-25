@@ -44,7 +44,7 @@ public class UREditPage extends DefaultPage {
     }
 
     public final BasisSet bas = BasisSet.current();
-    private final JBTN veif = new JBTN(0, "veif");
+    private final JBTN veif = new JBTN(0, "vuif");
     private final UREditTable jt;
     private final JScrollPane jspjt;
     private final JList<UniRand> jlst = new JList<>();
@@ -138,7 +138,7 @@ public class UREditPage extends DefaultPage {
 
     private void addListeners() {
         addl.addActionListener(arg0 -> {
-            int ind = jt.addLine(jlu.getSelectedValue());
+            int ind = jt.addLines(jlu.getSelectedValuesList());
             setUR(rand);
             if (ind < 0)
                 jt.clearSelection();

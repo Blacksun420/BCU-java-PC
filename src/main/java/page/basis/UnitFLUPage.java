@@ -71,7 +71,7 @@ public class UnitFLUPage extends LubCont {
 
 	@Override
 	protected void keyTyped(KeyEvent e) {
-		if (!seatf.isFocusOwner()) {
+		if (!seatf.isFocusOwner() && !ffrm.isFocusOwner()) {
 			super.keyTyped(e);
 			e.consume();
 		}

@@ -145,17 +145,14 @@ class AtkEditTable extends Page {
 	}
 
 	private void pini(UserPack pack) {
-		atktr.list.addAll(UserProfile.getBCData().traits.getList().subList(TRAIT_RED,TRAIT_EVA));
+		atktr.setup(pack, false);
 		Vector<Music> vs = new Vector<>();
 		vs.add(null);
 		vs.addAll(UserProfile.getBCData().musics.getList());
-
 		if (pack != null) {
-			atktr.list.addAll(pack.traits.getList());
 			vs.addAll(pack.musics.getList());
 			for (String dep : pack.desc.dependency) {
 				UserPack pacc = UserProfile.getUserPack(dep);
-				atktr.list.addAll(pacc.traits.getList());
 				vs.addAll(pacc.musics.getList());
 			}
 		}

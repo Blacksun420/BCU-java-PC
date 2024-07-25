@@ -40,7 +40,6 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public interface BattleBox {
 
@@ -469,6 +468,10 @@ public interface BattleBox {
 					if (pri == -1 || pri == -2)
 						g.colRect(x, y, iw, ih, 255 / -pri, 0, 0, 100 * -pri);
 					else if (sb.elu.readySpirit(i,j)) {
+						int scos = sb.elu.spiritCost(i, j, sb.st.getCont().price);
+						if (scos > 0)
+							Res.getCost(scos / 100, sb.money >= scos, setSym(g, hr * 0.7f, x - (imw - iw) / 2f, y - (imh - ih) / 2f, 0));
+
 						if (sb.time - sb.elu.sGlow[i][j] % 8 < 4)
 							g.colRect(x - (imw - iw) / 2f,y - (imh - ih) / 2f, imw, imh, 30, 92, 123, 100);
 						else
@@ -556,6 +559,10 @@ public interface BattleBox {
 				if (pri == -1 || pri == -2)
 					g.colRect(x, y, iw, ih, 255 / -pri, 0, 0, 100 * -pri);
 				else if (sb.elu.readySpirit(index,i)) {
+					int scos = sb.elu.spiritCost(index, i, sb.st.getCont().price);
+					if (scos > 0)
+						Res.getCost(scos / 100, sb.money >= scos, setSym(g, hr * 0.7f, x - (imw - iw) / 2f, y - (imh - ih) / 2f, 0));
+
 					if (sb.time - sb.elu.sGlow[index][i] % 8 < 4)
 						g.colRect(x - (imw - iw) / 2f,y - (imh - ih) / 2f, imw, imh, 30, 92, 123, 100);
 					else
@@ -714,12 +721,12 @@ public interface BattleBox {
 				if(e.dead)
 					continue;
 
-				int dep = e.layer * DEP;
+				int dep = e.getLayer() * DEP;
 
 				while(!efList.isEmpty()) {
 					ContAb wc = efList.getFirst();
 
-					if(wc.layer + 1 <= e.layer) {
+					if(wc.layer + 1 <= e.getLayer()) {
 						drawEff(gra, wc, at, psiz);
 						efList.pop();
 					} else
@@ -939,7 +946,7 @@ public interface BattleBox {
 						continue;
 
 					if ((e.getAbi() & Data.AB_TIMEI) > 0) {
-						int dep = e.layer * DEP;
+						int dep = e.getLayer() * DEP;
 
 						gra.setTransform(at);
 

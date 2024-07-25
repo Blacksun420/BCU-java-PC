@@ -269,7 +269,7 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 		set(jspu, x, y, 0, 50, 300, 500);
 		set((Canvas) mb, x, y, 300, 50, 700, 500);
 		set(jspp, x, y, 1000, 50, 300, 500);
-		set(sb, x, y, 1300, 50, 950, 400);
+		set(sb, x, y, 1300, 50, 1000, 450);
 		set(sort, x, y, 1300, 500, 200, 50);
 		set(revt, x, y, 1500, 500, 200, 50);
 		set(addl, x, y, 1700, 500, 200, 50);

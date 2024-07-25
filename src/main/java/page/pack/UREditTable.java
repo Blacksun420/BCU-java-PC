@@ -130,13 +130,13 @@ public class UREditTable extends AbJTable implements Reorderable {
         }
     }
 
-    protected synchronized int addLine(AbForm form) {
-        if (rand == null || form == null)
+    protected synchronized int addLines(java.util.List<AbForm> forms) {
+        if (rand == null || forms.isEmpty())
             return -1;
         int ind = getSelectedRow() + 1;
-        UREnt ur = new UREnt(form);
-        rand.list.add(ind, ur);
-        return rand.list.size() - 1;
+        for (AbForm f : forms)
+            rand.list.add(ind++, new UREnt(f));
+        return ind - 1;
     }
 
     protected synchronized void clicked(Point p) {
