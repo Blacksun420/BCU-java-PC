@@ -40,7 +40,7 @@ public class BCUWriter extends DataIO {
 
 	private static File log, ph;
 	private static WriteStream ps;
-	private static final short MIN_LENGTH = 329;
+	public static boolean nothingburger = true; //deletes logs if true
 
 	public static void logClose(boolean save, boolean genBackup) {
 		if (save && MainBCU.loaded && MainBCU.trueRun)
@@ -51,7 +51,7 @@ public class BCUWriter extends DataIO {
 		ps.flush();
 		ps.close();
 		ph.deleteOnExit();
-		if (log.length() <= MIN_LENGTH)
+		if (nothingburger)
 			log.deleteOnExit();
 	}
 
