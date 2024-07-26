@@ -9,6 +9,7 @@ import main.MainBCU;
 import page.JBTN;
 import page.MainLocale;
 import page.Page;
+import utilpc.UtilPC;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,6 +31,8 @@ public abstract class EntityFilterBox extends Page {
                     JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
                     if (o == null)
                         jl.setText(Page.get(0, "anypac"));
+                    else if (o instanceof PackData.UserPack)
+                        jl.setIcon(UtilPC.resizeIcon(((PackData.UserPack)o).icon, 24, 24));
                     return jl;
                 }
             });

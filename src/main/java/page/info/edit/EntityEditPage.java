@@ -40,9 +40,12 @@ import page.view.BGViewPage;
 import page.view.EnemyViewPage;
 import page.view.MusicPage;
 import page.view.UnitViewPage;
+import utilpc.UtilPC;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import static common.util.Data.*;
 
@@ -268,20 +271,18 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		jcbs.setModel(new DefaultComboBoxModel<>(vec));
 		if (pack.editable) {
 			add(jcba);
-			Vector<AnimCI> vda = new Vector<>();
-			if (ce.getPack().anim instanceof AnimCE) {
-				AnimCE ac = ((AnimCE) ce.getPack().anim);
-				if (ac != null && !ac.inPool())
-					vda.add(ac);
-				vda.addAll(AnimCE.map().values());
-				if (ac == null)
-					ce.getPack().anim = vda.get(0);
-			} else
-				vda.addAll(AnimCE.map().values());
-			getAnims(vda, pack);
+            Vector<AnimCI> vda = new Vector<>();
+			vda.addAll(AnimCE.map().values());
+			getAnims(vda, pack, true);
 			jcba.setModel(new DefaultComboBoxModel<>(vda));
-			if (!(ce.getPack().anim instanceof AnimCE))
-				jcba.setSelectedIndex(-1);
+			jcba.setRenderer(new DefaultListCellRenderer() {
+				@Override
+				public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean selected, boolean focus) {
+					JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, selected, focus);
+					jl.setIcon(UtilPC.getIcon(((AnimCI)o).getEdi()));
+					return jl;
+				}
+			});
 		}
 		setFocusTraversalPolicy(ljp);
 		setFocusCycleRoot(true);
@@ -315,11 +316,12 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		add(jsp);
 	}
 
-	private static void getAnims(Vector<AnimCI> vda, UserPack pac) {
-		if (pac.editable || pac.desc.allowAnim)
+	private static void getAnims(Vector<AnimCI> vda, UserPack pac, boolean checkDeps) {
+		if ((pac.editable || pac.desc.allowAnim))
 			vda.addAll(pac.source.getAnims(Source.BasePath.ANIM));
-		for (String s : pac.desc.dependency)
-			getAnims(vda, UserProfile.getUserPack(s));
+		if (checkDeps)
+			for (String s : pac.desc.dependency)
+				getAnims(vda, UserProfile.getUserPack(s), false);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -378,6 +380,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		set(atkn, x, y, 350, 600, 300, 50);
 
 		set(lra, x, y, 50, 400, 100, 50);
+
 		set(fra, x, y, 150, 400, 200, 50);
 		set(ltb, x, y, 50, 450, 100, 50);
 		set(ftb, x, y, 150, 450, 200, 50);
@@ -489,7 +492,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		jli.setSelectedIndex(ind);
 		Animable<AnimU<?>, UType> ene = ce.getPack();
 
-		if (pack.editable)
+		if (pack.editable && ene.anim instanceof AnimCE)
 			jcba.setSelectedItem(ene.anim);
 
 		jcbs.setSelectedItem(Identifier.get(ce.death));
@@ -639,7 +642,16 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		jcba.addActionListener(arg0 -> {
 			if (changing)
 				return;
-			ce.getPack().anim = (AnimCE) jcba.getSelectedItem();
+			ce.getPack().anim = (AnimCI) jcba.getSelectedItem();
+			ce.share = Arrays.copyOf(ce.share, ce.getPack().anim.anim.getAtkCount());
+			if (ce.hits.size() < ce.share.length)
+				for (int i = ce.hits.size(); i < ce.share.length; i++) {
+					ce.hits.add(new AtkDataModel[1]);
+					ce.hits.get(i)[0] = new AtkDataModel(ce);
+					ce.share[i] = 1;
+				}
+			while (ce.hits.size() > ce.share.length)
+				ce.hits.remove(ce.hits.size() - 1);
 			setData(ce);
 
 		});

@@ -359,6 +359,8 @@ public class UnitManagePage extends DefaultPage {
 				if (frm.names.put(jtff.getText().trim())) {
 					jlf.revalidate();
 					jlf.repaint();
+					jlu.revalidate();
+					jlu.repaint();
 				}
 			}
 
@@ -538,6 +540,10 @@ public class UnitManagePage extends DefaultPage {
 			ce.limit = CommonStatic.customFormMinPos(anim.mamodel);
 			frm.anim = anim;
 			edit.setToolTipText(null);
+			jlu.revalidate();
+			jlu.repaint();
+			jlf.revalidate();
+			jlf.repaint();
 		}
 		changing = false;
 	}

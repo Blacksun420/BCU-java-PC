@@ -93,9 +93,12 @@ public class UnitFilterBox extends EntityFilterBox {
                     } else {
 						if (rf && u.forms.length <= frmf)
 							continue;
-                        Form f = u.forms[Math.min(u.forms.length - 1, frmf)];
-                        if (validateForm(f))
-                            ans.add(f);
+						for (int i = Math.min(u.forms.length - 1, frmf); i >= 0; i--)
+                        	if (validateForm(u.forms[i])) {
+								ans.add(u.forms[i]);
+								break;
+							} else if (rf)
+								break;
                     }
 			if (rand)
 				for(UniRand rand : p.randUnits.getList()) {
