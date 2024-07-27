@@ -34,6 +34,7 @@ public class LimitTable extends Page {
 	private final JTF jcmax = new JTF();
 	private final JTF jcg = new JTF();
 	private final JTF jlr = new JTF();
+	private final JTF star = new JTF();
 	private final JBTN cgb = new JBTN(MainLocale.INFO, "ht15");
 	private final JBTN lrb = new JBTN(MainLocale.INFO, "ht16");
 	private final JBTN one = new JBTN(MainLocale.INFO, "row0");
@@ -65,6 +66,7 @@ public class LimitTable extends Page {
 		jcg.setEnabled(b);
 		lrb.setEnabled(b);
 		jlr.setEnabled(b);
+		star.setEnabled(b);
 		for (JTG jtb : brars)
 			jtb.setEnabled(b);
 	}
@@ -94,6 +96,7 @@ public class LimitTable extends Page {
 		set(rar, x, y, 0, 0, w, 50);
 		for (int i = 0; i < brars.length; i++)
 			set(brars[i], x, y, w + w * i, 0, w, 50);
+		set(star, x, y, w * 7, 0, w, 50);
 		set(cgb, x, y, w * 4, 50, w, 50);
 		set(jcg, x, y, w * 5, 50, w, 50);
 		set(lrb, x, y, w * 6, 50, w, 50);
@@ -112,6 +115,7 @@ public class LimitTable extends Page {
 			jcmax.setText(limits[4] + ": ");
 			jcmin.setText(limits[3] + ": ");
 			jnum.setText(limits[1] + ": ");
+			star.setText("");
 			one.setText(MainLocale.getLoc(MainLocale.INFO, "row0"));
 			jcg.setText("");
 			jlr.setText("");
@@ -128,6 +132,7 @@ public class LimitTable extends Page {
 		jcmax.setText(limits[4] + ": " + lim.max);
 		jcmin.setText(limits[3] + ": " + lim.min);
 		jnum.setText(limits[1] + ": " + lim.num);
+		star.setText(l.toString());//l.star == -1 ? "all stars" : ((l.star + 1) + " star"));
 		one.setText(MainLocale.getLoc(MainLocale.INFO, "row" + lim.line));
 		jcg.setText(lim.group + (lim.group != null && lim.group.type % 2 != 0 ? ": " + lim.fa : ""));
 		jlr.setText("" + lim.lvr);
@@ -187,6 +192,7 @@ public class LimitTable extends Page {
 		set(jnum);
 		set(jcg);
 		set(jlr);
+		set(star);
 		for (int i = 0; i < brars.length; i++) {
 			add(brars[i] = new JTG(rarity[i]));
 			brars[i].setSelected(true);
@@ -200,16 +206,24 @@ public class LimitTable extends Page {
 			if (val < 0)
 				return;
 			lim.max = val;
-		}
-		if (jtf == jcmin) {
+		} else if (jtf == jcmin) {
 			if (val < 0)
 				return;
 			lim.min = val;
-		}
-		if (jtf == jnum) {
+		} else if (jtf == jnum) {
 			if (val < 0 || val > 50)
 				return;
 			lim.num = val;
+		} else if (jtf == star) {
+			if (isAdj())
+				return;
+			int[] is = CommonStatic.parseIntsN(star.getText());
+
+			int bitmask = 0;
+			for (int j : is)
+				if (j >= 1 && j <= 4)
+					bitmask |= 1 << (j-1);
+			lim.star = bitmask;
 		}
 	}
 

@@ -59,22 +59,26 @@ public strictfp class MainLocale {
 				String str = NAMP.get(loci + langCode()).get(key);
 				if (str.equals("(null)"))
 					str = RENS[loc].getString(key);
-				String[] strs = str.split("#");
-				if (strs.length == 1)
-					return str;
-				for (int i = 1; i < strs.length; i += 2)
-					strs[i] = getLoc(loc, strs[i]);
-				StringBuilder ans = new StringBuilder();
-				for (String s : strs) ans.append(s);
-				return ans.toString();
+				return parseLoc(loc, str);
 			}
 			try {
-				return RENS[loc].getString(key);
+				return parseLoc(loc, RENS[loc].getString(key));
 			} catch (MissingResourceException e) {
 				return key;
 			}
 		}
 		return key;
+	}
+
+	private static String parseLoc(int loc, String str) {
+		String[] strs = str.split("#");
+		if (strs.length == 1)
+			return str;
+		for (int i = 1; i < strs.length; i += 2)
+			strs[i] = getLoc(loc, strs[i]);
+		StringBuilder ans = new StringBuilder();
+		for (String s : strs) ans.append(s);
+		return ans.toString();
 	}
 
 	public static String[] getLoc(int loc, String... strs) {

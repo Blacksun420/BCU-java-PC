@@ -45,7 +45,6 @@ public class StageEditPage extends DefaultPage {
 	private final JBTN rmsm = new JBTN(0, "rmsm");
 	private final JBTN rmst = new JBTN(0, "rmst");
 	private final JBTN recd = new JBTN(0, "replay");
-	private final JBTN elim = new JBTN(0, "limit");
 	private final JTF enam = new JTF();
 	private final StageEditTable jt;
 	private final JScrollPane jspjt;
@@ -69,7 +68,7 @@ public class StageEditPage extends DefaultPage {
 
 	final HeadEditTable hinf;
 	final StageLimitTable sinf;
-	private final JTG data = new JTG(0, "head1");
+	private final JTG data = new JTG(MainLocale.PAGE, "head1");
 
 	private final MapColc mc;
 	private final UserPack pack;
@@ -134,14 +133,14 @@ public class StageEditPage extends DefaultPage {
 			set(sinf, x, y, 900, 50, 0, 0);
 			set(hinf, x, y, 900, 50, 1400, 300);
 		}
-		set(addl, x, y, 900, 400, 200, 50);
-		set(reml, x, y, 1100, 400, 200, 50);
-		set(elim, x, y, 1600, 400, 200, 50);
-		set(recd, x, y, 1850, 400, 200, 50);
-		set(advs, x, y, 2100, 400, 200, 50);
+		int mw = (int)(1400 / 8 * 1.5f);
+		set(addl, x, y, 900, 400, mw, 50);
+		set(reml, x, y, 900 + mw, 400, mw, 50);
+		set(recd, x, y, 2300 - mw * 2, 400, mw, 50);
+		set(advs, x, y, 2300 - mw, 400, mw, 50);
 		set(jspjt, x, y, 900, 450, 1400, 850);
 
-		set(data, x, y, 1425, 0, 175, 50);
+		set(data, x, y, 900, 0, 1400, 50);
 		set(jspsm, x, y, 0, 50, 300, 800);
 		set(cpsm, x, y, 0, 850, 300, 50);
 		set(ptsm, x, y, 0, 900, 300, 50);
@@ -169,8 +168,6 @@ public class StageEditPage extends DefaultPage {
 		advs.setLnr(x -> changePanel(new AdvStEditPage(getThis(), stage)));
 
 		recd.setLnr(x -> changePanel(new StRecdPage(getThis(), stage, true)));
-
-		elim.setLnr(x -> changePanel(new LimitEditPage(getThis(), stage)));
 
 		addl.addActionListener(arg0 -> {
 			int ind = jt.addLine(jle.getSelectedValue());
@@ -387,7 +384,6 @@ public class StageEditPage extends DefaultPage {
 		add(jlpst);
 		add(recd);
 		add(advs);
-		add(elim);
 		add(data);
 		setAA(null);
 		setBA(null);
@@ -401,6 +397,7 @@ public class StageEditPage extends DefaultPage {
 	}
 
 	private void setAA(StageMap sm) {
+		sinf.setData(sm);
 		if (sm == null) {
 			jlst.setListData(null, null);
 			setAB(null);
@@ -502,12 +499,10 @@ public class StageEditPage extends DefaultPage {
 	private void setData(Stage st) {
 		stage = st;
 		hinf.setData(st);
-		sinf.setData(st);
 		jt.setData(st);
 		strt.setEnabled(st != null);
 		recd.setEnabled(st != null);
 		advs.setEnabled(st != null);
-		elim.setEnabled(st != null && !(st.getCont().getCont() instanceof MapColc.ClipMapColc));
 		jspjt.scrollRectToVisible(new Rectangle(0, 0, 1, 1));
 	}
 }

@@ -271,15 +271,24 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		jcbs.setModel(new DefaultComboBoxModel<>(vec));
 		if (pack.editable) {
 			add(jcba);
-            Vector<AnimCI> vda = new Vector<>();
-			vda.addAll(AnimCE.map().values());
-			getAnims(vda, pack, true);
+            Vector<AnimCI> vda = new Vector<>(AnimCE.map().values());
+			vda.addAll(pack.source.getAnims(Source.BasePath.ANIM));
+			for (String s : pack.desc.dependency) {
+				UserPack pac = UserProfile.getUserPack(s);
+				if (pac.editable || pac.desc.allowAnim)
+					vda.addAll(pac.source.getAnims(Source.BasePath.ANIM));
+			}
 			jcba.setModel(new DefaultComboBoxModel<>(vda));
 			jcba.setRenderer(new DefaultListCellRenderer() {
 				@Override
 				public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean selected, boolean focus) {
 					JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, selected, focus);
-					jl.setIcon(UtilPC.getIcon(((AnimCI)o).getEdi()));
+					if (o != null)
+						jl.setIcon(UtilPC.getIcon(((AnimCI)o).getEdi()));
+					else {
+						jl.setIcon(UtilPC.getIcon(ce.getPack().anim.getEdi()));
+						jl.setText(ce.getPack().anim.toString());
+					}
 					return jl;
 				}
 			});
@@ -314,14 +323,6 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		bobo.setEnabled(pack.editable);
 
 		add(jsp);
-	}
-
-	private static void getAnims(Vector<AnimCI> vda, UserPack pac, boolean checkDeps) {
-		if ((pac.editable || pac.desc.allowAnim))
-			vda.addAll(pac.source.getAnims(Source.BasePath.ANIM));
-		if (checkDeps)
-			for (String s : pac.desc.dependency)
-				getAnims(vda, UserProfile.getUserPack(s), false);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -492,7 +493,9 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		jli.setSelectedIndex(ind);
 		Animable<AnimU<?>, UType> ene = ce.getPack();
 
-		if (pack.editable && ene.anim instanceof AnimCE)
+		if (!(ene.anim instanceof AnimCI))
+			jcba.setSelectedIndex(-1);
+		if (pack.editable)
 			jcba.setSelectedItem(ene.anim);
 
 		jcbs.setSelectedItem(Identifier.get(ce.death));

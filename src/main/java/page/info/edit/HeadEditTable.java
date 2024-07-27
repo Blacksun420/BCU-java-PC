@@ -8,7 +8,6 @@ import common.pack.UserProfile;
 import common.util.Data;
 import common.util.pack.Background;
 import common.util.stage.*;
-import org.jcodec.common.tools.MathUtil;
 import page.*;
 import page.view.BGViewPage;
 import page.view.CastleViewPage;
@@ -17,7 +16,6 @@ import page.view.MusicPage;
 import javax.swing.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.util.Arrays;
 
 class HeadEditTable extends Page {
 
@@ -40,14 +38,11 @@ class HeadEditTable extends Page {
 	private final JTF jbgh = new JTF();
 	private final JTF jbg1 = new JTF();
 	private final JTG con = new JTG(MainLocale.INFO, "ht03");
-	private final JTF[] star = new JTF[4];
 	private final JTF jmax = new JTF();
 	private final JL res = new JL(MainLocale.INFO, "minspawn");
 	private final JL ures = new JL(MainLocale.INFO, "uminspawn");
-	private final JL cost = new JL(MainLocale.INFO, "chcos");
 	private final JTF jres = new JTF();
 	private final JTF jures = new JTF();
-	private final JTF cos = new JTF();
 	private final JTG dojo = new JTG(MainLocale.PAGE, "dojo");
 	private final JTG bbrr = new JTG(MainLocale.INFO, "bossBarrier");
 	private final LimitTable lt;
@@ -130,10 +125,6 @@ class HeadEditTable extends Page {
 	protected void resized(int x, int y) {
 		int w = 1400 / 8;
 		set(name, x, y, 0, 0, w * 2, 50);
-		for (int i = 0; i < 4; i++)
-			set(star[i], x, y, w * (2 + i), 0, w, 50);
-		set(cost, x, y, w * 6, 0, w, 50);
-		set(cos, x, y, w * 7, 0, w, 50);
 		set(hea, x, y, 0, 50, w, 50);
 		set(jhea, x, y, w, 50, w, 50);
 		set(len, x, y, w * 2, 50, w, 50);
@@ -184,18 +175,11 @@ class HeadEditTable extends Page {
 		jmh.setText("<" + st.mush + "% health:");
 		jm1.setText(String.valueOf(st.mus1));
 		jmax.setText(String.valueOf(st.max));
-		cos.setText(String.valueOf(st.getCont().price + 1));
 		con.setSelected(!st.non_con);
 		dojo.setSelected(st.trail);
 		bbrr.setSelected(st.bossGuard);
 		barrierAbler();
 
-		String str = get(MainLocale.INFO, "star") + ": ";
-		for (int i = 0; i < 4; i++)
-			if (i < st.getCont().stars.length)
-				star[i].setText(i + 1 + str + st.getCont().stars[i] + "%");
-			else
-				star[i].setText(i + 1 + str + "/");
 		Limit lim = st.lim;
 		lt.setLimit(lim);
 		change(false);
@@ -236,9 +220,6 @@ class HeadEditTable extends Page {
 		jmh.setEnabled(b);
 		jm1.setEnabled(b);
 		dojo.setEnabled(b);
-		for (JTF jtf : star)
-			jtf.setEnabled(b);
-		cos.setEnabled(b);
 		lt.abler(b);
 	}
 
@@ -305,14 +286,10 @@ class HeadEditTable extends Page {
 		set(jres);
 		set(ures);
 		set(jures);
-		set(cost);
-		set(cos);
 		con.setSelected(true);
 		add(bbrr);
 		bbrr.setEnabled(false);
 
-		for (int i = 0; i < 4; i++)
-			set(star[i] = new JTF());
 		addListeners();
 		abler(false);
 	}
@@ -349,30 +326,6 @@ class HeadEditTable extends Page {
 				return;
 			sta.max = val;
 		}
-		for (int i = 0; i < 4; i++)
-			if (jtf == star[i]) {
-				String[] strs = str.split(" ");
-				int[] vals = CommonStatic.parseIntsN(strs[strs.length - 1]);
-				val = vals.length == 0 ? -1 : vals[vals.length - 1];
-				int[] sr = sta.getCont().stars;
-				if (i == 0 && val <= 0)
-					val = 100;
-				if (i < sr.length)
-					if (val > 0)
-						sr[i] = val;
-					else
-						sta.getCont().stars = Arrays.copyOf(sr, i);
-				else if (val > 0) {
-					int[] ans = new int[i + 1];
-					for (int j = 0; j < i; j++)
-						if (j < sr.length)
-							ans[j] = sr[j];
-						else
-							ans[j] = sr[sr.length - 1];
-					ans[i] = val;
-					sta.getCont().stars = ans;
-				}
-			}
 
 		if (jtf == jbgh)
 			sta.bgh = val;
@@ -554,10 +507,6 @@ class HeadEditTable extends Page {
 				jm1.setText(str);
 				sta.mus1 = music.getID();
 			}
-		}
-
-		if (jtf == cos) {
-			sta.getCont().price = MathUtil.clip(val - 1, 0, 9);
 		}
 	}
 

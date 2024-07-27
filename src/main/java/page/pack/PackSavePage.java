@@ -62,6 +62,11 @@ public class PackSavePage extends DefaultPage {
         ini();
     }
 
+    public PackSavePage(Page p, UserPack pack, StageMap map) {
+        this(p, pack);
+        packMaps.setSelectedValue(map, true);
+    }
+
     private void addListeners() {
         packMaps.addListSelectionListener(l -> setMap(packMaps.getSelectedValue(), true));
         potMaps.addListSelectionListener(l -> addreq.setEnabled(pk.editable && curMap != null && potMaps.getSelectedIndex() != -1));

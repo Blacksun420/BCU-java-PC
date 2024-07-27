@@ -35,7 +35,7 @@ public class BattleSetupPage extends LubCont {
 	private final JTG rich = new JTG(0, "rich");
 	private final JTG snip = new JTG(0, "sniper");
 	private final JTG plus = new JTG(MainLocale.PAGE, "plusunlock");
-	private final JTG testMode = new JTG(MainLocale.PAGE, "testMode");
+	private final JTG testMode = new JTG(MainLocale.PAGE, "testmode");
 	private final JComboBox<String> lvlim = new JComboBox<>();
 	private final JList<String> jls = new JList<>();
 	private final JScrollPane jsps = new JScrollPane(jls);
@@ -129,7 +129,7 @@ public class BattleSetupPage extends LubCont {
 		super.mouseClicked(e);
 		if (lub.unusable() == 2 && lub.getSelected() instanceof Form) {
 			Stage sta = st.getCont().getCont().getSave(true).unlockedAt((Form)lub.getSelected());
-			ulock.setText(sta == null ? "Forever Locked" : "Clear " + sta + " to unlock");
+			ulock.setText(sta == null ? get(MainLocale.PAGE,"flocked") : get(MainLocale.PAGE,"cleartou").replace("_", sta.toString()));
 		} else
 			ulock.setText("");
 	}

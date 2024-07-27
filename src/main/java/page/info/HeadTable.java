@@ -34,6 +34,7 @@ public class HeadTable extends AbJTable {
 	private Object[][] data;
 	private Stage sta;
 	private final Page page;
+	private int star = 0;
 
 	protected HeadTable(Page p) {
 		super(new String[8]);
@@ -92,9 +93,10 @@ public class HeadTable extends AbJTable {
 			return;
 		int c = getColumnModel().getColumnIndexAtX(p.x);
 		int r = p.y / getRowHeight();
-		if (r == 0 && c > 1 && c < Math.min(sta.getCont().stars.length + 2, 6))
-			page.callBack(c - 2);
-		if (r == 1 && c == 5)
+		if (r == 0 && c > 1 && c < Math.min(sta.getCont().stars.length + 2, 6)) {
+			star = c - 2;
+			page.callBack(star);
+		} if (r == 1 && c == 5)
 			MainFrame.changePanel(new MusicPage(page, sta.mus0));
 		if (r == 1 && c == 7)
 			MainFrame.changePanel(new MusicPage(page, sta.mus1));
@@ -159,7 +161,7 @@ public class HeadTable extends AbJTable {
 		img[3] = st.bg1;
 		img[4] = infs[5];
 		img[5] = st.castle;
-		Limit lim = st.getLim(0);
+		Limit lim = st.getLim(this.star);
 		if (lim != null) {
 			if (lim.rare != 0) {
 				rar[0] = limits[0];

@@ -209,10 +209,10 @@ public class UnitInfoTable extends CharacterInfoTable {
 		if (pcoin != null)
 			add(pcoin);
 
-		if (!f.uid.pack.equals(Identifier.DEF) && UserProfile.getUserPack(f.uid.pack).save != null) {
+		if (!isBC && UserProfile.getUserPack(f.uid.pack).save != null) {
 			String st = String.valueOf(UserProfile.getUserPack(f.uid.pack).save.unlockedAt(f));
 			if (!st.equals("null"))
-				inis[0].setToolTipText("Unlocked by clearing " + st);
+				inis[0].setToolTipText(get(MainLocale.PAGE, "uclearinf").replace("_", st));
 		}
 
 		main[0][0].setText(Interpret.RARITY[f.unit.rarity]);
