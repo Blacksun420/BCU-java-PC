@@ -141,13 +141,7 @@ public abstract class AbRecdPage extends DefaultPage {
 			if (st == null || st.safeGet() == null)
 				changePanel(bp = new BasisPage(getThis()));
 			else {
-				boolean test = false;
-				for (byte i = 0; i < getSelection().bans.length; i++)
-					if (getSelection().bans[i] != 0) {
-						test = true;
-						break;
-					}
-				changePanel(bp = new BasisPage(getThis(), st.get(), st.get().getLim(getSelection().star), test));
+				changePanel(bp = new BasisPage(getThis(), st.get(), st.get().getLim(getSelection().star), getSelection().save == 2));
 			}
 		});
 

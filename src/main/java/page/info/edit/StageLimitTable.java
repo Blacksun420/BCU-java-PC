@@ -195,9 +195,10 @@ public class StageLimitTable extends Page {
     }
 
     private void input(JTF jtf, String text) {
-        if (jtf == jnam)
+        if (jtf == jnam) {
             map.names.put(text);
-        else if (jtf == cos)
+            getFront().callBack(map);
+        } else if (jtf == cos)
             map.price = Math.max(0 , Math.min(CommonStatic.parseIntN(text) - 1, 9));
         else if (jtf == jban)
             stli.maxMoney = Math.max(CommonStatic.parseIntN(text), 0);
@@ -229,6 +230,7 @@ public class StageLimitTable extends Page {
                 }
                 break;
             }
+        setData(map);
     }
 
     private void addListeners() {

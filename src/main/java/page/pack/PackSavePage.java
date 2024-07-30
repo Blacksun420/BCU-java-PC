@@ -187,7 +187,7 @@ public class PackSavePage extends DefaultPage {
                     continue;
                 (smap.unlockReq.contains(m) ? rm : pm).add(m);
             }
-            for (String s : pk.desc.dependency) {
+            for (String s : pk.syncPar) {
                 UserPack p = UserProfile.getUserPack(s);
                 if (p == null || p.save == null)
                     continue;
@@ -249,6 +249,7 @@ public class PackSavePage extends DefaultPage {
         sPar.setListData(sp.toArray(new UserPack[0]));
         addpar.setEnabled(pk.editable && usPar.getSelectedIndex() != -1);
         rempar.setEnabled(pk.editable && sPar.getSelectedIndex() != -1);
+        setMap(packMaps.getSelectedValue(), false);
         setUnits();
     }
 
@@ -282,7 +283,6 @@ public class PackSavePage extends DefaultPage {
         add(rempar);
 
         addListeners();
-        setMap(null, false);
         setSyncPacks();
     }
 

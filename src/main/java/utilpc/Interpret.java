@@ -12,8 +12,6 @@ import common.util.Data;
 import common.util.Data.Proc.ProcItem;
 import common.util.lang.Formatter;
 import common.util.lang.ProcLang;
-import common.util.stage.MapColc;
-import common.util.stage.MapColc.DefMapColc;
 import common.util.unit.Combo;
 import common.util.unit.Enemy;
 import common.util.unit.Trait;
@@ -585,23 +583,14 @@ public class Interpret extends Data {
 
 	public static boolean isER(Enemy e, int t) {
 		if (t == 0)
-			return e.getExplanation().replace("\n","").length() > 0; //e.inDic;
+			return !e.getExplanation().replace("\n", "").isEmpty(); //e.inDic;
 		else if (t == 1)
 			return e.de.getStar() == 1;
 		else if (t == 4)
 			return CommonStatic.getFaves().enemies.contains(e);
-
-		if (e.de instanceof DataEnemy) {
-			Map<MapColc.DefMapColc, Integer> lis = e.findMap();
-			final int recurring = lis.getOrDefault(DefMapColc.getMap("N"), 0) + lis.getOrDefault(DefMapColc.getMap("A"), 0)
-					+ lis.getOrDefault(DefMapColc.getMap("Q"), 0) + lis.getOrDefault(DefMapColc.getMap("ND"), 0);
-			if (t == 3)
-				return recurring > 3;
-			return recurring == 0 && (lis.containsKey(DefMapColc.getMap("C")) || lis.containsKey(DefMapColc.getMap("R")) || lis.containsKey(DefMapColc.getMap("CH"))
-					|| lis.containsKey(DefMapColc.getMap("CA")));
-		} else if (t == 3)
-			return e.findApp(UserProfile.getUserPack(e.id.pack).mc).size() > 3;
-		return false;
+		else if (t == 3)
+			return e.filter == 1;
+		return e.filter == 2;
 	}
 
 	public static boolean isType(MaskEntity de, int type) {

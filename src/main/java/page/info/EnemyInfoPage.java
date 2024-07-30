@@ -101,6 +101,7 @@ public class EnemyInfoPage extends DefaultPage {
 		add(extr);
 		prev.setEnabled(e.prev != null);
 		next.setEnabled(e.next != null);
+		find.setEnabled(!e.val.findApp().isEmpty());
 		addListeners();
 	}
 

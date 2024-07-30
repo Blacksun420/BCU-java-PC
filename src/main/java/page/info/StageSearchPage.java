@@ -1,6 +1,7 @@
 package page.info;
 
 import common.CommonStatic;
+import common.pack.SaveData;
 import common.util.stage.MapColc;
 import common.util.stage.SCDef.Line;
 import common.util.stage.Stage;
@@ -21,8 +22,8 @@ import java.util.List;
 public class StageSearchPage extends StagePage {
     private static final String[] ops = {"=", ">", "<"};
     private static final long serialVersionUID = 1L;
-    private final JL mapN = new JL("Stagemap Name:");
-    private final JL staN = new JL("Stage Name:");
+    private final JL mapN = new JL(MainLocale.PAGE, "smapsch");
+    private final JL staN = new JL(MainLocale.PAGE, "sstgsch");
     private final JTF mapName = new JTF();
     private final JTF stageName = new JTF();
 
@@ -40,26 +41,20 @@ public class StageSearchPage extends StagePage {
     private byte ConChoice = -1;
 
     private EnemyFindPage efp;
-    private final JL enemy = new JL(0, "enemy");
-    private final JBTN adde = new JBTN(0,"add");
-    private final JBTN reme = new JBTN(0,"rem");
+    private final JL enemy = new JL(MainLocale.PAGE, "enemy");
+    private final JBTN adde = new JBTN(MainLocale.PAGE,"add");
+    private final JBTN reme = new JBTN(MainLocale.PAGE,"rem");
     private final List<AbEnemy> eList = new ArrayList<>();
     private final JList<AbEnemy> enemies = new JList<>();
     private final JScrollPane enes = new JScrollPane(enemies);
-    private final JTG eneOrop = new JTG(0,"ops1");
+    private final JTG eneOrop = new JTG(MainLocale.PAGE,"ops1");
 
     private final JBTN hasBoss = new JBTN();
     private byte BossChoice = -1;
 
-    private final JBTN initSearch = new JBTN("Search");
+    private final JBTN initSearch = new JBTN(MainLocale.PAGE, "search");
     private boolean resultFound = false;
 
-    private final JList<MapColc> jlmc = new JList<>();
-    private final JScrollPane jspmc = new JScrollPane(jlmc);
-    private final JList<StageMap> jlsm = new JList<>();
-    private final JScrollPane jspsm = new JScrollPane(jlsm);
-    private final JList<Stage> jlst = new JList<>();
-    private final JScrollPane jspst = new JScrollPane(jlst);
     private StageMap[] stageMapsArr;
     private Stage[] stagesArr;
 
@@ -71,7 +66,7 @@ public class StageSearchPage extends StagePage {
     @Override
     protected void resized(int x, int y) {
         super.resized(x, y);
-        set(strt, x, y, 400, 0, 200, 50);
+        set(strt, x, y, 400, 0, 400, 50);
         if (!resultFound) {
             set(mapN, x, y, 0, 50, 200, 50);
             set(mapName, x, y, 200, 50, 600, 50);
@@ -101,16 +96,11 @@ public class StageSearchPage extends StagePage {
             set(jspsm, x, y, 0, 50, 400, 1150);
             set(jspst, x, y, 400, 50, 400, 1150);
         } else
-            set(jspst, x, y, 0, 50, 400, 1150);
-    }
-
-    @Override
-    public synchronized void onTimer(int t) {
-        super.onTimer(t);
-        setVisibility();
+            set(jspst, x, y, 400, 50, 400, 1150);
     }
 
     private void setVisibility() {
+        strt.setVisible(!resultFound);
         mapN.setVisible(!resultFound);
         mapName.setVisible(!resultFound);
         staN.setVisible(!resultFound);
@@ -143,6 +133,8 @@ public class StageSearchPage extends StagePage {
 
         for (MapColc mc : MapColc.values())
             for (StageMap sm : mc.maps) {
+                if (!sm.unlockReq.isEmpty() && mc.getSave(false) != null && !mc.getSave(false).cSt.containsKey(sm))
+                    continue;
                 int diff = UtilPC.damerauLevenshteinDistance(sm.toString().toLowerCase(),str);
                 if (diff <= minDiff) {
                     chaptersFound.add(sm);
@@ -204,6 +196,7 @@ public class StageSearchPage extends StagePage {
             if (resultFound) {
                 resultFound = false;
                 jlst.clearSelection();
+                setVisibility();
             } else
                 changePanel(getFront());
         });
@@ -227,20 +220,20 @@ public class StageSearchPage extends StagePage {
         continuable.addActionListener(l -> {
             if (ConChoice == 1) {
                 ConChoice = -1;
-                continuable.setText(Page.get(1, "ht03") + ": Any");
+                continuable.setText(Page.get(1, "ht03") + ": " + Page.get(MainLocale.PAGE, "any"));
             } else {
                 ConChoice++;
-                continuable.setText(Page.get(1, "ht03") + ": " + (ConChoice == 1));
+                continuable.setText(Page.get(1, "ht03") + ": " + Page.get(MainLocale.PAGE,String.valueOf(ConChoice == 1)));
             }
         });
 
         hasBoss.addActionListener(l -> {
             if (BossChoice == 1) {
                 BossChoice = -1;
-                hasBoss.setText("Has Boss: Any");
+                hasBoss.setText("Has Boss: " + Page.get(MainLocale.PAGE, "any"));
             } else {
                 BossChoice++;
-                hasBoss.setText("Has Boss: " + (BossChoice == 1));
+                hasBoss.setText("Has Boss: " + Page.get(MainLocale.PAGE,String.valueOf(BossChoice == 1)));
             }
         });
 
@@ -257,37 +250,39 @@ public class StageSearchPage extends StagePage {
         });
 
         jlmc.addListSelectionListener(l -> {
-            final MapColc mc = jlmc.getSelectedValue();
-            if (mc == null) {
+            final List<MapColc> mcs = jlmc.getSelectedValuesList();
+            if (mcs.isEmpty()) {
                 jlsm.setListData(stageMapsArr);
                 jlst.setListData(stagesArr);
             } else {
                 final List<StageMap> sm = new ArrayList<>();
                 for (int i = 0; i < stageMapsArr.length; i++)
-                    if (stageMapsArr[i].getCont() == mc)
+                    if (mcs.contains(stageMapsArr[i].getCont()))
                         sm.add(stageMapsArr[i]);
                 jlsm.setListData(sm.toArray(new StageMap[0]));
                 jlsm.setSelectedIndex(0);
 
-                final List<Stage> st = new ArrayList<>(sm.get(0).list.getList());
-                final List<Stage> arr = Arrays.asList(stagesArr);
-                st.removeIf(sta -> !arr.contains(sta));
+                final List<Stage> sts = new ArrayList<>();
+                for (Stage s : stagesArr)
+                    if (sm.contains(s.getCont()))
+                        sts.add(s);
 
-                jlst.setListData(st.toArray(new Stage[0]));
+                jlst.setListData(sts.toArray(new Stage[0]));
                 jlst.setSelectedIndex(0);
             }
         });
 
         jlsm.addListSelectionListener(l -> {
-            final StageMap sm = jlsm.getSelectedValue();
-            if (sm == null) {
+            final List<StageMap> sms = jlsm.getSelectedValuesList();
+            if (sms.isEmpty()) {
                 jlst.setListData(stagesArr);
             } else {
-                final List<Stage> st = new ArrayList<>(sm.list.getList());
-                final List<Stage> arr = Arrays.asList(stagesArr);
-                st.removeIf(sta -> !arr.contains(sta));
+                final List<Stage> sts = new ArrayList<>();
+                for (Stage s : stagesArr)
+                    if (sms.contains(s.getCont()))
+                        sts.add(s);
 
-                jlst.setListData(st.toArray(new Stage[0]));
+                jlst.setListData(sts.toArray(new Stage[0]));
                 jlst.setSelectedIndex(0);
             }
         });
@@ -296,7 +291,6 @@ public class StageSearchPage extends StagePage {
 
         initSearch.addActionListener(l -> {
             startSearch();
-
             fireDimensionChanged();
         });
 
@@ -313,9 +307,6 @@ public class StageSearchPage extends StagePage {
     private void ini() {
         add(mapN);
         add(staN);
-        add(jspmc);
-        add(jspsm);
-        add(jspst);
         add(mapName);
         add(stageName);
         add(HPCount);
@@ -335,8 +326,8 @@ public class StageSearchPage extends StagePage {
 
         greaterBaseHP.setText(ops[0]);
         greaterWidth.setText(ops[0]);
-        continuable.setText(Page.get(1, "ht03") + ": Any");
-        hasBoss.setText("Has Boss: Any");
+        continuable.setText(Page.get(1, "ht03") + ": " + Page.get(MainLocale.PAGE, "any"));
+        hasBoss.setText("Has Boss: " + Page.get(MainLocale.PAGE, "any"));
 
         enemies.setCellRenderer(new AnimLCR());
         addListeners();
@@ -400,6 +391,10 @@ public class StageSearchPage extends StagePage {
                 return !b;
             });
         }
+        stages.removeIf(s -> {
+            SaveData sd = s.getMC().getSave(false);
+            return sd != null && sd.cSt.getOrDefault(s.getCont(), s.getCont().unlockReq.isEmpty() ? 0 : -1) < s.id();
+        });
 
         if (chapters.isEmpty()) {
             for (Stage s : stages)
@@ -423,5 +418,6 @@ public class StageSearchPage extends StagePage {
         jlmc.setListData(maps.toArray(new MapColc[0]));
 
         resultFound = stagesArr.length > 0;
+        setVisibility();
     }
 }

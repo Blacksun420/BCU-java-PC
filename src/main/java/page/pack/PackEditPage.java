@@ -404,7 +404,7 @@ public class PackEditPage extends DefaultPage {
 			changing = true;
 			int ind = jle.getSelectedIndex();
 			pac.enemies.remove(ene);
-			jle.setListData(pac.enemies.toRawArray());
+			jle.setListData(pac.editable ? pac.enemies.toRawArray() : pac.getEnemies(false).toArray(new Enemy[0]));
 			if (ind >= 0)
 				ind--;
 			jle.setSelectedIndex(ind);
@@ -681,7 +681,7 @@ public class PackEditPage extends DefaultPage {
 			ce.limit = CommonStatic.customEnemyMinPos(anim.mamodel);
 			Enemy e = new Enemy(pac.getNextID(Enemy.class), anim, ce);
 			pac.enemies.add(e);
-			jle.setListData(pac.enemies.toRawArray());
+			jle.setListData(pac.editable ? pac.enemies.toRawArray() : pac.getEnemies(false).toArray(new Enemy[0]));
 			jle.setSelectedValue(e, true);
 			setEnemy(e);
 		} else if (ene.anim == null || (ene.anim != anim && Opts.conf(get(MainLocale.PAGE, "reasanim")))) {
@@ -851,7 +851,7 @@ public class PackEditPage extends DefaultPage {
 			jle.setListData(new Enemy[0]);
 			jlr.setListData(new UserPack[0]);
 		} else {
-			jle.setListData(pac.enemies.toRawArray());
+			jle.setListData(pac.editable ? pac.enemies.toRawArray() : pac.getEnemies(false).toArray(new Enemy[0]));
 			jle.clearSelection();
 			updateJlr();
 			jlr.clearSelection();

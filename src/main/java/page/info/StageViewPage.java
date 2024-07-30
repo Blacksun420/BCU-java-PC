@@ -1,6 +1,5 @@
 package page.info;
 
-import common.pack.SaveData;
 import common.util.stage.MapColc;
 import common.util.stage.RandStage;
 import common.util.stage.Stage;
@@ -19,48 +18,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
-class StageMapList extends JList<StageMap> {
-
-	public StageMapList() {
-		super();
-		setCellRenderer(new DefaultListCellRenderer() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean s, boolean f) {
-				JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
-				StageMap sm = (StageMap)o;
-				SaveData sv = sm.getCont().getSave(false);
-				if (sv == null || !sv.nearUnlock(sm)) {
-					jl.setToolTipText(null);
-					if (sv != null && sv.cSt.getOrDefault(sm,-1) >= sm.list.size())
-						jl.setText("<html><strong>" + sm + "</strong></html>");
-					return jl;
-				}
-				jl.setText("<html><strike>" + sm + "</strike></html>");
-				StringBuilder sbl = new StringBuilder("<html><table><tr><th>Requires clearing:</th></tr>");
-				for (StageMap lsm : sv.requirements(sm))
-					sbl.append("<tr><td>").append(lsm).append("</td></tr>");
-				sbl.append("</html>");
-				jl.setToolTipText(sbl.toString());
-				jl.setEnabled(false);
-
-				return jl;
-			}
-		});
-	}
-}
-
 public class StageViewPage extends StagePage {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JList<MapColc> jlmc = new JList<>();
-	private final JScrollPane jspmc = new JScrollPane(jlmc);
-	private final StageMapList jlsm = new StageMapList();
-	private final JScrollPane jspsm = new JScrollPane(jlsm);
-	private final JList<Stage> jlst = new JList<>();
-	private final JScrollPane jspst = new JScrollPane(jlst);
 	private final JBTN cpsm = new JBTN(0, "cpsm");
 	private final JBTN cpst = new JBTN(0, "cpst");
 	private final JBTN dgen = new JBTN(0, "dungeon");
@@ -80,7 +41,7 @@ public class StageViewPage extends StagePage {
 		this(p, col);
 		if (st == null)
 			return;
-		jlmc.setSelectedValue(st.getCont().getCont(), true);
+		jlmc.setSelectedValue(st.getMC(), true);
 		jlsm.setSelectedValue(st.getCont(), true);
 		jlst.setSelectedValue(st, true);
 	}
@@ -106,12 +67,6 @@ public class StageViewPage extends StagePage {
 		info.setEnabled(st != null && getInfo().length() > 6);
 		cpst.setEnabled(st != null);
 		recd.setEnabled(st != null);
-	}
-
-	@Override
-	public void callBack(Object v) {
-		if (v instanceof Integer)
-			setData(stage, (int) v);
 	}
 
 	private void addListeners() {
@@ -234,9 +189,6 @@ public class StageViewPage extends StagePage {
 	}
 
 	private void ini() {
-		add(jspmc);
-		add(jspsm);
-		add(jspst);
 		add(recd);
 		add(cpsm);
 		add(cpst);
@@ -247,16 +199,6 @@ public class StageViewPage extends StagePage {
 		cpst.setEnabled(false);
 		recd.setEnabled(false);
 		info.setEnabled(false);
-		jlmc.setCellRenderer(new DefaultListCellRenderer() {
-			@Override
-			public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean s, boolean f) {
-				JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
-				if (!(o instanceof MapColc.PackMapColc))
-					return jl;
-				jl.setIcon(UtilPC.resizeIcon(((MapColc.PackMapColc)o).pack.icon, UtilPC.iconSize, UtilPC.iconSize));
-				return jl;
-			}
-		});
 		addListeners();
 	}
 

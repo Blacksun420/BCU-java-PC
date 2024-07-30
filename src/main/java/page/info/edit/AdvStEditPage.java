@@ -233,9 +233,9 @@ public class AdvStEditPage extends DefaultPage {
 		addex.setLnr(e -> {
 			if (svp == null) {
 				ArrayList<MapColc> maps = new ArrayList<>();
-				maps.add(st.getCont().getCont());
+				maps.add(st.getMC());
 
-				UserPack pack = ((MapColc.PackMapColc)st.getCont().getCont()).pack;
+				UserPack pack = ((MapColc.PackMapColc)st.getMC()).pack;
 				for (MapColc map : MapColc.values())
 					if (map instanceof MapColc.DefMapColc || pack.desc.dependency.contains(((MapColc.PackMapColc)map).pack.desc.id))
 						maps.add(map);
@@ -310,8 +310,8 @@ public class AdvStEditPage extends DefaultPage {
 			for (Form f : jrwd.getSelectedValuesList())
 				csi.rewards.remove(f);
 			setRwd(csi);
-			if (st.getCont().getCont().getSave(true).cSt.getOrDefault(st.getCont(), -1) > st.getCont().list.indexOf(st))
-				st.getCont().getCont().getSave(true).resetUnlockedUnits();
+			if (st.getMC().getSave(true).cSt.getOrDefault(st.getCont(), -1) > st.getCont().list.indexOf(st))
+				st.getMC().getSave(true).resetUnlockedUnits();
 		});
 
 		ubaslv.addActionListener(l -> {
@@ -638,15 +638,15 @@ public class AdvStEditPage extends DefaultPage {
 
 			if (rewUni) {
 				Form fr = (Form)ufp.getForm();
-				if (fr != null && fr.fid > ((MapColc.PackMapColc)st.getCont().getCont()).pack.defULK.getOrDefault(fr.unit, -1)) {
-					Stage pr = st.getCont().getCont().getSave(true).getUnlockedsBeforeStage(st, false).get(fr);
+				if (fr != null && fr.fid > ((MapColc.PackMapColc)st.getMC()).pack.defULK.getOrDefault(fr.unit, -1)) {
+					Stage pr = st.getMC().getSave(true).getUnlockedsBeforeStage(st, false).get(fr);
 					if (pr == null) {
 						csi.rewards.removeIf(f -> f.unit.equals(fr.unit));
 						csi.rewards.add(fr);
 						csi.destroy(true);
 						setRwd(csi);
-						if (st.getCont().getCont().getSave(true).cSt.getOrDefault(st.getCont(), -1) > st.getCont().list.indexOf(st))
-							st.getCont().getCont().getSave(true).resetUnlockedUnits();
+						if (st.getMC().getSave(true).cSt.getOrDefault(st.getCont(), -1) > st.getCont().list.indexOf(st))
+							st.getMC().getSave(true).resetUnlockedUnits();
 					} else
 						Opts.pop(fr + " is already unlocked at " + pr, "Failed to add");
 				} else if (fr != null)

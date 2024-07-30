@@ -148,6 +148,8 @@ public class StageTable extends AbJTable {
 		Line[] info = st.data.getSimple();
 
 		data = new Object[info.length][11];
+		if (st.getMC().getSID().equals("000003") && st.getCont().id.id == 9)
+			st.getCont().price = starId; //Temp fix to EoC price problem
 
 		for (int i = 0; i < info.length; i++) {
 			int ind = info.length - i - 1;
@@ -183,7 +185,6 @@ public class StageTable extends AbJTable {
 			data[ind][9] = info[i].doorchance == 0 ? "0%" : info[i].doorchance + "% - " +
 					(info[i].doordis_0 == info[i].doordis_1 ? info[i].doordis_0 : info[i].doordis_0 + " ~ " + info[i].doordis_1);
 			data[ind][10] = scg == null ? g != 0 ? Data.trio(g) + " - invalid" : "" : scg.toString();
-
 		}
 	}
 }

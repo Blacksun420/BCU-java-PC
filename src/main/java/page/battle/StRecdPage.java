@@ -49,7 +49,7 @@ public class StRecdPage extends AbRecdPage {
 			if (recd != null && recd.st != null) {
 				if (recd.st.get() == st || Opts.conf("stage mismatch. Do you really want to add?")) {
 					st.recd.add(recd);
-					recd.localize(st.getCont().getCont().getSID());
+					recd.localize(st.getMC().getSID());
 					setList();
 				}
 			}

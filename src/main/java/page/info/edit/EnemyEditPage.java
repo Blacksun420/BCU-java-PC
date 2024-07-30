@@ -29,6 +29,7 @@ public class EnemyEditPage extends EntityEditPage {
 	private final JBTN stat = new JBTN(MainLocale.PAGE, "stat");
 	private final JBTN impt = new JBTN(MainLocale.PAGE, "import");
 	private final JBTN vuni = new JBTN(MainLocale.PAGE, "unit");
+	private final JBTN filt = new JBTN();
 	private final EnemyEditBox eeb;
 	private final Enemy ene;
 	private final CustomEnemy ce;
@@ -66,6 +67,7 @@ public class EnemyEditPage extends EntityEditPage {
 		set(ldr);
 		set(fdr);
 		set(fsr);
+		add(filt);
 		super.ini();
 		add(eeb);
 		add(vene);
@@ -73,6 +75,11 @@ public class EnemyEditPage extends EntityEditPage {
 		add(impt);
 		add(vuni);
 
+		filt.setText(get(MainLocale.PAGE, "filter") + ": " + get(MainLocale.INFO, "fi" + ene.filter));
+		filt.setLnr(l -> {
+			ene.filter = (byte)((ene.filter + 1) % 4);
+			filt.setText(get(MainLocale.PAGE, "filter") + ": " + get(MainLocale.INFO, "fi" + ene.filter));
+		});
 		List<Enemy> m = UserProfile.getAll(ene.id.pack, Enemy.class);
 		ArrayList<AbEnemy> l = new ArrayList<>(m);
 		stat.setLnr(x -> changePanel(new EnemyInfoPage(this, ENode.getListE(l, ene))));
@@ -93,6 +100,7 @@ public class EnemyEditPage extends EntityEditPage {
 			set(vuni, x, y, 450, 1150, 200, 50);
 			set(vene, x, y, 1800, 1100, 200, 50);
 			set(stat, x, y, 2000, 1100, 200, 50);
+			set(filt, x, y, 450, 1200, 200, 50);
 		} else {
 			set(vene, x, y, 650, 1000, 200, 50);
 			set(stat, x, y, 850, 1000, 200, 50);

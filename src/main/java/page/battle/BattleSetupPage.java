@@ -4,12 +4,9 @@ import common.CommonStatic;
 import common.battle.BasisLU;
 import common.battle.BasisSet;
 import common.pack.SortedPackSet;
-import common.pack.UserProfile;
 import common.util.stage.RandStage;
 import common.util.stage.Stage;
 import common.util.unit.Form;
-import common.util.unit.UniRand;
-import common.util.unit.Unit;
 import page.JBTN;
 import page.JTG;
 import page.MainLocale;
@@ -19,8 +16,6 @@ import page.basis.LineUpBox;
 import page.basis.LubCont;
 import page.basis.ModifierList;
 import page.info.StageTable;
-import page.info.UnitInfoPage;
-import page.pack.UREditPage;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
@@ -128,7 +123,7 @@ public class BattleSetupPage extends LubCont {
 	protected void mouseClicked(MouseEvent e) {
 		super.mouseClicked(e);
 		if (lub.unusable() == 2 && lub.getSelected() instanceof Form) {
-			Stage sta = st.getCont().getCont().getSave(true).unlockedAt((Form)lub.getSelected());
+			Stage sta = st.getMC().getSave(true).unlockedAt((Form)lub.getSelected());
 			ulock.setText(sta == null ? get(MainLocale.PAGE,"flocked") : get(MainLocale.PAGE,"cleartou").replace("_", sta.toString()));
 		} else
 			ulock.setText("");
@@ -140,9 +135,9 @@ public class BattleSetupPage extends LubCont {
 				return;
 			if (jls.getSelectedIndex() == -1)
 				jls.setSelectedIndex(0);
-			lub.setLimit(st.getLim(jls.getSelectedIndex()), st.getCont().getCont().getSave(false), st.getCont().price);
 
 			sttb.setData(st, jls.getSelectedIndex());
+			lub.setLimit(st.getLim(jls.getSelectedIndex()), st.getMC().getSave(false), st.getCont().price);
 		});
 
 		jlu.addActionListener(arg0 -> changePanel(new BasisPage(getThis(), st, st.getLim(conf == 1 ? jls.getSelectedIndex() : -1), testMode.isSelected())));
@@ -159,11 +154,8 @@ public class BattleSetupPage extends LubCont {
 				b = RandStage.getLU(star);
 				star = 0;
 			}
-			byte[] bans = new byte[10];
-			for (byte i = 0; i < bans.length; i++)
-				bans[i] = lub.unusable(i);
-
-			changePanel(new BattleInfoPage(getThis(), st, star, b, cfg, bans));
+			byte saveMode = (byte)(testMode.isSelected() ? 2 : st.getMC().getSave(false) != null ? 1 : 0);
+			changePanel(new BattleInfoPage(getThis(), st, star, b, cfg, saveMode));
 		});
 
 		tmax.addActionListener(arg0 -> {
@@ -179,7 +171,7 @@ public class BattleSetupPage extends LubCont {
 			plus.setEnabled(CommonStatic.getConfig().levelLimit != 0);
 		});
 
-		testMode.addActionListener(l -> lub.setTest(testMode.isSelected() ? st.getCont().getCont().getSave(true).getUnlockedsBeforeStage(st, true).keySet() : null));
+		testMode.addActionListener(l -> lub.setTest(testMode.isSelected() ? st.getMC().getSave(true).getUnlockedsBeforeStage(st, true).keySet() : null));
 	}
 
 	private void ini() {
@@ -197,7 +189,7 @@ public class BattleSetupPage extends LubCont {
 		add(ulock);
 		sttb.setData(st, 0);
 		tmax.setEnabled(st.lim != null && st.lim.lvr != null);
-		testMode.setEnabled(st.getCont().getCont().getSave(true) != null);
+		testMode.setEnabled(st.getMC().getSave(true) != null);
 		if(st.isAkuStage()) {
 			add(plus);
 			add(lvlim);
@@ -232,7 +224,7 @@ public class BattleSetupPage extends LubCont {
 			jls.setListData(tit);
 		}
 		jls.setSelectedIndex(0);
-		lub.setLimit(st.getLim(conf == 1 ? jls.getSelectedIndex() : -1), st.getCont().getCont().getSave(false), st.getCont().price);
+		lub.setLimit(st.getLim(conf == 1 ? jls.getSelectedIndex() : -1), st.getMC().getSave(false), st.getCont().price);
 		addListeners();
 	}
 

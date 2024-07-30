@@ -128,7 +128,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		packData = null;
 	}
 
-	protected BattleInfoPage(Page p, Stage st, int star, BasisLU bl, int conf, byte[] bans) {
+	protected BattleInfoPage(Page p, Stage st, int star, BasisLU bl, int conf, byte saveMode) {
 		super(p);
 		long seed = new Random().nextLong();
 
@@ -136,8 +136,8 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		if (CommonStatic.getConfig().realLevel)
 			lu.simulateBCLeveling();
 
-		packData = st.getCont().getCont().getSave(false);
-		SBCtrl sb = new SBCtrl(this, st, star, lu, conf, seed, bans);
+		packData = st.getMC().getSave(false);
+		SBCtrl sb = new SBCtrl(this, st, star, lu, conf, seed, saveMode);
 		bb = BBBuilder.def.getCtrl(this, sb);
 		basis = sb;
 		ct.setData(basis.sb.st);
@@ -156,7 +156,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 	public void callBack(Object o) {
 		BCMusic.stopAll();
 		if(o instanceof Stage) {
-			changePanel(new BattleInfoPage(getFront(), (Stage) o, 0, basis.sb.b, 0, new byte[10]));
+			changePanel(new BattleInfoPage(getFront(), (Stage) o, 0, basis.sb.b, 0, (byte)0));
 		} else
 			changePanel(getFront());
 	}

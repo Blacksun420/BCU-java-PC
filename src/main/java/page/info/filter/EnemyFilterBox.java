@@ -56,7 +56,8 @@ public class EnemyFilterBox extends EntityFilterBox {
 		List<AbEnemy> ans = new ArrayList<>();
 		for(PackData p : UserProfile.getAllPacks())
 			if ((pks.getSelectedItem() == null || processOperator(3, p.equals(pks.getSelectedItem()))) && validatePack(p)) {
-				for (Enemy e : p.enemies.getList())
+				List<Enemy> el = p.getEnemies(p instanceof PackData.UserPack && ((PackData.UserPack)p).editable);
+				for (Enemy e : el)
 					if (validateEnemy(e))
 						ans.add(e);
 				if (rand)
@@ -87,6 +88,8 @@ public class EnemyFilterBox extends EntityFilterBox {
 	}
 
 	protected boolean validateEnemy(Enemy e) {
+		if (e.filter == 3)
+			return false;
 		String fname = MultiLangCont.getStatic().ENAME.getCont(e);
 		if (fname == null)
 			fname = e.names.toString();

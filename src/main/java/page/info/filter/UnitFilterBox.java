@@ -42,7 +42,7 @@ public class UnitFilterBox extends EntityFilterBox {
 		super(p, sdat == null ? null : sdat.pack, rand && sdat == null);
 		lim = limit;
 		this.price = price;
-		this.sdat = sdat;
+		this.sdat = ulk == null ? sdat : null;
 		unlk = ulk;
 		hideSpirits = true;
 
@@ -169,7 +169,7 @@ public class UnitFilterBox extends EntityFilterBox {
 
 	protected boolean validateUnit(Unit u) {
 		return (rare.getSelectedIndex() == -1 || rare.isSelectedIndex(u.rarity) || (rare.getSelectedIndices().length == 1 && rare.isSelectedIndex(rare.getModel().getSize() - 1)))
-				&& (sdat == null || pack.defULK.containsKey(u) || sdat.ulkUni.containsKey(u));
+				&& (sdat == null || !sdat.locked(u.forms[0]));
 	}
 
 	protected boolean validateForm(Form f) {
