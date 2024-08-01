@@ -71,51 +71,39 @@ public class BCUReader extends DataIO {
 				JsonObject jo = je.getAsJsonObject();
 				int[] rect = JsonDecoder.decode(jo.get("crect"), int[].class);
 				MainFrame.crect = new Rectangle(rect[0], rect[1], rect[2], rect[3]);
-				MainBCU.preload = jo.get("preload").getAsBoolean();
-				ViewBox.Conf.white = jo.get("transparent").getAsBoolean();
-				MainBCU.USE_JOGL = jo.get("JOGL").getAsBoolean();
-				if(jo.has("seconds"))
-					MainBCU.seconds = jo.get("seconds").getAsBoolean();
-				if(jo.has("prefLV"))
-					CommonStatic.getConfig().prefLevel = jo.get("prefLv").getAsInt();
-				if(jo.has("buttonSound"))
-					MainBCU.buttonSound = jo.get("buttonSound").getAsBoolean();
-				if (jo.has("drawBGEffect"))
-					CommonStatic.getConfig().drawBGEffect = jo.get("drawBGEffect").getAsBoolean();
-				BCMusic.play = jo.get("play_sound").getAsBoolean();
-				BCMusic.VOL_BG = jo.get("volume_BG").getAsInt();
-				BCMusic.VOL_SE = jo.get("volume_SE").getAsInt();
+				MainBCU.preload = jo.has("preload");
+				ViewBox.Conf.white = jo.has("transparent");
+				MainBCU.USE_JOGL = jo.has("JOGL");
+				MainBCU.seconds = jo.has("seconds");
+				MainBCU.buttonSound = jo.has("buttonSound");
+				BCMusic.play = !jo.has("play_sound");
+				if(jo.has("volume_BG"))
+					BCMusic.VOL_BG = jo.get("volume_BG").getAsInt();
+				if(jo.has("volume_SE"))
+					BCMusic.VOL_SE = jo.get("volume_SE").getAsInt();
 				if(jo.has("volume_UI"))
 					BCMusic.VOL_UI = jo.get("volume_UI").getAsInt();
-				BattleInfoPage.DEF_LARGE = jo.get("large_screen").getAsBoolean();
+				BattleInfoPage.DEF_LARGE = jo.has("large_screen");
 				if(jo.has("author"))
 					MainBCU.author = jo.get("author").getAsString();
-				if(jo.has("rowlayout"))
-					CommonStatic.getConfig().twoRow = jo.get("rowlayout").getAsBoolean();
 				if(jo.has("backup_file")) {
 					String value = jo.get("backup_file").getAsString();
 					CommonStatic.getConfig().backupFile = value.equals("None") ? null : value;
 				}
 				if (jo.has("autosavetime"))
 					MainBCU.autoSaveTime = jo.get("autosavetime").getAsInt();
-				if (jo.has("searchtype"))
-					MainBCU.searchPerKey = jo.get("searchtype").getAsBoolean();
+				MainBCU.searchPerKey = jo.has("searchtype");
 				if (jo.has("tolerance"))
 					MainBCU.searchTolerance = jo.get("tolerance").getAsInt();
-				if (jo.has("usedynamic"))
-					MainBCU.useDynamic = jo.get("usedynamic").getAsBoolean();
+				MainBCU.useDynamic = jo.has("usedynamic");
 				String[] exp = JsonDecoder.decode(jo.get("export_paths"), String[].class);
 				String[] imp = JsonDecoder.decode(jo.get("import_paths"), String[].class);
 				for (int i = 0; i < Math.min(Exporter.curs.length, exp.length); i++)
 					Exporter.curs[i] = exp[i] == null ? null : new File(exp[i]);
 				for (int i = 0; i < Math.min(Importer.curs.length, imp.length); i++)
 					Importer.curs[i] = imp[i] == null ? null : new File(imp[i]);
-				if (jo.has("fps60"))
-					CommonStatic.getConfig().fps60 = jo.get("fps60").getAsBoolean();
 				if (CommonStatic.getConfig().fps60)
 					Timer.fps = 1000 / 60;
-				if (jo.has("stat"))
-					CommonStatic.getConfig().stat = jo.get("stat").getAsBoolean();
 			} catch (Exception e) {
 				CommonStatic.ctx.noticeErr(e, ErrType.WARN, "failed to read config");
 			}

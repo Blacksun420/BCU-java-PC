@@ -109,6 +109,7 @@ public class StageEditPage extends DefaultPage {
 	@Override
 	protected void renew() {
 		hinf.renew();
+		sinf.renew();
 		jt.updateAbEnemy();
 		if (efp != null)
 			enam.setText(efp.getSearch());

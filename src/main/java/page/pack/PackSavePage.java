@@ -11,8 +11,11 @@ import common.util.unit.Unit;
 import page.*;
 import page.support.ReorderList;
 import page.support.UnitLCR;
+import utilpc.Theme;
+import utilpc.UtilPC;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -121,8 +124,18 @@ public class PackSavePage extends DefaultPage {
                     f = p.save.ulkUni.get(u) + 2;
             }
 
-            pk.defULK.replace(u, Math.min(f - 1, u.getForms().length - 1));
+            int nf = Math.min(f - 1, u.getForms().length - 1);
+            pk.defULK.replace(u, nf);
+            for (int i = 0; i < pk.mc.si.size(); i++) {
+                CustomStageInfo csi = pk.mc.si.get(i);
+                csi.rewards.removeIf(fr -> fr.unit == u && fr.fid <= nf);
+                csi.destroy(true);
+                if (csi.st.info == null)
+                    i--;
+            }
             setMJTF();
+            ulkUnits.revalidate();
+            ulkUnits.repaint();
             changing = false;
         });
         addulk.setLnr(e -> {
@@ -132,9 +145,12 @@ public class PackSavePage extends DefaultPage {
             List<AbUnit> units = locUnits.getSelectedValuesList();
             for (AbUnit u : units) {
                 pk.defULK.put(u, u.getForms().length - 1);
-                for (CustomStageInfo csi : pk.mc.si) {
+                for (int i = 0; i < pk.mc.si.size(); i++) {
+                    CustomStageInfo csi = pk.mc.si.get(i);
                     csi.rewards.removeIf(f -> f.unit == u);
                     csi.destroy(true);
+                    if (csi.st.info == null)
+                        i--;
                 }
                 pk.save.ulkUni.remove(u);
             }
@@ -269,7 +285,20 @@ public class PackSavePage extends DefaultPage {
         add(addulk);
         add(unlockUnit);
         add(jlU);
-        ulkUnits.setCellRenderer(new UnitLCR());
+        ulkUnits.setCellRenderer(new DefaultListCellRenderer() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean s, boolean f) {
+                JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
+                AbUnit u = (AbUnit)o;
+                jl.setText(u.getForms()[pk.defULK.get(u)].toString());
+                jl.setIcon(UtilPC.getIcon(u.getForms()[pk.defULK.get(u)].getIcon()));
+                jl.setHorizontalTextPosition(SwingConstants.RIGHT);
+                if (s)
+                    jl.setBackground(Theme.DARK.NIMBUS_SELECT_BG);
+                return jl;
+            }}
+                );
         add(maxFrm);
         add(remulk);
 

@@ -5,9 +5,11 @@ import common.CommonStatic.Config;
 import common.io.Backup;
 import common.io.assets.AssetLoader;
 import common.pack.UserProfile;
+import common.util.Data;
 import common.util.ImgCore;
 import common.util.Res;
 import common.util.lang.MultiLangCont;
+import common.util.unit.Level;
 import io.BCMusic;
 import io.BCUReader;
 import main.MainBCU;
@@ -15,10 +17,10 @@ import main.Opts;
 import main.Timer;
 import page.support.ColorPicker;
 import page.view.ViewBox;
-import utilpc.Interpret;
 
 import javax.swing.*;
-import java.awt.*;
+
+import static utilpc.Interpret.RARITY;
 
 public class ConfigPage extends DefaultPage {
 
@@ -48,8 +50,9 @@ public class ConfigPage extends DefaultPage {
 	private final JL jtol = new JL(MainLocale.PAGE, "tolerance");
 	private final JTF tole = new JTF(String.valueOf(MainBCU.searchTolerance));
 
+	private final JL[] prfr = new JL[6];
+	private final JTF[] jrfr = new JTF[6];
 
-	private final JTF prlvmd = new JTF();
 	private final JBTN[] left = new JBTN[4];
 	private final JBTN[] right = new JBTN[4];
 	private final JL[] name = new JL[4];
@@ -168,20 +171,25 @@ public class ConfigPage extends DefaultPage {
 		set(row, x, y, 1425, 250, 200, 50);
 		set(jlth, x, y, 1425, 100, 200, 50);
 		set(rlla, x, y, 1225, 400, 400, 50);
-		set(preflv, x, y, 1225, 475, 200, 50);
-		set(prlvmd, x, y, 1425, 475, 200, 50);
-		set(autosave, x, y, 1225, 550, 200, 50);
-		set(savetime, x, y, 1425, 550, 200, 50);
+		set(autosave, x, y, 1225, 475, 200, 50);
+		set(savetime, x, y, 1425, 475, 200, 50);
 
-		set(rlpk, x, y, 1225, 625, 400, 50);
-		set(vcol, x, y, 1225, 700, 400, 50);
-		set(vres, x, y, 1225, 775, 400, 50);
-		set(jtol, x, y, 1225, 850, 200, 50);
-		set(tole, x, y, 1425, 850, 200, 50);
-		set(dyna, x, y, 1425, 550, 200, 50);
+		set(rlpk, x, y, 1225, 550, 400, 50);
+		set(vcol, x, y, 1225, 625, 400, 50);
+		set(vres, x, y, 1225, 700, 400, 50);
+		set(jtol, x, y, 1225, 775, 200, 50);
+		set(tole, x, y, 1425, 775, 200, 50);
+		set(dyna, x, y, 1425, 850, 200, 50);
 
 		set(jlla, x, y, 1750, 100, 300, 50);
 		set(jsps, x, y, 1750, 150, 300, 300);
+
+		set(preflv, x, y, 1675, 500, 450, 50);
+		for (int i = 0; i < prfr.length; i++) {
+			int yy = 550 + (i * 75);
+			set(prfr[i], x, y, 1675, yy, 150, 50);
+			set(jrfr[i], x, y, 1825, yy, 300, 50);
+		}
 	}
 
 	@Override
@@ -313,6 +321,8 @@ public class ConfigPage extends DefaultPage {
 			cfg().lang = jls.getSelectedValue();
 			Res.langIcons();
 			Page.renewLoc(getThis());
+			for (int i = 0; i < prfr.length; i++)
+				prfr[i].setText(RARITY[i]);
 			changing = false;
 		});
 
@@ -368,6 +378,27 @@ public class ConfigPage extends DefaultPage {
 			MainBCU.useDynamic = dyna.isSelected();
 			tole.setEnabled(!dyna.isSelected());
 		});
+
+		for (int i = 0; i < jrfr.length; i++) {
+			int I = i;
+			jrfr[i].setLnr(e -> {
+				String text = jrfr[I].getText().trim();
+				Level l = CommonStatic.getPrefLvs().rare[I];
+				if (!text.isEmpty()) {
+					int[] v = CommonStatic.parseIntsN(text);
+					if (v.length > 0) {
+						l.setLevel(Math.max(1, v[0]));
+						if (v.length > 1) {
+							l.setPlusLevel(Math.max(0, v[1]));
+							int[] nps = new int[Math.min(Data.PC_CORRES.length + Data.PC_CUSTOM.length, v.length - 2)];
+							System.arraycopy(v, 2, nps, 0, nps.length);
+							l.setTalents(nps);
+						}
+					}
+				}
+				jrfr[I].setText(Level.lvString(l));
+			});
+		}
 	}
 
 	private void ini() {
@@ -402,8 +433,6 @@ public class ConfigPage extends DefaultPage {
 		add(row);
 		add(secs);
 		add(preflv);
-		add(prlvmd);
-		set(prlvmd);
 		set(jsba);
 		add(mbac);
 		add(jcsnd);
@@ -425,8 +454,11 @@ public class ConfigPage extends DefaultPage {
 		add(pkprog);
 		add(stat);
 		add(dyna);
+		for (int i = 0; i < prfr.length; i++) {
+			add(prfr[i] = new JL(RARITY[i]));
+			add(jrfr[i] = new JTF(Level.lvString(CommonStatic.getPrefLvs().rare[i])));
+		}
 		excont.setSelected(cfg().exContinuation);
-		prlvmd.setText(String.valueOf(cfg().prefLevel));
 		jls.setSelectedValue(cfg().lang, true);
 		jsmin.setValue(cfg().deadOpa);
 		jsmax.setValue(cfg().fullOpa);
@@ -483,17 +515,6 @@ public class ConfigPage extends DefaultPage {
 		dyna.setSelected(MainBCU.useDynamic);
 		comv.setBorder(null);
 		addListeners();
-	}
-
-	protected void set(JTF jtf) {
-		jtf.setLnr(e -> {
-			String text = jtf.getText().trim();
-			if (text.length() > 0) {
-				int[] v = CommonStatic.parseIntsN(text);
-				CommonStatic.getConfig().prefLevel = Math.max(1, v[0]);
-				jtf.setText(String.valueOf(CommonStatic.getConfig().prefLevel));
-			}
-		});
 	}
 
 	private void set(JSlider sl) {

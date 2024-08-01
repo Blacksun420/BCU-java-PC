@@ -461,7 +461,17 @@ public class CGLREditPage extends DefaultPage {
 		jlus.setEnabled(cg != null);
 		addus.setEnabled(cg != null);
 		remus.setEnabled(cg != null);
-		remcg.setEnabled(cg != null && !cg.used());
+
+		List<Object> uses = cg != null ? cg.used() : new ArrayList<>(0);
+		remcg.setEnabled(cg != null && uses.isEmpty());
+		if (!uses.isEmpty()) {
+			StringBuilder b = new StringBuilder("<html><table><tr><th>Used by:</th></tr>");
+			for (Object obj : uses)
+				b.append("<tr><td>").append(obj).append("</td><td>").append(obj.getClass().getSimpleName()).append("</td></tr>");
+			b.append("</html>");
+			remcg.setToolTipText(b.toString());
+		} else
+			remcg.setToolTipText(null);
 		cgt.setEnabled(cg != null);
 		jtfna.setEnabled(cg != null);
 		cgt.setText("");

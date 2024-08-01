@@ -35,12 +35,14 @@ public class UnitInfoPage extends DefaultPage {
 		super(p);
 		n = new Node<>(u);
 		b = BasisSet.current();
+		boolean sp = !u.id.pack.equals(Identifier.DEF);
 
 		info = new UnitInfoTable[u.forms.length];
 		for (int i = 0; i < info.length; i++)
-			info[i] = new UnitInfoTable(this, n.val.forms[i], lvs, !u.id.pack.equals(Identifier.DEF));
+			info[i] = new UnitInfoTable(this, n.val.forms[i], lvs, sp);
 		trea = new TreaTable(this);
 		ini();
+		extr.setSelected(sp);
 	}
 
 	public UnitInfoPage(Page p, Node<Unit> de) {

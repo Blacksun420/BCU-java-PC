@@ -63,6 +63,11 @@ public class StageLimitTable extends Page {
     }
 
     @Override
+    protected void renew() {
+        lt.renew();
+    }
+
+    @Override
     protected void resized(int x, int y) {
         int w = 1400 / 8;
         if (jll.isSelectionEmpty()) {

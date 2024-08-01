@@ -95,7 +95,6 @@ class HeadEditTable extends Page {
 			jcas.setText(val.toString());
 			sta.castle = val;
 		}
-
 		if (mp != null) {
 			Identifier<Music> val = mp.getSelectedID();
 			if (musl == 0) {
@@ -109,8 +108,6 @@ class HeadEditTable extends Page {
 
 		jres.setEnabled(sta != null);
 		jures.setEnabled(sta != null);
-
-
 		if (sta != null) {
 			jres.setText(generateMinRespawn(sta.minSpawn, sta.maxSpawn));
 			jures.setText(generateMinRespawn(sta.minUSpawn, sta.maxUSpawn));
@@ -299,7 +296,7 @@ class HeadEditTable extends Page {
 			return;
 		if (jtf == name) {
 			str = str.trim();
-			if (str.length() > 0)
+			if (!str.isEmpty())
 				sta.names.put(str);
 			if (getFront() != null)
 				getFront().callBack(null);

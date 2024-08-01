@@ -245,7 +245,7 @@ public class ComboEditPage extends DefaultPage {
                 return;
             changing = true;
             Identifier<Combo> id = pac.getNextID(Combo.class);
-            Combo combo = new Combo(id, "new combo", frm);
+            Combo combo = new Combo(id, frm);
             pac.combos.add(combo);
             if (!CommonStatic.getConfig().packCombos.containsKey(pac.getSID()))
                 CommonStatic.getConfig().packCombos.put(pac.getSID(), true);

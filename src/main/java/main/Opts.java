@@ -60,6 +60,16 @@ public class Opts {
 
 	public static void pop(String text, String title) {
 		int opt = JOptionPane.PLAIN_MESSAGE;
+		if (text.length() > 512) {
+			JTextArea txt = new JTextArea(text);
+			JScrollPane scroll = new JScrollPane(txt);
+			txt.setLineWrap(true);
+			txt.setWrapStyleWord(true);
+			txt.setEditable(false);
+			scroll.setPreferredSize(UtilPC.size(500, 720));
+			JOptionPane.showMessageDialog(null, scroll, title, opt);
+			return;
+		}
 		JOptionPane.showMessageDialog(null, text, title, opt);
 	}
 

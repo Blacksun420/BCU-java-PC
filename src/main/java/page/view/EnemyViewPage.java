@@ -6,6 +6,7 @@ import common.pack.UserProfile;
 import common.system.ENode;
 import common.util.anim.AnimCE;
 import common.util.anim.AnimU;
+import common.util.anim.EAnimU;
 import common.util.unit.AbEnemy;
 import common.util.unit.Enemy;
 import main.Opts;
@@ -74,6 +75,7 @@ public class EnemyViewPage extends AbViewPage {
 		if (u == null)
 			return;
 		setAnim(u.anim);
+		((EAnimU)vb.getEnt()).setDir(u.rev);
 	}
 
 	private void addListeners() {

@@ -7,6 +7,7 @@ import common.system.Node;
 import common.util.anim.AnimCE;
 import common.util.anim.AnimD;
 import common.util.anim.EAnimI;
+import common.util.anim.EAnimU;
 import common.util.unit.Form;
 import common.util.unit.Unit;
 import main.Opts;
@@ -82,6 +83,7 @@ public class UnitViewPage extends AbViewPage {
 		if (f == null)
 			return;
 		setAnim(f.anim);
+		((EAnimU)vb.getEnt()).setDir(f.rev);
 	}
 
 	private void addListeners() {

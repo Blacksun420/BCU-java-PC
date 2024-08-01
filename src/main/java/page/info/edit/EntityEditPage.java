@@ -10,20 +10,16 @@ import common.pack.IndexContainer.Indexable;
 import common.pack.PackData.UserPack;
 import common.pack.Source;
 import common.pack.UserProfile;
-import common.util.Animable;
 import common.util.anim.AnimCE;
 import common.util.anim.AnimCI;
 import common.util.anim.AnimU;
-import common.util.anim.AnimU.UType;
 import common.util.lang.Editors;
 import common.util.pack.Background;
 import common.util.pack.EffAnim;
 import common.util.pack.Soul;
 import common.util.stage.Music;
-import common.util.unit.AbUnit;
-import common.util.unit.Enemy;
-import common.util.unit.Form;
-import common.util.unit.Unit;
+import common.util.unit.Character;
+import common.util.unit.*;
 import main.MainBCU;
 import main.Opts;
 import page.*;
@@ -44,8 +40,8 @@ import utilpc.UtilPC;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 import static common.util.Data.*;
 
@@ -96,6 +92,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 	private final JComboBox<CommonStatic.Lang.Locale> jlang = new JComboBox<>(MainLocale.LOC_LIST);
 	private final JTG hbbo = new JTG(MainLocale.INFO, "kbbounce");
 	private final JTG bobo = new JTG(MainLocale.INFO, "bossbounce");
+	protected final JTG revt = new JTG(MainLocale.PAGE, "revt");
 	private final ListJtfPolicy ljp = new ListJtfPolicy();
 	private final AtkEditTable aet;
 	private final ProcTable.MainProcTable mpt;
@@ -265,6 +262,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		entName.setHintText("Name");
 		add(hbbo);
 		add(bobo);
+		add(revt);
 		Vector<Soul> vec = new Vector<>();
 		vec.add(null);
 		vec.addAll(UserProfile.getAll(pack.getSID(), Soul.class));
@@ -321,6 +319,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		entDesc.setEnabled(pack.editable);
 		hbbo.setEnabled(pack.editable);
 		bobo.setEnabled(pack.editable);
+		revt.setEnabled(pack.editable);
 
 		add(jsp);
 	}
@@ -405,6 +404,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		set(fli, x, y, 2000, 1000, 200, 50);
 		set(hbbo, x, y, 50, 1200, 200, 50);
 		set(bobo, x, y, 250, 1200, 200, 50);
+		set(revt, x, y, 650, 1200, 400, 50);
 
 		set(jcbs, x, y, 1800, 1050, 400, 50);
 		set(entName, x, y, 1050, 1000, 750, 50);
@@ -491,7 +491,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 			ind = 0;
 		setA(ind);
 		jli.setSelectedIndex(ind);
-		Animable<AnimU<?>, UType> ene = ce.getPack();
+		Character ene = ce.getPack();
 
 		if (!(ene.anim instanceof AnimCI))
 			jcba.setSelectedIndex(-1);
@@ -501,6 +501,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		jcbs.setSelectedItem(Identifier.get(ce.death));
 		hbbo.setSelected(ce.kbBounce);
 		bobo.setSelected(ce.bossBounce);
+		revt.setSelected(ene.rev);
 		changing = false;
 
 		fireDimensionChanged();
@@ -694,8 +695,13 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		bobo.addActionListener(arg0 -> {
 			if (changing)
 				return;
-
 			ce.bossBounce = bobo.isSelected();
+		});
+
+		revt.addActionListener(arg0 -> {
+			if (changing)
+				return;
+			ce.getPack().rev = revt.isSelected();
 		});
 	}
 

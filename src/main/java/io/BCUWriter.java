@@ -1,5 +1,7 @@
 package io;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import common.CommonStatic;
 import common.battle.BasisSet;
@@ -168,6 +170,7 @@ public class BCUWriter extends DataIO {
 		Source.Workspace.saveWorkspace(false);
 		AnimGroup.writeAnimGroup();
 		writeOptions();
+		writeDefLevels();
 		writeFaves();
 		if (genBackup && CommonStatic.getConfig().maxBackup != -1)
 			Backup.createBackup(null, new ArrayList<>(
@@ -263,27 +266,23 @@ public class BCUWriter extends DataIO {
 		JsonObject jo = JsonEncoder.encode(CommonStatic.getConfig()).getAsJsonObject();
 		Rectangle r = MainFrame.crect;
 		jo.add("crect", JsonEncoder.encode(new int[] { r.x, r.y, r.width, r.height }));
-		jo.addProperty("preload", MainBCU.preload);
-		jo.addProperty("transparent", ViewBox.Conf.white);
-		jo.addProperty("JOGL", MainBCU.USE_JOGL);
-		jo.addProperty("seconds", MainBCU.seconds);
-		jo.addProperty("prefLv", CommonStatic.getConfig().prefLevel);
-		jo.addProperty("play_sound", BCMusic.play);
-		jo.addProperty("volume_BG", BCMusic.VOL_BG);
-		jo.addProperty("volume_SE", BCMusic.VOL_SE);
-		jo.addProperty("volume_UI",BCMusic.VOL_UI);
-		jo.addProperty("large_screen", BattleInfoPage.DEF_LARGE);
-		jo.addProperty("author", MainBCU.author);
-		jo.addProperty("rowlayout", CommonStatic.getConfig().twoRow);
+		addPropertyIf(jo, "preload", MainBCU.preload, false);//jo.addProperty("preload", MainBCU.preload);
+		addPropertyIf(jo, "transparent", ViewBox.Conf.white, false);//jo.addProperty("transparent", ViewBox.Conf.white);
+		addPropertyIf(jo, "JOGL", MainBCU.USE_JOGL, false);//jo.addProperty("JOGL", MainBCU.USE_JOGL);
+		addPropertyIf(jo, "seconds", MainBCU.seconds, false);//jo.addProperty("seconds", MainBCU.seconds);
+		addPropertyIf(jo, "play_sound", BCMusic.play, true);//jo.addProperty("play_sound", BCMusic.play);
+		addPropertyIf(jo, "volume_BG", BCMusic.VOL_BG, 20);//jo.addProperty("volume_BG", BCMusic.VOL_BG);
+		addPropertyIf(jo, "volume_SE", BCMusic.VOL_SE, 20);//jo.addProperty("volume_SE", BCMusic.VOL_SE);
+		addPropertyIf(jo, "volume_UI", BCMusic.VOL_UI, 20);//jo.addProperty("volume_UI",BCMusic.VOL_UI);
+		addPropertyIf(jo, "large_screen", BattleInfoPage.DEF_LARGE, false);//jo.addProperty("large_screen", BattleInfoPage.DEF_LARGE);
+		if (!MainBCU.author.isEmpty())
+			jo.addProperty("author", MainBCU.author);
 		jo.addProperty("backup_file", CommonStatic.getConfig().backupFile == null ? "None" : CommonStatic.getConfig().backupFile);
-		jo.addProperty("buttonSound", MainBCU.buttonSound);
-		jo.addProperty("autosavetime", MainBCU.autoSaveTime);
-		jo.addProperty("drawBGEffect", CommonStatic.getConfig().drawBGEffect);
-		jo.addProperty("fps60", CommonStatic.getConfig().fps60);
-		jo.addProperty("stat", CommonStatic.getConfig().stat);
-		jo.addProperty("searchtype", MainBCU.searchPerKey);
-		jo.addProperty("tolerance", MainBCU.searchTolerance);
-		jo.addProperty("usedynamic", MainBCU.useDynamic);
+		addPropertyIf(jo, "buttonSound", MainBCU.buttonSound, false);//jo.addProperty("buttonSound", MainBCU.buttonSound);
+		addPropertyIf(jo, "autosavetime", MainBCU.autoSaveTime, 0);//jo.addProperty("autosavetime", MainBCU.autoSaveTime);
+		addPropertyIf(jo, "searchtype", MainBCU.searchPerKey, false);//jo.addProperty("searchtype", MainBCU.searchPerKey);
+		addPropertyIf(jo, "tolerance", MainBCU.searchTolerance, 4);//jo.addProperty("tolerance", MainBCU.searchTolerance);
+		addPropertyIf(jo, "usedynamic", MainBCU.useDynamic, false);//jo.addProperty("usedynamic", MainBCU.useDynamic);
 		String[] exp = new String[Exporter.curs.length];
 		for (int i = 0; i < exp.length; i++)
 			exp[i] = Exporter.curs[i] == null ? null : Exporter.curs[i].toString();
@@ -293,7 +292,8 @@ public class BCUWriter extends DataIO {
 		jo.add("export_paths", JsonEncoder.encode(exp));
 		jo.add("import_paths", JsonEncoder.encode(imp));
 		try (java.io.Writer w = new OutputStreamWriter(Files.newOutputStream(f.toPath()), StandardCharsets.UTF_8)) {
-			w.write(jo.toString());
+			Gson G = new GsonBuilder().setPrettyPrinting().create();//More storage but more convenient to modify
+			w.write(G.toJson(jo));
 		} catch (Exception e) {
 			CommonStatic.ctx.noticeErr(e, ErrType.ERROR, "failed to write config");
 		}
@@ -308,8 +308,36 @@ public class BCUWriter extends DataIO {
 		}
 	}
 
+	private static void addPropertyIf(JsonObject jo, String name, int property, int def) {
+		if (property != def)
+			jo.addProperty(name, property);
+	}
+	private static void addPropertyIf(JsonObject jo, String name, boolean property, boolean def) {
+		if (property != def)
+			jo.addProperty(name, property);
+	}
+
+	private static void writeDefLevels() {
+		File f = new File(CommonStatic.ctx.getBCUFolder(), "./user/levels.json");
+		if (CommonStatic.getPrefLvs().uni.isEmpty() && CommonStatic.getPrefLvs().allDefs()) {
+			f.delete(); //No level settings out of the default, so why save
+			return;
+		}
+		Data.err(() -> Context.check(f));
+		JsonObject jo = JsonEncoder.encode(CommonStatic.getPrefLvs()).getAsJsonObject();
+		try (java.io.Writer w = new OutputStreamWriter(Files.newOutputStream(f.toPath()), StandardCharsets.UTF_8)) {
+			w.write(jo.toString());
+		} catch (Exception e) {
+			CommonStatic.ctx.noticeErr(e, ErrType.ERROR, "failed to write level preferences");
+		}
+	}
+
 	private static void writeFaves() {
 		File f = new File(CommonStatic.ctx.getBCUFolder(), "./user/favorites.json");
+		if (CommonStatic.getFaves().units.isEmpty() && CommonStatic.getFaves().enemies.isEmpty()) {
+			f.delete(); //No faves, so why save
+			return;
+		}
 		Data.err(() -> Context.check(f));
 		JsonObject jo = JsonEncoder.encode(CommonStatic.getFaves()).getAsJsonObject();
 		try (java.io.Writer w = new OutputStreamWriter(Files.newOutputStream(f.toPath()), StandardCharsets.UTF_8)) {

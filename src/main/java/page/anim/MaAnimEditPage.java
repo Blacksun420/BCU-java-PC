@@ -90,6 +90,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		if (o instanceof SpriteBox) {
 			if (sb.sele >= 0) {
 				jlp.getSelectionModel().setSelectionInterval(sb.sele, sb.sele);
+				jlp.ensureIndexIsVisible(jlp.getSelectedIndex());
 				int[] rows = maet.getSelectedRows();
 				if (rows.length != 1 || maet.ma.parts[rows[0]].ints[1] != 2)
 					return;

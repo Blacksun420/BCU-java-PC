@@ -10,10 +10,7 @@ import common.util.pack.NyCastle;
 import common.util.stage.Limit;
 import common.util.stage.Stage;
 import common.util.unit.*;
-import page.JBTN;
-import page.JTF;
-import page.JTG;
-import page.Page;
+import page.*;
 import page.info.TreaTable;
 import page.support.ReorderList;
 import page.support.ReorderListener;
@@ -53,6 +50,7 @@ public class BasisPage extends LubCont {
 	private final JTF lvjtf = new JTF();
 	private final JTF cjtf = new JTF();
 	private final JTF ujtf = new JTF();
+	private final JBTN setpref = new JBTN(0, "setpref");
 	private final JBTN lvorb = new JBTN(0, "orb");
 	private final JLabel pcoin = new JLabel();
 	private final Vector<BasisSet> vbs = new Vector<>(BasisSet.list());
@@ -209,7 +207,8 @@ public class BasisPage extends LubCont {
 		set(combo, x, y, 1250, 750, 150, 50);
 
 		set(pcoin, x, y, 500, 50, 1200, 50);
-		set(lvjtf, x, y, 500, 100, 700, 50);
+		set(lvjtf, x, y, 500, 100, 500, 50);
+		set(setpref, x, y, 1000, 100, 200, 50);
 		set(lvorb, x, y, 1200, 100, 200, 50);
 		set(form, x, y, 500, 450, 200, 50);
 		set(reset, x, y, 700, 450, 200, 50);
@@ -268,7 +267,7 @@ public class BasisPage extends LubCont {
 					ul.setSelectedIndex(row);
 					lub.select(ul.getSelectedValue());
 					if (((Form) lub.sf).du.getPCoin() != null) {
-						lub.setLv(new Level(((Form)lub.sf).unit.getPreferredLevel(), ((Form)lub.sf).unit.getPreferredPlusLevel(), new int[] { 0, 0, 0, 0, 0 }));
+						lub.setLv(new Level(((Form)lub.sf).unit.getPreferredLevel(), ((Form)lub.sf).unit.getPreferredPlusLevel(), new int[0]));
 						setLvs(lub.sf);
 					}
 				} else {
@@ -298,10 +297,21 @@ public class BasisPage extends LubCont {
 			}
 		});
 
-		lvorb.setLnr(x -> {
-			if (lub.sf != null) {
-				changePanel(new LevelEditPage(this, lu().getLv(lub.sf), (Form) lub.sf));
+		setpref.setLnr(x -> {
+			if (lub.sf instanceof Form) {
+				Level lv = lu().getLv(lub.sf);
+				if (CommonStatic.getPrefLvs().uni.containsKey(lub.sf.getID()) && (CommonStatic.getPrefLvs().uni.get(lub.sf.getID()).equals(lv)
+						|| CommonStatic.getPrefLvs().equalsDef(((Form)lub.sf), lv))) {
+					CommonStatic.getPrefLvs().uni.remove(lub.sf.getID());
+				} else
+					CommonStatic.getPrefLvs().uni.put(lub.sf.getID(), lv);
+				setLvs(lub.sf);
 			}
+		});
+
+		lvorb.setLnr(x -> {
+			if (lub.sf != null)
+				changePanel(new LevelEditPage(this, lu().getLv(lub.sf), (Form) lub.sf));
 		});
 
 		for (int i = 0; i < 3; i++) {
@@ -583,6 +593,7 @@ public class BasisPage extends LubCont {
 		add(lvjtf);
 		add(pcoin);
 		add(lvorb);
+		add(setpref);
 		add(ncb);
 		add(reset);
 		add(cjtf);
@@ -615,6 +626,7 @@ public class BasisPage extends LubCont {
 		addListeners$1();
 		addListeners$2();
 		lvorb.setEnabled(lub.sf != null);
+		setpref.setEnabled(lub.sf != null);
 		cost.setSelected(true);
 		ufp = new UnitFLUPage(getThis(), st == null ? null : st.getMC().getSave(false), lub.lim, lub.price,
 				lub.isTest() && st != null ? st.getMC().getSave(true).getUnlockedsBeforeStage(st, true).keySet() : null);
@@ -707,18 +719,28 @@ public class BasisPage extends LubCont {
 	private void setLvs(AbForm f) {
 		if (f instanceof Form) {
 			lvorb.setEnabled(((Form) f).orbs != null);
-
-			String[] strs = UtilPC.lvText(f, lu().getLv(f));
+			Level lv = lu().getLv(f);
+			String[] strs = UtilPC.lvText(f, lv);
 			lvjtf.setText(strs[0]);
 			pcoin.setText(strs[1]);
+
+			setpref.setEnabled(CommonStatic.getPrefLvs().uni.containsKey(f.getID()) || !CommonStatic.getPrefLvs().equalsDef((Form)f, lv));
+			if (CommonStatic.getPrefLvs().uni.containsKey(f.getID()) && (CommonStatic.getPrefLvs().uni.get(f.getID()).equals(lv)
+					|| CommonStatic.getPrefLvs().equalsDef((Form)f, lv))) {
+				setpref.setText(MainLocale.PAGE, "rempref");
+				setpref.setForeground(Color.RED);
+			} else {
+				setpref.setText(MainLocale.PAGE, "setpref");
+				setpref.setForeground(Color.BLACK);
+			}
 		} else {
+			setpref.setEnabled(false);
 			lvorb.setEnabled(false);
 			pcoin.setText("");
 			if (f == null) {
 				lvjtf.setText("");
-			} else {
+			} else
 				lvjtf.setText(UtilPC.lvText(f, lu().getLv(f))[0]);
-			}
 		}
 	}
 
