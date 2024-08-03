@@ -330,6 +330,13 @@ public class MainBCU {
 			return in + "f";
 	}
 
+	public static String convertTime(double in) {
+		if (seconds)
+			return df.format(in / 30.0) + "s";
+		else //for convenience, function is built to merely return the time if player prefers it like that
+			return in + "f";
+	}
+
 	public static void main(String[] args) {
 		Thread.setDefaultUncaughtExceptionHandler(MainBCU::noticeErr);
 		trueRun = true;

@@ -72,7 +72,8 @@ public class PCoinEditPage extends DefaultPage {
             uni.pcoin.info.add(getCoinParams(slot + 1));
 
             uni.pcoin.max = new int[uni.pcoin.info.size()];
-            uni.pcoin.max[uni.pcoin.info.size() -1] = uni.pcoin.info.get(uni.pcoin.info.size() -1)[1];
+            for (int i = 0; i < uni.pcoin.info.size(); i++)
+                uni.pcoin.max[i] = uni.pcoin.info.get(i)[1];
 
             pCoinEdits.add(new PCoinEditTable(this, uni, slot, editable));
             cont.add(pCoinEdits.get(slot));

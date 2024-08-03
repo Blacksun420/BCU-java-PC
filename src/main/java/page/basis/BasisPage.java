@@ -146,17 +146,7 @@ public class BasisPage extends LubCont {
 
 	@Override
 	protected void keyTyped(KeyEvent e) {
-		if (trea.isFocusOwner())
-			return;
-		if (lvjtf.isFocusOwner())
-			return;
-		if (bjtf.isFocusOwner())
-			return;
-		if (bsjtf.isFocusOwner())
-			return;
-		if (cjtf.isFocusOwner())
-			return;
-		if (ujtf.isFocusOwner())
+		if (trea.isFocusOwner() || lvjtf.isFocusOwner() || bjtf.isFocusOwner() || bsjtf.isFocusOwner() || cjtf.isFocusOwner() || ujtf.isFocusOwner())
 			return;
 		super.keyTyped(e);
 		e.consume();
@@ -628,6 +618,8 @@ public class BasisPage extends LubCont {
 		lvorb.setEnabled(lub.sf != null);
 		setpref.setEnabled(lub.sf != null);
 		cost.setSelected(true);
+		ujtf.setHintText(get(MainLocale.PAGE, "search"));
+		cjtf.setHintText(get(MainLocale.PAGE, "search"));
 		ufp = new UnitFLUPage(getThis(), st == null ? null : st.getMC().getSave(false), lub.lim, lub.price,
 				lub.isTest() && st != null ? st.getMC().getSave(true).getUnlockedsBeforeStage(st, true).keySet() : null);
 		assignSubPage(trea);

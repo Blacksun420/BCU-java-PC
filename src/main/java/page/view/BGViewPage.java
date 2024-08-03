@@ -68,7 +68,7 @@ public class BGViewPage extends DefaultPage implements SupPage<Background> {
 		if (s == null)
 			return;
 		if (prev.isSelected()) {
-			vb.update();
+			vb.update(1);
 			vb.paint();
 		}
 	}

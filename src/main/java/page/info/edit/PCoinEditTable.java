@@ -122,7 +122,7 @@ class PCoinEditTable extends Page {
                         + (pdata[1] <= Data.PC2_SPEED || pdata[1] == Data.PC2_HB || pdata[1] == Data.PC2_RNG ? "+ " : "")
                         + (pdata[1] == Data.PC2_TBA ? "- " : "")
                         + (pdata[1] <= Data.PC2_ATK || pdata[1] == Data.PC2_TBA ? "%" : "");
-                JL[] stTxts = new JL[]{new JL(text + " (Lv1)"), new JL(text + " (Lv" + maxLv + ")")};
+                JL[] stTxts = maxLv == 1 ? new JL[]{new JL(text)} : new JL[]{new JL(text + " (Lv1)"), new JL(text + " (Lv" + maxLv + ")")};
                 for (int i = 0; i < stTxts.length; i++) {
                     JL stTxt = stTxts[i];
                     add(stTxt);
@@ -150,6 +150,7 @@ class PCoinEditTable extends Page {
                         num.setText("" + par.unit.pcoin.info.get(par.talent)[fi]);
                         if (maxLv > 1)
                             ((JTF)tchance.get(fi-2+ind)).setText("" + par.unit.pcoin.info.get(par.talent)[fi+ind]);
+                        par.unit.pcoin.update();
                     });
                     add(num);
                     tchance.add(num);
@@ -187,13 +188,14 @@ class PCoinEditTable extends Page {
                                     return;
                                 }
                                 int ind = fi % 2 == 0 ? 1 : -1;
-                                par.unit.pcoin.info.get(par.talent)[fi + (ind == 1 ? 0 : ind)] = v[0];
+                                par.unit.pcoin.info.get(par.talent)[fi] = v[0];
                                 if (maxLv > 1 && v.length > 1)
-                                    par.unit.pcoin.info.get(par.talent)[fi + (ind != 1 ? 0 : ind)] = v[1];
+                                    par.unit.pcoin.info.get(par.talent)[fi + ind] = v[1];
                                 par.unit.pcoin.info.set(par.talent, par.unit.getProc().getArr(pdata[1]).setTalent(par.unit.pcoin.info.get(par.talent)));
                                 num.setText("" + par.unit.pcoin.info.get(par.talent)[fi]);
-                                if (maxLv > 1 && v.length > 1)
+                                if (maxLv > 1)
                                     ((JTF) tchance.get(fi - 2 + ind - fpen)).setText("" + par.unit.pcoin.info.get(par.talent)[fi + ind]);
+                                par.unit.pcoin.update();
                             });
                         } else if (f.getType().equals(boolean.class)) {
                             JTG tgl = new JTG("Apply");
@@ -322,8 +324,9 @@ class PCoinEditTable extends Page {
     private void addListeners() {
         PCoinLV.setLnr(arg0 -> {
             String txt = PCoinLV.getText().trim();
-            int v = CommonStatic.parseIntN(txt);
-            unit.pcoin.info.get(talent)[1] = MathUtil.clip(v, 1, 10);
+            int v = MathUtil.clip(CommonStatic.parseIntN(txt), 1 , 10);
+            unit.pcoin.info.get(talent)[1] = v;
+            unit.pcoin.max[talent] = v;
             slots.setTalent(Data.get_CORRES(unit.pcoin.info.get(talent)[0]), false);
             setData();
         });
@@ -481,7 +484,7 @@ class PCoinEditTable extends Page {
             unit.pcoin.info.get(talent)[1] = 1;
 
         if (pc) {
-            PCoinLV.setText("" + unit.pcoin.info.get(talent)[1]);
+            PCoinLV.setText("" + unit.pcoin.max[talent]);
             superLv.setText("" + unit.pcoin.getReqLv(talent));
             int tal = unit.pcoin.info.get(talent)[0];
             ListModel<talentData> listModel = ctypes.getModel();

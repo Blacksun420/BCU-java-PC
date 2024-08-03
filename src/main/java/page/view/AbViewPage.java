@@ -52,6 +52,7 @@ public abstract class AbViewPage extends DefaultPage {
 	private boolean changingtl;
 	private boolean focusOn = false;
 	protected int cx = 1000;
+	private float aspd = 1;
 	private final DecimalFormat df = new DecimalFormat("#.##");
 
 	protected AbViewPage(Page p) {
@@ -73,11 +74,6 @@ public abstract class AbViewPage extends DefaultPage {
 		gif.setEnabled(b);
 		mp4.setEnabled(b);
 		png.setEnabled(b && pause);
-	}
-
-	@Override
-	protected void exit() {
-		Timer.fps = 1000 / (CommonStatic.getConfig().fps60 ? 60 : 30);
 	}
 
 	@Override
@@ -256,8 +252,7 @@ public abstract class AbViewPage extends DefaultPage {
 		jst.addChangeListener(arg0 -> {
 			if (jst.getValueIsAdjusting())
 				return;
-			Timer.fps = jst.getValue() / 100 * 1000 / (CommonStatic.getConfig().fps60 ? 60 : 30);
-			Timer.fps = 1000 / (CommonStatic.getConfig().fps60 ? 60 : 30);
+			aspd = 100f / jst.getValue();
 		});
 
 		jtl.addChangeListener(arg0 -> {
@@ -347,7 +342,7 @@ public abstract class AbViewPage extends DefaultPage {
 	}
 
 	private void eupdate() {
-		vb.update();
+		vb.update(aspd);
 		changingtl = true;
 		if (vb.getEnt() != null) {
 			int selection = (int)CommonStatic.fltFpsMul(vb.getEnt().ind());

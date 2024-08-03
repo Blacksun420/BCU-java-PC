@@ -204,7 +204,8 @@ public class UREditTable extends AbJTable implements Reorderable {
         if (c == 1) {
             ur.lv.setLvs(Level.lvList(ur.ent.unit(), v, null));
             ur.lv.setLevel(Math.min(ur.lv.getLv(), v[0]));
-            ur.lv.setPlusLevel(Math.min(ur.lv.getPlusLv(), v[1]));
+            if (v.length > 1)
+                ur.lv.setPlusLevel(Math.min(ur.lv.getPlusLv(), v[1]));
         } else if (c == 2) {
             if (v[0] < 0)
                 v[0] = 0;

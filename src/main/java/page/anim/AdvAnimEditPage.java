@@ -54,9 +54,9 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 	private final UType animID;
 	private final MMTree mmt;
 	private Point p = null;
-	private boolean pause, death;
+	private boolean pause;
 
-	public AdvAnimEditPage(Page p, AnimCE anim, UType id) {
+    public AdvAnimEditPage(Page p, AnimCE anim, UType id) {
 		super(p);
 		ac = anim;
 		animID = id;
@@ -164,21 +164,21 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 		set(jspma, x, y, 500, 650, 900, 650);
 		set(jspmp, x, y, 1400, 650, 900, 650);
 		set(jspm, x, y, 0, 50, 300, 1250);
-		set((Canvas) ab, x, y, 300, 50, 700, 500);
+		set((Canvas) ab, x, y, 300, 50, 1100, 500);
 		set(addl, x, y, 2100, 550, 200, 50);
 		set(reml, x, y, 2100, 600, 200, 50);
-		set(jtl, x, y, 300, 550, 700, 100);
+		set(jtl, x, y, 300, 550, 1100, 100);
 		set(inft, x, y, 1400, 550, 250, 50);
 		set(inff, x, y, 1650, 550, 250, 50);
 		set(infv, x, y, 1400, 600, 250, 50);
 		set(infm, x, y, 1650, 600, 250, 50);
 
-		set(revt, x, y, 1000, 50, 200, 50);
-		set(polish, x, y, 1200, 50, 200, 50);
-		set(addfs, x, y, 1000, 100, 200, 50);
-		set(jstfs, x, y, 1200, 100, 200, 50);
-		set(trimfs, x, y, 1000, 150, 200, 50);
-		set(jtrim, x, y, 1200, 150, 200, 50);
+		set(revt, x, y, 1400, 50, 200, 50);
+		set(polish, x, y, 1600, 50, 200, 50);
+		set(addfs, x, y, 1400, 100, 200, 50);
+		set(jstfs, x, y, 1600, 100, 200, 50);
+		set(trimfs, x, y, 1400, 150, 200, 50);
+		set(jtrim, x, y, 1600, 150, 200, 50);
 
 		maet.setRowHeight(size(x, y, 50));
 		mpet.setRowHeight(size(x, y, 50));
@@ -445,18 +445,20 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 			change(false);
 		});
 
+		maet.getSelectionModel().addListSelectionListener(l -> {
+			if (l.getValueIsAdjusting())
+				return;
+			boolean b = maet.getSelectedRows().length > 0;
+			jstfs.setEnabled(b);
+			jtrim.setEnabled(b);
+		});
+
 		jstfs.setLnr(theJ -> {
 			MaAnim anim = ac.getMaAnim(animID);
-			if (anim == null || death || isAdj() || jstfs.getText().isEmpty())
+			if (anim == null || theJ.isTemporary() || isAdj() || jstfs.getText().isEmpty())
 				return;
-			death = true;
-			int add = CommonStatic.parseIntN(jstfs.getText());
+            int add = CommonStatic.parseIntN(jstfs.getText());
 			int[] rows = maet.getSelectedRows();
-			if (rows.length == 0) {
-				death = false;
-				Opts.pop("You must select at least 1 part to add", "Nothing selected");
-				return;
-			}
 			if (add != 0 && Opts.conf((add > 0 ? "Add " : "Substract ") + Math.abs(add) + "f startup time for the selected parts?")) {
 				change(true);
 				for (int row : rows) {
@@ -470,21 +472,14 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 				setJTLs();
 				change(false);
 			}
-			death = false;
-		});
+        });
 
 		jtrim.setLnr(theJ -> {
 			MaAnim anim = ac.getMaAnim(animID);
-			if (anim == null || isAdj() || jtrim.getText().isEmpty())
+			if (anim == null || theJ.isTemporary() || jtrim.getText().isEmpty())
 				return;
 			int trim = CommonStatic.parseIntN(jtrim.getText());
 			int[] rows = maet.getSelectedRows();
-			death = true;
-			if (rows.length == 0) {
-				death = false;
-				Opts.pop("You must select at least 1 part to trim", "Nothing selected");
-				return;
-			}
 			if (Opts.conf("Trim every keyframe timed " + (trim > 0 ? "after " : "before ") + trim + "f for the selected parts?")) {
 				change(true);
 				for (int row : rows) {
@@ -519,8 +514,7 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 				setJTLs();
 				change(false);
 			}
-			death = false;
-		});
+        });
 	}
 
 	private boolean unecessarymove(Part data, int part) {
@@ -560,6 +554,8 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 		add(jstfs);
 		add(trimfs);
 		add(jtrim);
+		jstfs.setEnabled(false);
+		jtrim.setEnabled(false);
 		setA();
 
 		addListeners$0();

@@ -229,8 +229,8 @@ class GLViewBox extends GLCstd implements ViewBox, GLEventListener {
 	}
 
 	@Override
-	public void update() {
-		dat.update();
+	public void update(float aspd) {
+		dat.update(aspd);
 		if (dat.getEnt() != null)
 			exp.update();
 	}

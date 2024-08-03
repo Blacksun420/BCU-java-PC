@@ -159,6 +159,7 @@ public class MaAnimEditTable extends AnimTable<Part> {
 		ma = maa;
 		revalidate();
 		repaint();
+		page.fireDimensionChanged();
 	}
 
 }

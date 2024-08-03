@@ -445,7 +445,7 @@ public interface BattleBox {
 					imh = ih;
 
 					if(sb.selectedUnit[0] != -1 && sb.selectedUnit[0] == i && sb.selectedUnit[1] == j) {
-						switch (sb.buttonDelay) {
+						switch ((int)sb.buttonDelay) {
 							case 3:
 								imw = (int) (imw * 0.95);
 								imh = (int) (imh * 0.95);
@@ -490,7 +490,7 @@ public interface BattleBox {
 					} else if (sb.elu.validSpirit(i,j))
 						g.colRect((int) (x - (imw - iw) / 2.0), (int) (y - (imh - ih) / 2.0), imw, imh, 64, 0, 0, 160);
 
-					int cool = sb.elu.cool[i][j];
+					double cool = sb.elu.cool[i][j];
 					boolean b = pri > sb.money || cool > 0;
 					if (b)
 						g.colRect((int) (x - (imw - iw) / 2.0), (int) (y - (imh - ih) / 2.0), imw, imh, 0, 0, 0, 100);
@@ -499,7 +499,7 @@ public interface BattleBox {
 					if (cool > 0) {
 						int dw = (int) (hr * 10);
 						int dh = (int) (hr * 12);
-						float cd = 1f * cool / sb.elu.maxC[i][j];
+						float cd = (float)(1f * cool / sb.elu.maxC[i][j]);
 						int xw = (int) (cd * (iw - dw * 2));
 						int xw2 = iw - dw * 2;
 
@@ -527,7 +527,7 @@ public interface BattleBox {
 				imh = ih;
 
 				if(sb.selectedUnit[0] != -1 && sb.selectedUnit[0] == index && sb.selectedUnit[1] == i) {
-					switch (sb.buttonDelay) {
+					switch ((int)sb.buttonDelay) {
 						case 3:
 							imw = (int) (imw * 0.95);
 							imh = (int) (imh * 0.95);
@@ -581,7 +581,7 @@ public interface BattleBox {
 				} else if (sb.elu.validSpirit(index,i))
 					g.colRect((int) (x - (imw - iw) / 2.0), (int) (y - (imh - ih) / 2.0), imw, imh, 64, 0, 0, 160);
 
-				int cool = sb.elu.cool[index][i];
+				double cool = sb.elu.cool[index][i];
 				boolean b = isBehind || pri > sb.money || cool > 0;
 				if (b)
 					g.colRect((int) (x - (imw - iw) / 2.0), (int) (y - (imh - ih) / 2.0), imw, imh, 0, 0, 0, 100);
@@ -591,7 +591,7 @@ public interface BattleBox {
 					if (cool > 0) {
 						int dw = (int) (hr * 10);
 						int dh = (int) (hr * 12);
-						float cd = 1f * cool / sb.elu.maxC[index][i];
+						float cd = (float)(1f * cool / sb.elu.maxC[index][i]);
 						int xw = (int) (cd * (iw - dw * 2));
 						g.colRect(x + iw - dw - xw, y + ih - dh * 2, xw, dh, 0, 0, 0, -1);
 						g.colRect(x + dw, y + ih - dh * 2, iw - dw * 2 - xw, dh, 100, 212, 255, -1);
@@ -648,7 +648,7 @@ public interface BattleBox {
 				int centr = (int) (cast.center * ratio * sca);
 				gra.drawImage(bimg, posx - bw + shake + centr, posy - bh, bw, bh);
 			} else {
-				if(sb.temp_inten == 0 || (sb.ebase.getAbi() & Data.AB_TIMEI) == 0) {
+				if(sb.tstop == 0 || (sb.ebase.getAbi() & Data.AB_TIMEI) == 0) {
 					posx = (int) getX(sb.ebase.pos);
 
 					((Entity) sb.ebase).anim.draw(gra, setP(posx + shake, posy), bf.sb.siz * sprite);
@@ -667,7 +667,7 @@ public interface BattleBox {
 			if (sb.ubase instanceof ECastle)
 				drawNyCast(gra, (int) (midh - road_h * bf.sb.siz), (int) (posx + shake), bf.sb.siz, sb.nyc);
 			else {
-				if(sb.temp_inten == 0 || (sb.ubase.getAbi() & Data.AB_TIMEI) == 0) {
+				if(sb.tstop == 0 || (sb.ubase.getAbi() & Data.AB_TIMEI) == 0) {
 					posx = (int) getX(sb.ubase.pos);
 
 					((Entity) sb.ubase).anim.draw(gra, setP(posx + shake, (int) (midh - road_h * bf.sb.siz)), bf.sb.siz * sprite);
@@ -782,7 +782,7 @@ public interface BattleBox {
 			}
 
 			if(sb.ebase instanceof Entity) {
-				if(sb.temp_inten == 0 || (sb.ebase.getAbi() & Data.AB_TIMEI) > 0) {
+				if(sb.tstop == 0 || (sb.ebase.getAbi() & Data.AB_TIMEI) > 0) {
 					if(((Entity) sb.ebase).anim.smoke != null && !((Entity) sb.ebase).anim.smoke.done()) {
 						gra.setTransform(at);
 
@@ -793,7 +793,7 @@ public interface BattleBox {
 					}
 				}
 			} else if(sb.ebase instanceof ECastle) {
-				if(sb.temp_inten == 0 && ((ECastle) sb.ebase).smoke != null && !((ECastle) sb.ebase).smoke.done()) {
+				if(sb.tstop == 0 && ((ECastle) sb.ebase).smoke != null && !((ECastle) sb.ebase).smoke.done()) {
 					gra.setTransform(at);
 
 					float sx = getX(((ECastle) sb.ebase).smokeX);
@@ -801,7 +801,7 @@ public interface BattleBox {
 
 					((ECastle) sb.ebase).smoke.draw(gra, setP(sx, sy), psiz * 1.2f);
 				}
-				if(sb.temp_inten == 0 && ((ECastle) sb.ebase).guard != null && !((ECastle) sb.ebase).guard.done()) { // TODO (visuals): match exact visuals in-game
+				if(sb.tstop == 0 && ((ECastle) sb.ebase).guard != null && !((ECastle) sb.ebase).guard.done()) { // TODO (visuals): match exact visuals in-game
 					gra.setTransform(at);
 
 					float sx = getX(sb.ebase.pos + 25f);
@@ -812,7 +812,7 @@ public interface BattleBox {
 			}
 
 			if(sb.ubase instanceof Entity) {
-				if (sb.temp_inten == 0 || (sb.ubase.getAbi() & Data.AB_TIMEI) > 0) {
+				if (sb.tstop == 0 || (sb.ubase.getAbi() & Data.AB_TIMEI) > 0) {
 					if (((Entity) sb.ubase).anim.smoke != null && !((Entity) sb.ubase).anim.smoke.done()) {
 						gra.setTransform(at);
 
@@ -823,7 +823,7 @@ public interface BattleBox {
 					}
 				}
 			} else if(sb.ubase instanceof ECastle) {
-				if(sb.temp_inten == 0 && ((ECastle) sb.ubase).smoke != null && !((ECastle) sb.ubase).smoke.done()) {
+				if(sb.tstop == 0 && ((ECastle) sb.ubase).smoke != null && !((ECastle) sb.ubase).smoke.done()) {
 					gra.setTransform(at);
 
 					float sx = getX(((ECastle) sb.ubase).smokeX);
@@ -893,7 +893,7 @@ public interface BattleBox {
 				gra.setTransform(at);
 			}
 
-			if (sb.temp_inten > 0) {
+			if (sb.tstop > 0) {
 				gra.setComposite(FakeGraphics.GRAY, 0, 0);
 				gra.fillRect(0, 0, w, h);
 

@@ -23,23 +23,18 @@ public class JTF extends JTextField implements CustomComp {
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent ke) {
-                if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+                if (ke.getKeyCode() == KeyEvent.VK_ENTER)
                     transferFocus();
-                    if (isFocusOwner())
-                        KeyboardFocusManager.getCurrentKeyboardFocusManager().clearFocusOwner();
-                }
             }
         });
     }
 
     public void setLnr(Consumer<FocusEvent> c) {
         addFocusListener(new FocusAdapter() {
-
             @Override
             public void focusLost(FocusEvent e) {
                 c.accept(e);
             }
-
         });
     }
 

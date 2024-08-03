@@ -355,10 +355,11 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		set(tmul, x, y, 300, 700, 200, 50);
 		set(addp, x, y, 300, 750, 200, 50);
 		set(remp, x, y, 300, 800, 200, 50);
-		if (maet.anim != null && maet.anim.getAtkCount() > 0) {
+		if (maet.anim != null && maet.anim.getAtkCount() >= 1) {
+			int ath = maet.anim.getAtkCount() >= 2 ? 50 : 0;
 			set(adda, x, y, 300, 850, 200, 50);
-			set(rema, x, y, 300, 900, 200, 50);
-			set(jspv, x, y, 300, 950, 200, 350);
+			set(rema, x, y, 300, 900, 200, ath);
+			set(jspv, x, y, 300, 900 + ath, 200, 400 - ath);
 		} else {
 			set(adda, x, y, 300, 850, 0, 0);
 			set(rema, x, y, 300, 900, 0, 0);
@@ -604,7 +605,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		inft.setLnr(j -> {
 			if (changing || isAdj())
 				return;
-			int l = (int)CommonStatic.fltFpsMul(CommonStatic.parseFloatN(inft.getText()));
+			int l = (int)(CommonStatic.parseFloatN(inft.getText()));
 			if (l < 0)
 				return;
 			changing = true;
@@ -723,6 +724,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		add(sort);
 		agt.renewNodes();
 		jta.setCellRenderer(new AnimTreeRenderer());
+		tmul.setHintText("Speed %");
 		SwingUtilities.invokeLater(() -> jta.setUI(new TreeNodeExpander(jta)));
 		inft.setBorder(BorderFactory.createEtchedBorder());
 		inff.setBorder(BorderFactory.createEtchedBorder());
@@ -898,7 +900,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		callBack(null);
 		if (p == mpet.part)
 			change(si, i -> mpet.getSelectionModel().setSelectionInterval(i, i));
-		setD(p.n - 1);
+		setD(si);
 		setJTL();
 		int h = mpet.getRowHeight();
 		mpet.scrollRectToVisible(new Rectangle(0, h * (p.n - 1), 1, h));

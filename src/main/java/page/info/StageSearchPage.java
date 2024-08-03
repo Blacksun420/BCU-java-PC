@@ -15,7 +15,6 @@ import utilpc.UtilPC;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("ForLoopReplaceableByForEach")
@@ -129,7 +128,7 @@ public class StageSearchPage extends StagePage {
         String str = mapName.getText().toLowerCase();
         List<StageMap> chaptersFound = new ArrayList<>();
         List<Integer> diffs = new ArrayList<>();
-        int minDiff = MainBCU.searchTolerance ;
+        int minDiff = MainBCU.searchTolerance;
 
         for (MapColc mc : MapColc.values())
             for (StageMap sm : mc.maps) {

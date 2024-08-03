@@ -28,7 +28,6 @@ public class UIPage extends DefaultPage {
 
     @Override
     protected void exit() {
-        changePanel(getFront());
         P.uninstallOpaqueHandler(opaSlider, opaInput);
     }
 

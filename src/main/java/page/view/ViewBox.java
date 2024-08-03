@@ -120,20 +120,20 @@ public interface ViewBox {
 			}
 		}
 
-		public void update() {
+		public void update(float aspd) {
 			if (bgEffect != null) {
 				if(!bgi) {
 					bgEffect.initialize(fw, (float) ms, (float) midY, bg);
 					bgi = true;
 				}
-				bgEffect.update(fw, (float) ms, (float) midY);
+				bgEffect.update(fw, (float) ms, (float) midY, 1);
 			}
 			if (ent != null) {
 				if (ent instanceof EAnimU) {
 					EAnimU e = (EAnimU) ent;
-					ent.update(e.type.rotate());
+					ent.update(e.type.rotate(), aspd);
 				} else
-					ent.update(true);
+					ent.update(true, aspd);
 			}
 		}
 	}
@@ -242,5 +242,5 @@ public interface ViewBox {
 		return null;
 	}
 
-	void update();
+	void update(float aspd);
 }

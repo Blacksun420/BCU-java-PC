@@ -134,8 +134,8 @@ class ViewBoxDef extends Canvas implements ViewBox, ViewBox.VBExporter {
 	}
 
 	@Override
-	public synchronized void update() {
-		dat.update();
+	public synchronized void update(float aspd) {
+		dat.update(aspd);
 	}
 
 	protected synchronized BufferedImage getImage() {
