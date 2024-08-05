@@ -77,9 +77,8 @@ class ComingTable extends AbJTable {
 		c = lnk[c];
 		if (data == null || r < 0 || c < 0 || r >= data.length || c >= data[r].length)
 			return null;
-		if (c == 2) {
+		if (c == 2)
 			return data[r][c] + "%";
-		}
 		if (data[r][c] == null)
 			return "";
 		else
@@ -109,16 +108,17 @@ class ComingTable extends AbJTable {
 
 	}
 
-	protected void setData(Stage st) {
+	protected void setData(Stage st, int star) {
 		Line[] info = st.data.getSimple();
 		data = new Object[info.length][7];
 		link = new int[info.length];
+		int mul = st.getCont().stars[star];
 		for (int i = 0; i < info.length; i++) {
 			int ind = info.length - i - 1;
 			link[i] = ind;
 			data[link[i]][1] = Identifier.getOr(info[i].enemy, AbEnemy.class);
 			data[link[i]][0] = info[i].boss >= 1 ? MainLocale.getLoc(MainLocale.INFO, "b" + info[i].boss) : "";
-			data[link[i]][2] = CommonStatic.toArrayFormat(info[i].multiple, info[i].mult_atk);
+			data[link[i]][2] = info[i].multiple != info[i].mult_atk ? CommonStatic.toArrayFormat(info[i].multiple*mul/100, info[i].mult_atk*mul/100) : info[i].multiple*mul/100;
 			data[link[i]][3] = info[i].number == 0 ? Page.get(MainLocale.UTIL, "inf") : info[i].number;
 			if (info[i].castle_0 >= info[i].castle_1)
 				data[link[i]][4] = info[i].castle_0 + "%";

@@ -434,6 +434,10 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 				return;
 
 			setA((AnimCE) node.getUserObject());
+			if (pause && ab.getEntity() != null)
+				ab.getEntity().setTime(CommonStatic.fltFpsDiv(jtl.getValue()));
+			else
+				jtl.setValue(0);
 		});
 
 		jlt.addListSelectionListener(arg0 -> {

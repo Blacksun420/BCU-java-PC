@@ -23,15 +23,21 @@ import utilpc.Algorithm;
 import utilpc.Algorithm.SRResult;
 import utilpc.UtilPC;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 
 public class ImgCutEditPage extends DefaultPage implements AbEditPage {
@@ -174,34 +180,7 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 			BufferedImage bimg = new Importer("Add your sprite", Importer.IMP_IMG).getImg();
 			if (bimg == null)
 				return;
-			int selection = Opts.selection("What kind of animation do you want to create?",
-					"Select Animation Type",
-					"Unit/Enemy",
-					"Soul",
-					"Background Effect");
-			if (selection == -1)
-				return;
-			changing = true;
-			ResourceLocation rl;
-			if (selection == 2)
-				rl = new ResourceLocation(ResourceLocation.LOCAL, "new bgeffect anim", Source.BasePath.BGEffect);
-			else if (selection == 1)
-				rl = new ResourceLocation(ResourceLocation.LOCAL, "new soul anim", Source.BasePath.SOUL);
-			else
-				rl = new ResourceLocation(ResourceLocation.LOCAL, "new anim", Source.BasePath.ANIM);
-			Workspace.validate(rl);
-			Source.warn = false;
-			AnimCE ac = new AnimCE(rl);
-			Source.warn = true;
-			ac.setNum(MainBCU.builder.build(bimg));
-			ac.saveImg();
-			ac.createNew();
-			AnimCE.map().put(rl.id, ac);
-			AnimGroup.workspaceGroup.renewGroup();
-			agt.renewNodes();
-			selectAnimNode(ac);
-			setA(ac);
-			changing = false;
+			addAnimation(bimg);
 		});
 
 		impt.addActionListener(arg0 -> {
@@ -239,7 +218,7 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 			public void focusLost(FocusEvent arg0) {
 				changing = true;
 				String str = CommonStatic.verifyFileName(name.getText().trim());
-				if (str.length() == 0 || icet.anim == null || icet.anim.id.id.equals(str)) {
+				if (str.isEmpty() || icet.anim == null || icet.anim.id.id.equals(str)) {
 					if (icet.anim != null)
 						name.setText(icet.anim.id.id);
 					changing = false;
@@ -334,15 +313,7 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 					"Select Icon Type",
 					"Display icon",
 					"Deploy icon");
-			if (selection == 0) {
-				icet.anim.setEdi(MainBCU.builder.toVImg(bimg));
-				icet.anim.saveIcon();
-			} else if (selection == 1) {
-				icet.anim.setUni(MainBCU.builder.toVImg(bimg));
-				icet.anim.saveUni();
-				if (icet.anim.getUni() != null)
-					uni.setIcon(UtilPC.getIcon(icet.anim.getUni()));
-			}
+			setIcon(bimg, selection);
 		});
 
 		white.setLnr(e -> {
@@ -568,6 +539,68 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		setA(null);
 		addListeners$0();
 		addListeners$1();
+
+		setDropTarget(new DropTarget() {
+			@Override
+			public synchronized void drop(DropTargetDropEvent evt) {
+				try {
+					evt.acceptDrop(DnDConstants.ACTION_COPY);
+					File f = ((java.util.List<File>)evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor)).get(0);
+					Component c = findComponentAt(evt.getLocation());
+					if (icet.anim == null || c == jta) {
+						addAnimation(ImageIO.read(f));
+					} else
+						setIcon(ImageIO.read(f), c == uni ? 1 : 0);
+					evt.dropComplete(true);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					evt.dropComplete(false);
+				}
+			}
+		});
+	}
+
+	private void addAnimation(BufferedImage bimg) {
+		int selection = Opts.selection("What kind of animation do you want to create?",
+				"Select Animation Type",
+				"Unit/Enemy",
+				"Soul",
+				"Background Effect");
+		if (selection == -1)
+			return;
+		changing = true;
+		ResourceLocation rl;
+		if (selection == 2)
+			rl = new ResourceLocation(ResourceLocation.LOCAL, "new bgeffect anim", Source.BasePath.BGEffect);
+		else if (selection == 1)
+			rl = new ResourceLocation(ResourceLocation.LOCAL, "new soul anim", Source.BasePath.SOUL);
+		else
+			rl = new ResourceLocation(ResourceLocation.LOCAL, "new anim", Source.BasePath.ANIM);
+		Workspace.validate(rl);
+		Source.warn = false;
+		AnimCE ac = new AnimCE(rl);
+		Source.warn = true;
+		ac.setNum(MainBCU.builder.build(bimg));
+		ac.saveImg();
+		ac.createNew();
+		AnimCE.map().put(rl.id, ac);
+		AnimGroup.workspaceGroup.renewGroup();
+		agt.renewNodes();
+		selectAnimNode(ac);
+		setA(ac);
+		changing = false;
+	}
+
+	private void setIcon(BufferedImage bimg, int selection) {
+		if (selection == 0) {
+			icet.anim.setEdi(MainBCU.builder.toVImg(bimg));
+			icet.anim.saveIcon();
+		} else if (selection == 1) {
+			icet.anim.setUni(MainBCU.builder.toVImg(bimg));
+			icet.anim.saveUni();
+			//If it's null, it will get the default
+			uni.setIcon(UtilPC.getIcon(icet.anim.getUni()));
+		}
 	}
 
 	private void setA(AnimCE anim) {
@@ -585,6 +618,7 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		sb.setAnim(anim);
 		if (sb.sele == -1)
 			icet.clearSelection();
+		sb.setEnabled(anim != null);
 		name.setEnabled(anim != null);
 		name.setText(anim == null ? "" : anim.id.id);
 		boolean del = anim != null && anim.deletable();

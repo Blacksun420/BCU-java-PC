@@ -2,14 +2,21 @@ package page.anim;
 
 import common.util.anim.AnimCE;
 import common.util.anim.ImgCut;
+import main.MainBCU;
 import page.Page;
 import utilpc.Interpret;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 
 class SpriteBox extends JPanel implements KeyListener, MouseInputListener, MouseWheelListener {
 
@@ -211,7 +218,28 @@ class SpriteBox extends JPanel implements KeyListener, MouseInputListener, Mouse
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addMouseWheelListener(this);
-	}
+
+		setDropTarget(new DropTarget() {
+			@Override
+			public synchronized void drop(DropTargetDropEvent evt) {
+				try {
+					if (anim == null) {
+						evt.rejectDrop();
+						return;
+					}
+					evt.acceptDrop(DnDConstants.ACTION_COPY);
+					File f = ((java.util.List<File>)evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor)).get(0);
+
+					anim.setNum(MainBCU.builder.build(ImageIO.read(f)));
+					anim.saveImg();
+					anim.reloImg();
+					evt.dropComplete(true);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		}
 
 	@Override
 	public void keyTyped(KeyEvent e) {

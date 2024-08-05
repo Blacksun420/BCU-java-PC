@@ -132,6 +132,8 @@ public class StRecdPage extends AbRecdPage {
 			if (!Replay.getMap().containsKey(name) || st.recd.stream().noneMatch(re -> re.rl.id.equals(name)) || Opts.conf("A replay named " + name + " already exists. Do you wish to overwrite?"))
 				r.rename(name);
 			rena.setText(r.rl.id);
+			list.revalidate();
+			list.repaint();
 		});
 
 	}

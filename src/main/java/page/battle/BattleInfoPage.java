@@ -97,7 +97,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			bb = BBBuilder.def.getRply(this, basis, rec.rl.id, (conf & 4) != 0);
 		jtb.setSelected((conf & 2) != 0);
 		jtb.setEnabled((conf & 1) == 0);
-		ct.setData(basis.sb.st);
+		ct.setData(basis.sb.st, rec.star);
 		utd = new TotalDamageTable(basis);
 		utdsp = new JScrollPane(utd);
 		etd = new EnemyDamageTable(basis);
@@ -115,7 +115,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		bb = BBBuilder.def.getCtrl(this, ctrl);
 		pause = true;
 		basis = ctrl;
-		ct.setData(basis.sb.st);
+		ct.setData(basis.sb.st, basis.sb.est.star);
 		utd = new TotalDamageTable(basis);
 		utdsp = new JScrollPane(utd);
 		etd = new EnemyDamageTable(basis);
@@ -140,7 +140,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		SBCtrl sb = new SBCtrl(this, st, star, lu, conf, seed, saveMode);
 		bb = BBBuilder.def.getCtrl(this, sb);
 		basis = sb;
-		ct.setData(basis.sb.st);
+		ct.setData(basis.sb.st, basis.sb.est.star);
 		jtb.setSelected(DEF_LARGE);
 		utd = new TotalDamageTable(basis);
 		utdsp = new JScrollPane(utd);
@@ -525,13 +525,14 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		row.addActionListener(a -> {
 			CommonStatic.getConfig().twoRow = !CommonStatic.getConfig().twoRow;
 			row.setText(get(MainLocale.PAGE, CommonStatic.getConfig().twoRow ? "tworow" : "onerow"));
+			bb.paint();
 		});
 
 		jsl.addChangeListener(e -> {
 			if (jsl.getValueIsAdjusting() || isAdj() || !(basis instanceof SBRply))
 				return;
 			((SBRply) basis).restoreTo(jsl.getValue());
-			ct.setData(basis.sb.st);
+			ct.setData(basis.sb.st, basis.sb.est.star);
 			updateTables();
 			updateTablesL();
 			BCMusic.flush(false);

@@ -78,6 +78,8 @@ public class RecdManagePage extends AbRecdPage {
 			if (!Replay.getMap().containsKey(name) || Opts.conf("A replay named " + name + " already exists. Do you wish to overwrite?"))
 				r.rename(name);
 			rena.setText(r.rl.id);
+			jlr.revalidate();
+			jlr.repaint();
 		});
 
 		dele.addActionListener(arg0 -> {
