@@ -15,24 +15,16 @@ import common.util.unit.Enemy;
 import main.MainBCU;
 import main.Opts;
 import page.*;
-import page.support.AnimTreeRenderer;
-import page.support.Exporter;
-import page.support.Importer;
-import page.support.TreeNodeExpander;
+import page.support.*;
 import utilpc.Algorithm;
 import utilpc.Algorithm.SRResult;
 import utilpc.UtilPC;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
@@ -59,6 +51,7 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 	private final JBTN merg = new JBTN(0, "merge");
 	private final JBTN spri = new JBTN(0, "sprite");
 	private final JBTN white = new JBTN(0, "whiteBG");
+	private final JLabel edi = new JLabel();
 	private final JLabel uni = new JLabel();
 	private final JTree jta = new JTree();
 	private final AnimGroupTree agt;
@@ -158,7 +151,8 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		set(reml, x, y, 650, 350, 200, 50);
 		set(ico, x, y, 400, 400, 200, 50);
 		set(white, x, y, 650, 400, 200, 50);
-		set(uni, x, y, 450, 450, 400, 150);
+		set(edi, x, y, 400, 450, 200, 150);
+		set(uni, x, y, 650, 450, 200, 150);
 		set(jspic, x, y, 50, 600, 800, 650);
 		set(sb, x, y, 900, 100, 1400, 1150);
 
@@ -178,8 +172,6 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 	private void addListeners$0() {
 		add.addActionListener(arg0 -> {
 			BufferedImage bimg = new Importer("Add your sprite", Importer.IMP_IMG).getImg();
-			if (bimg == null)
-				return;
 			addAnimation(bimg);
 		});
 
@@ -531,6 +523,9 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		add(uni);
 		uni.setVerticalAlignment(SwingConstants.CENTER);
 		uni.setHorizontalAlignment(SwingConstants.CENTER);
+		add(edi);
+		edi.setVerticalAlignment(SwingConstants.CENTER);
+		edi.setHorizontalAlignment(SwingConstants.CENTER);
 		add.setEnabled(aep.focus == null);
 		name.setEnabled(aep.focus == null);
 		relo.setEnabled(aep.focus == null);
@@ -539,35 +534,44 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		setA(null);
 		addListeners$0();
 		addListeners$1();
+		setDrops();
+	}
 
-		setDropTarget(new DropTarget() {
+	private void setDrops() {
+		setDropTarget(new DropParser() {
 			@Override
-			public synchronized void drop(DropTargetDropEvent evt) {
-				try {
-					evt.acceptDrop(DnDConstants.ACTION_COPY);
-					File f = ((java.util.List<File>)evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor)).get(0);
-					Component c = findComponentAt(evt.getLocation());
-					if (icet.anim == null || c == jta) {
-						addAnimation(ImageIO.read(f));
-					} else
-						setIcon(ImageIO.read(f), c == uni ? 1 : 0);
-					evt.dropComplete(true);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-					evt.dropComplete(false);
-				}
+			public boolean process(File f) {
+				return addAnimation(getImg());
+			}
+		});
+		edi.setDropTarget(new DropParser() {
+			@Override
+			public boolean process(File f) {
+				if (icet.anim == null)
+					return addAnimation(getImg());
+				return setIcon(getImg(), 0);
+			}
+		});
+		uni.setDropTarget(new DropParser() {
+			@Override
+			public boolean process(File f) {
+				if (icet.anim == null)
+					return addAnimation(getImg());
+				return setIcon(getImg(), 1);
 			}
 		});
 	}
 
-	private void addAnimation(BufferedImage bimg) {
+	private boolean addAnimation(BufferedImage bimg) {
+		if (bimg == null)
+			return false;
 		int selection = Opts.selection("What kind of animation do you want to create?",
 				"Select Animation Type",
 				"Unit/Enemy",
 				"Soul",
 				"Background Effect");
 		if (selection == -1)
-			return;
+			return false;
 		changing = true;
 		ResourceLocation rl;
 		if (selection == 2)
@@ -589,18 +593,21 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		selectAnimNode(ac);
 		setA(ac);
 		changing = false;
+		return true;
 	}
 
-	private void setIcon(BufferedImage bimg, int selection) {
+	private boolean setIcon(BufferedImage bimg, int selection) {
 		if (selection == 0) {
 			icet.anim.setEdi(MainBCU.builder.toVImg(bimg));
 			icet.anim.saveIcon();
+			edi.setIcon(icet.anim.getEdi() == null ? null : UtilPC.getIcon(icet.anim.getEdi()));
 		} else if (selection == 1) {
 			icet.anim.setUni(MainBCU.builder.toVImg(bimg));
 			icet.anim.saveUni();
 			//If it's null, it will get the default
 			uni.setIcon(UtilPC.getIcon(icet.anim.getUni()));
 		}
+		return selection >= 0 && selection <= 1;
 	}
 
 	private void setA(AnimCE anim) {
@@ -653,8 +660,10 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		}
 
 		merg.setEnabled(mergeEnabled);
-		if (anim != null && anim.getUni() != null)
+		if (anim != null) {
 			uni.setIcon(UtilPC.getIcon(anim.getUni()));
+			edi.setIcon(anim.getEdi() == null ? null : UtilPC.getIcon(anim.getEdi()));
+		}
 		setB();
 		changing = boo;
 	}

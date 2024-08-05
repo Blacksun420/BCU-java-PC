@@ -9,15 +9,12 @@ import common.util.stage.Music;
 import io.BCMusic;
 import main.Opts;
 import page.*;
+import page.support.DropParser;
 import page.support.Importer;
 
 import javax.sound.sampled.LineEvent;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetDropEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -162,38 +159,34 @@ public class MusicEditPage extends DefaultPage {
 		setList();
 		addListeners();
 
-		setDropTarget(new DropTarget() {
+		setDropTarget(new DropParser() {
 			@Override
-			public synchronized void drop(DropTargetDropEvent evt) {
+			public boolean process(File mus) {
+				if (!Music.isMusic(mus.getName()))
+					return false;
+				int id = CommonStatic.parseIntN(mus.getName().substring(0, 3));
+				if (id == -1)
+					id = pack.musics.nextInd();
+				Music musc = pack.musics.getRaw(id);
+				if (musc != null && !Opts.conf("Music file with id " + id + " already exists in the pack. Replace?")) {
+					if (Opts.conf("Add as new song?"))
+						id = pack.musics.nextInd();
+					else
+						return false;
+				}
 				try {
-					evt.acceptDrop(DnDConstants.ACTION_COPY);
-					File mus = ((java.util.List<File>)evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor)).get(0);
-					if (Music.isMusic(mus.getName())) {
-						int id = CommonStatic.parseIntN(mus.getName().substring(0, 3));
-						if (id == -1)
-							id = pack.musics.nextInd();
-						Music musc = pack.musics.getRaw(id);
-						if (musc != null && !Opts.conf("Music file with id " + id + " already exists in the pack. Replace?")) {
-							if (Opts.conf("Add as new song?"))
-								id = pack.musics.nextInd();
-							else {
-								evt.dropComplete(false);
-								return;
-							}
-						}
-						File nmf = CommonStatic.ctx.getWorkspaceFile("./" + pack.getSID() + "/musics/" + Data.trio(id) + ".ogg");
-						Context.check(nmf);
-						Files.copy(mus.toPath(), nmf.toPath(), StandardCopyOption.REPLACE_EXISTING);
-						Music m = new Music(pack.getID(Music.class, id), new FDFile(nmf), musc);
-						if (CommonStatic.parseIntN(mus.getName().substring(0, 3)) == -1)
-							m.name = mus.getName().substring(0, mus.getName().length() - 4);
-						pack.musics.set(m.id.id, m);
-						setList();
-					}
-					evt.dropComplete(true);
+					File nmf = CommonStatic.ctx.getWorkspaceFile("./" + pack.getSID() + "/musics/" + Data.trio(id) + ".ogg");
+					Context.check(nmf);
+					Files.copy(mus.toPath(), nmf.toPath(), StandardCopyOption.REPLACE_EXISTING);
+					Music m = new Music(pack.getID(Music.class, id), new FDFile(nmf), musc);
+					if (CommonStatic.parseIntN(mus.getName().substring(0, 3)) == -1)
+						m.name = mus.getName().substring(0, mus.getName().length() - 4);
+					pack.musics.set(m.id.id, m);
+					setList();
+					return true;
 				} catch (Exception e) {
 					e.printStackTrace();
-					evt.dropComplete(false);
+					return false;
 				}
 			}
 		});

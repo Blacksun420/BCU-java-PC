@@ -14,8 +14,10 @@ import page.*;
 import page.info.filter.TraitList;
 import page.info.filter.UnitFindPage;
 import page.support.AnimLCR;
+import page.support.DropParser;
 import page.support.Importer;
 import page.support.ReorderList;
+import utilpc.UtilPC;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -79,14 +81,17 @@ public class TraitEditPage extends DefaultPage {
             for (Unit u : packpack.units)
                 for (Form f : u.forms)
                     list.remove(f);
-            list.removeIf(f -> ((Form)f).maxu().getTraits().isEmpty() || Entity.targetTraited(((Form)f).maxu().getTraits()));
+            list.removeIf(f -> ((Form)f).maxu().getTraits().isEmpty() || (t.targetType && Entity.targetTraited(((Form)f).maxu().getTraits())));
 
             jlf.setListData(list.toArray(new AbForm[0]));
             jlf.clearSelection();
-            if (list.size() > 0)
+            if (!list.isEmpty())
                 jlf.setSelectedIndex(0);
             else
                 jlf.clearSelection();
+            boolean b = editable && t != null && !list.isEmpty();
+            addu.setEnabled(b);
+            remu.setEnabled(b);
             changing = false;
         }
     }
@@ -100,8 +105,8 @@ public class TraitEditPage extends DefaultPage {
         set(altrg, x, y, 50, 950, 300, 50);
         set(ctrna, x, y, 50, 900, 300, 50);
         set(adicn, x, y, 350, 100, 250, 50);
-        set(jl, x, y, 450, 150, 50, 50);
-        set(reicn, x, y, 350, 200, 250, 50);
+        set(jl, x, y, 350, 150, 250, 250);
+        set(reicn, x, y, 350, 400, 250, 50);
         set(adv, x, y, 650, 50, 300, 50);
         set(jspf, x, y, 650, 100, 300, 800);
         set(vuif, x, y, 650, 900, 300, 50);
@@ -119,6 +124,8 @@ public class TraitEditPage extends DefaultPage {
                 t.icon = null;
                 jl.setIcon(null);
                 reicn.setEnabled(false);
+                jlct.revalidate();
+                jlct.repaint();
             }
         });
 
@@ -163,6 +170,8 @@ public class TraitEditPage extends DefaultPage {
                 return;
             changing = true;
             t.targetType = !t.targetType;
+            if (t.targetType)
+                t.others.removeIf(f -> Entity.targetTraited(f.maxu().getTraits()));
             updateCTL();
             changing = false;
         });
@@ -180,7 +189,7 @@ public class TraitEditPage extends DefaultPage {
             String str = ctrna.getText();
             if (t.name.equals(str))
                 return;
-            if (str.equals("")) {
+            if (str.isEmpty()) {
                 ctrna.setText(t.name);
                 return;
             }
@@ -191,7 +200,7 @@ public class TraitEditPage extends DefaultPage {
 
         addu.addActionListener(arg0 -> {
             List<AbForm> formList = jlf.getSelectedValuesList();
-            if (formList.size() == 0 || changing || jlct.getValueIsAdjusting())
+            if (formList.isEmpty() || changing || jlct.getValueIsAdjusting())
                 return;
             changing = true;
             t.others.addAll(formList);
@@ -201,7 +210,7 @@ public class TraitEditPage extends DefaultPage {
 
         remu.addActionListener(arg0 -> {
             List<Form> formList = tlf.getSelectedValuesList();
-            if (formList.size() == 0 ||changing || jlct.getValueIsAdjusting())
+            if (formList.isEmpty() ||changing || jlct.getValueIsAdjusting())
                 return;
             changing = true;
             formList.forEach(t.others::remove);
@@ -213,6 +222,12 @@ public class TraitEditPage extends DefaultPage {
             if (ufp == null)
                 ufp = new UnitFindPage(getThis(), false, packpack);
             changePanel(ufp);
+        });
+
+        jlf.addListSelectionListener(l -> {
+            boolean b = editable && t != null && jlf.getSelectedIndex() != -1;
+            addu.setEnabled(b);
+            remu.setEnabled(b);
         });
     }
 
@@ -233,18 +248,16 @@ public class TraitEditPage extends DefaultPage {
             ctrna.setText(t.name);
             altrg.setSelected(t.targetType);
             tlf.setListData(t.others.toArray(new Form[0]));
-            if (t.icon != null)
-                jl.setIcon(new ImageIcon((BufferedImage)t.icon.getImg().bimg()));
-            else
-                jl.setIcon(null);
+            jl.setIcon(t.icon != null ? UtilPC.resizeIcon(t.icon, 200, 200) : null);
         } else {
             tlf.clearSelection();
             tlf.setListData(new Form[0]);
         }
         renew();
         reicn.setEnabled(t != null && t.icon != null && editable);
-        addu.setEnabled(editable && t != null);
-        remu.setEnabled(editable && t != null);
+        boolean b = editable && t != null && jlf.getSelectedIndex() != -1;
+        addu.setEnabled(b);
+        remu.setEnabled(b);
     }
 
     private boolean isUsedTrait(Trait tr) {
@@ -282,18 +295,33 @@ public class TraitEditPage extends DefaultPage {
         jlf.setCellRenderer(new AnimLCR());
         tlf.setCellRenderer(new AnimLCR());
         jl.setIcon(null);
+        jl.setVerticalAlignment(SwingConstants.CENTER);
+        jl.setHorizontalAlignment(SwingConstants.CENTER);
         addListeners$0();
         addListeners$CG();
         updateCTL();
+
+        jl.setDropTarget(new DropParser() {
+            @Override
+            public boolean process(File f) {
+                if (t == null)
+                    return false;
+                return setTraitIcon(getImg());
+            }
+        });
     }
 
     private void getFile(String str) {
         BufferedImage bimg = new Importer(str, Importer.IMP_IMG).getImg();
         if (bimg == null)
             return;
+        setTraitIcon(bimg);
+    }
+
+    private boolean setTraitIcon(BufferedImage bimg) {
         if (bimg.getWidth() != bimg.getHeight()) {
             getFile(get(MainLocale.PAGE, "sqrwrn"));
-            return;
+            return false;
         }
         bimg = resizeImage(bimg, 41, 41);
 
@@ -308,10 +336,13 @@ public class TraitEditPage extends DefaultPage {
         } catch (IOException e) {
             CommonStatic.ctx.noticeErr(e, Context.ErrType.WARN, "failed to write file");
             getFile("Failed to save file");
-            return;
+            return false;
         }
+        jlct.revalidate();
+        jlct.repaint();
         updateCT();
         setIconImage(jlct.getSelectedValue());
+        return true;
     }
 
     private void setIconImage(Trait slt) {

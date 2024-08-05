@@ -6,6 +6,7 @@ import common.pack.PackData.UserPack;
 import main.MainBCU;
 import main.Opts;
 import page.*;
+import page.support.DropParser;
 import page.support.Importer;
 import utilpc.Interpret;
 import utilpc.UtilPC;
@@ -86,6 +87,7 @@ public class DescPage extends Page {
             pbanner.setIcon(UtilPC.resizeIcon(pack.banner, 1050, 550));
         }
         addListeners();
+        addDrops();
     }
 
     @Override
@@ -138,18 +140,12 @@ public class DescPage extends Page {
         picon.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println(e.getButton());
                 super.mouseClicked(e);
                 if (editable)
                     if (e.getButton() == MouseEvent.BUTTON1)
                         getImage(true, "Choose an icon for your pack");
-                    else if (Opts.conf()) {
-                        File file = CommonStatic.ctx.getWorkspaceFile(pack.getSID() + "/icon.png");
-                        if (file.delete()) {
-                            pack.icon = null;
-                            picon.setIcon(null);
-                        }
-                    }
+                    else
+                        setImage(true, null);
             }
         });
         pbanner.addMouseListener(new MouseAdapter() {
@@ -159,18 +155,13 @@ public class DescPage extends Page {
                 if (editable)
                     if (e.getButton() == MouseEvent.BUTTON1)
                         getImage(false, "Choose a banner for your pack (Recommended Res: 1050x550)");
-                    else if (Opts.conf()) {
-                        File file = CommonStatic.ctx.getWorkspaceFile(pack.getSID() + "/banner.png");
-                        if (file.delete()) {
-                            pack.icon = null;
-                            pbanner.setIcon(null);
-                        }
-                    }
+                    else
+                        setImage(false, null);
             }
         });
 
         setIcn.setLnr(c -> getImage(true, "Choose an icon for your pack"));
-        setBnr.setLnr(c -> getImage(false, "Choose a banner for your pack"));
+        setBnr.setLnr(c -> getImage(false, "Choose a banner for your pack (Recommended Res: 1050x550)"));
 
         tver.setLnr(c -> {
             double n = CommonStatic.parseDoubleN(tver.getText());
@@ -180,14 +171,62 @@ public class DescPage extends Page {
         });
     }
 
+    private void addDrops() {
+        picon.setDropTarget(new DropParser() {
+            @Override
+            public boolean process(File f) {
+                return setImage(true, getImg());
+            }
+        });
+        setIcn.setDropTarget(new DropParser() {
+            @Override
+            public boolean process(File f) {
+                return setImage(true, getImg());
+            }
+        });
+
+        pbanner.setDropTarget(new DropParser() {
+            @Override
+            public boolean process(File f) {
+                return setImage(false, getImg());
+            }
+        });
+        setBnr.setDropTarget(new DropParser() {
+            @Override
+            public boolean process(File f) {
+                return setImage(false, getImg());
+            }
+        });
+    }
+
     private void getImage(boolean icon, String text) {
         BufferedImage bimg = new Importer(text, Importer.IMP_IMG).getImg();
-        if (bimg == null)
-            return;
+        setImage(icon, bimg);
+    }
+
+    private boolean setImage(boolean icon, BufferedImage bimg) {
+        if (bimg == null) {
+            String e = icon ? "/icon" : "/banner";
+            if ((icon ? pack.icon : pack.banner) != null && Opts.conf(CommonStatic.ctx.getWorkspaceFile(pack.getSID() + e + ".png"))) {
+                File file = CommonStatic.ctx.getWorkspaceFile(pack.getSID() + e + ".png");
+                if (file.delete()) {
+                    if (icon)
+                        pack.icon = null;
+                    else {
+                        pack.banner = null;
+                        fireDimensionChanged();
+                    }
+                    (icon ? picon : pbanner).setIcon(null);
+                    return true;
+                }
+            }
+            return false;
+        }
+        boolean resize = !icon && pack.banner == null;
         if (icon) {
             if (bimg.getWidth() != bimg.getHeight()) {
                 getImage(true, "Icon must have the same width and height");
-                return;
+                return false;
             }
             bimg = resizeImage(bimg, 128, 128);
             if (pack.icon != null)
@@ -208,9 +247,12 @@ public class DescPage extends Page {
         } catch (IOException e) {
             CommonStatic.ctx.noticeErr(e, Context.ErrType.WARN, "failed to write file");
             getImage(icon, "Failed to save file");
-            return;
+            return false;
         }
         updateIconDisplays();
+        if (resize)
+            fireDimensionChanged();
+        return true;
     }
 
     private void updateIconDisplays() {
