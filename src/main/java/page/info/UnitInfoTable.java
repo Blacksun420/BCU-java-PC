@@ -2,7 +2,6 @@ package page.info;
 
 import common.CommonStatic;
 import common.battle.data.MaskAtk;
-import common.battle.data.MaskUnit;
 import common.battle.data.PCoin;
 import common.pack.Identifier;
 import common.pack.UserProfile;
@@ -52,26 +51,6 @@ public class UnitInfoTable extends CharacterInfoTable {
 	@Override
 	protected void resetAtk() {
 		super.resetAtk();
-		boolean pc = f.du.getPCoin() != null;
-		MaskUnit du = f.maxu();
-		List<Interpret.ProcDisplay> ls = Interpret.getAbi(du, dispAtk);
-		double mul = f.unit.lv.getMult(multi.getTotalLv());
-		ls.addAll(Interpret.getProc(du, false, new double[]{Math.round(du.getHp() * mul) * b.t().getDefMulti(), multi.getTotalLv()}, dispAtk));
-		if (pc)
-			ls.add(new Interpret.ProcDisplay("",null));
-		proc = new JLabel[ls.size()];
-		for (int i = 0; i < ls.size(); i++) {
-			Interpret.ProcDisplay display = ls.get(i);
-			add(proc[i] = new JLabel(display.toString()));
-			proc[i].setBorder(BorderFactory.createEtchedBorder());
-			proc[i].setIcon(UtilPC.getScaledIcon(display.icon, UtilPC.iconSize, UtilPC.iconSize));
-		}
-		if (pc) {
-			pcoin = proc[ls.size() - 1];
-			add(pcoin);
-			pcoin.setText(UtilPC.lvText(f, multi)[1]);
-		} else
-			pcoin = null;
 		reset();
 	}
 
@@ -140,16 +119,21 @@ public class UnitInfoTable extends CharacterInfoTable {
 
 		List<Interpret.ProcDisplay> ls = Interpret.getAbi(ef.du, dispAtk);
 		ls.addAll(Interpret.getProc(ef.du, false, new double[]{mul, multi.getTotalLv()}, dispAtk));
-		for (JLabel l : proc) {
-			if (l != pcoin)
-				l.setText("");
-			l.setIcon(null);
-		}
+		if (proc != null)
+			for (JLabel p : proc)
+				remove(p);
+		proc = new JLabel[ls.size() + (pc != null ? 1 : 0)];
 		for (int i = 0; i < ls.size(); i++) {
 			Interpret.ProcDisplay display = ls.get(i);
-			proc[i].setText(display.toString());
+			add(proc[i] = new JLabel(display.toString()));
 			proc[i].setIcon(UtilPC.getScaledIcon(display.icon, UtilPC.iconSize, UtilPC.iconSize));
+			proc[i].setBorder(BorderFactory.createEtchedBorder());
 		}
+		if (pc != null) {
+			add(pcoin = proc[ls.size()] = new JLabel(UtilPC.lvText(f, multi)[1]));
+			pcoin.setBorder(BorderFactory.createEtchedBorder());
+		} else
+			pcoin = null;
 		updateTooltips();
 	}
 

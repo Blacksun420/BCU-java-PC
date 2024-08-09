@@ -72,9 +72,8 @@ public class FormEditPage extends EntityEditPage {
 	public void callBack(Object o) {
 		super.callBack(o);
 
-		if(o instanceof int[]) {
+		if(o instanceof int[])
 			BasisSet.synchronizeOrb(form.unit);
-		}
 	}
 
 	@Override

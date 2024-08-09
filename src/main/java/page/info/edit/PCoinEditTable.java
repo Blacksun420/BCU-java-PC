@@ -191,6 +191,8 @@ class PCoinEditTable extends Page {
                                 par.unit.pcoin.info.get(par.talent)[fi] = v[0];
                                 if (maxLv > 1 && v.length > 1)
                                     par.unit.pcoin.info.get(par.talent)[fi + ind] = v[1];
+                                else if (maxLv == 1)
+                                    par.unit.pcoin.info.get(par.talent)[fi + ind] = v[0];
                                 par.unit.pcoin.info.set(par.talent, par.unit.getProc().getArr(pdata[1]).setTalent(par.unit.pcoin.info.get(par.talent)));
                                 num.setText("" + par.unit.pcoin.info.get(par.talent)[fi]);
                                 if (maxLv > 1)

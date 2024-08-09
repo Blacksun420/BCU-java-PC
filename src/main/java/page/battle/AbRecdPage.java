@@ -3,7 +3,6 @@ package page.battle;
 import common.CommonStatic;
 import common.battle.BasisSet;
 import common.pack.Identifier;
-import common.pack.UserProfile;
 import common.util.stage.MapColc;
 import common.util.stage.Replay;
 import common.util.stage.Stage;
@@ -19,18 +18,17 @@ public abstract class AbRecdPage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JBTN rply = new JBTN(0, "rply");
-	private final JBTN recd = new JBTN(-1, "mp4");
-	private final JBTN vsta = new JBTN(0, "vsta");
-	private final JBTN jlu = new JBTN(0, "line");
+	private final JBTN rply = new JBTN(MainLocale.PAGE, "rply");
+	private final JBTN recd = new JBTN(MainLocale.PAGE, "expmp4");
+	private final JBTN vsta = new JBTN(MainLocale.PAGE, "csta");
+	private final JBTN jlu = new JBTN(MainLocale.PAGE, "line");
 	private final JTF seed = new JTF();
-	private final JTG larg = new JTG(0, "larges");
-	private final JBTN imgs = new JBTN(-1, "PNG");
-	private final JBTN clu = new JBTN(0, "Copy Lineup");
+	private final JTG larg = new JTG(MainLocale.PAGE, "larges");
+	private final JBTN imgs = new JBTN(MainLocale.PAGE, "png");
+	private final JBTN clu = new JBTN(MainLocale.PAGE, "Copy Lineup");
 	private final JLabel len = new JLabel();
 
-	private final JL ista = new JL();
-	private final JL imap = new JL();
+	private final JBTN ista = new JBTN();
 
 	private StageViewPage svp;
 	private BasisPage bp;
@@ -54,8 +52,8 @@ public abstract class AbRecdPage extends DefaultPage {
 		add(vsta);
 		add(seed);
 		add(jlu);
-		add(imap);
 		add(ista);
+		ista.setHorizontalAlignment(SwingConstants.LEFT);
 		len.setBorder(BorderFactory.createEtchedBorder());
 		addListeners();
 	}
@@ -76,8 +74,7 @@ public abstract class AbRecdPage extends DefaultPage {
 					r.st = ns.id;
 					r.unsaved = true;
 				}
-				ista.setText(UserProfile.getPack(r.st.pack.substring(0, r.st.pack.indexOf('/'))) != null ? r.st.get().toString() : "unavailable (" + r.st.toString() + ")");
-				imap.setText(r.st.getCont().toString());
+				setRecd(r);
 			}
 		}
 		if (editable && bp != null) {
@@ -95,16 +92,15 @@ public abstract class AbRecdPage extends DefaultPage {
 	protected void resized(int x, int y) {
 		super.resized(x, y);
 		set(rply, x, y, 600, 100, 300, 50);
-		set(imap, x, y, 950, 100, 300, 50);
-		set(ista, x, y, 1300, 100, 300, 50);
+		set(ista, x, y, 950, 100, 650, 50);
 		set(recd, x, y, 600, 200, 300, 50);
 		set(larg, x, y, 950, 200, 300, 50);
 		set(imgs, x, y, 1300, 200, 300, 50);
-		set(clu, x, y, 1300, 300, 300, 50);
-		set(len, x, y, 600, 300, 300, 50);
-		set(vsta, x, y, 600, 600, 300, 50);
-		set(jlu, x, y, 950, 600, 300, 50);
-		set(seed, x, y, 950, 300, 300, 50);
+		set(len, x, y, 950, 300, 300, 50);
+		set(seed, x, y, 1300, 300, 300, 50);
+		set(vsta, x, y, 1300, 400, 300, 50);
+		set(clu, x, y, 600, 500, 300, 50);
+		set(jlu, x, y, 950, 500, 300, 50);
 	}
 
 	protected abstract void setList();
@@ -117,8 +113,8 @@ public abstract class AbRecdPage extends DefaultPage {
 		rply.setEnabled(a);
 		recd.setEnabled(a);
 		imgs.setEnabled(a);
-		ista.setText(!a ? "(unavailable)" : st.toString());
-		imap.setText(!a ? "(unavailable)" : st.getCont().toString());
+		ista.setText(!a ? "(unavailable" + (r != null ? r.st.toString() : "") + ")" : st.getCont() + ":  " + st);
+		ista.setEnabled(a);
 		jlu.setEnabled(r != null);
 		if (r == null) {
 			len.setText("");
@@ -134,6 +130,8 @@ public abstract class AbRecdPage extends DefaultPage {
 			Stage rStage = getSelection().st == null ? null : getSelection().st.safeGet();
 			changePanel(svp = new StageViewPage(getThis(), MapColc.values(), rStage));
 		});
+
+		ista.setLnr(x -> changePanel(new StageViewPage(getThis(), MapColc.values(), getSelection().st.safeGet()))); //Pinpoints without change
 
 		jlu.setLnr(x -> {
 			Identifier<Stage> st = getSelection().st;

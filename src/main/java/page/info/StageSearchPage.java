@@ -132,7 +132,8 @@ public class StageSearchPage extends StagePage {
 
         for (MapColc mc : MapColc.values())
             for (StageMap sm : mc.maps) {
-                if (!sm.unlockReq.isEmpty() && mc.getSave(false) != null && !mc.getSave(false).cSt.containsKey(sm))
+                SaveData sd = mc.getSave(false);
+                if (sd != null && !sd.unlocked(sm))
                     continue;
                 int diff = UtilPC.damerauLevenshteinDistance(sm.toString().toLowerCase(),str);
                 if (diff <= minDiff) {
@@ -392,7 +393,7 @@ public class StageSearchPage extends StagePage {
         }
         stages.removeIf(s -> {
             SaveData sd = s.getMC().getSave(false);
-            return sd != null && sd.cSt.getOrDefault(s.getCont(), s.getCont().unlockReq.isEmpty() ? 0 : -1) < s.id();
+            return sd != null && !sd.unlocked(s);
         });
 
         if (chapters.isEmpty()) {

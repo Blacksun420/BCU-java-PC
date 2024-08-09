@@ -9,10 +9,7 @@ import page.JBTN;
 import page.Page;
 import page.battle.BattleSetupPage;
 import page.battle.StRecdPage;
-import utilpc.UtilPC;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -85,7 +82,7 @@ public class StageViewPage extends StagePage {
 			for (MapColc mc : mcs)
 				if (mc.getSave(false) != null) {
 					for (StageMap sm : mc.maps)
-						if (sm.unlockReq.isEmpty() || mc.getSave(false).cSt.containsKey(sm) || mc.getSave(false).nearUnlock(sm))
+						if (mc.getSave(true).unlocked(sm) || mc.getSave(true).nearUnlock(sm))
 							sms.add(sm);
 				} else
 					sms.addAll(mc.maps.getList());
@@ -105,9 +102,9 @@ public class StageViewPage extends StagePage {
 
 			for (StageMap sm : sms)
 				if (sm.getCont().getSave(false) != null) {
-					Integer stInds = sm.getCont().getSave(false).cSt.get(sm);
+					Integer stInds = sm.getCont().getSave(true).cSt.get(sm);
 					if (stInds == null) {
-						if (sm.list.size() > 0 && sm.unlockReq.isEmpty())
+						if (!sm.list.isEmpty() && sm.unlockReq.isEmpty())
 							sts.add(sm.list.get(0));
 					} else if (stInds >= sm.list.size() - 1)
 						sts.addAll(sm.list.getList());
@@ -214,7 +211,7 @@ public class StageViewPage extends StagePage {
 
 		Vector<StageMap> sms = new Vector<>();
 		for (StageMap sm : mc.maps)
-			if (sm.unlockReq.isEmpty() || mc.getSave(false).cSt.containsKey(sm) || mc.getSave(false).nearUnlock(sm))
+			if (mc.getSave(true).unlocked(sm) || mc.getSave(true).nearUnlock(sm))
 				sms.add(sm);
 		jlsm.setListData(sms);
 
@@ -225,9 +222,9 @@ public class StageViewPage extends StagePage {
 			else
 				return;
 		}
-		Integer stInds = mc.getSave(false).cSt.get(sm);
+		Integer stInds = mc.getSave(true).cSt.get(sm);
 		if (stInds == null) {
-			if (sm.list.size() > 0 && sm.unlockReq.isEmpty())
+			if (!sm.list.isEmpty() && sm.unlockReq.isEmpty())
 				jlst.setListData(new Stage[]{sm.list.get(0)});
 			else
 				jlst.setListData(sm.list.toArray());

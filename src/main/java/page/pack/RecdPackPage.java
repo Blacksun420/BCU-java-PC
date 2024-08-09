@@ -38,7 +38,7 @@ public class RecdPackPage extends AbRecdPage {
 		super.resized(x, y);
 		set(stdat, x, y, 50, 50, 500, 50);
 		set(jspr, x, y, 50, 100, 500, 1100);
-		set(rena, x, y, 600, 500, 300, 50);
+		set(rena, x, y, 600, 300, 300, 50);
 	}
 
 	@Override

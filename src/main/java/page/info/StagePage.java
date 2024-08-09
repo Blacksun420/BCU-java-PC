@@ -15,37 +15,6 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
-class StageMapList extends JList<StageMap> {
-	public StageMapList() {
-		super();
-		setCellRenderer(new DefaultListCellRenderer() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean s, boolean f) {
-				JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
-				StageMap sm = (StageMap)o;
-				SaveData sv = sm.getCont().getSave(false);
-				if (sv == null || !sv.nearUnlock(sm)) {
-					jl.setToolTipText(null);
-					if (sv != null && sv.cSt.getOrDefault(sm,-1) >= sm.list.size())
-						jl.setText("<html><strong>" + sm + "</strong></html>");
-					return jl;
-				}
-				jl.setText("<html><strike>" + sm + "</strike></html>");
-				StringBuilder sbl = new StringBuilder("<html><table><tr><th>Requires clearing:</th></tr>");
-				for (StageMap lsm : sv.requirements(sm))
-					sbl.append("<tr><td>").append(lsm).append("</td></tr>");
-				sbl.append("</html>");
-				jl.setToolTipText(sbl.toString());
-				jl.setEnabled(false);
-
-				return jl;
-			}
-		});
-	}
-}
-
 public class StagePage extends DefaultPage {
 
 	private static final long serialVersionUID = 1L;
@@ -134,7 +103,7 @@ public class StagePage extends DefaultPage {
 				SaveData sv = sm.getCont().getSave(false);
 				if (sv == null || !sv.nearUnlock(sm)) {
 					jl.setToolTipText(null);
-					if (sv != null && sv.cSt.getOrDefault(sm,-1) >= sm.list.size())
+					if (sv != null && sv.clear(sm))
 						jl.setText("<html><strong>" + sm + "</strong></html>");
 					return jl;
 				}
@@ -153,9 +122,8 @@ public class StagePage extends DefaultPage {
 			@Override
 			public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean s, boolean f) {
 				JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
-				if (!(o instanceof MapColc.PackMapColc))
-					return jl;
-				jl.setIcon(UtilPC.resizeIcon(((MapColc.PackMapColc)o).pack.icon, UtilPC.iconSize, UtilPC.iconSize));
+				if (o instanceof MapColc.PackMapColc)
+					jl.setIcon(UtilPC.resizeIcon(((MapColc.PackMapColc)o).pack.icon, UtilPC.iconSize, UtilPC.iconSize));
 				return jl;
 			}
 		});

@@ -44,7 +44,7 @@ public class BCMusic extends Data {
 		customSounds.clear();
 
 		for (ArrayDeque<BCPlayer> clips : sounds.values())
-			while (true) {
+			while (!clips.isEmpty()) {
 				BCPlayer c = clips.poll();
 				if (c != null)
 					c.release();
@@ -204,6 +204,7 @@ public class BCMusic extends Data {
 						loadSound(i, CACHE[i]);
 				} catch (Exception e) {
 					e.printStackTrace();
+					play = false;
 				}
 		secall = new boolean[TOT];
 		if (allow)

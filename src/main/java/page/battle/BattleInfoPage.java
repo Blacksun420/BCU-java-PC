@@ -78,7 +78,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 	private byte spe = 0;
 	private int upd = 0;
 	private boolean musicChanged = false, exPopupShown = false;
-	private byte dataPopup = 75;
+	private float dataPopup = 75;
 	private final SaveData packData;
 
 	/**
@@ -334,7 +334,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			if (sb.ebase.health <= 0) {
 				if (packData != null && dataPopup >= 0)
 					claimReward();
-				if(!exPopupShown && CommonStatic.getConfig().exContinuation && sb.st.info != null && (sb.st.info.exConnection() || (sb.st.info.getExStages() != null && sb.st.info.getExStages().length != 0))) {
+				else if (!exPopupShown && CommonStatic.getConfig().exContinuation && sb.st.info != null && (sb.st.info.exConnection() || (sb.st.info.getExStages() != null && sb.st.info.getExStages().length != 0))) {
 					exPopupShown = true;
 					Opts.showExStageSelection("EX stages found", "You can select one of these EX stages and continue the battle", sb.st, this);
 					return;
@@ -431,7 +431,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 				Opts.pop(rewardText, get(MainLocale.PAGE, "grats"));
 			}
 		}
-		dataPopup--;
+		dataPopup -= CommonStatic.fltFpsDiv(1f);
 	}
 
 	private void updateTables() {

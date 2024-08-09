@@ -294,7 +294,7 @@ public class BasisPage extends LubCont {
 						|| CommonStatic.getPrefLvs().equalsDef(((Form)lub.sf), lv))) {
 					CommonStatic.getPrefLvs().uni.remove(lub.sf.getID());
 				} else
-					CommonStatic.getPrefLvs().uni.put(lub.sf.getID(), lv);
+					CommonStatic.getPrefLvs().uni.put(lub.sf.getID(), lv.clone());
 				setLvs(lub.sf);
 			}
 		});
