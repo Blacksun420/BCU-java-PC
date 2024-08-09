@@ -93,10 +93,10 @@ public class BasisPage extends LubCont {
         ini();
 	}
 
-	public BasisPage(Page p, Stage st, Limit lim, boolean test) {
+	public BasisPage(Page p, Stage st, int star, boolean test) {
 		super(p);
 		this.st = st;
-		lub.setLimit(lim, st.getMC().getSave(false), st.getCont().price);
+		lub.setLimit(st.getLim(star), st.getMC().getSave(false), st.getCont().price);
 		if (st.getCont().stageLimit != null)
 			jlcn.setBanned(st.getCont().stageLimit.bannedCatCombo);
         if (test)

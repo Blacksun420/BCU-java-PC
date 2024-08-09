@@ -156,6 +156,10 @@ public class LineUpBox extends Canvas {
 		paint(getGraphics());
 	}
 
+	public Limit getLim() {
+		return lim;
+	}
+
 	public void setTest(Set<AbForm> units) {
 		testL = units;
 		paint(getGraphics());

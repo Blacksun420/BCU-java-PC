@@ -13,6 +13,7 @@ import page.MainLocale;
 import page.pack.EREditPage;
 import page.pack.UREditPage;
 import utilpc.Interpret;
+import utilpc.UtilPC;
 
 import javax.swing.*;
 import java.awt.event.FocusAdapter;
@@ -47,7 +48,7 @@ public class EnemyInfoTable extends CharacterInfoTable {
 			add(proc[i] = new JLabel(disp.toString()));
 			JLabel pi = proc[i];
 			pi.setBorder(BorderFactory.createEtchedBorder());
-			pi.setIcon(disp.icon);
+			pi.setIcon(UtilPC.getScaledIcon(disp.icon, 40, 40));
 			pi.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {

@@ -193,10 +193,10 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 		if (ab.getEntity() != null && mpet.part != null) {
 			Part p = mpet.part;
 			EPart ep = ab.getEntity().ent[p.ints[0]];
-			inft.setText("frame: " + ab.getEntity().ind());
-			inff.setText("part frame: " + (p.frame - p.off));
-			infv.setText("actual value: " + ep.getVal(p.ints[1]));
-			infm.setText("part value: " + p.vd);
+			inft.setText(Page.get(0, "curframe") + ": " + ab.getEntity().ind());
+			inff.setText(Page.get(0, "pframe") + ": " + (p.frame - p.off));
+			infv.setText(Page.get(0, "curvalue") + ": " + ep.getVal(p.ints[1]));
+			infm.setText(Page.get(0, "pvalue") + ": " + p.vd);
 		} else {
 			inft.setText("");
 			inff.setText("");

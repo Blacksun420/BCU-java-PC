@@ -96,7 +96,7 @@ public class BattleSetupPage extends LubCont {
 
 		mod.setBasis(BasisSet.current());
 		mod.setComboList(BasisSet.current().sele.lu.coms);
-		mod.setBanned(st.getCont().stageLimit != null ? st.getCont().stageLimit.bannedCatCombo : null);
+		mod.setBanned(lub.getLim().stageLimit != null ? lub.getLim().stageLimit.bannedCatCombo : null);
 	}
 
 	@Override
@@ -138,9 +138,10 @@ public class BattleSetupPage extends LubCont {
 
 			sttb.setData(st, jls.getSelectedIndex());
 			lub.setLimit(st.getLim(jls.getSelectedIndex()), st.getMC().getSave(false), st.getCont().price);
+			renew();
 		});
 
-		jlu.addActionListener(arg0 -> changePanel(new BasisPage(getThis(), st, st.getLim(conf == 1 ? jls.getSelectedIndex() : -1), testMode.isSelected())));
+		jlu.addActionListener(arg0 -> changePanel(new BasisPage(getThis(), st, conf == 1 ? jls.getSelectedIndex() : -1, testMode.isSelected())));
 
 		strt.addActionListener(arg0 -> {
 			int star = jls.getSelectedIndex();

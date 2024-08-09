@@ -199,7 +199,7 @@ public class FormEditPage extends EntityEditPage {
 	protected void setData(CustomEntity data) {
 		super.setData(data);
 		flv.setText(String.valueOf(lv));
-		frs.setText(String.valueOf(bas.t().getFinRes(cu.getRespawn(), bas.getInc(Data.C_RESP))));
+		frs.setText(String.valueOf(bas.t().getFinRes(cu.getRespawn(), 0)));
 		fdr.setText(String.valueOf((int) Math.round(cu.getPrice() * 1.5)));
 		flr.setText(interpretLayer(cu.back, cu.front));
 		fli.setText(String.valueOf(cu.getLimit()));

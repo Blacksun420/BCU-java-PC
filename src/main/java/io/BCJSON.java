@@ -16,14 +16,14 @@ import java.util.List;
 
 public class BCJSON {
 
-	public static final String[] PC_LANG_CODES = { "en", "jp", "kr", "zh", "fr", "it", "es", "de" };
-	public static final String[] PC_LANG_FILES = { "util.properties", "page.properties", "info.properties", "docs.properties",
+	public static final String[] PC_LANG_CODES = { "en", "jp", "kr", "zh", "fr", "it", "es", "de", "ru" };
+	public static final String[] PC_LANG_FILES = { "util.properties", "page.properties", "info.properties",
 			"StageName.txt", "UnitName.txt", "UnitExplanation.txt", "EnemyName.txt", "EnemyExplanation.txt", "ComboName.txt", "RewardName.txt", "proc.json", "animation_type.json", "CatFruitExplanation.txt" };
 
 	public static void check() {
 		LoadPage.prog("checking update information");
 		UpdateJson json = Data.ignore(UpdateCheck::checkUpdate);
-		List<Downloader> assets = null, musics, libs = null, lang;
+		List<Downloader> assets = null, musics = null, libs = null, lang = null;
 		try {
 			libs = UpdateCheck.checkPCLibs(json);
 			assets = UpdateCheck.checkAsset(json, "pc");

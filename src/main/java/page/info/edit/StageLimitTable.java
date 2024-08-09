@@ -19,14 +19,14 @@ public class StageLimitTable extends Page {
 
     private static final long serialVersionUID = 1L;
 
-    private static String[] climits;
+    private static String[] rarity;
 
     static {
         redefine();
     }
 
     protected static void redefine() {
-        climits = Page.get(MainLocale.INFO, "ht2", 2);
+        rarity = new String[] { "N", "EX", "R", "SR", "UR", "LR" };
     }
 
     private final JTF[] star = new JTF[4];

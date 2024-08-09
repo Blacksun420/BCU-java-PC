@@ -26,8 +26,8 @@ public strictfp class MainLocale {
 	public static final int UTIL = 2;
 	public static final Map<String, MainLocale> NAMP = new TreeMap<>();
 	public static final Map<String, TTT> TMAP = new TreeMap<>();
-	public static final Lang.Locale[] LOC_LIST = { Lang.Locale.EN, Lang.Locale.ZH, Lang.Locale.KR, Lang.Locale.JP, Lang.Locale.FR, Lang.Locale.IT, Lang.Locale.ES, Lang.Locale.DE };
-	public static final String[] RENN = { "page", "info", "util", "docs" };
+	public static final Lang.Locale[] LOC_LIST = { Lang.Locale.EN, Lang.Locale.ZH, Lang.Locale.KR, Lang.Locale.JP, Lang.Locale.RU, Lang.Locale.DE, Lang.Locale.FR, Lang.Locale.ES, Lang.Locale.IT, Lang.Locale.TH };
+	public static final String[] RENN = { "page", "info", "util" };
 	private static final ResourceBundle[] RENS = new ResourceBundle[4];
 
 	static {

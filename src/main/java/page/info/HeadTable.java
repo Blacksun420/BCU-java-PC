@@ -1,6 +1,7 @@
 package page.info;
 
 import common.util.stage.*;
+import main.MainBCU;
 import org.jetbrains.annotations.NotNull;
 import page.MainFrame;
 import page.MainLocale;
@@ -82,7 +83,7 @@ public class HeadTable extends AbJTable {
 			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		else if (r == 4 && c == 7 && data[r][c] instanceof LvRestrict)
 			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		else if (r == 3 && c == 7 && data[r][c] != null)
+		else if (r == 3 && c == 7 && data[r][c] instanceof CharaGroup)
 			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		else
 			setCursor(Cursor.getDefaultCursor());
@@ -108,7 +109,7 @@ public class HeadTable extends AbJTable {
 			MainFrame.changePanel(new CastleViewPage(page, CastleList.from(sta), sta.castle));
 		if (r == 4 && c == 7 && data[r][c] instanceof LvRestrict)
 			MainFrame.changePanel(new LvRestrictPage(page, (LvRestrict) data[r][c]));
-		if (r == 3 && c == 7 && data[r][c] != null)
+		if (r == 3 && c == 7 && data[r][c] instanceof CharaGroup) // todo: fix so charagroup doesn't replace global cooldown
 			MainFrame.changePanel(new CharaGroupPage(page, (CharaGroup) data[r][c]));
 	}
 
@@ -154,7 +155,7 @@ public class HeadTable extends AbJTable {
 			bas2[5] = st.timeLimit +" secs";
 		}
 		if (st.bossGuard)
-			bas2[6] = Page.get(MainLocale.INFO, "bossBarrier");
+			bas2[6] = Page.get(MainLocale.INFO, "bossguard");
 		img[0] = infs[4];
 		img[1] = st.bg;
 		img[2] = "<" + st.bgh + "%";
@@ -199,6 +200,52 @@ public class HeadTable extends AbJTable {
 					reg[i] = MainLocale.getLoc(MainLocale.INFO, "row" + lim.line);
 			}
 		}
+		if (lim.stageLimit != null) {
+			if (lim.stageLimit.maxMoney > 0) {
+				bas2[6] = rarity[0];
+				bas2[7] = lim.stageLimit.maxMoney;
+			}
+			if (lim.stageLimit.globalCooldown > 0) {
+				img[6] = rarity[1];
+				img[7] = MainBCU.convertTime(lim.stageLimit.globalCooldown);
+			}
+		}
+		if (lim.rare != 0) {
+			rar[0] = limits[0];
+			int j = 1;
+			for (int i = 0; i < rarity.length; i++)
+				if (((lim.rare >> i) & 1) > 0)
+					rar[j++] = rarity[i];
+		}
+		if (lim.lvr != null) {
+			rar[6] = limits[6];
+			rar[7] = lim.lvr;
+		}
+		if (lim.group != null) {
+			img[6] = limits[5];
+			img[7] = lim.group;
+		}
+		if (lim.min + lim.max + lim.max + lim.line + lim.num > 0) {
+			int i = 0;
+			if (lim.min > 0) {
+				reg[0] = limits[3];
+				reg[1] = String.valueOf(lim.min);
+				i = 2;
+			}
+			if (lim.max > 0) {
+				reg[i] = limits[4];
+				reg[i + 1] = String.valueOf(lim.max);
+				i += 2;
+			}
+			if (lim.num > 0) {
+				reg[i] = limits[1];
+				reg[i + 1] = String.valueOf(lim.num);
+				i += 2;
+			}
+			if (lim.line > 0)
+				reg[i] = limits[2];
+		}
+
 		data = lstr;
 	}
 
