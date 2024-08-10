@@ -152,7 +152,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 	}
 
 	private int getAngle(EPart part, boolean ignoreDef) {
-		int a = ignoreDef ? 0 : (int)part.getVal(11);
+		int a = ignoreDef ? 0 : CommonStatic.parseIntN(part.getVal(11));
 		if (part.getPar() != -1)
 			a += getAngle(part.getParts()[part.getPar()], false);
 		return a;
@@ -399,9 +399,9 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		if (mpet.part != null) {
 			Part p = mpet.part;
 			EPart ep = ab.getEntity().ent[p.ints[0]];
-			inff.setText("part frame: " + (p.frame - p.off));
-			infv.setText("actual value: " + ep.getVal(p.ints[1]));
-			infm.setText("part value: " + p.vd);
+			inff.setText("partF: " + (p.frame - p.off));
+			infv.setText("actualV: " + ep.getVal(p.ints[1]));
+			infm.setText("partV: " + p.vd);
 		} else {
 			inff.setText("");
 			infv.setText("");

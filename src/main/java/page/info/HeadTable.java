@@ -115,14 +115,15 @@ public class HeadTable extends AbJTable {
 
 	protected void setData(Stage st) {
 		sta = st;
-		Object[][] lstr = new Object[6][8];
-		Object[] tit, bas, bas2, img, rar, reg;
+		Object[][] lstr = new Object[7][8];
+		Object[] tit, bas, bas2, img, rar, reg, colo;
 		tit = lstr[0];
 		bas = lstr[1];
 		bas2 = lstr[2];
 		img = lstr[3];
 		rar = lstr[4];
 		reg = lstr[5];
+		colo = lstr[6];
 		tit[0] = "ID:";
 		tit[1] = st.getCont().id + "-" + st.id();
 		String star = Page.get(MainLocale.INFO, "star");
@@ -148,14 +149,12 @@ public class HeadTable extends AbJTable {
 			bas2[3] = st.minUSpawn + "f";
 		else
 			bas2[3] = st.minUSpawn + "f ~ " + st.maxUSpawn + "f";
-		bas2[4] = MainLocale.getLoc(MainLocale.INFO, "ht03");
-		bas2[5] = Page.get(MainLocale.PAGE, String.valueOf(!st.non_con));
+		bas2[4] = MainLocale.getLoc(MainLocale.INFO, "ht03") + ": " + Page.get(MainLocale.PAGE, String.valueOf(!st.non_con));
 		if(st.timeLimit != 0) {
 			bas2[4] = Page.get(MainLocale.INFO, "time");
 			bas2[5] = st.timeLimit +" secs";
-		}
-		if (st.bossGuard)
-			bas2[6] = Page.get(MainLocale.INFO, "bossguard");
+		} else if (st.bossGuard)
+			bas2[5] = Page.get(MainLocale.INFO, "bossguard");
 		img[0] = infs[4];
 		img[1] = st.bg;
 		img[2] = "<" + st.bgh + "%";
@@ -199,51 +198,51 @@ public class HeadTable extends AbJTable {
 				if (lim.line > 0)
 					reg[i] = MainLocale.getLoc(MainLocale.INFO, "row" + lim.line);
 			}
-		}
-		if (lim.stageLimit != null) {
-			if (lim.stageLimit.maxMoney > 0) {
-				bas2[6] = rarity[0];
-				bas2[7] = lim.stageLimit.maxMoney;
+			if (lim.stageLimit != null) {
+				if (lim.stageLimit.maxMoney > 0) {
+					bas2[6] = MainLocale.getLoc(MainLocale.INFO, "ht20");
+					bas2[7] = lim.stageLimit.maxMoney;
+				}
+				if (lim.stageLimit.globalCooldown > 0) {
+					colo[0] = MainLocale.getLoc(MainLocale.INFO, "ht21");
+					colo[1] = MainBCU.convertTime(lim.stageLimit.globalCooldown);
+				}
 			}
-			if (lim.stageLimit.globalCooldown > 0) {
-				img[6] = rarity[1];
-				img[7] = MainBCU.convertTime(lim.stageLimit.globalCooldown);
+			if (lim.rare != 0) {
+				rar[0] = limits[0];
+				int j = 1;
+				for (int i = 0; i < rarity.length; i++)
+					if (((lim.rare >> i) & 1) > 0)
+						rar[j++] = rarity[i];
 			}
-		}
-		if (lim.rare != 0) {
-			rar[0] = limits[0];
-			int j = 1;
-			for (int i = 0; i < rarity.length; i++)
-				if (((lim.rare >> i) & 1) > 0)
-					rar[j++] = rarity[i];
-		}
-		if (lim.lvr != null) {
-			rar[6] = limits[6];
-			rar[7] = lim.lvr;
-		}
-		if (lim.group != null) {
-			img[6] = limits[5];
-			img[7] = lim.group;
-		}
-		if (lim.min + lim.max + lim.max + lim.line + lim.num > 0) {
-			int i = 0;
-			if (lim.min > 0) {
-				reg[0] = limits[3];
-				reg[1] = String.valueOf(lim.min);
-				i = 2;
+			if (lim.lvr != null) {
+				rar[6] = limits[6];
+				rar[7] = lim.lvr;
 			}
-			if (lim.max > 0) {
-				reg[i] = limits[4];
-				reg[i + 1] = String.valueOf(lim.max);
-				i += 2;
+			if (lim.group != null) {
+				img[6] = limits[5];
+				img[7] = lim.group;
 			}
-			if (lim.num > 0) {
-				reg[i] = limits[1];
-				reg[i + 1] = String.valueOf(lim.num);
-				i += 2;
+			if (lim.min + lim.max + lim.max + lim.line + lim.num > 0) {
+				int i = 0;
+				if (lim.min > 0) {
+					reg[0] = limits[3];
+					reg[1] = String.valueOf(lim.min);
+					i = 2;
+				}
+				if (lim.max > 0) {
+					reg[i] = limits[4];
+					reg[i + 1] = String.valueOf(lim.max);
+					i += 2;
+				}
+				if (lim.num > 0) {
+					reg[i] = limits[1];
+					reg[i + 1] = String.valueOf(lim.num);
+					i += 2;
+				}
+				if (lim.line > 0)
+					reg[i] = limits[2];
 			}
-			if (lim.line > 0)
-				reg[i] = limits[2];
 		}
 
 		data = lstr;

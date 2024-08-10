@@ -32,7 +32,6 @@ public class StageEditPage extends DefaultPage {
 	public static void redefine() {
 		StageEditTable.redefine();
 		LimitTable.redefine();
-		StageLimitTable.redefine();
 		SCGroupEditTable.redefine();
 	}
 

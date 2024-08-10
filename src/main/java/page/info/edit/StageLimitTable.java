@@ -3,12 +3,9 @@ package page.info.edit;
 import common.CommonStatic;
 import common.pack.PackData.UserPack;
 import common.util.stage.Limit;
-import common.util.stage.StageLimit;
 import common.util.stage.StageMap;
 import page.*;
 import page.pack.PackSavePage;
-import page.support.CrossList;
-import utilpc.Interpret;
 
 import javax.swing.*;
 import java.awt.event.FocusAdapter;
@@ -18,16 +15,6 @@ import java.util.Arrays;
 public class StageLimitTable extends Page {
 
     private static final long serialVersionUID = 1L;
-
-    private static String[] rarity;
-
-    static {
-        redefine();
-    }
-
-    protected static void redefine() {
-        rarity = new String[] { "N", "EX", "R", "SR", "UR", "LR" };
-    }
 
     private final JTF[] star = new JTF[4];
     private final JL cost = new JL(MainLocale.INFO, "chcos");
@@ -39,20 +26,11 @@ public class StageLimitTable extends Page {
     private final JBTN reml = new JBTN(0, "remlim");
     private final LimitTable lt;
 
-    private final JL bank = new JL(MainLocale.INFO, "ht20");
-    private final JL cres = new JL(MainLocale.INFO, "ht21");
-    private final JTF jban = new JTF();
-    private final JTF jcre = new JTF();
     private final JBTN prog = new JBTN(MainLocale.PAGE, "csav");
     private final JTF jnam = new JTF();
 
-    private final CrossList<String> jlco = new CrossList<>(Interpret.getComboFilter(0));
-    private final JScrollPane jsco = new JScrollPane(jlco);
-    private final JBTN banc = new JBTN(MainLocale.PAGE, "ban0");
-
     private final UserPack pac;
 
-    private StageLimit stli;
     private StageMap map;
 
     protected StageLimitTable(Page p, UserPack pack) {
@@ -73,34 +51,23 @@ public class StageLimitTable extends Page {
         if (jll.isSelectionEmpty()) {
             set(lt, x, y, 0, 0, 0, 0);
 
-            set(jspl, x, y, w * 2, 50, w * 2, 200);
-            set(addl, x, y, w * 2, 250, w, 50);
-            set(reml, x, y, w * 3, 250, w, 50);
-
-            set(jsco, x, y, w * 6, 0, w * 2, 250);
-            set(banc, x, y, w * 6, 250, w * 2, 50);
-            set(prog, x, y, 0, 200, w * 2, 50);
+            set(jspl, x, y, 0, 50, w * 2, 200);
+            set(addl, x, y, 0, 250, w, 50);
+            set(reml, x, y, w, 250, w, 50);
         } else {
             set(lt, x, y, 0, 200, 1400, 100);
 
-            set(jspl, x, y, w * 2, 50, w * 2, 100);
-            set(addl, x, y, w * 2, 150, w, 50);
-            set(reml, x, y, w * 3, 150, w, 50);
-
-            set(jsco, x, y, w * 6, 0, w * 2, 150);
-            set(banc, x, y, w * 6, 150, w * 2, 50);
-            set(prog, x, y, w * 4, 150, w * 2, 50);
+            set(jspl, x, y, 0, 50, w * 2, 150);
+            set(addl, x, y, w * 2, 100, w, 50);
+            set(reml, x, y, w * 3, 100, w, 50);
         }
         set(jnam, x, y, 0, 0, w * 2, 50);
         for (int i = 0; i < 4; i++)
             set(star[i], x, y, w * (2 + i), 0, w, 50);
+        set(prog, x, y, w * 2, 50, w * 2, 50);
 
-        set(bank, x, y, 0, 50, w, 50);
-        set(cres, x, y, 0, 100, w, 50);
-        set(cost, x, y, 0, 150, w, 50);
-        set(jban, x, y, w, 50, w, 50);
-        set(jcre, x, y, w, 100, w, 50);
-        set(cos, x, y, w, 150, w, 50);
+        set(cost, x, y, w * 6, 0, w, 50);
+        set(cos, x, y, w * 7, 0, w, 50);
     }
 
     @Override
@@ -121,16 +88,7 @@ public class StageLimitTable extends Page {
         add(reml);
         add(lt);
 
-        add(bank);
-        reg(jban);
-        add(cres);
         add(prog);
-        reg(jcre);
-        add(jsco);
-        add(banc);
-
-        jlco.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        jlco.setCheck(i -> stli != null && stli.bannedCatCombo.contains(i));
         addListeners();
     }
 
@@ -141,7 +99,6 @@ public class StageLimitTable extends Page {
             return;
         }
         this.map = map;
-        stli = map.stageLimit == null ? map.stageLimit = new StageLimit() : map.stageLimit;
         setListL();
         jnam.setText(map.names.toString());
         cos.setText(String.valueOf(map.price + 1));
@@ -152,9 +109,6 @@ public class StageLimitTable extends Page {
             else
                 star[i].setText(i + 1 + str + "/");
 
-        jban.setText(stli.maxMoney + "");
-        jcre.setText(stli.globalCooldown + "");
-        jlco.repaint();
         abler(true);
     }
 
@@ -164,10 +118,6 @@ public class StageLimitTable extends Page {
         cos.setEnabled(b);
         for (JTF jtf : star)
             jtf.setEnabled(b);
-        jban.setEnabled(b);
-        jcre.setEnabled(b);
-        jlco.setEnabled(b);
-        banc.setEnabled(b && jlco.getSelectedIndex() != -1);
         addl.setEnabled(b);
     }
 
@@ -194,7 +144,7 @@ public class StageLimitTable extends Page {
                 if (getFront().isAdj())
                     return;
                 input(jtf, jtf.getText());
-                getFront().callBack(stli);
+                getFront().callBack(jll.getSelectedValue());
             }
         });
     }
@@ -205,10 +155,6 @@ public class StageLimitTable extends Page {
             getFront().callBack(map);
         } else if (jtf == cos)
             map.price = Math.max(0 , Math.min(CommonStatic.parseIntN(text) - 1, 9));
-        else if (jtf == jban)
-            stli.maxMoney = Math.max(CommonStatic.parseIntN(text), 0);
-        else if (jtf == jcre)
-            stli.globalCooldown = Math.max(CommonStatic.parseIntN(text), 0);
 
         for (int i = 0; i < 4; i++)
             if (jtf == star[i]) {
@@ -239,26 +185,6 @@ public class StageLimitTable extends Page {
     }
 
     private void addListeners() {
-        jlco.addListSelectionListener(x -> {
-            banc.setEnabled(jlco.getSelectedIndex() != -1);
-            banc.setText(MainLocale.PAGE, "ban" + (!stli.bannedCatCombo.contains(jlco.getSelectedIndex()) ? "0" : "1"));
-        });
-
-        banc.setLnr(x -> {
-            if (stli == null || jlco.getSelectedIndex() == -1)
-                return;
-
-            if (stli.bannedCatCombo.contains(jlco.getSelectedIndex())) {
-                stli.bannedCatCombo.remove(jlco.getSelectedIndex());
-                banc.setText(MainLocale.PAGE, "ban0");
-            } else {
-                stli.bannedCatCombo.add(jlco.getSelectedIndex());
-                banc.setText(MainLocale.PAGE, "ban1");
-            }
-
-            jlco.repaint();
-        });
-
         prog.setLnr(p -> changePanel(new PackSavePage(getFront(), pac, map)));
 
         addl.setLnr(e -> {

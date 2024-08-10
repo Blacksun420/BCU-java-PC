@@ -11,7 +11,14 @@ import common.system.P;
 import common.util.Data;
 import common.util.Data.Proc.ProcItem;
 import common.util.lang.Formatter;
+import common.util.lang.MultiLangCont;
 import common.util.lang.ProcLang;
+import common.util.stage.Limit;
+import common.util.stage.MapColc;
+import common.util.stage.StageLimit;
+import common.util.stage.info.CustomStageInfo;
+import common.util.stage.info.DefStageInfo;
+import common.util.stage.info.StageInfo;
 import common.util.unit.Combo;
 import common.util.unit.Enemy;
 import common.util.unit.Trait;
@@ -888,6 +895,222 @@ public class Interpret extends Data {
 		} else {
 			return i + "th";
 		}
+	}
+
+	public static String infoHTML(StageInfo si, int star) {
+		return si instanceof CustomStageInfo ? customHTML((CustomStageInfo)si, star) : defHTML((DefStageInfo)si, star);
+	}
+
+	public static String defHTML(DefStageInfo si, int star) {
+		StringBuilder ans = new StringBuilder("<html>" + MainLocale.getLoc(MainLocale.INFO,"energy") + ": "
+				+ si.energy + "<br> " + MainLocale.getLoc(MainLocale.INFO,"xp") + ": " + si.xp);
+
+		if (si.st.getCont().info.hiddenUponClear)
+			ans.append("<br>").append(MainLocale.getLoc(MainLocale.PAGE,"clrhide"));
+
+		if (si.st.getCont().info.resetMode != -1) {
+			if (si.st.getCont().info.resetMode < 3)
+				ans.append("<br> ").append(MainLocale.getLoc(MainLocale.INFO, "reward" + si.st.getCont().info.resetMode));
+			else
+				ans.append("<br> Reset mode flag ").append(si.st.getCont().info.resetMode);
+		}
+		if (si.st.getCont().info.waitTime != -1)
+			ans.append("<br> ").append(MainLocale.getLoc(MainLocale.INFO, "playtime")).append(": ")
+					.append(si.st.getCont().info.waitTime);
+		if (si.st.getCont().info.clearLimit != -1)
+			ans.append("<br> ").append(MainLocale.getLoc(MainLocale.INFO, "playnum")).append(": ")
+					.append(si.st.getCont().info.clearLimit);
+
+		if (si.st.getCont().info.unskippable)
+			ans.append("<br> ").append(MainLocale.getLoc(MainLocale.INFO, "nogold"));
+		Limit l = si.st.getLim(star);
+		if (l.stageLimit != null)
+			ans.append(stageLimHTML(l.stageLimit));
+
+		if (si.exConnection) {
+			ans.append("<br><br> ").append(MainLocale.getLoc(MainLocale.INFO, "exmap")).append(": ")
+					.append(MultiLangCont.get(MapColc.get("000004").maps.get(si.exMapID)))
+					.append("<br> ").append(MainLocale.getLoc(MainLocale.INFO, "exchance")).append(": ")
+					.append(si.exChance)
+					.append("%<br> ").append(MainLocale.getLoc(MainLocale.INFO, "exrng")).append(": ")
+					.append(Data.duo(si.exStageIDMin)).append(" ~ ").append(Data.duo(si.exStageIDMax))
+					.append("<br>");
+		}
+		if (si.exStages != null && si.exChances != null) {
+			ans.append("<table><tr><th>").append(MainLocale.getLoc(MainLocale.INFO, "exname")).append("</th><th>")
+					.append(MainLocale.getLoc(MainLocale.INFO, "chance")).append("</th></tr>");
+			for (int i = 0; i < si.exStages.length; i++) {
+				if (si.exStages[i] == null)
+					continue;
+				String name = MultiLangCont.get(si.exStages[i]);
+				String smName = MultiLangCont.get(si.exStages[i].getCont());
+
+				if (name == null || name.isEmpty())
+					name = si.exStages[i].id.toString();
+				else if (smName == null || smName.isEmpty())
+					smName = si.exStages[i].getCont().id.toString();
+				name = smName + " - " + name;
+
+				ans.append("<tr><td>").append(name).append("</td><td>")
+						.append(df.format(si.exChances[i])).append("%</td></tr>");
+			}
+			ans.append("</table>");
+		}
+		if (!si.exConnection && (si.exStages == null || si.exChances == null))
+			ans.append("<br>");
+
+		ans.append("<br> Drop rewards");
+		if(si.drop == null || si.drop.length == 0)
+			ans.append(" : none");
+		else {
+			ans.append("<br>");
+			appendDropData(si, ans);
+		}
+		if (si.time.length > 0) {
+			ans.append("<b><h3><center>Time scores</center></h3></b>");
+			ans.append("<table><tr><th>score</th><th>item name</th><th>number</th></tr>");
+			for (int[] tm : si.time)
+				ans.append("<tr><td>").append(tm[0]).append("</td><td>").append(MultiLangCont.getStageDrop(tm[1])).append("</td><td>").append(tm[2]).append("</td><tr>");
+			ans.append("</table>");
+		}
+
+		if (si.maxMaterial == -1) {
+			ans.append("</html>");
+			return ans.toString();
+		}
+		ans.append("<b><h2><center>Material Drop Data</center></h2></b>");
+		ans.append(MainLocale.getLoc(MainLocale.PAGE, "maxmat")).append("<br>");
+		for (int i = 0; i < si.map.multiplier.length; i++) {
+			ans.append(i + 1).append(" ").append(MainLocale.getLoc(MainLocale.INFO, "star")).append(": ")
+					.append((int) (si.map.multiplier[i] * si.maxMaterial))
+					.append("<br>");
+		}
+
+		ans.append("<br><table><tr><th>")
+				.append(MainLocale.getLoc(MainLocale.INFO, "mat"))
+				.append("</th><th>")
+				.append(MainLocale.getLoc(MainLocale.INFO, "chance"))
+				.append("</th></tr>");
+
+		int missChance = si.map.materialDrop[0];
+		int totalChances = Arrays.stream(si.map.materialDrop).reduce(0, Integer::sum) - missChance;
+		for (int i = 1 ; i < si.map.materialDrop.length; i++) {
+			int chance = si.map.materialDrop[i];
+			if (si.map.materialDrop[i] == 0)
+				continue;
+
+			ans.append("<tr><td>")
+					.append(MainLocale.getLoc(MainLocale.UTIL, "m" + (i - 1)))
+					.append("</td><td>")
+					.append((double) (((100 - missChance) * chance * 100) / totalChances) / 100.0).append("%")
+					.append("</td></tr>");
+		}
+		ans.append("</table></html>");
+		return ans.toString();
+	}
+	private static void appendDropData(DefStageInfo si, StringBuilder ans) {
+		if (si.drop == null || si.drop.length == 0) {
+			ans.append("none");
+			return;
+		}
+		List<String> chances = si.analyzeRewardChance();
+		if(chances == null) {
+			ans.append("none");
+			return;
+		}
+		if(chances.isEmpty())
+			ans.append("<table><tr><th>No.</th><th>item name</th><th>amount</th></tr>");
+		else
+			ans.append("<table><tr><th>chance</th><th>item name</th><th>amount</th></tr>");
+
+		for(int i = 0; i < si.drop.length; i++) {
+			if(!chances.isEmpty() && i < chances.size() && Double.parseDouble(chances.get(i)) == 0.0)
+				continue;
+
+			String chance;
+
+			if(chances.isEmpty())
+				chance = String.valueOf(i + 1);
+			else
+				chance = chances.get(i) + "%";
+
+			String reward = MultiLangCont.getServerDrop(si.drop[i][1]);
+
+			if(reward == null || reward.isEmpty())
+				reward = "Reward " + si.drop[i][1];
+
+			if(i == 0 && (si.rand == 1 || (si.drop[i][1] >= 1000 && si.drop[i][1] < 30000)))
+				reward += " (Once)";
+
+			if(i == 0 && si.drop[i][0] != 100 && si.rand != -4)
+				reward += " [" + MultiLangCont.getServerDrop(1) + "]";
+
+			ans.append("<tr><td>")
+					.append(chance)
+					.append("</td><td>")
+					.append(reward)
+					.append("</td><td>")
+					.append(si.drop[i][2])
+					.append("</td></tr>");
+		}
+
+		ans.append("</table>");
+	}
+
+	public static String customHTML(CustomStageInfo csi, int star) {
+		StringBuilder ans = new StringBuilder();
+		ans.append("<html>");
+		if (csi.st.getLim(star).stageLimit != null)
+			ans.append(stageLimHTML(csi.st.getLim(star).stageLimit));
+		if (!csi.stages.isEmpty()) {
+			ans.append("<table><tr><th>").append(MainLocale.getLoc(MainLocale.INFO, "exstage")).append("</th></tr>");
+			for (int i = 0; i < csi.stages.size(); i++)
+				ans.append("<tr><td>")
+						.append(csi.stages.get(i).getCont().toString())
+						.append(" - ")
+						.append(csi.stages.get(i).toString())
+						.append("</td><td>")
+						.append(df.format(csi.chances.get(i)))
+						.append("%</td></tr>");
+		}
+		if (csi.ubase != null)
+			ans.append("Unit Base: ").append(csi.ubase).append(" (").append(CommonStatic.def.lvText(csi.ubase, csi.lv)[0]).append(")");
+		if (!csi.rewards.isEmpty()) {
+			ans.append("<table><tr><th>List of Unit Rewards:</th></tr>");
+			for (int i = 0; i < csi.rewards.size(); i++)
+				ans.append("<tr><td>").append(csi.rewards.get(i).toString()).append("</td></tr>");
+		}
+		return ans.toString();
+	}
+	public static String stageLimHTML(StageLimit sl) {
+		StringBuilder ans = new StringBuilder();
+		if (!sl.bannedCatCombo.isEmpty()) {
+			String[] comboData = new String[sl.bannedCatCombo.size()];
+			ans.append("<br> ").append(MainLocale.getLoc(MainLocale.INFO,"comboban")).append(": ");
+			int i = 0;
+			for (int id : sl.bannedCatCombo)
+				comboData[i++] = MainLocale.getLoc(MainLocale.UTIL, "nb" + id);
+			ans.append(String.join(", ", comboData));
+		}
+		if (sl.coolStart)
+			ans.append("<br> Units will start on cooldown");
+		if (sl.maxMoney > 0)
+			ans.append("<br> Total Bank: ").append(sl.maxMoney);
+		if (sl.globalCooldown > 0)
+			ans.append("<br> Universal CD: ").append(sl.globalCooldown);
+		if (!sl.defMoney() || !sl.defCD()) {
+			ans.append("<br><table><tr><th>")
+					.append(MainLocale.getLoc(MainLocale.INFO, "ht10")).append("</th><th>")
+					.append(MainLocale.getLoc(MainLocale.INFO, "price")).append("</th><th>")
+					.append(MainLocale.getLoc(MainLocale.INFO, "cdo")).append("</th></tr>");
+			for (byte i = 0; i < RARITY_TOT; i++)
+				ans.append("<tr><td>")
+						.append(RARITY[i]).append("</td><td>")
+						.append(sl.costMultiplier[i]).append("%</td><td>")
+						.append(sl.cooldownMultiplier[i]).append("%</td></tr>");
+			ans.append("</table>");
+		}
+		return ans.toString();
 	}
 
 	public static double formatDouble(double number, int decimalPlaces) {

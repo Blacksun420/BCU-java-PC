@@ -28,10 +28,10 @@ public strictfp class MainLocale {
 	public static final Map<String, TTT> TMAP = new TreeMap<>();
 	public static final Lang.Locale[] LOC_LIST = { Lang.Locale.EN, Lang.Locale.ZH, Lang.Locale.KR, Lang.Locale.JP, Lang.Locale.RU, Lang.Locale.DE, Lang.Locale.FR, Lang.Locale.ES, Lang.Locale.IT, Lang.Locale.TH };
 	public static final String[] RENN = { "page", "info", "util" };
-	private static final ResourceBundle[] RENS = new ResourceBundle[4];
+	private static final ResourceBundle[] RENS = new ResourceBundle[3];
 
 	static {
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < RENN.length; i++)
 			RENS[i] = ResourceBundle.getBundle(RENN[i], Locale.ROOT, new URLClassLoader(new URL[]{MainLocale.class.getClassLoader().getResource(RENN[i]+".properties")}));
 	}
 

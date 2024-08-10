@@ -4,14 +4,12 @@ import common.util.stage.MapColc;
 import common.util.stage.RandStage;
 import common.util.stage.Stage;
 import common.util.stage.StageMap;
-import main.Opts;
 import page.JBTN;
 import page.Page;
 import page.battle.BattleSetupPage;
 import page.battle.StRecdPage;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
@@ -23,7 +21,6 @@ public class StageViewPage extends StagePage {
 	private final JBTN cpst = new JBTN(0, "cpst");
 	private final JBTN dgen = new JBTN(0, "dungeon");
 	private final JBTN recd = new JBTN(0, "replay");
-	private final JBTN info = new JBTN(0, "info");
 	private final JBTN search = new JBTN(0, "search");
 
 	public StageViewPage(Page p, Collection<MapColc> collection) {
@@ -54,21 +51,17 @@ public class StageViewPage extends StagePage {
 		set(dgen, x, y, 600, 0, 200, 50);
 		set(strt, x, y, 400, 0, 200, 50);
 		set(recd, x, y, 1850, 0, 200, 50);
-		set(info, x, y, 1600, 0, 200, 50);
 		set(search, x, y, 200, 0, 200, 50);
 	}
 
 	@Override
 	protected void setData(Stage st, int starId) {
 		super.setData(st, starId);
-		info.setEnabled(st != null && getInfo().length() > 6);
 		cpst.setEnabled(st != null);
 		recd.setEnabled(st != null);
 	}
 
 	private void addListeners() {
-
-		info.setLnr(x -> Opts.pop(getInfo(), stage + " info"));
 
 		recd.setLnr(x -> changePanel(new StRecdPage(this, stage, false)));
 
@@ -159,43 +152,15 @@ public class StageViewPage extends StagePage {
 		search.setLnr(x -> changePanel(new StageSearchPage(getThis())));
 	}
 
-	private String getInfo() {
-		StringBuilder str = new StringBuilder();
-		if (stage.info != null)
-			str = new StringBuilder(stage.info.getHTML());
-		else if (stage.getCont().stageLimit != null)
-			str = new StringBuilder("<html>").append(stage.getCont().stageLimit.getHTML());
-
-		if (stage.getCont().list.indexOf(stage) == stage.getCont().list.size() - 1) {
-			if (stage.info == null && stage.getCont().stageLimit == null)
-				str.append("<html>");
-			LinkedList<StageMap> newUnlocks = stage.getCont().getUnlockableMaps();
-			if (!newUnlocks.isEmpty()) {
-				str.append("<table><tr><th>Chapters that require clearing this chapter to be unlocked:</th></tr> ");
-				for (StageMap newUnlock : newUnlocks)
-					str.append("<tr><td>").append(newUnlock).append("</td></tr>");
-			}
-		} else if (stage.getCont().list.indexOf(stage) == 0 && !stage.getCont().unlockReq.isEmpty()) {
-			if (stage.info == null && stage.getCont().stageLimit == null)
-				str.append("<html>");
-			str.append("<table><tr><th>Unlock Chapter Clear requirements:</th></tr> ");
-			for (StageMap newUnlock : stage.getCont().unlockReq)
-				str.append("<tr><td>").append(newUnlock).append("</td></tr>");
-		}
-		return str.toString();
-	}
-
 	private void ini() {
 		add(recd);
 		add(cpsm);
 		add(cpst);
 		add(dgen);
-		add(info);
 		add(search);
 		cpsm.setEnabled(false);
 		cpst.setEnabled(false);
 		recd.setEnabled(false);
-		info.setEnabled(false);
 		addListeners();
 	}
 

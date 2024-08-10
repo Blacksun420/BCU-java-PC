@@ -44,7 +44,7 @@ class HeadEditTable extends Page {
 	private final JTF jres = new JTF();
 	private final JTF jures = new JTF();
 	private final JTG dojo = new JTG(MainLocale.PAGE, "dojo");
-	private final JTG bbrr = new JTG(MainLocale.INFO, "bossBarrier");
+	private final JTG bbrr = new JTG(MainLocale.INFO, "bossguard");
 	private final LimitTable lt;
 
 	private Stage sta;

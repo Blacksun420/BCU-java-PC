@@ -565,7 +565,7 @@ public class UnitManagePage extends DefaultPage {
 		} else {
 			edit.setToolTipText(null);
 		}
-		remf.setEnabled(b && frm.fid > 0);
+		remf.setEnabled(b && frm.fid > 0 && f.unused());
 		jtff.setEnabled(b);
 		if (frm != null) {
 			jtff.setText(f.names.toString());
@@ -668,7 +668,7 @@ public class UnitManagePage extends DefaultPage {
 			changing = boo;
 		}
 		boolean b = unit != null && pac.editable;
-		remu.setEnabled(b);
+		remu.setEnabled(b && unit.unused());
 		rar.setEnabled(b);
 		cbl.setEnabled(b);
 		addf.setEnabled(b);
