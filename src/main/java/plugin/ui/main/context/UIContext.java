@@ -204,8 +204,16 @@ public abstract class UIContext {
         private static UpdateJson getUpdateJson() {
             try {
                 JsonElement json = WebFileIO.read(JAR_CHECK_URL);
-                if (json != null)
-                    return JsonUtils.get("latest", json.getAsJsonObject(), UpdateJson.class);
+                if (json != null) {
+                    UpdateJson j = JsonUtils.get("latest", json.getAsJsonObject(), UpdateJson.class);
+                    UpdateJson[] olds = JsonUtils.getArr("past", json.getAsJsonObject(), UpdateJson.class);
+                    for (int i = olds.length - 1; i >= 0; i--) {
+                        if (olds[i].getVer() <= MainBCU.ver)
+                            break;
+                        j.info = "(" + olds[i].ver + ")\n" + olds[i].info + "\n\n" + j.info;
+                    }
+                    return j;
+                }
             } catch (Exception e) {
                 UIPlugin.popError("Failed to check update, try again later on a stable WI-FI connection");
                 e.printStackTrace();
