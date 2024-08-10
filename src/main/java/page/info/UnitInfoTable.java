@@ -11,10 +11,7 @@ import common.system.VImg;
 import common.util.Data;
 import common.util.unit.*;
 import main.MainBCU;
-import page.JL;
-import page.JTA;
-import page.MainLocale;
-import page.Page;
+import page.*;
 import page.pack.EREditPage;
 import page.pack.UREditPage;
 import utilpc.Interpret;
@@ -31,7 +28,7 @@ public class UnitInfoTable extends CharacterInfoTable {
 
 	private final JL[][] upgrade = new JL[3][2];
 	private JLabel pcoin;
-	private final JTA cfdesc = new JTA();
+	private final HTMLTextField cfdesc = new HTMLTextField();
 
 	private final Form f;
 	private Level multi;
@@ -248,10 +245,9 @@ public class UnitInfoTable extends CharacterInfoTable {
 			cfdesc.setEditable(false);
 		}
 		String fDesc = f.getExplanation();
-		if (fDesc.replace("\n", "").length() > 0)
+		if (!fDesc.replace("\n", "").isEmpty())
 			add(desc);
-		descr.setText(f.toString().replace((f.uid == null ? "NULL" : f.uid.id) + "-" + f.fid + " ", "") + "\n" + fDesc);
-		descr.setEditable(false);
+		descr.setText("<h2>" + f.toString().replace((f.uid == null ? "NULL" : f.uid.id) + "-" + f.fid + " ", "") + "</h2><hr>" + fDesc);
 		descr.setBorder(BorderFactory.createEtchedBorder());
 		resetAtk();
 		addListeners();

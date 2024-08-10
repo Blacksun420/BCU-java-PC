@@ -35,8 +35,11 @@ public class DescPage extends Page {
     private final JL pbcuver = new JL();
     private final JL pdate = new JL();
     private final JL pdatexp = new JL();
-    private final JTA descDisplay = new JTA();
-    private final JScrollPane descPane = new JScrollPane(descDisplay);
+    private final JTA descEdit = new JTA();
+    private final HTMLTextField descDisplay = new HTMLTextField();
+    private final JScrollPane descPane = new JScrollPane(descEdit);
+    private final JScrollPane htmlPane = new JScrollPane(descDisplay);
+    private final JTG prev = new JTG(MainLocale.PAGE, "htmlprev");
 
     private final JBTN setIcn = new JBTN(MainLocale.PAGE, "icon");
     private final JBTN setBnr = new JBTN(MainLocale.PAGE, "banner");
@@ -51,14 +54,13 @@ public class DescPage extends Page {
     }
 
     private void ini() {
-        add(descPane);
-        descDisplay.setText(pack.desc.info.toString());
-        descDisplay.setEnabled(editable);
+        add(htmlPane);
         add(pauth);
         pauth.setText(pack.desc.getAuthor().isEmpty() ? "No Author" : "By " + pack.desc.author);
         add(pdate);
         pdate.setText(pack.desc.creationDate == null ? get(MainLocale.PAGE, "ucdate") : get(MainLocale.PAGE, "cdate") + Interpret.translateDate(pack.desc.creationDate));
         if (!pack.editable) {
+            descDisplay.setText(pack.desc.info.toString());
             add(panim);
             panim.setText((pack.desc.parentPassword == null ? "Parentable, " : "Unparentable, ") + "anims " +  (pack.desc.allowAnim ? "copyable" : "uncopyable"));
             add(pver);
@@ -68,16 +70,16 @@ public class DescPage extends Page {
             add(pdatexp);
             pdatexp.setText(pack.desc.exportDate == null ? get(MainLocale.PAGE, "uedate") : get(MainLocale.PAGE, "edate") + Interpret.translateDate(pack.desc.exportDate));
         } else {
+            add(descPane);
+            descEdit.setText(pack.desc.info.toString());
+            add(prev);
             add(tver);
             tver.setText("Version " + pack.desc.version);
-        }
-        add(psta);
-        psta.setText(get(MainLocale.PAGE, "sttot") + " " + pack.mc.getStageCount());
-
-        if (pack.editable) {
             add(setIcn);
             add(setBnr);
         }
+        add(psta);
+        psta.setText(get(MainLocale.PAGE, "sttot") + " " + pack.mc.getStageCount());
         if (pack.icon != null || pack.editable) {
             add(picon);
             picon.setIcon(UtilPC.resizeIcon(pack.icon, 128, 128));
@@ -98,8 +100,10 @@ public class DescPage extends Page {
     @Override
     protected void resized(int x, int y) {
         int h = pack.banner == null ? pack.editable ? 50 : 0 : 720;
-        set(descPane, x, y, 0, h, 900, 300);
-        setComponentZOrder(descPane, 2);
+        JScrollPane desc = !pack.editable || prev.isSelected() ? htmlPane : descPane, inv = prev.isSelected() ? descPane : htmlPane;
+        set(desc, x, y, 0, h, 900, 300);
+        setComponentZOrder(desc, 2);
+        setComponentZOrder(inv, 3);
         if (h != 720) {
             set(pbanner, x, y, 0, 0, 0, 0);
             set(picon, x, y, 740, h, 182, 182);
@@ -131,11 +135,12 @@ public class DescPage extends Page {
         } else {
             set(tver, x, y, 900, h + 50, 350, 50);
             set(pdate, x, y, 900, h + 150, 350, 50);
+            set(prev, x, y, 900, h + 200, 350, 50);
         }
     }
 
     private void addListeners() {
-        descDisplay.setLnr(c -> pack.desc.info.put(descDisplay.getText()));
+        descEdit.setLnr(c -> pack.desc.info.put(descEdit.getText()));
 
         picon.addMouseListener(new MouseAdapter() {
             @Override
@@ -168,6 +173,11 @@ public class DescPage extends Page {
             if (n > 0)
                 pack.desc.version = n;
             tver.setText("Version " + pack.desc.version);
+        });
+
+        prev.setLnr(r -> {
+            descDisplay.setText(pack.desc.info.toString());
+            fireDimensionChanged();
         });
     }
 

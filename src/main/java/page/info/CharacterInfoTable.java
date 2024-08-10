@@ -29,7 +29,7 @@ public abstract class CharacterInfoTable extends Page {
     protected JL[][] atks;
     protected JLabel[] proc;
     protected final JTF jtf = new JTF();
-    protected final JTA descr = new JTA();
+    protected final HTMLTextField descr = new HTMLTextField();
     protected final JScrollPane desc = new JScrollPane(descr);
 
     private final JL atkind = new JL();
@@ -271,7 +271,7 @@ public abstract class CharacterInfoTable extends Page {
             l += 1 + (isBC ? 0 : atks.length);
         if (multiAtk)
             l++;
-        return (l + (proc.length + (proc.length % 2 == 1 ? 1 : 0)) / 2) * 50 + (c.getExplanation().replace("\n","").length() > 0 ? 200 : 0);
+        return (l + (proc.length + (proc.length % 2 == 1 ? 1 : 0)) / 2) * 50 + (!c.getExplanation().replace("\n", "").isEmpty() ? 200 : 0);
     }
 
     protected void updateTooltips() {

@@ -208,41 +208,6 @@ public class HeadTable extends AbJTable {
 					colo[1] = MainBCU.convertTime(lim.stageLimit.globalCooldown);
 				}
 			}
-			if (lim.rare != 0) {
-				rar[0] = limits[0];
-				int j = 1;
-				for (int i = 0; i < rarity.length; i++)
-					if (((lim.rare >> i) & 1) > 0)
-						rar[j++] = rarity[i];
-			}
-			if (lim.lvr != null) {
-				rar[6] = limits[6];
-				rar[7] = lim.lvr;
-			}
-			if (lim.group != null) {
-				img[6] = limits[5];
-				img[7] = lim.group;
-			}
-			if (lim.min + lim.max + lim.max + lim.line + lim.num > 0) {
-				int i = 0;
-				if (lim.min > 0) {
-					reg[0] = limits[3];
-					reg[1] = String.valueOf(lim.min);
-					i = 2;
-				}
-				if (lim.max > 0) {
-					reg[i] = limits[4];
-					reg[i + 1] = String.valueOf(lim.max);
-					i += 2;
-				}
-				if (lim.num > 0) {
-					reg[i] = limits[1];
-					reg[i + 1] = String.valueOf(lim.num);
-					i += 2;
-				}
-				if (lim.line > 0)
-					reg[i] = limits[2];
-			}
 		}
 
 		data = lstr;

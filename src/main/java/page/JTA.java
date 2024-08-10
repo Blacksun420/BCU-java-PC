@@ -10,6 +10,9 @@ public class JTA extends JEditorPane implements CustomComp {
 
     private static final long serialVersionUID = 1L;
     private String hint;
+    //private Stack<String> htmls = new Stack<>();
+    //private static final String[] stackable = {"a", "h1", "h2", "h3", "h4", "h5", "h6", "p"}; //TODO: img
+    //private static final String[] emptyValid = {"br"};
 
     public JTA() {
         super();
@@ -19,44 +22,44 @@ public class JTA extends JEditorPane implements CustomComp {
         String text = getText().replace("\n", "");
         int sta = -1;
         while ((sta = text.indexOf('<', sta + 1)) != -1) {
+            int oldLen = text.length();
             text = text.substring(0, sta) + text.substring(text.indexOf('>') + 1);
+            sta -= oldLen - text.length();
         }
         return text;
     }
 
     @SuppressWarnings("all")
     public String assignSplitText(int lim) {
-        String str = getRawText();
-        if (lim == -1 || str.length() <= lim)
+        if (lim == -1 || getRawText().length() <= lim)
             return getText();
         String tex = getText();
         if (tex.lastIndexOf('>') == -1 || tex.indexOf('<') > lim)
-            return getText().substring(0, lim);
-        str = str.substring(0, lim);
+            return tex.substring(0, lim);
         StringBuilder ans = new StringBuilder();
         String last = "";
+        int plusLen = 0;
 
         int sta = tex.indexOf('<'), col = tex.indexOf('>'), clen = 0;
-        while (col != -1) {
-            String[] strs = tex.substring(col, col = tex.indexOf('>', col + 1)).split("<");
-            ans.append(strs[0]);
-            if (strs.length == 1 && sta == 0) {
-                continue;
-            }
-            sta = tex.indexOf('<', sta + 1);
-            last = strs[0];
-
-            if (str.contains(strs[0])) {
-                clen += last.length();
-                ans.append(strs[1]);
-            }
+        while (sta != -1 && col != -1 && sta + plusLen < lim) {
+            plusLen += col - sta + 1;
+            sta = tex.indexOf('<', sta+1);
+            col = tex.indexOf('>', col+1);
         }
-        str = str.substring(clen);
-        int enterCount = last.length() - str.length();
-        ans.append(last, 0, str.length() + enterCount);
-
-        return ans.toString();
+        if (sta != -1 && col != -1 && sta + plusLen >= lim)
+            return tex.substring(0, lim + plusLen) + tex.substring(sta, col + 1);
+        return tex.substring(0, lim + plusLen);
     }
+
+    /*private int validHTML(String text) {
+        if (text.startsWith("/")) {
+            String last = htmls.pop();
+            if (last != null && text.substring(1).equals(last.contains(" ") ? last.substring(0, last.indexOf(" ")) : last))
+                return 2;
+            return -1;
+        } //TODO
+        return -1;
+    }*/
 
     public void setLnr(Consumer<FocusEvent> c) {
         addFocusListener(new FocusAdapter() {
@@ -72,7 +75,7 @@ public class JTA extends JEditorPane implements CustomComp {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        if (getText().length() == 0 && hint != null && !isFocusOwner()) {
+        if (getText().isEmpty() && hint != null && !isFocusOwner()) {
             int h = getHeight();
             ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             Insets ins = getInsets();

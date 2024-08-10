@@ -137,8 +137,7 @@ public class EnemyInfoTable extends CharacterInfoTable {
 		String eDesc = e.getExplanation();
 		if (eDesc.replace("\n", "").length() > 0)
 			add(desc);
-		descr.setText(e.toString().replace(Data.trio(e.id.id) + " - ", "") + (e.de.getStar() > 2 ? " (Cool Dude)" : "") + "\n" + eDesc);
-		descr.setEditable(false);
+		descr.setText("<h2>" + e.toString().replace(Data.trio(e.id.id) + " - ", "") + (e.de.getStar() > 2 ? " (Cool Dude)" : "") + "</h2><hr>" + eDesc);
 		resetAtk();
 		addListeners();
 	}

@@ -60,17 +60,15 @@ public class Opts {
 
 	public static void pop(String text, String title) {
 		int opt = JOptionPane.PLAIN_MESSAGE;
+		HTMLTextField txt = new HTMLTextField(text);
+		txt.setEditable(false);
 		if (text.length() > 512) {
-			JTextArea txt = new JTextArea(text);
 			JScrollPane scroll = new JScrollPane(txt);
-			txt.setLineWrap(true);
-			txt.setWrapStyleWord(true);
-			txt.setEditable(false);
 			scroll.setPreferredSize(UtilPC.size(500, 720));
 			JOptionPane.showMessageDialog(null, scroll, title, opt);
 			return;
 		}
-		JOptionPane.showMessageDialog(null, text, title, opt);
+		JOptionPane.showMessageDialog(null, txt, title, opt);
 	}
 
 	public static void errOnce(String text, String title, boolean fatal) {
@@ -109,20 +107,18 @@ public class Opts {
 	}
 
 	private static boolean warning(String text, String title) {
+		HTMLTextField txt = new HTMLTextField(text);
+		txt.setEditable(false);
 		if (text.length() > 512)
-			return warningLong(text, title);
+			return warningLong(txt, title);
 
 		int opt = JOptionPane.OK_CANCEL_OPTION;
-		int val = JOptionPane.showConfirmDialog(null, text, title, opt);
+		int val = JOptionPane.showConfirmDialog(null, txt, title, opt);
 		return val == JOptionPane.OK_OPTION;
 	}
 
-	public static boolean warningLong(String text, String title) {
-		JTextArea txt = new JTextArea(text);
+	public static boolean warningLong(HTMLTextField txt, String title) {
 		JScrollPane scroll = new JScrollPane(txt);
-		txt.setLineWrap(true);
-		txt.setWrapStyleWord(true);
-		txt.setEditable(false);
 		scroll.setPreferredSize(UtilPC.size(1000, 500));
 		int opt = JOptionPane.OK_CANCEL_OPTION;
 		int val = JOptionPane.showConfirmDialog(null, scroll, title, opt);

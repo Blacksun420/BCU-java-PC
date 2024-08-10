@@ -928,7 +928,7 @@ public class Interpret extends Data {
 			ans.append(stageLimHTML(l.stageLimit));
 
 		if (si.exConnection) {
-			ans.append("<br><br> ").append(MainLocale.getLoc(MainLocale.INFO, "exmap")).append(": ")
+			ans.append("<hr><br> ").append(MainLocale.getLoc(MainLocale.INFO, "exmap")).append(": ")
 					.append(MultiLangCont.get(MapColc.get("000004").maps.get(si.exMapID)))
 					.append("<br> ").append(MainLocale.getLoc(MainLocale.INFO, "exchance")).append(": ")
 					.append(si.exChance)
@@ -937,7 +937,7 @@ public class Interpret extends Data {
 					.append("<br>");
 		}
 		if (si.exStages != null && si.exChances != null) {
-			ans.append("<table><tr><th>").append(MainLocale.getLoc(MainLocale.INFO, "exname")).append("</th><th>")
+			ans.append("<hr><table><tr><th>").append(MainLocale.getLoc(MainLocale.INFO, "exname")).append("</th><th>")
 					.append(MainLocale.getLoc(MainLocale.INFO, "chance")).append("</th></tr>");
 			for (int i = 0; i < si.exStages.length; i++) {
 				if (si.exStages[i] == null)
@@ -959,7 +959,7 @@ public class Interpret extends Data {
 		if (!si.exConnection && (si.exStages == null || si.exChances == null))
 			ans.append("<br>");
 
-		ans.append("<br> Drop rewards");
+		ans.append("<hr> Drop rewards");
 		if(si.drop == null || si.drop.length == 0)
 			ans.append(" : none");
 		else {
@@ -967,7 +967,7 @@ public class Interpret extends Data {
 			appendDropData(si, ans);
 		}
 		if (si.time.length > 0) {
-			ans.append("<b><h3><center>Time scores</center></h3></b>");
+			ans.append("<hr><b><h3><center>Time scores</center></h3></b>");
 			ans.append("<table><tr><th>score</th><th>item name</th><th>number</th></tr>");
 			for (int[] tm : si.time)
 				ans.append("<tr><td>").append(tm[0]).append("</td><td>").append(MultiLangCont.getStageDrop(tm[1])).append("</td><td>").append(tm[2]).append("</td><tr>");
@@ -978,7 +978,7 @@ public class Interpret extends Data {
 			ans.append("</html>");
 			return ans.toString();
 		}
-		ans.append("<b><h2><center>Material Drop Data</center></h2></b>");
+		ans.append("<hr><b><h2><center>Material Drop Data</center></h2></b>");
 		ans.append(MainLocale.getLoc(MainLocale.PAGE, "maxmat")).append("<br>");
 		for (int i = 0; i < si.map.multiplier.length; i++) {
 			ans.append(i + 1).append(" ").append(MainLocale.getLoc(MainLocale.INFO, "star")).append(": ")
@@ -1060,8 +1060,11 @@ public class Interpret extends Data {
 	public static String customHTML(CustomStageInfo csi, int star) {
 		StringBuilder ans = new StringBuilder();
 		ans.append("<html>");
-		if (csi.st.getLim(star).stageLimit != null)
+		if (csi.st.getLim(star).stageLimit != null) {
 			ans.append(stageLimHTML(csi.st.getLim(star).stageLimit));
+		if (!csi.stages.isEmpty() || !csi.rewards.isEmpty())
+			ans.append("<hr>");
+		}
 		if (!csi.stages.isEmpty()) {
 			ans.append("<table><tr><th>").append(MainLocale.getLoc(MainLocale.INFO, "exstage")).append("</th></tr>");
 			for (int i = 0; i < csi.stages.size(); i++)
@@ -1076,6 +1079,8 @@ public class Interpret extends Data {
 		if (csi.ubase != null)
 			ans.append("Unit Base: ").append(csi.ubase).append(" (").append(CommonStatic.def.lvText(csi.ubase, csi.lv)[0]).append(")");
 		if (!csi.rewards.isEmpty()) {
+			if (!csi.stages.isEmpty() || csi.ubase != null)
+				ans.append("<hr>");
 			ans.append("<table><tr><th>List of Unit Rewards:</th></tr>");
 			for (int i = 0; i < csi.rewards.size(); i++)
 				ans.append("<tr><td>").append(csi.rewards.get(i).toString()).append("</td></tr>");
