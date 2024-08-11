@@ -225,6 +225,8 @@ public class LimitTable extends Page {
 			one.setText(MainLocale.getLoc(MainLocale.INFO, "row" + lim.line));
 		});
 
+		gcd.setLnr(e -> lim.stageLimit.coolStart = gcd.isSelected());
+
 		for (int i = 0; i < brars.length; i++) {
 			int I = i;
 			brars[i].addActionListener(e -> {
@@ -306,6 +308,7 @@ public class LimitTable extends Page {
 		set(jcg);
 		set(jlr);
 		set(star);
+		add(gcd);
 		for (int i = 0; i < brars.length; i++) {
 			add(brars[i] = new JTG(rarity[i]));
 			brars[i].setSelected(true);
