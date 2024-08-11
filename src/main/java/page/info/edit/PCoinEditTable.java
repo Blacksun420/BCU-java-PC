@@ -246,8 +246,8 @@ class PCoinEditTable extends Page {
 
         /**
          * 0 is int, 1 is boolean, 2 is Identifier
-         * @param ind
-         * @return
+         * @param ind the field index
+         * @return 0 if text, 1 if toggle, 2 if id
          */
         private byte getFieldType(int ind) {
             return (byte)(tchance.get(ind) instanceof JTF ? 0 : tchance.get(ind) instanceof JTG ? 1 : 2);
@@ -278,6 +278,8 @@ class PCoinEditTable extends Page {
     private final JTF PCoinLV = new JTF();
     private final JL jSpLv = new JL(0,"Required Lv");
     private final JTF superLv = new JTF();
+    private final JL jAtks = new JL(0,"atk");
+    private final JTF atks = new JTF();
     private final JBTN delet = new JBTN(0,"rem");
     private final PCoinEditPage pcedit;
     private final boolean editable;
@@ -306,17 +308,25 @@ class PCoinEditTable extends Page {
 
     @Override
     protected void resized(int x, int y) {
+        int[] type = unit.pcoin != null ? Data.get_CORRES(unit.pcoin.info.get(talent)[0]) : new int[]{-1, 0};
+        int h = !unit.common && type[0] == Data.PC_P && !Data.procSharable[type[1]] ? 50 : 0;
         set(pCoin, x, y, 0, 0, getW(), 50);
         set(delet, x, y, 0, 50, getW(), 50);
         set(jPCLV, x, y, 0, 100, getW() / 2, 50);
         set(PCoinLV, x, y, getW() / 2, 100, getW() / 2, 50);
         set(jSpLv, x, y, 0, 150, getW() / 2, 50);
         set(superLv, x, y, getW() / 2, 150, getW() / 2, 50);
-
+        if (h == 50) {
+            set(jAtks, x, y, 0, 200, getW() / 2, 50);
+            set(atks, x, y, getW() / 2, 200, getW() / 2, 50);
+        } else {
+            set(jAtks, x, y, 0, 0, 0, 0);
+            set(atks, x, y, 0, 0, 0, 0);
+        }
         int sh = Math.min(MAX_TABLE_H, slots.getH());
-        set(sslot, x, y, 0, 200, getW(), sh);
+        set(sslot, x, y, 0, h + 200, getW(), sh);
         slots.resized(x, y);
-        set(stypes, x, y, 0, 200 + sh, getW(), 900 - sh);
+        set(stypes, x, y, 0, h + 200 + sh, getW(), 900 - sh - h);
     }
 
     protected int getW() {
@@ -342,9 +352,22 @@ class PCoinEditTable extends Page {
             setData();
         });
 
+        atks.setLnr(a -> {
+            int[] ints = CommonStatic.parseIntsN(atks.getText());
+            ArrayList<int[]> ilist = new ArrayList<>();
+            for (int i = 0; i < ints.length; i += 2)
+                if (i+1 < ints.length && ints[i] < unit.getAtkTypeCount() && ints[i+1] < unit.getAtkCount(i))
+                    ilist.add(new int[]{ints[i], ints[i + 1]});
+            unit.pcoin.atks.set(unit.pcoin.getAtkInd(talent), ilist.toArray(new int[0][]));
+            setData();
+        });
+
         delet.addActionListener(arg0 -> {
             changing = true;
 
+            int[] type = Data.get_CORRES(unit.pcoin.info.get(talent)[0]);
+            if (type[0] == Data.PC_P && !Data.procSharable[type[1]])
+                unit.pcoin.atks.remove(unit.pcoin.getAtkInd(talent));
             unit.pcoin.info.remove(talent);
             unit.pcoin.max = new int[unit.pcoin.info.size()];
 
@@ -382,6 +405,12 @@ class PCoinEditTable extends Page {
 
             neww[neww.length - 1] = old[old.length - 1];
             unit.pcoin.info.set(talent, neww);
+            if (Data.get_CORRES(neww[0])[0] == Data.PC_P && !Data.procSharable[Data.get_CORRES(neww[0])[1]]) {
+                if (Data.get_CORRES(old[0])[0] != Data.PC_P || Data.procSharable[Data.get_CORRES(old[0])[1]])
+                    unit.pcoin.atks.add(unit.pcoin.getAtkInd(talent), new int[0][]);
+            } else if (Data.get_CORRES(old[0])[0] == Data.PC_P && !Data.procSharable[Data.get_CORRES(old[0])[1]])
+                unit.pcoin.atks.remove(unit.pcoin.getAtkInd(talent));
+
             pcedit.setCoinTypes();
             changing = false;
         });
@@ -400,6 +429,8 @@ class PCoinEditTable extends Page {
         add(stypes);
         add(PCoinLV);
         add(sslot);
+        add(jAtks);
+        add(atks);
         sslot.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         sslot.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         setCTypes(unit.pcoin != null && unit.pcoin.info.size() > talent);
@@ -488,6 +519,8 @@ class PCoinEditTable extends Page {
         if (pc) {
             PCoinLV.setText("" + unit.pcoin.max[talent]);
             superLv.setText("" + unit.pcoin.getReqLv(talent));
+            if (!unit.common && type[0] == Data.PC_P && !Data.procSharable[type[1]])
+                atks.setText(Arrays.deepToString(unit.pcoin.atks.get(unit.pcoin.getAtkInd(talent))));
             int tal = unit.pcoin.info.get(talent)[0];
             ListModel<talentData> listModel = ctypes.getModel();
             for (int i = 0; i < listModel.getSize(); i++)

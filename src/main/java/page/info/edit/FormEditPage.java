@@ -7,7 +7,6 @@ import common.pack.Identifier;
 import common.pack.PackData.UserPack;
 import common.pack.UserProfile;
 import common.system.Node;
-import common.util.Data;
 import common.util.unit.Form;
 import common.util.unit.Unit;
 import page.JBTN;
