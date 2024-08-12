@@ -320,7 +320,7 @@ public class MenuBarHandler {
         jsh.setValue((int) (Rectangle.ratioY / Rectangle.UNIT_Y));
         jsh.addChangeListener((e -> P.setRatioY(jsh.getValue())));
 
-
+        setting.add(MainBCU.getSettingMenu());
         setting.add(UI);
         setting.add(battle_scene);
         getBar().add(setting);

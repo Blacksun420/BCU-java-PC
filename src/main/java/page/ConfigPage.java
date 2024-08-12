@@ -20,6 +20,7 @@ import page.view.ViewBox;
 
 import javax.swing.*;
 
+import plugin.ui.main.util.BCUSettingMenu;
 import static utilpc.Interpret.RARITY;
 
 public class ConfigPage extends DefaultPage {
@@ -209,6 +210,7 @@ public class ConfigPage extends DefaultPage {
 		secs.addActionListener(arg0 -> {
 			MainBCU.seconds = !MainBCU.seconds;
 			secs.setText(0, MainBCU.seconds ? "secs" : "frame");
+			MainBCU.getSettingMenu().syncCheckBox(BCUSettingMenu.TIME, MainBCU.seconds);
 		});
 
 		search.addActionListener(a -> MainBCU.searchPerKey = search.isSelected());
@@ -229,7 +231,10 @@ public class ConfigPage extends DefaultPage {
 
 		whit.addActionListener(arg0 -> ViewBox.Conf.white = whit.isSelected());
 
-		refe.addActionListener(arg0 -> cfg().ref = refe.isSelected());
+		refe.addActionListener(arg0 -> {
+			cfg().ref = refe.isSelected();
+			MainBCU.getSettingMenu().syncCheckBox(BCUSettingMenu.AXIS, refe.isSelected());
+		});
 
 		jogl.addActionListener(arg0 -> {
 			if (Opts.conf("This requires restart to apply. Do you want to restart?")) {
@@ -295,20 +300,20 @@ public class ConfigPage extends DefaultPage {
 		jsba.addChangeListener(arg0 -> {
 			if(!jsba.getValueIsAdjusting()) {
 				int back = Backup.backups.size();
-				int pre = CommonStatic.getConfig().maxBackup;
+				int pre = cfg().maxBackup;
 
 				if(pre >= back && back > jsba.getValue() && jsba.getValue() > 0) {
 					if(Opts.conf((back-jsba.getValue())+" "+get(MainLocale.PAGE, "backremwarn")))
-						CommonStatic.getConfig().maxBackup = jsba.getValue();
+						cfg().maxBackup = jsba.getValue();
 					else
-						jsba.setValue(CommonStatic.getConfig().maxBackup);
+						jsba.setValue(cfg().maxBackup);
 				} else if(jsba.getValue() == 0) {
 					if(Opts.conf((get(MainLocale.PAGE, "backinfwarn"))))
-						CommonStatic.getConfig().maxBackup = jsba.getValue();
+						cfg().maxBackup = jsba.getValue();
 					else
-						jsba.setValue(CommonStatic.getConfig().maxBackup);
+						jsba.setValue(cfg().maxBackup);
 				} else
-					CommonStatic.getConfig().maxBackup = jsba.getValue();
+					cfg().maxBackup = jsba.getValue();
 			}
 		});
 
@@ -321,6 +326,7 @@ public class ConfigPage extends DefaultPage {
 			cfg().lang = jls.getSelectedValue();
 			Res.langIcons();
 			Page.renewLoc(getThis());
+			MainBCU.getSettingMenu().updateLoc();
 			for (int i = 0; i < prfr.length; i++)
 				prfr[i].setText(RARITY[i]);
 			changing = false;
@@ -334,8 +340,8 @@ public class ConfigPage extends DefaultPage {
 		});
 
 		row.addActionListener(a -> {
-			CommonStatic.getConfig().twoRow = !CommonStatic.getConfig().twoRow;
-			row.setText(MainLocale.PAGE, CommonStatic.getConfig().twoRow ? "tworow" : "onerow");
+			cfg().twoRow = !cfg().twoRow;
+			row.setText(MainLocale.PAGE, cfg().twoRow ? "tworow" : "onerow");
 		});
 
 		jcsnd.addActionListener(a -> {
@@ -344,36 +350,43 @@ public class ConfigPage extends DefaultPage {
 				BCMusic.doSound(11);
 		});
 
-		jcraw.addActionListener(a -> CommonStatic.getConfig().rawDamage = jcraw.isSelected());
-		jcdly.addActionListener(a -> CommonStatic.getConfig().buttonDelay = !CommonStatic.getConfig().buttonDelay);
-		stdis.addActionListener(a -> CommonStatic.getConfig().stageName = !CommonStatic.getConfig().stageName);
+		jcraw.addActionListener(a -> cfg().rawDamage = jcraw.isSelected());
+		jcdly.addActionListener(a -> cfg().buttonDelay = !cfg().buttonDelay);
+		stdis.addActionListener(a -> cfg().stageName = !cfg().stageName);
 
 		perfo.addActionListener(a -> {
 			cfg().fps60 = !cfg().fps60;
-			Timer.fps = 1000 / (CommonStatic.getConfig().fps60 ? 60 : 30);
+			Timer.fps = 1000 / (cfg().fps60 ? 60 : 30);
+			MainBCU.getSettingMenu().syncCheckBox(BCUSettingMenu.FPS, cfg().fps60);
 		});
 
-		jceff.addActionListener(a -> CommonStatic.getConfig().drawBGEffect = !CommonStatic.getConfig().drawBGEffect);
+		jceff.addActionListener(a -> cfg().drawBGEffect = !cfg().drawBGEffect);
 		rlpk.addActionListener(l -> UserProfile.reloadExternalPacks());
 
 		vcol.addActionListener(l -> {
-			if(CommonStatic.getConfig().viewerColor != -1)
-				Opts.showColorPicker("Pick Viewer BG Color", this, CommonStatic.getConfig().viewerColor);
+			if(cfg().viewerColor != -1)
+				Opts.showColorPicker("Pick Viewer BG Color", this, cfg().viewerColor);
 			else
 				Opts.showColorPicker("Pick Viewer BG Color", this);
 		});
 
-		vres.addActionListener(l -> CommonStatic.getConfig().viewerColor = -1);
-		excont.addActionListener(l -> CommonStatic.getConfig().exContinuation = excont.isSelected());
+		vres.addActionListener(l -> cfg().viewerColor = -1);
+		excont.addActionListener(l -> {
+			cfg().exContinuation = excont.isSelected();
+			MainBCU.getSettingMenu().syncCheckBox(BCUSettingMenu.EXCONT, excont.isSelected());
+		});
 
 		savetime.setLnr(c -> {
 			MainBCU.autoSaveTime = Math.max(0, CommonStatic.parseIntN(savetime.getText()));
 			savetime.setText(MainBCU.autoSaveTime > 0 ? MainBCU.autoSaveTime + "min" : get(MainLocale.PAGE, "deactivated"));
 			MainBCU.restartAutoSaveTimer();
 		});
-		shake.addActionListener(c -> CommonStatic.getConfig().shake = shake.isSelected());
-		reallv.addActionListener(c -> CommonStatic.getConfig().realLevel = reallv.isSelected());
-		pkprog.addActionListener(c -> CommonStatic.getConfig().prog = pkprog.isSelected());
+		shake.addActionListener(c -> cfg().shake = shake.isSelected());
+		reallv.addActionListener(c -> cfg().realLevel = reallv.isSelected());
+		pkprog.addActionListener(c -> {
+			cfg().prog = pkprog.isSelected();
+			MainBCU.getSettingMenu().syncCheckBox(BCUSettingMenu.PROG, pkprog.isSelected());
+		});
 		dyna.setLnr(c -> {
 			MainBCU.useDynamic = dyna.isSelected();
 			tole.setEnabled(!dyna.isSelected());

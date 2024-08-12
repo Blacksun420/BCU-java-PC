@@ -24,14 +24,12 @@ public class PluginHandler implements Plugin {
 
     private void installDefaultPlugin() {
         InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("plugin.txt");
-        if (in == null) {
+        if (in == null)
             return;
-        }
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-            while (reader.ready()) {
+            while (reader.ready())
                 installPlugin((Plugin) ReflectUtils.getInstance(Class.forName(reader.readLine())));
-            }
         } catch (Exception e) {
             System.out.println("error when install default plugin: " + e);
         }
@@ -39,10 +37,8 @@ public class PluginHandler implements Plugin {
 
     public void installPlugin(Plugin plugin) {
         boolean b = pluginList.stream().map(Object::getClass).anyMatch(c -> c == plugin.getClass());
-
-        if (!b) {
+        if (!b)
             pluginList.add(plugin);
-        }
     }
 
     private void forEach(Consumer<Plugin> doSth, boolean sync) {

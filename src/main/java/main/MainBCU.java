@@ -31,6 +31,7 @@ import page.awt.BBBuilder;
 import page.battle.BattleBox;
 import plugin.Plugin;
 import plugin.ui.main.UIPlugin;
+import plugin.ui.main.util.BCUSettingMenu;
 import plugin.ui.main.util.MenuBarHandler;
 import utilpc.UtilPC;
 import utilpc.awt.FIBI;
@@ -312,11 +313,18 @@ public class MainBCU {
 	public static int[] dynamicTolerance = {0,0,0,0,1,1,1,2,2,2,3};
 	public static boolean useDynamic = false;
 	private static AutoSaveTimer ast;
+	private static BCUSettingMenu settingMenu;
 
 	public static void restartAutoSaveTimer() {
 		if (ast != null)
 			ast.interrupt();
 		ast = autoSaveTime > 0 ? new AutoSaveTimer() : null;
+	}
+
+	public static BCUSettingMenu getSettingMenu() {
+		if (settingMenu == null)
+			settingMenu = new BCUSettingMenu();
+		return settingMenu;
 	}
 
 	public static String getTime() {
