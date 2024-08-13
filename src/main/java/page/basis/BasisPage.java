@@ -4,10 +4,11 @@ import common.CommonStatic;
 import common.battle.BasisLU;
 import common.battle.BasisSet;
 import common.battle.LineUp;
+import common.battle.data.MaskUnit;
 import common.pack.UserProfile;
 import common.system.Node;
+import common.util.Data;
 import common.util.pack.NyCastle;
-import common.util.stage.Limit;
 import common.util.stage.Stage;
 import common.util.unit.*;
 import page.*;
@@ -24,6 +25,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 import java.util.stream.Collectors;
@@ -32,7 +34,41 @@ import static common.battle.BasisSet.current;
 
 public class BasisPage extends LubCont {
 
+	private static class OrbContainer {
+		int i;
+		int[] orb;
+
+		public OrbContainer(int ind, int[] data) {
+			i = ind;
+			orb = data;
+		}
+		@Override
+		public String toString() {
+			if (orb.length != 0)
+				return "Orb" + i + ": " + getTrait(orb[1]) + " " + getType(orb[0]) + " " + (orb[2] < gradeStrs.length ? gradeStrs[orb[2]] : "?");
+			return "Orb" + i + ": None";
+		}
+	}
 	private static final long serialVersionUID = 1L;
+
+	private static final String[] gradeStrs = {"D","C","B","A","S"};
+	private static String getTrait(int trait) {
+		StringBuilder res = new StringBuilder();
+
+		for (int i = 0; i < Interpret.TRAIT.length; i++)
+			if (((trait >> i) & 1) > 0)
+				res.append(Interpret.TRAIT[i]).append("/ ");
+
+		if (res.toString().endsWith("/ "))
+			res = new StringBuilder(res.substring(0, res.length() - 2));
+
+		return res.toString();
+	}
+	private static String getType(int type) {
+		if (type <= 4)
+			return MainLocale.getLoc(MainLocale.UTIL, "ot"+type);
+		return "Unknown Type " + type;
+	}
 
 	private final JBTN unit = new JBTN(0, "vuif");
 	private final JBTN setc = new JBTN(0, "set0");
@@ -51,7 +87,6 @@ public class BasisPage extends LubCont {
 	private final JTF cjtf = new JTF();
 	private final JTF ujtf = new JTF();
 	private final JBTN setpref = new JBTN(0, "setpref");
-	private final JBTN lvorb = new JBTN(0, "orb");
 	private final JLabel pcoin = new JLabel();
 	private final Vector<BasisSet> vbs = new Vector<>(BasisSet.list());
 	private final ReorderList<BasisSet> jlbs = new ReorderList<>(vbs);
@@ -74,6 +109,16 @@ public class BasisPage extends LubCont {
 	private final JBTN[] jbcsR = new JBTN[3];
 	private final JBTN[] jbcsL = new JBTN[3];
 	private final JTG cost = new JTG(1, "price");
+
+	private final JList<OrbContainer> orbList = new JList<>();
+	private final JScrollPane orbScroll = new JScrollPane(orbList);
+	private final OrbBox orbb = new OrbBox();
+	private final JComboBox<String> type = new JComboBox<>(), trait = new JComboBox<>(), grade = new JComboBox<>();
+	private List<Byte> typeData = new ArrayList<>();
+	private List<Integer> traitData = new ArrayList<>();
+	private List<Byte> gradeData = new ArrayList<>();
+	private final JBTN addo = new JBTN(0, "add");
+	private final JBTN remo = new JBTN(0, "rem");
 
 	private boolean changing = false, outside = false;
 
@@ -197,14 +242,11 @@ public class BasisPage extends LubCont {
 		set(combo, x, y, 1250, 750, 150, 50);
 
 		set(pcoin, x, y, 500, 50, 1200, 50);
-		set(lvjtf, x, y, 500, 100, 500, 50);
-		set(setpref, x, y, 1000, 100, 200, 50);
-		set(lvorb, x, y, 1200, 100, 200, 50);
+		set(lvjtf, x, y, 500, 100, 600, 50);
+		set(setpref, x, y, 1100, 100, 300, 50);
 		set(form, x, y, 500, 450, 200, 50);
 		set(reset, x, y, 700, 450, 200, 50);
 		set(cost, x, y, 900, 450, 200, 50);
-
-		set(jspcn, x, y, 500, 500, 600, 250);
 
 		set(lub, x, y, 500, 150, 600, 300);
 		set(ncb, x, y, 1175, 150, 150, 300);
@@ -212,6 +254,19 @@ public class BasisPage extends LubCont {
 			set(jbcsL[i], x, y, 1100, 150 + 100 * i, 75, 100);
 		for (int i = 0; i < jbcsR.length; i++) // 1375 - 1170 = 205
 			set(jbcsR[i], x, y, 1325, 150 + 100 * i, 75, 100);
+
+		int cw = generateNames().length > 0 ? 50 : 0;
+		set(type, x, y, 1100, 450, cw * 6, 50);
+		set(trait, x, y, 1100, 500, cw * 3, 50);
+		set(grade, x, y, 1250, 500, cw * 3, 50);
+		if (cw != 0 && (lu().getLv(lub.sf).getOrbs() == null || lu().getLv(lub.sf).getOrbs().length < (((Form)lub.sf).orbs == null || ((Form)lub.sf).orbs.getSlots() != -1 ? 1 : 2)))
+			cw = 0;
+		set(jspcn, x, y, 500, 500, 600 - (cw*5), 250);
+		set(orbScroll, x, y, 850, 500, cw * 5, 250);
+		cw = lub.sf instanceof Form && ((Form)lub.sf).orbs != null && ((Form)lub.sf).orbs.getSlots() == -1 ? 150 : 0;
+		set(addo, x, y, 1100, 700, cw, 50);
+		set(remo, x, y, 1250, 700, cw, 50);
+		set(orbb, x, y, 1100, 550, 300, 200-(cw/3));
 
 		jlc.setRowHeight(50);
 		jlc.getColumnModel().getColumn(2).setPreferredWidth(size(x, y, 300));
@@ -223,6 +278,7 @@ public class BasisPage extends LubCont {
 	@Override
 	public synchronized void onTimer(int t) {
 		super.onTimer(t);
+		orbb.paint(orbb.getGraphics());
 		ncb.paint(ncb.getGraphics());
 		jspt.revalidate();
 	}
@@ -278,10 +334,11 @@ public class BasisPage extends LubCont {
 			@Override
 			public void focusLost(FocusEvent arg0) {
 				if (lub.sf != null) {
+					changing = true;
 					int[] lv = CommonStatic.parseIntsN(lvjtf.getText());
-
 					lub.setLv(Level.lvList(lub.sf.unit(), lv, null));
-
+					for (int[] orb : getOrbs(-1))
+						initializeDrops(orb, false);
 					setLvs(lub.sf);
 				}
 			}
@@ -297,11 +354,6 @@ public class BasisPage extends LubCont {
 					CommonStatic.getPrefLvs().uni.put(lub.sf.getID(), lv.clone());
 				setLvs(lub.sf);
 			}
-		});
-
-		lvorb.setLnr(x -> {
-			if (lub.sf != null)
-				changePanel(new LevelEditPage(this, lu().getLv(lub.sf), (Form) lub.sf));
 		});
 
 		for (int i = 0; i < 3; i++) {
@@ -459,7 +511,7 @@ public class BasisPage extends LubCont {
 			@Override
 			public void focusLost(FocusEvent arg0) {
 				String str = bsjtf.getText().trim();
-				if (str.length() > 0)
+				if (!str.isEmpty())
 					BasisSet.current().name = str;
 				bsjtf.setText(BasisSet.current().name);
 				jlbs.repaint();
@@ -470,7 +522,7 @@ public class BasisPage extends LubCont {
 			@Override
 			public void focusLost(FocusEvent arg0) {
 				String str = bjtf.getText().trim();
-				if (str.length() > 0)
+				if (!str.isEmpty())
 					BasisSet.current().sele.name = str;
 				bjtf.setText(BasisSet.current().sele.name);
 				jlb.repaint();
@@ -546,6 +598,64 @@ public class BasisPage extends LubCont {
 		});
 
 		cost.addActionListener(x -> lub.swap = !cost.isSelected());
+
+		addo.setLnr(x -> {
+			if (changing)
+				return;
+			int[][] orbs = getOrbs(-1);
+			orbs = Arrays.copyOf(orbs, orbs.length + 1);
+			orbs[orbs.length - 1] = new int[]{0,CommonStatic.getBCAssets().DATA.get((byte)0),0};
+			setLvOrb((Form)lub.sf, orbs);
+		});
+		remo.setLnr(x -> {
+			if (changing)
+				return;
+			setLvOrb((Form)lub.sf, getOrbs(orbList.getSelectedIndex()));
+		});
+		orbList.addListSelectionListener(e -> {
+			if (changing || e.getValueIsAdjusting())
+				return;
+			setOrb((Form)lub.sf);
+		});
+		type.addActionListener(arg0 -> {
+			if (!changing && !orbList.isSelectionEmpty()) {
+				int[] data = orbList.getSelectedValue().orb;
+				Form f = (Form)lub.sf;
+				if (f.orbs != null && f.orbs.getSlots() != -1) {
+					if (type.getSelectedIndex() == 0) {
+						setLvOrb((Form)lub.sf, getOrbs(orbList.getSelectedIndex()));
+						return;
+					} else {
+						if (data.length == 0) {
+							int[][] orbs = getOrbs(-1);
+							orbs = Arrays.copyOf(orbs, orbs.length + 1);
+							orbs[orbs.length - 1] = data = new int[]{0, 0, 0};
+							setLvOrb((Form)lub.sf, orbs);
+						}
+						data[0] = typeData.get(type.getSelectedIndex() - 1);
+					}
+				} else
+					data[0] = typeData.get(type.getSelectedIndex());
+				changeOrb(f, data, true);
+			}
+		});
+		trait.addActionListener(arg0 -> {
+			if (!changing && !orbList.isSelectionEmpty()) {
+				int[] data = orbList.getSelectedValue().orb;
+				data[1] = traitData.get(trait.getSelectedIndex());
+				changeOrb((Form)lub.sf, data, true);
+			}
+		});
+		grade.addActionListener(arg0 -> {
+			if (!changing && !orbList.isSelectionEmpty()) {
+				int[] data = orbList.getSelectedValue().orb;
+				data[2] = gradeData.get(grade.getSelectedIndex());
+				changeOrb((Form)lub.sf, data, true);
+			}
+		});
+	}
+	private boolean valid() {
+		return !orbList.isSelectionEmpty() && orbList.getSelectedValue().orb.length == Data.ORB_TOT;
 	}
 
 	private void changeLU() {
@@ -582,7 +692,6 @@ public class BasisPage extends LubCont {
 		add(form);
 		add(lvjtf);
 		add(pcoin);
-		add(lvorb);
 		add(setpref);
 		add(ncb);
 		add(reset);
@@ -590,6 +699,16 @@ public class BasisPage extends LubCont {
 		add(ujtf);
 		add(combo);
 		add(cost);
+
+		add(orbScroll);
+		orbList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		add(orbb);
+		add(trait);
+		add(type);
+		add(grade);
+		add(addo);
+		add(remo);
+
 		for (int i = 0; i < 3; i++)
 			add(jbcsR[i] = new JBTN(0, ">"));
 		for (int i = 0; i < 3; i++)
@@ -615,7 +734,6 @@ public class BasisPage extends LubCont {
 		addListeners$0();
 		addListeners$1();
 		addListeners$2();
-		lvorb.setEnabled(lub.sf != null);
 		setpref.setEnabled(lub.sf != null);
 		cost.setSelected(true);
 		ujtf.setHintText(get(MainLocale.PAGE, "search"));
@@ -623,6 +741,209 @@ public class BasisPage extends LubCont {
 		ufp = new UnitFLUPage(getThis(), st == null ? null : st.getMC().getSave(false), lub.lim, lub.price,
 				lub.isTest() && st != null ? st.getMC().getSave(true).getUnlockedsBeforeStage(st, true).keySet() : null);
 		assignSubPage(trea);
+	}
+
+	private void setOrb(Form f) {
+		changing = true;
+		if (f == null) {
+			orbList.setListData(new OrbContainer[0]);
+			orbList.setSelectedIndex(-1);
+		} else {
+			OrbContainer[] names = generateNames();
+			int s = Math.max(0, Math.min(orbList.getSelectedIndex(), names.length - 1));
+			orbList.setListData(names);
+			orbList.setSelectedIndex(s);
+			type.setEnabled(!orbList.isSelectionEmpty());
+			if (!orbList.isSelectionEmpty()) {
+				initializeDrops(orbList.getSelectedValue().orb, true);
+				orbb.changeOrb(orbList.getSelectedValue().orb);
+			} else {
+				initializeDrops(new int[0], true);
+				orbb.changeOrb(new int[0]);
+			}
+		}
+		fireDimensionChanged();
+		remo.setEnabled(valid());
+		changing = false;
+	}
+	private int[][] getOrbs(int substr) {
+		if (!(lub.sf instanceof Form) || lu().getLv(lub.sf).getOrbs() == null)
+			return new int[0][];
+		int[][] orbs = lu().getLv(lub.sf).getOrbs();
+		if (substr == -1)
+			return orbs;
+		int[][] valid = new int[orbs.length - 1][];
+        for (int i = 0; i < valid.length; i++)
+			valid[i] = orbs[i + (i < substr ? 0 : 1)];
+		return valid;
+	}
+	private OrbContainer[] generateNames() {
+		int[][] orbs = getOrbs(-1);
+		int min = lub.sf instanceof Form && ((Form)lub.sf).orbs != null && ((Form)lub.sf).orbs.getSlots() != -1 ? ((Form)lub.sf).orbs.getSlots() : 0;
+		OrbContainer[] res = new OrbContainer[Math.max(min, orbs.length)];
+		for (int i = 0; i < orbs.length; i++)
+			res[i] = new OrbContainer(i, orbs[i]);
+		for (int i = orbs.length; i < min; i++)
+			res[i] = new OrbContainer(i, new int[0]);
+		return res;
+	}
+	private void initializeDrops(int[] data, boolean setLists) {
+		CommonStatic.BCAuxAssets aux = CommonStatic.getBCAssets();
+
+		if (!(lub.sf instanceof Form) || lub.sf.unit() == null || ((Form)lub.sf).orbs == null)
+			return;
+		Form f = (Form)lub.sf;
+		Level lv = lu().getLv(f);
+		ArrayList<String> typeText = new ArrayList<>();
+		boolean str = false;
+		boolean mas = false;
+		boolean res = false;
+
+		if(f.orbs.getSlots() == -1) {
+			for(Form form : f.unit.forms) {
+				MaskUnit mu = form.du.getPCoin() != null ? form.du.getPCoin().improve(lv.getTalents()) : form.du;
+				int atk = (int) mu.getProc().DMGINC.mult;
+				int def = (int) mu.getProc().DEFINC.mult;
+				str |= (atk > 100 && atk < 300) || (def > 100 && def < 400);
+				mas |= atk >= 300 && atk < 500;
+				res |= def >= 400 && def < 600;
+			}
+		} else {
+			MaskUnit mu = f.du.getPCoin() != null ? f.du.getPCoin().improve(lv.getTalents()) : f.du;
+			int atk = (int) mu.getProc().DMGINC.mult;
+			int def = (int) mu.getProc().DEFINC.mult;
+			str = (atk > 100 && atk < 300) || (def > 100 && def < 400);
+			mas = atk >= 300 && atk < 500;
+			res = def >= 400 && def < 600;
+		}
+		if (f.orbs.getSlots() != -1)
+			typeText.add("None");
+
+		typeData = new ArrayList<>();
+		typeText.add(MainLocale.getLoc(MainLocale.UTIL, "ot0"));
+		typeData.add(Data.ORB_ATK);
+		typeText.add(MainLocale.getLoc(MainLocale.UTIL, "ot1"));
+		typeData.add(Data.ORB_RES);
+
+		if(str) {
+			typeText.add(MainLocale.getLoc(MainLocale.UTIL, "ot2"));
+			typeData.add(Data.ORB_STRONG);
+		}
+		if(mas) {
+			typeText.add(MainLocale.getLoc(MainLocale.UTIL, "ot3"));
+			typeData.add(Data.ORB_MASSIVE);
+		}
+		if(res) {
+			typeText.add(MainLocale.getLoc(MainLocale.UTIL, "ot4"));
+			typeData.add(Data.ORB_RESISTANT);
+		}
+		if (data.length == 0) {
+			if (!setLists)
+				return;
+			type.setModel(new DefaultComboBoxModel<>(typeText.toArray(new String[0])));
+			type.setEnabled(f.orbs.getSlots() != -1);
+			type.setSelectedIndex(0);
+			trait.setEnabled(false);
+			grade.setEnabled(false);
+			if (!orbList.isSelectionEmpty()) {
+				int index = orbList.getSelectedIndex();
+				orbList.setListData(generateNames());
+				orbList.setSelectedIndex(index);
+			}
+			return;
+		}
+		trait.setEnabled(true);
+		grade.setEnabled(true);
+
+		String[] traits;
+		String[] grades;
+		byte otype = (byte)data[Data.ORB_TYPE];
+		if (!typeData.contains(otype))
+			data[Data.ORB_TYPE] = otype = Data.ORB_ATK;
+
+		if (aux.ORB.containsKey(otype)) {
+			if(otype == Data.ORB_STRONG || otype == Data.ORB_MASSIVE || otype == Data.ORB_RESISTANT) {
+				List<Integer> allTraits = new ArrayList<>(aux.ORB.get(otype).keySet());
+				traitData = new ArrayList<>();
+				List<Trait> traitList = new ArrayList<>();
+
+				if(f.orbs.getSlots() == -1) {
+					for(Form form : f.unit.forms) {
+						MaskUnit mu = form.du.getPCoin() != null ? form.du.getPCoin().improve(lv.getTalents()) : form.du;
+						for(Trait t : mu.getTraits())
+							if(t.BCTrait() && !traitList.contains(t))
+								traitList.add(t);
+					}
+				} else {
+					MaskUnit mu = f.du.getPCoin() != null ? f.du.getPCoin().improve(lv.getTalents()) : f.du;
+					for(Trait t : mu.getTraits())
+						if(t.BCTrait() && !traitList.contains(t))
+							traitList.add(t);
+				}
+				for (Trait t : traitList)
+					if (allTraits.contains(1 << t.id.id))
+						traitData.add(1 << t.id.id);
+
+				if(traitData.isEmpty())
+					traitData = allTraits;
+				else
+					traitData.sort(Integer::compareTo);
+			} else
+				traitData = new ArrayList<>(aux.ORB.get(otype).keySet());
+
+			traits = new String[traitData.size()];
+			for (int i = 0; i < traits.length; i++)
+				traits[i] = getTrait(traitData.get(i));
+
+			if (!traitData.contains(data[Data.ORB_TRAIT]))
+				data[Data.ORB_TRAIT] = traitData.get(0);
+			gradeData = aux.ORB.get(otype).get(data[Data.ORB_TRAIT]);
+			grades = new String[gradeData.size()];
+
+			for (int i = 0; i < grades.length; i++)
+				grades[i] = gradeData.get(i) < gradeStrs.length ? gradeStrs[gradeData.get(i)] : "?"; //getGrade(gradeData.get(i)); "Unknown Grade " + grade
+		} else
+			return;
+
+		byte ograde = (byte)data[Data.ORB_GRADE];
+		if (!gradeData.contains(ograde))
+			data[Data.ORB_GRADE] = gradeData.get(Data.ORB_GRADE);
+
+		if (valid())
+			changeOrb(f, data, false);
+
+		if (setLists) {
+			type.setModel(new DefaultComboBoxModel<>(typeText.toArray(new String[0])));
+			trait.setModel(new DefaultComboBoxModel<>(traits));
+			grade.setModel(new DefaultComboBoxModel<>(grades));
+
+			if (f.orbs.getSlots() != -1)
+				type.setSelectedIndex(typeData.indexOf(otype) + 1);
+			else
+				type.setSelectedIndex(typeData.indexOf(otype));
+
+			trait.setSelectedIndex(traitData.indexOf(data[Data.ORB_TRAIT]));
+			grade.setSelectedIndex(gradeData.indexOf(ograde));
+
+			if (valid()) {
+				int index = orbList.getSelectedIndex();
+				orbList.setListData(generateNames());
+				orbList.setSelectedIndex(index);
+			}
+		}
+	}
+
+	private void changeOrb(Form f, int[] orb, boolean setp) {
+		int[][] orbs = getOrbs(-1);
+		orbs[orbList.getSelectedIndex()] = orb;
+		if (setp)
+			setLvOrb(f, orbs);
+		else
+			lu().setOrb(f.unit, lu().getLv(f), orbs);
+	}
+	private void setLvOrb(Form f, int[][] orbs) {
+		lu().setOrb(f.unit, lu().getLv(f), orbs);
+		setOrb(f); //callBack(null);
 	}
 
 	private LineUp lu() {
@@ -710,11 +1031,11 @@ public class BasisPage extends LubCont {
 
 	private void setLvs(AbForm f) {
 		if (f instanceof Form) {
-			lvorb.setEnabled(((Form) f).orbs != null);
 			Level lv = lu().getLv(f);
 			String[] strs = UtilPC.lvText(f, lv);
 			lvjtf.setText(strs[0]);
 			pcoin.setText(strs[1]);
+			setOrb((Form)f);
 
 			setpref.setEnabled(CommonStatic.getPrefLvs().uni.containsKey(f.getID()) || !CommonStatic.getPrefLvs().equalsDef((Form)f, lv));
 			if (CommonStatic.getPrefLvs().uni.containsKey(f.getID()) && (CommonStatic.getPrefLvs().uni.get(f.getID()).equals(lv)
@@ -726,8 +1047,8 @@ public class BasisPage extends LubCont {
 				setpref.setForeground(Color.BLACK);
 			}
 		} else {
+			setOrb(null);
 			setpref.setEnabled(false);
-			lvorb.setEnabled(false);
 			pcoin.setText("");
 			if (f == null) {
 				lvjtf.setText("");

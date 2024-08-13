@@ -91,6 +91,11 @@ public class LineUpBox extends Canvas {
 						Res.getLv(lu.getLv(f).getLv() + lu.getLv(f).getPlusLv(),
 							new SymCoord(gra, 0.8f, 120 * j, 100 * i + (img.getImg().getHeight() / 3.5f), 2));
 					}
+					if (lu.getLv(f).getOrbs() != null) {
+						int[][] orbs = lu.getLv(f).getOrbs();
+						for (int k = orbs.length - 1; k >= 0; k--)
+							OrbBox.paintOrb(gra, orbs[k], (120 * j) + 90 - (k * Math.min(24, 72f / orbs.length)), 100 * i, 24);
+					}
 				}
 			}
 		if (relative != null && sf != null) {
@@ -112,6 +117,11 @@ public class LineUpBox extends Canvas {
 					new SymCoord(gra, 1, p.x, p.y + uni.getHeight(), 2));
 				Res.getLv(lu.getLv(sf).getLv() + lu.getLv(sf).getPlusLv(),
 					new SymCoord(gra, 0.8f, p.x, p.y + (uni.getHeight() / 3.5f), 2));
+			}
+			if (lu.getLv(sf).getOrbs() != null) {
+				int[][] orbs = lu.getLv(sf).getOrbs();
+				for (int k = orbs.length - 1; k >= 0; k--)
+					OrbBox.paintOrb(gra, orbs[k], p.x + 90 - (k * Math.min(24, 72f / orbs.length)), p.y, 24);
 			}
 		}
 		g.drawImage(bimg, 0, 0, getWidth(), getHeight(), null);

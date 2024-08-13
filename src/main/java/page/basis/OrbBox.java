@@ -11,12 +11,14 @@ import java.awt.image.BufferedImage;
 public class OrbBox extends Canvas {
 	private static final long serialVersionUID = 1L;
 
-	private int[] orbs;
+	private int[] orbs = new int[0];
 
-	public OrbBox(int[] orbs) {
-		this.orbs = orbs;
-
+	public OrbBox() {
 		setIgnoreRepaint(true);
+	}
+	public OrbBox(int[] data) {
+		this();
+		orbs = data;
 	}
 
 	public void changeOrb(int[] orbs) {
@@ -34,16 +36,18 @@ public class OrbBox extends Canvas {
 		float w = getWidth(), h = getHeight();
 
 		BufferedImage img = (BufferedImage) createImage((int) a, (int) a);
-
 		FG2D f = new FG2D(img.getGraphics());
-
-		f.drawImage(CommonStatic.getBCAssets().TRAITS[Orb.reverse(orbs[1])], 0, 0, a, a);
-		f.setComposite(FakeGraphics.TRANS, 204, 0);
-		f.drawImage(CommonStatic.getBCAssets().TYPES[orbs[0]], 0, 0, a, a);
-		f.setComposite(FakeGraphics.DEF, 0, 0);
-		f.drawImage(CommonStatic.getBCAssets().GRADES[orbs[2]], 0, 0, a, a);
+		paintOrb(f, orbs, 0, 0, a);
 
 		g.drawImage(img, (int) ((w - a) / 2), (int) ((h - a) / 2), null);
 		g.dispose();
+	}
+
+	public static void paintOrb(FakeGraphics f, int[] orbs, float x, float y, float a) {
+		f.drawImage(CommonStatic.getBCAssets().TRAITS[Orb.reverse(orbs[1])], x, y, a, a);
+		f.setComposite(FakeGraphics.TRANS, 204, 0);
+		f.drawImage(CommonStatic.getBCAssets().TYPES[orbs[0]], x, y, a, a);
+		f.setComposite(FakeGraphics.DEF, 0, 0);
+		f.drawImage(CommonStatic.getBCAssets().GRADES[orbs[2]], x, y, a, a);
 	}
 }
