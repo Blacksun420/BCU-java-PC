@@ -413,7 +413,13 @@ public class UnitManagePage extends DefaultPage {
 
 		});
 
-		vuni.setLnr((e) -> changePanel(new UnitViewPage(this, pac.getSID())));
+		vuni.setLnr(() -> {
+			if (jlf.getSelectedValue() != null)
+				return new UnitViewPage(this, jlf.getSelectedValue());
+			if (jlu.getSelectedValue() != null)
+				return new UnitViewPage(this, jlu.getSelectedValue());
+			return new UnitViewPage(this, pac.getSID());
+		});
 
 		unir.setLnr(() -> new UREditPage(getThis(), pac));
 

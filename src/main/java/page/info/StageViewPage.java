@@ -41,6 +41,13 @@ public class StageViewPage extends StagePage {
 	}
 
 	@Override
+	public void callBack(Object v) {
+		super.callBack(v);
+		if (v instanceof String && v.equals("prog"))
+			renew();
+	}
+
+	@Override
 	protected void resized(int x, int y) {
 		super.resized(x, y);
 		set(jspsm, x, y, 0, 50, 400, 1150);

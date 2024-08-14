@@ -96,10 +96,11 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 
 		if (selectedNode != null) {
 			agt.expandCurrentAnimNode(selectedNode);
-			jlt.setSelectionPath(new TreePath(selectedNode.getPath()));
-		} else {
+			TreePath path = new TreePath(selectedNode.getPath());
+			jlt.setSelectionPath(path);
+			jlt.scrollPathToVisible(path);
+		} else
 			jlt.clearSelection();
-		}
 	}
 
 
@@ -211,29 +212,18 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 	protected void renew() {
 		change(this, page -> {
 			TreePath path = jlt.getSelectionPath();
-
 			if (path == null)
 				return;
 
 			if (!(path.getLastPathComponent() instanceof DefaultMutableTreeNode))
 				return;
-
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 
 			if (!(node.getUserObject() instanceof AnimCE))
 				return;
-
 			AnimCE da = (AnimCE) node.getUserObject();
 
-			if (aep.focus == null) {
-				agt.renewNodes();
-			} else {
-				DefaultMutableTreeNode root = new DefaultMutableTreeNode("Animation");
-
-				root.add(new DefaultMutableTreeNode(aep.focus));
-
-				jlt.setModel(new DefaultTreeModel(root));
-			}
+			agt.renewNodes();
 			if (da != null) {
 				int row = mmet.getSelectedRow();
 				setA(da);

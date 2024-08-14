@@ -18,7 +18,6 @@ import utilpc.UtilPC;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -48,17 +47,13 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 		ib = (IconBox) vb;
 		aep = new EditHead(this, 0);
 		agt = new AnimGroupTree(jlt);
+		preIni();
 		ini();
 	}
 
 	public DIYViewPage(Page p, AnimCE ac) {
-		super(p, BBBuilder.def.getIconBox());
-		ib = (IconBox) vb;
-		aep = new EditHead(this, 0);
-		agt = new AnimGroupTree(jlt);
-		if (!ac.inPool())
-			aep.focus = ac;
-		ini();
+		this(p);
+		setSelection(ac);
 	}
 
 	public DIYViewPage(Page p, EditHead bar) {
@@ -71,15 +66,14 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 
 	@Override
 	public void setSelection(AnimCE ac) {
-
 		DefaultMutableTreeNode selectedNode = agt.findAnimNode(ac, null);
-
 		if(selectedNode == null)
 			return;
 
 		agt.expandCurrentAnimNode(selectedNode);
-		jlt.setSelectionPath(new TreePath(selectedNode.getPath()));
-
+		TreePath path = new TreePath(selectedNode.getPath());
+		jlt.setSelectionPath(path);
+		jlt.scrollPathToVisible(path);
 		remgroup.setEnabled(false);
 	}
 
@@ -121,27 +115,23 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 				}
 	}
 
+	private void preIni() {
+		AnimGroup.workspaceGroup.renewGroup();
+		agt.renewNodes();
+	}
+
 	@Override
 	protected void renew() {
-		if (aep.focus == null) {
-			AnimGroup.workspaceGroup.renewGroup();
-			agt.renewNodes();
-		}  else {
-			DefaultMutableTreeNode root = new DefaultMutableTreeNode("Animation");
-
-			root.add(new DefaultMutableTreeNode(aep.focus));
-
-			jlt.setModel(new DefaultTreeModel(root));
-		}
-
+		if (jlt.getSelectionPath() != null)
+			return;
+		preIni();
 		DefaultMutableTreeNode firstNode = agt.getVeryFirstAnimNode();
-
-		if(firstNode != null) {
+		if (firstNode != null) {
 			agt.expandCurrentAnimNode(firstNode);
-			jlt.setSelectionPath(new TreePath(firstNode));
+			TreePath path = new TreePath(firstNode);
+			jlt.setSelectionPath(path);
+			jlt.scrollPathToVisible(path);
 		}
-
-		group.setEnabled(aep.focus == null);
 	}
 
 	@Override
@@ -305,7 +295,6 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 		ics.setEnabled(false);
 		icc.setEnabled(false);
 		jlt.setCellRenderer(new AnimTreeRenderer());
-		group.setEnabled(aep.focus == null);
 		SwingUtilities.invokeLater(() -> jlt.setUI(new TreeNodeExpander(jlt)));
 		jlt.setTransferHandler(new AnimTreeTransfer(agt));
 		jlt.setDragEnabled(true);

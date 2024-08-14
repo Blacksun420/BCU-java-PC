@@ -150,9 +150,9 @@ public class FormEditPage extends EntityEditPage {
 	}
 
 	private void addLnrs() {
-		pf.setLnr(s -> changePanel(new FormEditPage(getFront(), pack, form.unit.forms[form.fid - 1])));
-		nf.setLnr(s -> changePanel(new FormEditPage(getFront(), pack, form.unit.forms[form.fid + 1])));
-		pcoin.setLnr(x -> changePanel(new PCoinEditPage(getThis(),form, pack.editable)));
+		pf.setLnr(() -> new FormEditPage(getFront(), pack, form.unit.forms[form.fid - 1]));
+		nf.setLnr(() -> new FormEditPage(getFront(), pack, form.unit.forms[form.fid + 1]));
+		pcoin.setLnr(() -> new PCoinEditPage(getThis(),form, pack.editable));
 		stat.setLnr(x -> {
 			Unit u = (Unit) Identifier.get(cu.getPack().uid);
 			Node<Unit> nu = Node.getList(UserProfile.getAll(cu.getPack().uid.pack, Unit.class), u);

@@ -13,7 +13,6 @@ import plugin.ui.main.util.MenuBarHandler;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -130,10 +129,11 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 
 		if(selectedNode != null) {
 			agt.expandCurrentAnimNode(selectedNode);
-			jta.setSelectionPath(new TreePath(selectedNode.getPath()));
-		} else {
+			TreePath path = new TreePath(selectedNode.getPath());
+			jta.setSelectionPath(path);
+			jta.scrollPathToVisible(path);
+		} else
 			jta.clearSelection();
-		}
 	}
 
 	@Override
@@ -297,7 +297,6 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 	@Override
 	protected void renew() {
 		TreePath path = jta.getSelectionPath();
-
 		if(path == null)
 			return;
 
@@ -305,7 +304,6 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 			return;
 
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-
 		if(!(node.getUserObject() instanceof AnimCE))
 			return;
 
@@ -313,15 +311,8 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		int ani = jlt.getSelectedIndex();
 		int par = maet.getSelectedRow();
 		int row = mpet.getSelectedRow();
-		if (aep.focus == null) {
-			agt.renewNodes();
-		} else {
-			DefaultMutableTreeNode root = new DefaultMutableTreeNode("Animation");
+		agt.renewNodes();
 
-			root.add(new DefaultMutableTreeNode(aep.focus));
-
-			jta.setModel(new DefaultTreeModel(root));
-		}
 		change(0, x -> {
 			if (da != null) {
 				setA(da);

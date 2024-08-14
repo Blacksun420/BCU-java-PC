@@ -26,7 +26,7 @@ public class DefaultPage extends Page {
 	}
 
 	private void addListeners() {
-		back.setLnr(e -> changePanel(getFront()));
+		back.setLnr(this::getFront);
 	}
 
 	private void ini() {

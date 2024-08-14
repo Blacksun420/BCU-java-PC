@@ -21,8 +21,6 @@ public class EditHead extends Page implements EditLink {
 	private final JBTN mmdl = new JBTN(0, "camm");
 	private final JBTN manm = new JBTN(0, "cama");
 
-	protected AnimCE focus;
-
 	private DIYViewPage p0;
 	private ImgCutEditPage p1;
 	private MaModelEditPage p2;
@@ -37,7 +35,6 @@ public class EditHead extends Page implements EditLink {
 		super(p.getFront());
 		val = v;
 		cur = p;
-		focus = null;
 		if (v == 0)
 			p0 = (DIYViewPage) p;
 		else if (v == 1)

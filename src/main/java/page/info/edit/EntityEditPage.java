@@ -513,11 +513,9 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		u.setLnr(x -> changePanel(ufp = new UnitFindPage(getThis(), false)));
 
 		a.setLnr(x -> {
-			if (pack.editable) {
-				AnimCE anim = (AnimCE) jcba.getSelectedItem();
-
-				if(anim != null)
-					changePanel(new DIYViewPage(getThis(), anim));
+			if (pack.editable && jcba.getSelectedItem() instanceof AnimCE) {
+				AnimCE anim = (AnimCE)jcba.getSelectedItem();
+				changePanel(new DIYViewPage(getThis(), anim));
 			} else if (o instanceof Unit)
 				changePanel(new UnitViewPage(getThis(), (Unit) o));
 			else if (o instanceof Enemy)

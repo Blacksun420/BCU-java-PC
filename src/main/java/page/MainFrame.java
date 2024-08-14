@@ -36,6 +36,11 @@ public class MainFrame extends JFrame {
 			back.setEnabled(p.getBackButton() != null);
 	}
 
+	public static void callback(Object obj) {
+		if (mainPanel != null)
+			mainPanel.callBack(obj);
+	}
+
 	public static void exitAll() {
 		if (mainPanel != null)
 			mainPanel.exitAll();

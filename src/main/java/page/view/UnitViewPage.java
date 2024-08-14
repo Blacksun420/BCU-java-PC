@@ -63,6 +63,11 @@ public class UnitViewPage extends AbViewPage {
 		jlu.setSelectedValue(u, true);
 	}
 
+	public UnitViewPage(Page p, Form f) {
+		this(p, f.unit);
+		jlf.setSelectedValue(f, true);
+	}
+
 	@Override
 	protected void resized(int x, int y) {
 		super.resized(x, y);

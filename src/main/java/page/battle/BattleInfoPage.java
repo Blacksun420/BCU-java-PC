@@ -154,6 +154,15 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 
 	@Override
 	public void callBack(Object o) {
+		if (o instanceof String) {
+			if (o.equals("music")) {
+				if (BCMusic.play)
+					renew();
+				else
+					BCMusic.stopAll();
+			}
+			return;
+		}
 		BCMusic.stopAll();
 		if(o instanceof Stage) {
 			changePanel(new BattleInfoPage(getFront(), (Stage) o, 0, basis.sb.b, 0, (byte)0));

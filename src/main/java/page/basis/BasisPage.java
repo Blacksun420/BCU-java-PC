@@ -284,7 +284,7 @@ public class BasisPage extends LubCont {
 	}
 
 	private void addListeners$0() {
-		unit.addActionListener(e -> changePanel(ufp));
+		unit.setLnr(() -> ufp);
 
 		ujtf.getDocument().addDocumentListener(new DocumentListener() {
 			public void insertUpdate(DocumentEvent e) {

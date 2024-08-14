@@ -203,6 +203,28 @@ public class ConfigPage extends DefaultPage {
 			rgb = (rgb << 8) + ((ColorPicker) obj).rgb[2];
 
 			cfg().viewerColor = rgb;
+		} else if (obj instanceof String) {
+			prel.setSelected(MainBCU.preload);
+			whit.setSelected(ViewBox.Conf.white);
+			refe.setSelected(cfg().ref);
+			musc.setSelected(BCMusic.play);
+			excont.setSelected(cfg().exContinuation);
+			jcsnd.setSelected(MainBCU.buttonSound);
+			jogl.setSelected(MainBCU.USE_JOGL);
+			jcbac.setSelected(cfg().maxBackup != -1);
+			jcmus.setSelected(cfg().updateOldMusic);
+			jcraw.setSelected(CommonStatic.getConfig().rawDamage);
+			jceff.setSelected(cfg().drawBGEffect);
+			jcdly.setSelected(cfg().buttonDelay);
+			perfo.setSelected(cfg().fps60);
+			stdis.setSelected(cfg().stageName);
+
+			shake.setSelected(cfg().shake);
+			reallv.setSelected(cfg().realLevel);
+			pkprog.setSelected(cfg().prog);
+			stat.setSelected(cfg().stat);
+			search.setSelected(MainBCU.searchPerKey);
+			dyna.setSelected(MainBCU.useDynamic);
 		}
 	}
 
@@ -337,6 +359,7 @@ public class ConfigPage extends DefaultPage {
 			jsbg.setEnabled(BCMusic.play);
 			jsse.setEnabled(BCMusic.play);
 			jcsnd.setEnabled(BCMusic.play);
+			MainBCU.getSettingMenu().syncCheckBox(BCUSettingMenu.PLAYMUSIC, musc.isSelected());
 		});
 
 		row.addActionListener(a -> {
@@ -471,7 +494,6 @@ public class ConfigPage extends DefaultPage {
 			add(prfr[i] = new JL(RARITY[i]));
 			add(jrfr[i] = new JTF(Level.lvString(CommonStatic.getPrefLvs().rare[i])));
 		}
-		excont.setSelected(cfg().exContinuation);
 		jls.setSelectedValue(cfg().lang, true);
 		jsmin.setValue(cfg().deadOpa);
 		jsmax.setValue(cfg().fullOpa);
@@ -494,38 +516,19 @@ public class ConfigPage extends DefaultPage {
 			left[i].setEnabled(cfg().ints[i] > 0);
 			right[i].setEnabled(cfg().ints[i] < 2);
 		}
-		prel.setSelected(MainBCU.preload);
-		whit.setSelected(ViewBox.Conf.white);
-		refe.setSelected(cfg().ref);
-		musc.setSelected(BCMusic.play);
+		callBack("init");
 		jsbg.setEnabled(BCMusic.play);
 		jsse.setEnabled(BCMusic.play);
 		jcsnd.setEnabled(BCMusic.play);
-		jcraw.setSelected(CommonStatic.getConfig().rawDamage);
 		jcraw.setToolTipText(get(MainLocale.PAGE, "rawdmgtip"));
-		jcsnd.setSelected(MainBCU.buttonSound);
-		jogl.setSelected(MainBCU.USE_JOGL);
-		jcbac.setSelected(cfg().maxBackup != -1);
-		jcmus.setSelected(cfg().updateOldMusic);
 		if (cfg().maxBackup != -1)
 			jsba.setValue(cfg().maxBackup);
 		else
 			jsba.setEnabled(false);
-		jceff.setSelected(cfg().drawBGEffect);
-		jcdly.setSelected(cfg().buttonDelay);
-		perfo.setSelected(cfg().fps60);
-		stdis.setSelected(cfg().stageName);
-
-		shake.setSelected(cfg().shake);
-		reallv.setSelected(cfg().realLevel);
 		reallv.setToolTipText(get(MainLocale.PAGE, "reallvtip"));
-		pkprog.setSelected(cfg().prog);
 		pkprog.setToolTipText(get(MainLocale.PAGE, "pkprogtip"));
-		stat.setSelected(cfg().stat);
 		stat.setToolTipText(get(MainLocale.PAGE, "defstattip"));
-		search.setSelected(MainBCU.searchPerKey);
 		tole.setText(String.valueOf(MainBCU.searchTolerance));
-		dyna.setSelected(MainBCU.useDynamic);
 		comv.setBorder(null);
 		addListeners();
 	}

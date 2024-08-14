@@ -22,7 +22,6 @@ import utilpc.UtilPC;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
@@ -106,9 +105,10 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 			changing = false;
 			return;
 		}
-
 		agt.expandCurrentAnimNode(selectedNode);
-		jta.setSelectionPath(new TreePath(selectedNode.getPath()));
+		TreePath path = new TreePath(selectedNode.getPath());
+		jta.setSelectionPath(path);
+		jta.scrollPathToVisible(path);
 
 		setA(ac);
 		changing = false;
@@ -483,14 +483,9 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 	}
 
 	private void preIni() {
-		if (aep.focus == null) {
-			AnimGroup.workspaceGroup.renewGroup();
-			agt.renewNodes();
-		} else {
-			DefaultMutableTreeNode root = new DefaultMutableTreeNode("Animation");
-			root.add(new DefaultMutableTreeNode(aep.focus));
-			jta.setModel(new DefaultTreeModel(root));
-		}
+		AnimGroup.workspaceGroup.renewGroup();
+		agt.renewNodes();
+
 		ini();
 	}
 
@@ -526,9 +521,6 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		add(edi);
 		edi.setVerticalAlignment(SwingConstants.CENTER);
 		edi.setHorizontalAlignment(SwingConstants.CENTER);
-		add.setEnabled(aep.focus == null);
-		name.setEnabled(aep.focus == null);
-		relo.setEnabled(aep.focus == null);
 		jta.setCellRenderer(new AnimTreeRenderer());
 		SwingUtilities.invokeLater(() -> jta.setUI(new TreeNodeExpander(jta)));
 		setA(null);
@@ -629,9 +621,9 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		name.setEnabled(anim != null);
 		name.setText(anim == null ? "" : anim.id.id);
 		boolean del = anim != null && anim.deletable();
-		rem.setEnabled(aep.focus == null && anim != null && del);
-		loca.setEnabled(aep.focus == null && anim != null && !del && anim.inPool());
-		copy.setEnabled(aep.focus == null && anim != null);
+		rem.setEnabled(anim != null && del);
+		loca.setEnabled(anim != null && !del && anim.inPool());
+		copy.setEnabled(anim != null);
 		impt.setEnabled(anim != null);
 		expt.setEnabled(anim != null);
 		spri.setEnabled(anim != null);

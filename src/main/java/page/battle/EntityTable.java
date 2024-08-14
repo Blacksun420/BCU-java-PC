@@ -7,6 +7,7 @@ import common.battle.entity.Entity;
 import common.pack.Identifier;
 import common.util.unit.Enemy;
 import common.util.unit.Form;
+import main.MainBCU;
 import page.MainLocale;
 import page.support.EnemyTCR;
 import page.support.SortTable;
@@ -99,7 +100,7 @@ class EntityTable extends SortTable<Entity> {
 				return t.damageGiven;
 			else if(c == 3)
 				return t.livingTime == 0 ? 0.0 : CommonStatic.parseDoubleN(df.format(t.damageGiven * 30.0 / t.livingTime));
-			return t.livingTime;
+			return MainBCU.convertTime(t.livingTime);
 		} else {
 			if (c == 0)
 				return (t.hasBarrier() ? "[" : "") + t.health + (t.status.shield[0] > 0 ? " (+" + t.status.shield[0] + ")" : "") + (t.hasBarrier() ? "]" : "");

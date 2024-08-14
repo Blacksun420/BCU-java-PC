@@ -86,6 +86,9 @@ public class BattleSetupPage extends LubCont {
 			} else
 				strt.setToolTipText(null);
 		}
+		if (obj instanceof String)
+			if (obj.equals("prog"))
+				lub.setLimit(st.getLim(jls.getSelectedIndex()), st.getMC().getSave(false), st.getCont().price);
 	}
 
 	@Override
