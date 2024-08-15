@@ -64,7 +64,7 @@ class EntityTable extends SortTable<Entity> {
 				return id0.compareTo(id1);
 			} else if(c == 3)
 				return Double.compare((double) get(e0, 3), (double) get(e1, 3));
-			return Integer.compare((int) get(e0, c), (int) get(e1, c));
+			return Double.compare(CommonStatic.parseDoubleN((String)get(e0, c)), CommonStatic.parseDoubleN((String)get(e1, c)));
 		} else {
 			if (c == 0)
 				return Long.compare(CommonStatic.parseLongN(get(e0,0).toString()),CommonStatic.parseLongN(get(e1,0).toString()));

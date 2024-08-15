@@ -259,7 +259,7 @@ public class BasisPage extends LubCont {
 		set(type, x, y, 1100, 450, cw * 6, 50);
 		set(trait, x, y, 1100, 500, cw * 3, 50);
 		set(grade, x, y, 1250, 500, cw * 3, 50);
-		if (cw != 0 && (lu().getLv(lub.sf).getOrbs() == null || lu().getLv(lub.sf).getOrbs().length < (((Form)lub.sf).orbs == null || ((Form)lub.sf).orbs.getSlots() != -1 ? 1 : 2)))
+		if (cw != 0 && (lu().getLv(lub.sf).getOrbs() == null || lu().getLv(lub.sf).getOrbs().length < (((Form)lub.sf).orbs == null || ((Form)lub.sf).orbs.getSlots() >= 2 ? 1 : 2)))
 			cw = 0;
 		set(jspcn, x, y, 500, 500, 600 - (cw*5), 250);
 		set(orbScroll, x, y, 850, 500, cw * 5, 250);

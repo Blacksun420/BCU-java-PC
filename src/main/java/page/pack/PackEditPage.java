@@ -372,7 +372,10 @@ public class PackEditPage extends DefaultPage {
 		});
 
 		cmbo.setLnr(x -> {
-			CommonStatic.getConfig().packCombos.replace(pac.desc.id, cmbo.isSelected());
+			if (cmbo.isSelected())
+				CommonStatic.getConfig().excludeCombo.remove(pac.desc.id);
+			else
+				CommonStatic.getConfig().excludeCombo.add(pac.desc.id);
 			for (BasisLU b : BasisLU.allLus())
 				b.lu.renewCombo();
 		});
@@ -821,10 +824,9 @@ public class PackEditPage extends DefaultPage {
 
 		pac = pack;
 		boolean b = pac != null && pac.editable;
-		SortedPackSet<String> deps = pac != null ? parentedList(pac) : null;
+		SortedPackSet<String> deps = pac != null ? parentedList(pac) : new SortedPackSet<>(0);
 		remp.setEnabled(pac != null && deps.isEmpty());
-
-		if(pac != null && !deps.isEmpty())
+		if(!deps.isEmpty())
 			remp.setToolTipText(Page.get(MainLocale.PAGE, "packused") + deps);
 		else
 			remp.setToolTipText(null);
@@ -847,8 +849,8 @@ public class PackEditPage extends DefaultPage {
 		unpk.setEnabled(canUnpack);
 		extr.setEnabled(canExport);
 
-		cmbo.setEnabled(pac != null && pac.combos.size() > 0);
-		cmbo.setSelected(cmbo.isEnabled() && CommonStatic.getConfig().packCombos.get(pac.getSID()));
+		cmbo.setEnabled(pac != null && !pac.combos.isEmpty());
+		cmbo.setSelected(cmbo.isEnabled() && !CommonStatic.getConfig().excludeCombo.contains(pac.getSID()));
 		if (b)
 			jtfp.setText(pack.desc.names.toString());
 		if (pac == null) {

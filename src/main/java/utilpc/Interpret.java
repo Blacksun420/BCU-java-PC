@@ -829,7 +829,7 @@ public class Interpret extends Data {
 	private static String getAtkNumbers(List<Integer> inds) {
 		StringBuilder builder = new StringBuilder("[");
 		String suffix;
-		switch (CommonStatic.getConfig().lang) {
+		switch (CommonStatic.getConfig().langs[0]) {
 			case ZH:
 				builder.append("第 ");
 				suffix = " 次攻擊]";
@@ -861,7 +861,7 @@ public class Interpret extends Data {
 		StringBuilder ans = new StringBuilder();
 		int[] times = CommonStatic.parseIntsN(date);
 		//English, also used for placeholder
-		if (CommonStatic.getConfig().lang == CommonStatic.Lang.Locale.JP) { //Japanese
+		if (CommonStatic.getConfig().langs[0] == CommonStatic.Lang.Locale.JP) { //Japanese
 			ans.append(times[0]).append('月').append(times[1]).append('日').append(times[2]).append("年、")
 					.append(times[3] >= 12 ? "午後" : "午前").append((times[3] - 1) % 12 + 1).append('時');
 		} else {
@@ -873,7 +873,7 @@ public class Interpret extends Data {
 	}
 
 	public static String getExtension(int i) {
-		switch (CommonStatic.getConfig().lang) {
+		switch (CommonStatic.getConfig().langs[0]) {
 			case ZH:
 				return ("第 " + i);
 			case KR:

@@ -70,7 +70,7 @@ public class MainBCU {
 
 		@Override
 		public InputStream getLangFile(String file) {
-			File f = new File(getBCUFolder(),"./assets/lang/" + CommonStatic.getConfig().lang.code + "/" + file);
+			File f = new File(getBCUFolder(),"./assets/lang/" + CommonStatic.getConfig().langs[0].code + "/" + file);
 			if (f.exists())
 				return Data.err(() -> new FileInputStream(f));
 

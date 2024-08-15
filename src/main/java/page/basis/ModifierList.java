@@ -36,7 +36,7 @@ public class ModifierList extends JList<Object> {
                 JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
                 if (o instanceof Combo) {
                     Combo c = (Combo) o;
-                    if (banned != null && banned.contains(c.type) || (!c.id.pack.equals(Identifier.DEF) && !CommonStatic.getConfig().packCombos.getOrDefault(c.id.pack, false))) {
+                    if (banned != null && banned.contains(c.type) || CommonStatic.getConfig().excludeCombo.contains(c.id.pack)) {
                         jl.setText("<html><strike>" + Interpret.comboLv[c.lv] + " Combo: " + Interpret.comboInfo(c, lineup) + "</strike></html>");
                         jl.setForeground(getSelectedIndex() == ind ? Color.WHITE : Color.GRAY);
                     } else

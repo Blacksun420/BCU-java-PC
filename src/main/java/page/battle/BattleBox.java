@@ -415,7 +415,7 @@ public interface BattleBox {
 		}
 
 		private int getFireLang() {
-			switch (CommonStatic.getConfig().lang) {
+			switch (CommonStatic.getConfig().langs[0]) {
 				case ZH:
 					return 18;
 				case KR:

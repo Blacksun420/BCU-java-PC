@@ -255,7 +255,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		add(comm);
 		add(jcbs);
 		add(jlang);
-		jlang.setSelectedItem(CommonStatic.getConfig().lang);
+		jlang.setSelectedItem(CommonStatic.getConfig().langs[0]);
 		add(jsDesc);
 		entDesc.setHintText(get(MainLocale.INFO, "desc"));
 		add(entName);

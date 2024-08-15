@@ -16,11 +16,16 @@ import main.MainBCU;
 import main.Opts;
 import main.Timer;
 import page.support.ColorPicker;
+import page.support.ReorderList;
+import page.support.ReorderListener;
 import page.view.ViewBox;
 
 import javax.swing.*;
 
 import plugin.ui.main.util.BCUSettingMenu;
+
+import java.awt.*;
+
 import static utilpc.Interpret.RARITY;
 
 public class ConfigPage extends DefaultPage {
@@ -80,7 +85,7 @@ public class ConfigPage extends DefaultPage {
 	private final JSlider jsse = new JSlider(0, 100);
 	private final JSlider jsui = new JSlider(0, 100);
 	private final JSlider jsba = new JSlider(0, 50);
-	private final JList<CommonStatic.Lang.Locale> jls = new JList<>(MainLocale.LOC_LIST); // TODO: reorderlist for custom priority
+	private final ReorderList<CommonStatic.Lang.Locale> jls = new ReorderList<>(cfg().langs);
 	private final JBTN row = new JBTN(MainLocale.PAGE, CommonStatic.getConfig().twoRow ? "tworow" : "onerow");
 	private final JBTN vcol = new JBTN(MainLocale.PAGE, "viewcolor");
 	private final JBTN vres = new JBTN(MainLocale.PAGE, "viewreset");
@@ -339,20 +344,32 @@ public class ConfigPage extends DefaultPage {
 			}
 		});
 
-		jls.addListSelectionListener(arg0 -> {
-			if (changing)
-				return;
-			changing = true;
-			if (jls.getSelectedIndex() == -1)
-				jls.setSelectedIndex(0);
-			cfg().lang = jls.getSelectedValue();
-			Res.langIcons();
-			Page.renewLoc(getThis());
-			MainBCU.getSettingMenu().updateLoc();
-			for (int i = 0; i < prfr.length; i++)
-				prfr[i].setText(RARITY[i]);
-			changing = false;
-		});
+		jls.list = new ReorderListener<CommonStatic.Lang.Locale>() {
+			@Override
+			public void reordered(int ori, int fin) {
+				change(false);
+				changing = true;
+				CommonStatic.Lang.Locale og = cfg().langs[ori];
+				if (ori < fin)
+					for (int i = ori; i < fin; i++)
+						cfg().langs[i] = cfg().langs[i+1];
+				else
+					for (int i = ori; i > fin; i--)
+						cfg().langs[i] = cfg().langs[i-1];
+				cfg().langs[fin] = og;
+				Res.langIcons();
+				Page.renewLoc(getThis());
+				MainBCU.getSettingMenu().updateLoc();
+				for (int i = 0; i < prfr.length; i++)
+					prfr[i].setText(RARITY[i]);
+				changing = false;
+			}
+			@Override
+			public void reordering() {
+				change(true);
+			}
+
+		};
 
 		musc.addActionListener(arg0 -> {
 			BCMusic.play = musc.isSelected();
@@ -494,7 +511,15 @@ public class ConfigPage extends DefaultPage {
 			add(prfr[i] = new JL(RARITY[i]));
 			add(jrfr[i] = new JTF(Level.lvString(CommonStatic.getPrefLvs().rare[i])));
 		}
-		jls.setSelectedValue(cfg().lang, true);
+		jls.setCellRenderer(new DefaultListCellRenderer() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean s, boolean f) {
+				JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
+				jl.setText(((CommonStatic.Lang.Locale)o).name);
+				return jl;
+			}
+		});
 		jsmin.setValue(cfg().deadOpa);
 		jsmax.setValue(cfg().fullOpa);
 		jsbg.setValue(BCMusic.VOL_BG);

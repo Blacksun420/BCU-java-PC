@@ -137,7 +137,7 @@ public strictfp class MainLocale {
 	}
 
 	private static String langCode() {
-		return CommonStatic.getConfig().lang.code;
+		return CommonStatic.getConfig().langs[0].code;
 	}
 
 	public final Map<String, String> res = new TreeMap<>();

@@ -247,8 +247,6 @@ public class ComboEditPage extends DefaultPage {
             Identifier<Combo> id = pac.getNextID(Combo.class);
             Combo combo = new Combo(id, frm);
             pac.combos.add(combo);
-            if (!CommonStatic.getConfig().packCombos.containsKey(pac.getSID()))
-                CommonStatic.getConfig().packCombos.put(pac.getSID(), true);
 
             jlc.setList(pac.combos.getRawList());
             jlc.getSelectionModel().setSelectionInterval(0, pac.combos.indexOf(combo));
@@ -266,8 +264,8 @@ public class ComboEditPage extends DefaultPage {
                 sel--;
             jlc.setRowSelectionInterval(sel, sel);
             pac.combos.remove(combo);
-            if (pac.combos.size() == 0)
-                CommonStatic.getConfig().packCombos.remove(pac.getSID());
+            if (pac.combos.isEmpty())
+                CommonStatic.getConfig().excludeCombo.remove(pac.getSID());
 
             jlc.setList(pac.combos.getRawList());
             updateC();
