@@ -46,13 +46,10 @@ public class EnemyViewPage extends AbViewPage {
 	public EnemyViewPage(Page p) {
 		super(p);
 		Vector<Enemy> v = new Vector<>();
-
-		for(PackData pack : UserProfile.getAllPacks()) {
+		for(PackData pack : UserProfile.getAllPacks())
 			v.addAll(pack.enemies.getList());
-		}
 
 		jlu.setListData(v);
-
 		ini();
 	}
 

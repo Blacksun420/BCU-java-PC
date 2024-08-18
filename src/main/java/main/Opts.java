@@ -340,7 +340,7 @@ public class Opts {
 
 	@SuppressWarnings("MagicConstant")
 	public static void showExStageSelection(String title, String content, Stage s, BattleInfoPage bp) {
-		if(s.info == null || !(s.info.exConnection() || s.info.getExStages() != null))
+		if(s.info == null || s.info.getExStages() == null)
 			throw new IllegalStateException("This stage doesn't have EX stage");
 
 		JLabel contents = new JLabel(content);

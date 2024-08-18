@@ -256,6 +256,16 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		add(jcbs);
 		add(jlang);
 		jlang.setSelectedItem(CommonStatic.getConfig().langs[0]);
+		jlang.setRenderer(new DefaultListCellRenderer() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public Component getListCellRendererComponent(JList<?> l, Object o, int ind, boolean s, boolean f) {
+				JLabel jl = (JLabel) super.getListCellRendererComponent(l, o, ind, s, f);
+				jl.setText(((CommonStatic.Lang.Locale)o).name);
+				return jl;
+			}
+		});
+
 		add(jsDesc);
 		entDesc.setHintText(get(MainLocale.INFO, "desc"));
 		add(entName);

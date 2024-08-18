@@ -147,11 +147,9 @@ public class LineUpBox extends Canvas {
 		return unusable(f, ef, (byte)(slot/5));
 	}
 	public byte unusable(AbForm f, IForm ef, byte row) {
-		if (lim != null && ef instanceof EForm && lim.unusable(((EForm)ef).du, price, row))
-			return 1;
-		if (isTest())
-			return (byte)(testL.contains(f) ? 0 : 2);
-		return (byte)(sdat != null && sdat.locked(f) ? 2 : 0);
+		if ((isTest() && !testL.contains(f)) || (sdat != null && sdat.locked(f)))
+			return 2;
+		return (byte)(lim != null && ef instanceof EForm && lim.unusable(((EForm)ef).du, price, row) ? 1 : 0);
 	}
 
 	public void setLU(LineUp l) {
