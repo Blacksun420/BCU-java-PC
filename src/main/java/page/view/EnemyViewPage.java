@@ -32,7 +32,6 @@ public class EnemyViewPage extends AbViewPage {
 	public EnemyViewPage(Page p, Enemy e) {
 		this(p, e.getID().pack);
 		jlu.setSelectedValue(e, true);
-
 	}
 
 	public EnemyViewPage(Page p, String pac) {

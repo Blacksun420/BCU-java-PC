@@ -52,6 +52,7 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 	private final JBTN white = new JBTN(0, "whiteBG");
 	private final JLabel edi = new JLabel();
 	private final JLabel uni = new JLabel();
+	private final JLabel prev = new JLabel();
 	private final JTree jta = new JTree();
 	private final AnimGroupTree agt;
 	private final JScrollPane jspu = new JScrollPane(jta);
@@ -151,8 +152,9 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		set(reml, x, y, 650, 350, 200, 50);
 		set(ico, x, y, 400, 400, 200, 50);
 		set(white, x, y, 650, 400, 200, 50);
-		set(edi, x, y, 400, 450, 200, 150);
-		set(uni, x, y, 650, 450, 200, 150);
+		set(edi, x, y, 400, 450, 150, 150);
+		set(uni, x, y, 550, 450, 150, 150);
+		set(prev, x, y, 700, 450, 150, 150);
 		set(jspic, x, y, 50, 600, 800, 650);
 		set(sb, x, y, 900, 100, 1400, 1150);
 
@@ -242,6 +244,7 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 			AnimCE ac = new AnimCE(rl, icet.anim);
 			ac.setEdi(icet.anim.getEdi());
 			ac.setUni(icet.anim.getUni());
+			ac.setPreview(icet.anim.getPreviewIcon());
 			agt.renewNodes();
 			selectAnimNode(ac);
 			setA(ac);
@@ -304,7 +307,8 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 			int selection = Opts.selection("What icon is this for?",
 					"Select Icon Type",
 					"Display icon",
-					"Deploy icon");
+					"Deploy icon",
+					"Preview icon");
 			setIcon(bimg, selection);
 		});
 
@@ -521,6 +525,9 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		add(edi);
 		edi.setVerticalAlignment(SwingConstants.CENTER);
 		edi.setHorizontalAlignment(SwingConstants.CENTER);
+		add(prev);
+		prev.setVerticalAlignment(SwingConstants.CENTER);
+		prev.setHorizontalAlignment(SwingConstants.CENTER);
 		jta.setCellRenderer(new AnimTreeRenderer());
 		SwingUtilities.invokeLater(() -> jta.setUI(new TreeNodeExpander(jta)));
 		setA(null);
@@ -550,6 +557,14 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 				if (icet.anim == null)
 					return addAnimation(getImg());
 				return setIcon(getImg(), 1);
+			}
+		});
+		prev.setDropTarget(new DropParser() {
+			@Override
+			public boolean process(File f) {
+				if (icet.anim == null)
+					return addAnimation(getImg());
+				return setIcon(getImg(), 2);
 			}
 		});
 	}
@@ -598,8 +613,15 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 			icet.anim.saveUni();
 			//If it's null, it will get the default
 			uni.setIcon(UtilPC.getIcon(icet.anim.getUni()));
+		} else if (selection == 2) {
+			if (bimg.getWidth() != bimg.getHeight())
+				return false;
+			bimg = UtilPC.resizeImage(bimg, 72, 72);
+			icet.anim.setPreview(MainBCU.builder.toVImg(bimg));
+			icet.anim.savePreview();
+			prev.setIcon(UtilPC.getIcon(icet.anim.getPreviewIcon() == null ? null : icet.anim.getPreviewIcon()));
 		}
-		return selection >= 0 && selection <= 1;
+		return selection >= 0 && selection <= 2;
 	}
 
 	private void setA(AnimCE anim) {
@@ -655,6 +677,7 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		if (anim != null) {
 			uni.setIcon(UtilPC.getIcon(anim.getUni()));
 			edi.setIcon(anim.getEdi() == null ? null : UtilPC.getIcon(anim.getEdi()));
+			prev.setIcon(anim.getPreviewIcon() == null ? null : UtilPC.getIcon(anim.getPreviewIcon()));
 		}
 		setB();
 		changing = boo;
