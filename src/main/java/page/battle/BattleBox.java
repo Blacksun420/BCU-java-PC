@@ -918,7 +918,7 @@ public interface BattleBox {
 							((Entity) sb.ebase).anim.drawEff(gra, setP(posx + shake, posy), bf.sb.siz * sprite);
 					}
 				}
-				if((sb.ubase.getAbi() * Data.AB_TIMEI) != 0) {
+				if((sb.ubase.getAbi() & Data.AB_TIMEI) != 0) {
 					float shake = 0f;
 
 					if(sb.ubase.health <= 0 || sb.ubase.hit > 0)
