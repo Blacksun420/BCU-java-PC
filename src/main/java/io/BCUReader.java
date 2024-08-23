@@ -289,7 +289,7 @@ public class BCUReader extends DataIO {
 										if (u == null)
 											continue;
 										for (int i = 0; i < Math.min(u.forms.length, strs.length - 1); i++)
-											MultiLangCont.getStatic().FEXP.put(locale, u.forms[i], strs);
+											MultiLangCont.getStatic().FEXP.put(locale, u.forms[i], strs[i+1].split("<br>"));
 									}
 								continue;
 							}
@@ -316,7 +316,7 @@ public class BCUReader extends DataIO {
 										Enemy e = UserProfile.getBCData().enemies.get(CommonStatic.parseIntN(strs[0]));
 										if (e == null || strs.length < 2)
 											continue;
-										MultiLangCont.getStatic().EEXP.put(locale, e, strs);
+										MultiLangCont.getStatic().EEXP.put(locale, e, strs[1].split("<br>"));
 									}
 								continue;
 							}

@@ -878,7 +878,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		p.moves = new int[++p.n][];
 		System.arraycopy(data, 0, p.moves, 0, data.length);
 
-		int[] newPart = new int[]{(int)ab.getEntity().ind(), (int)p.vd, 0, 0};
+		int[] newPart = new int[]{(int)(p.frame-p.off), (int)p.vd, 0, 0};
 		int si = 0;
 		for (int i = p.n - 2; i >= 0; i--) {
 			if (p.moves[i][0] <= newPart[0]) {
