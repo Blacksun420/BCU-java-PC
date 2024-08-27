@@ -198,11 +198,9 @@ public class PackSavePage extends DefaultPage {
         curMap = smap;
         if (smap != null) {
             LinkedList<StageMap> rm = new LinkedList<>(), pm = new LinkedList<>();
-            for (StageMap m : pk.mc.maps) {
-                if (m == smap)
-                    continue;
+            for (StageMap m : pk.mc.maps)
                 (smap.unlockReq.contains(m) ? rm : pm).add(m);
-            }
+            recRemoval(smap, pm);//TODO - Remove chapters that require clearing this chapter to unlock
             for (String s : pk.syncPar) {
                 UserPack p = UserProfile.getUserPack(s);
                 if (p == null || p.save == null)
@@ -220,6 +218,11 @@ public class PackSavePage extends DefaultPage {
         }
         addreq.setEnabled(pk.editable && smap != null && potMaps.getSelectedIndex() != -1);
         remreq.setEnabled(pk.editable && smap != null && reqMaps.getSelectedIndex() != -1);
+    }
+    private void recRemoval(StageMap current, LinkedList<StageMap> pm) {
+        pm.remove(current);
+        for (StageMap req : current.unlockReq)
+            recRemoval(req, pm);
     }
 
     private void setMJTF() {
