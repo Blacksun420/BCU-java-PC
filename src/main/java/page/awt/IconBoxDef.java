@@ -18,7 +18,7 @@ class IconBoxDef extends ViewBoxDef implements IconBox {
 	protected IconBoxDef() {
 		super(new IBCtrl());
 		setFocusable(true);
-		glow = 0;
+		glow = false;
 		changeType();
 	}
 

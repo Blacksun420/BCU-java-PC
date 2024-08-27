@@ -30,7 +30,7 @@ class GLIconBox extends GLViewBox implements IconBox {
 	protected GLIconBox() {
 		super(new IBCtrl());
 		setFocusable(true);
-		glow = 0;
+		glow = false;
 		changeType();
 	}
 

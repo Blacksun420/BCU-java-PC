@@ -27,7 +27,7 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String[] icos = new String[] { "default", "starred", "soul", "EF", "TF", "uni_f", "uni_c", "uni_s" };
+	private static final String[] icos = new String[] { "default", "starred", "soul", "EF", "TF", "ZF", "uni_f", "uni_c", "uni_s", "uni_u" };
 
 	private final JTree jlt = new JTree();
 	private final JScrollPane jspu = new JScrollPane(jlt);
@@ -243,9 +243,9 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 
 		jcb.addActionListener(arg0 -> {
 			int t = jcb.getSelectedIndex();
-			IconBox.IBConf.mode = t / 5; // [ Def, Str, Sou,
-			IconBox.IBConf.type = t % 5; // [ 0,   1,   2,  3, 4, 5, 6, 7]
-			IconBox.IBConf.glow = t / 3 >= 1 && t % 3 <= 1 ? 1 : 0;
+			IconBox.IBConf.mode = t / 6; // [ Def, Str, Sou,
+			IconBox.IBConf.type = t % 6; // [ 0,   1,   2,  3, 4, 5, 6, 7]
+			IconBox.IBConf.glow = t >= 3 && t != 6;
 			ib.changeType();
 		});
 

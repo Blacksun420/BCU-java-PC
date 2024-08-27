@@ -16,10 +16,9 @@ import static page.anim.IconBox.IBConf.*;
 public interface IconBox extends ViewBox {
 
 	class IBConf {
-
 		public static final int[] line = new int[4];
-		public static int mode = 0, type = 0, glow = 0;
-
+		public static int mode = 0, type = 0;
+		public static boolean glow = false;
 	}
 
 	class IBCtrl extends ViewBox.Controller {
@@ -93,7 +92,7 @@ public interface IconBox extends ViewBox {
 			if (cont.isBlank()) {
 				BCAuxAssets aux = CommonStatic.getBCAssets();
 
-				int t = mode == 0 ? (type == 1 || type == 2) ? type : 0 : 3;
+				int t = mode == 0 ? (type == 1 || type == 2) ? type : 0 : 4;
 
 				FakeImage bimg = aux.ico[mode][t].getImg();
 
@@ -105,24 +104,20 @@ public interface IconBox extends ViewBox {
 				gra.setColor(FakeGraphics.BLACK);
 				gra.drawRect(line[0] - 1, line[1] - 1, line[2] + 1, line[3] + 1);
 
-				if (glow == 1) {
+				if (glow) {
 					gra.setComposite(FakeGraphics.BLEND, 255, 3);
-					bimg = aux.ico[0][5].getImg();
+					bimg = aux.ico[0][6].getImg();
 					gra.drawImage(bimg, line[0], line[1], (int) (bw * r), (int) (bh * r));
 //					gra.setComposite(FakeGraphics.BLEND, 117, 3);
-//					bimg = aux.ico[0][6].getImg();
+//					bimg = aux.ico[0][7].getImg();
 //					gra.drawImage(bimg, line[0], line[1], (int) (bw * r), (int) (bh * r));
 					gra.setComposite(FakeGraphics.DEF, 0, 0);
 				}
-
-				if (mode == 0 && type > 2) {
-					bimg = aux.ico[0][6].getImg();
-				} else {
+				if (mode == 0 && type > 2)
+					bimg = aux.ico[0][7].getImg();
+				else
 					bimg = aux.ico[mode][t].getImg();
-				}
-
 				gra.drawImage(bimg, line[0], line[1], (int) (bw * r), (int) (bh * r));
-
 			}
 		}
 
