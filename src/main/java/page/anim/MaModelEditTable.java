@@ -238,6 +238,10 @@ class MaModelEditTable extends AnimTable<int[]> {
 		int x = 0, f = 0;
 		while (lnk[f] != 10)
 			x += getColumnModel().getColumn(lnk[f++]).getWidth();
+		((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		int m = 0xfefefefe, left = x + getInsets().left, ych = getRowHeight() / 2 + g.getFontMetrics().getAscent() / 2 - 2;
+		int c2 = ((getBackground().getRGB() & m) >>> 1) + ((getForeground().getRGB() & m) >>> 1);
+		g.setColor(new Color(c2, true));
 		for (int i = 0; i < mm.strs0.length; i++) {
 			if (!mm.strs0[i].isEmpty() || anim.imgcut.strs[mm.parts[i][2]].isEmpty())
 				continue;
@@ -245,13 +249,7 @@ class MaModelEditTable extends AnimTable<int[]> {
 			int leadCol = getColumnModel().getSelectionModel().getLeadSelectionIndex();
 			if (leadRow == i && leadCol == lnk[f])
 				continue;
-			((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-			Insets ins = getInsets();
-			FontMetrics fm = g.getFontMetrics();
-			int m = 0xfefefefe;
-			int c2 = ((getBackground().getRGB() & m) >>> 1) + ((getForeground().getRGB() & m) >>> 1);
-			g.setColor(new Color(c2, true));
-			g.drawString(anim.imgcut.strs[mm.parts[i][2]], x + ins.left,i * getRowHeight() + getRowHeight() / 2 + fm.getAscent() / 2 - 2);
+			g.drawString(anim.imgcut.strs[mm.parts[i][2]], left, i * getRowHeight() + ych);
 		}
 	}
 }

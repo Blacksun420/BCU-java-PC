@@ -17,8 +17,7 @@ class MMTree implements TreeExpansionListener {
 	protected final TreeCont tc;
 	private final MaModel mm;
 	private final JTree jtr;
-	private DefaultMutableTreeNode top;
-	private DefaultMutableTreeNode[] data;
+    private DefaultMutableTreeNode[] data;
 	private boolean adj;
 
 	protected MMTree(TreeCont cont, AnimCE am, JTree tree) {
@@ -67,7 +66,7 @@ class MMTree implements TreeExpansionListener {
 
 	protected void renew() {
 		data = new DefaultMutableTreeNode[mm.n];
-		top = new DefaultMutableTreeNode("MaModel");
+        DefaultMutableTreeNode top = new DefaultMutableTreeNode("MaModel");
 		int c = 0;
 		while (c < mm.n) {
 			for (int i = 0; i < mm.n; i++)
@@ -76,7 +75,7 @@ class MMTree implements TreeExpansionListener {
 					DefaultMutableTreeNode pre = (line[0] == -1 ? top : data[line[0]]);
 					if (pre == null)
 						continue;
-					data[i] = new DefaultMutableTreeNode(i + " - " + mm.strs0[i]);
+					data[i] = new DefaultMutableTreeNode(i + " - " + (mm.strs0[i].isEmpty() ? anim.imgcut.strs[mm.parts[i][2]] : mm.strs0[i]));
 					pre.add(data[i]);
 					c++;
 				}

@@ -168,6 +168,10 @@ public class MaAnimEditTable extends AnimTable<Part> {
 		int x = 0, f = 0;
 		while (lnk[f] != 3)
 			x += getColumnModel().getColumn(lnk[f++]).getWidth();
+		((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		int m = 0xfefefefe, left = x + getInsets().left, ych = getRowHeight() / 2 + g.getFontMetrics().getAscent() / 2 - 2;
+		int c2 = ((getBackground().getRGB() & m) >>> 1) + ((getForeground().getRGB() & m) >>> 1);
+		g.setColor(new Color(c2, true));
 		for (int i = 0; i < ma.parts.length; i++) {
 			if (!ma.parts[i].name.isEmpty())
 				continue;
@@ -178,13 +182,7 @@ public class MaAnimEditTable extends AnimTable<Part> {
 			int leadCol = getColumnModel().getSelectionModel().getLeadSelectionIndex();
 			if (leadRow == i && leadCol == lnk[f])
 				continue;
-			((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-			Insets ins = getInsets();
-			FontMetrics fm = g.getFontMetrics();
-			int m = 0xfefefefe;
-			int c2 = ((getBackground().getRGB() & m) >>> 1) + ((getForeground().getRGB() & m) >>> 1);
-			g.setColor(new Color(c2, true));
-			g.drawString(s, x + ins.left,i * getRowHeight() + getRowHeight() / 2 + fm.getAscent() / 2 - 2);
+			g.drawString(s, left, i * getRowHeight() + ych);
 		}
 	}
 }
