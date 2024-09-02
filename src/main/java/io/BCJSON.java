@@ -33,7 +33,7 @@ public class BCJSON {
 			CommonStatic.def.save(false, false, true);
 		}
 
-		int count = json != null ? json.music : getMusicTotal() - 1;
+		int count = json != null ? json.music : -1;//Null json usually means error or no connection, there's no point on checking anything given the case
 		if (CommonStatic.getConfig().updateOldMusic)
 			musics = CommonStatic.ctx.noticeErr(UpdateCheck.checkMusic(count), ErrType.ERROR, "Failed to check for updates, try again later on a stable WI-FI connection");
 		else
