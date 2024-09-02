@@ -160,20 +160,14 @@ public class StageEditTable extends AbJTable implements Reorderable {
 
 	@Override
 	public synchronized void setValueAt(Object arg0, int r, int c) {
-		if (stage == null)
+		if (stage == null || r >= getRowCount())
 			return;
-
-		if (r >= getRowCount())
-			return;
-
 		c = lnk[c];
 
 		if (c == 1) {
-			String[] is = CommonStatic.getPackEntityID((String) arg0);
-
-			if (is[0] == null || is[0].isEmpty() || is[1] == null || is[1].isEmpty())
+			String[] is = ((String)arg0).split("/");
+			if (is.length < 2 || is[0].isEmpty() || is[1].isEmpty())
 				return;
-
 			setEnemy(r, is[0], is[1]);
 		}else if (c == 9) {
 			int[] is = CommonStatic.parseIntsN((String) arg0);
@@ -191,7 +185,6 @@ public class StageEditTable extends AbJTable implements Reorderable {
 			}
 		} else if (c > 3) {
 			int[] is = CommonStatic.parseIntsN((String) arg0);
-
 			if (is.length == 0)
 				return;
 
@@ -480,18 +473,15 @@ public class StageEditTable extends AbJTable implements Reorderable {
 			return;
 
 		Line[] info = stage.datas;
-
 		Line data = info[info.length-r-1];
 
 		String packID;
-
 		if(CommonStatic.isInteger(pack))
 			packID = Data.hex(CommonStatic.parseIntN(pack));
 		else
 			packID = pack;
 
 		PackData p = UserProfile.getPack(packID);
-
 		if(p == null)
 			return;
 

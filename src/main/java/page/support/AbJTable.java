@@ -14,17 +14,14 @@ public abstract class AbJTable extends JTable implements TableModel {
 	protected final int[] lnk;
 	protected final String[] title;
 
-	private final TModel tm = new TModel(this);
-
-	protected AbJTable(@Nonnull String[] title) {
+    protected AbJTable(@Nonnull String[] title) {
 		this.title = title;
 
 		lnk = new int[getColumnCount()];
-
 		for (int i = 0; i < lnk.length; i++)
 			lnk[i] = i;
 
-		setColumnModel(tm);
+		setColumnModel(new TModel(this));
 		setModel(this);
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
@@ -85,20 +82,16 @@ class TModel extends DefaultTableColumnModel {
 
 	@Override
 	public void moveColumn(int c, int nc) {
-		c = Math.max(c, 0);
-		c = Math.min(c, getColumnCount() - 1);
-		nc = Math.max(nc, 0);
-		nc = Math.min(nc, getColumnCount() - 1);
+		c = Math.max(0, Math.min(c, getColumnCount() - 1));
+		nc = Math.max(0, Math.min(nc, getColumnCount() - 1));
 
 		if (c == nc)
 			return;
 		t.swap(c, nc);
 		super.moveColumn(c, nc);
-
 	}
 
 	@Override
 	public void removeColumn(TableColumn tc) {
 	}
-
 }

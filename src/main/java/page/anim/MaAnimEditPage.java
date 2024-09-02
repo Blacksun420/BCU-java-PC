@@ -765,7 +765,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 			MaModel mm = anim.mamodel;
 			name = new String[mm.n];
 			for (int i = 0; i < mm.n; i++)
-				name[i] = i + " " + mm.strs0[i];
+				name[i] = i + " " + (mm.strs0[i].isEmpty() ? anim.imgcut.strs[mm.parts[i][2]] : mm.strs0[i]);
 			jlm.setListData(name);
 		});
 	}

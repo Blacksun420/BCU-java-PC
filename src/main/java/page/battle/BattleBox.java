@@ -803,7 +803,6 @@ public interface BattleBox {
 				}
 				if(sb.tstop == 0 && ((ECastle) sb.ebase).guard != null && !((ECastle) sb.ebase).guard.done()) { // TODO (visuals): match exact visuals in-game
 					gra.setTransform(at);
-
 					float sx = getX(sb.ebase.pos + 25f);
 					float sy = midh - (road_h - 3 * DEP + 50f) * bf.sb.siz;
 
@@ -877,7 +876,6 @@ public interface BattleBox {
 					eac.draw(gra, setP(p, y), psiz * 1.2f);
 				}
 			}
-
 			gra.setTransform(at);
 			int can = cany[sb.canon.id];
 			int disp = canx[sb.canon.id];
@@ -899,10 +897,8 @@ public interface BattleBox {
 
 				if((sb.ebase.getAbi() & Data.AB_TIMEI) != 0) {
 					float shake = 0f;
-
-					if(sb.ebase.health <= 0 || sb.ebase.hit > 0) {
+					if(sb.ebase.health <= 0 || sb.ebase.hit > 0)
 						shake = (2 + (sb.time % 2 * -4)) * bf.sb.siz;
-					}
 
 					if (sb.ebase instanceof Entity) {
 						int posx = (int) getX(sb.ebase.pos);
@@ -941,13 +937,11 @@ public interface BattleBox {
 
 				for(int i = 0; i < sb.le.size(); i ++) {
 					Entity e = sb.le.get(i);
-
 					if(e.dead)
 						continue;
 
 					if ((e.getAbi() & Data.AB_TIMEI) > 0) {
 						int dep = e.getLayer() * DEP;
-
 						gra.setTransform(at);
 
 						float p = getX(e.pos);

@@ -380,22 +380,20 @@ class HeadEditTable extends Page {
 
 		if (jtf == jbg || jtf == jbg1) {
 			boolean mainbg = jtf == jbg;
-			String[] result = CommonStatic.getPackContentID(str);
+			String[] result = str.split("/");
 			if (result[0].isEmpty())
 				return;
-			if (result[1].isEmpty()) {
+			if (result.length == 1 || result[1].isEmpty()) {
 				if (!CommonStatic.isInteger(result[0]))
 					return;
 				Background b = UserProfile.getBCData().bgs.get(CommonStatic.safeParseInt(result[0]));
 				if (b == null)
 					return;
+				jtf.setText(b.toString());
 				if (mainbg) {
-					jbg.setText(b.toString());
 					sta.bg = b.getID();
-				} else {
-					jbg1.setText(b.toString());
+				} else
 					sta.bg1 = b.getID();
-				}
 				return;
 			}
 			String p = result[0];
@@ -419,13 +417,13 @@ class HeadEditTable extends Page {
 		}
 
 		if (jtf == jcas) {
-			String[] result = CommonStatic.getPackContentID(str);
+			String[] result = str.split("/");
 			if (result[0].isEmpty()) {
 				jm0.setText("null");
 				sta.mus0 = null;
 				return;
 			}
-			if (result[1].isEmpty()) {
+			if (result.length == 1 || result[1].isEmpty()) {
 				if (!CommonStatic.isInteger(result[0]))
 					return;
 				CastleImg c = CastleList.getList("000000").get(CommonStatic.safeParseInt(result[0]));
@@ -452,30 +450,26 @@ class HeadEditTable extends Page {
 
 		if (jtf == jm0 || jtf == jm1) {
 			boolean mainmus = jtf == jm0;
-			String[] result = CommonStatic.getPackContentID(str);
+			String[] result = str.split("/");
 			if (result[0].isEmpty()) {
-				if (mainmus) {
-					jm0.setText("null");
+				jtf.setText("null");
+				if (mainmus)
 					sta.mus0 = null;
-				} else {
-					jm1.setText("null");
+				else
 					sta.mus1 = null;
-				}
 				return;
 			}
-			if (result[1].isEmpty()) {
+			if (result.length == 1 || result[1].isEmpty()) {
 				if (!CommonStatic.isInteger(result[0]))
 					return;
 				Music m = UserProfile.getBCData().musics.get(CommonStatic.safeParseInt(result[0]));
 				if (m == null)
 					return;
-				if (mainmus) {
-					jm0.setText(m.toString());
+				jtf.setText(m.toString());
+				if (mainmus)
 					sta.mus0 = m.getID();
-				} else {
-					jm1.setText(m.toString());
+				else
 					sta.mus1 = m.getID();
-				}
 				return;
 			}
 			String p = result[0];
@@ -484,26 +478,21 @@ class HeadEditTable extends Page {
 				p = Data.hex(CommonStatic.safeParseInt(p));
 			PackData pack = PackData.getPack(p);
 			if (pack == null) {
+				jtf.setText("null");
 				if (mainmus) {
-					jm0.setText("null");
 					sta.mus0 = null;
-				} else {
-					jm1.setText("null");
+				} else
 					sta.mus1 = null;
-				}
 				return;
 			}
 			Music music = pack.musics.get(CommonStatic.safeParseInt(i));
 			if (music == null)
 				return;
-
+			jtf.setText(str);
 			if (mainmus) {
-				jm0.setText(str);
 				sta.mus0 = music.getID();
-			} else {
-				jm1.setText(str);
+			} else
 				sta.mus1 = music.getID();
-			}
 		}
 	}
 

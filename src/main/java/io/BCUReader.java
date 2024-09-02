@@ -314,7 +314,7 @@ public class BCUReader extends DataIO {
 									for (String str : qs) {
 										String[] strs = str.trim().split("\t");
 										Enemy e = UserProfile.getBCData().enemies.get(CommonStatic.parseIntN(strs[0]));
-										if (e == null || strs.length < 2)
+										if (e == null || strs.length < 2 || strs[1].replace("<br>","").isEmpty())
 											continue;
 										MultiLangCont.getStatic().EEXP.put(locale, e, strs[1].split("<br>"));
 									}

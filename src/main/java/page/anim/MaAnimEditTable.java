@@ -162,4 +162,29 @@ public class MaAnimEditTable extends AnimTable<Part> {
 		page.fireDimensionChanged();
 	}
 
+	@Override
+	public void paint(Graphics g) {
+		super.paint(g);
+		int x = 0, f = 0;
+		while (lnk[f] != 3)
+			x += getColumnModel().getColumn(lnk[f++]).getWidth();
+		for (int i = 0; i < ma.parts.length; i++) {
+			if (!ma.parts[i].name.isEmpty())
+				continue;
+			String s = anim.mamodel.strs0[ma.parts[i].ints[0]].isEmpty() ? anim.imgcut.strs[anim.mamodel.parts[ma.parts[i].ints[0]][2]] : anim.mamodel.strs0[ma.parts[i].ints[0]];
+			if (s.isEmpty())
+				continue;
+			int leadRow = getSelectionModel().getLeadSelectionIndex();
+			int leadCol = getColumnModel().getSelectionModel().getLeadSelectionIndex();
+			if (leadRow == i && leadCol == lnk[f])
+				continue;
+			((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			Insets ins = getInsets();
+			FontMetrics fm = g.getFontMetrics();
+			int m = 0xfefefefe;
+			int c2 = ((getBackground().getRGB() & m) >>> 1) + ((getForeground().getRGB() & m) >>> 1);
+			g.setColor(new Color(c2, true));
+			g.drawString(s, x + ins.left,i * getRowHeight() + getRowHeight() / 2 + fm.getAscent() / 2 - 2);
+		}
+	}
 }
