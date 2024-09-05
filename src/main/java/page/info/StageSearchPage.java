@@ -99,7 +99,6 @@ public class StageSearchPage extends StagePage {
     }
 
     private void setVisibility() {
-        strt.setVisible(!resultFound);
         mapN.setVisible(!resultFound);
         mapName.setVisible(!resultFound);
         staN.setVisible(!resultFound);
@@ -119,6 +118,7 @@ public class StageSearchPage extends StagePage {
         eneOrop.setVisible(!resultFound);
         initSearch.setVisible(!resultFound);
 
+        strt.setVisible(resultFound);
         jspmc.setVisible(resultFound && jlmc.getModel().getSize() > 1);
         jspsm.setVisible(resultFound && stageMapsArr.length > 1);
         jspst.setVisible(resultFound);

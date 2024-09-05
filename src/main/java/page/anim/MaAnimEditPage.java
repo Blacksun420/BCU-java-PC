@@ -299,7 +299,6 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		TreePath path = jta.getSelectionPath();
 		if(path == null)
 			return;
-
 		if(!(path.getLastPathComponent() instanceof DefaultMutableTreeNode))
 			return;
 

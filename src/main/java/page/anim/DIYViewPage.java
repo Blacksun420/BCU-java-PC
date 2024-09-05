@@ -104,7 +104,7 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 								return;
 
 							String groupName = (String) ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
-							if(groupName.equals(""))
+							if(groupName.isEmpty())
 								return;
 							groups.add(groupName);
 						}
@@ -122,13 +122,16 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 
 	@Override
 	protected void renew() {
-		if (jlt.getSelectionPath() != null)
-			return;
+		TreePath path = jlt.getSelectionPath();
 		preIni();
+		if (path != null && path.getLastPathComponent() instanceof DefaultMutableTreeNode && ((DefaultMutableTreeNode)path.getLastPathComponent()).getUserObject() instanceof AnimCE) {
+			setSelection((AnimCE)((DefaultMutableTreeNode)path.getLastPathComponent()).getUserObject());
+			return;
+		}
 		DefaultMutableTreeNode firstNode = agt.getVeryFirstAnimNode();
 		if (firstNode != null) {
 			agt.expandCurrentAnimNode(firstNode);
-			TreePath path = new TreePath(firstNode);
+			path = new TreePath(firstNode);
 			jlt.setSelectionPath(path);
 			jlt.scrollPathToVisible(path);
 		}
@@ -170,17 +173,14 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 	@Override
 	protected void updateChoice() {
 		TreePath path = jlt.getSelectionPath();
-
 		if(path == null)
 			return;
-
 		Object o = path.getLastPathComponent();
-
 		if(!(o instanceof DefaultMutableTreeNode))
 			return;
 
 		if(((DefaultMutableTreeNode) o).getUserObject() instanceof AnimCE) {
-			AnimCE e = (AnimCE) ((DefaultMutableTreeNode) o).getUserObject();
+			AnimCE e = (AnimCE)((DefaultMutableTreeNode) o).getUserObject();
 			aep.setAnim(e);
 			uni.setIcon(e == null ? null : UtilPC.getIcon(e.getUni()));
 			if (e == null)
@@ -225,7 +225,7 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 						return;
 
 					String groupName = (String) ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
-					if(groupName.equals(""))
+					if(groupName.isEmpty())
 						return;
 					groups.add(groupName);
 				}
