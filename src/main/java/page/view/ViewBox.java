@@ -130,8 +130,8 @@ public interface ViewBox {
 			}
 			if (ent != null) {
 				if (ent instanceof EAnimU) {
-					EAnimU e = (EAnimU) ent;
-					ent.update(e.type.rotate(), aspd);
+					EAnimU e = (EAnimU)ent;
+					e.update(e.type.rotate(), aspd);
 				} else
 					ent.update(true, aspd);
 			}

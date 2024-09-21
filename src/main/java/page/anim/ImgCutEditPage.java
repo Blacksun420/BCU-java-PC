@@ -609,7 +609,7 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 			icet.anim.saveIcon();
 			edi.setIcon(icet.anim.getEdi() == null ? null : UtilPC.getIcon(icet.anim.getEdi()));
 		} else if (selection == 1) {
-			icet.anim.setUni(MainBCU.builder.toVImg(bimg));
+			icet.anim.setUni(MainBCU.builder.toVImg(bimg == null ? (BufferedImage)CommonStatic.getBCAssets().slot[0].getImg().bimg() : bimg));
 			icet.anim.saveUni();
 			//If it's null, it will get the default
 			uni.setIcon(UtilPC.getIcon(icet.anim.getUni()));

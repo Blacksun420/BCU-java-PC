@@ -185,7 +185,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 			Point p1 = ab.getPoint(p = e.getPoint());
 
 			int currow = mpet.getSelectedRow();
-			int t = (int)ab.getEntity().ind();
+			int t = (int)ab.getEntity().ind() % ab.getEntity().len();
 			for (int ind : rows) {
 				if (ind == -1)
 					continue;
@@ -268,7 +268,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 			ab.setSiz(ab.getSiz() * (float) Math.pow(res, d));
 		else {
 			int currow = mpet.getSelectedRow();
-			int t = (int)ab.getEntity().ind();
+			int t = (int)ab.getEntity().ind() % ab.getEntity().len();
 			for (int r : rows) {
 				if (r == -1)
 					continue;
@@ -503,6 +503,18 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 			int h = mpet.getRowHeight();
 			mpet.scrollRectToVisible(new Rectangle(0, h * ind, 1, h));
 		}));
+
+		jlv.addListSelectionListener(l -> {
+			int[] mod = maet.getSelectedRows();
+			int ind = jlv.getSelectedIndex();
+			if (isAdj() || changing || ind == -1)
+				return;
+			changing = true;
+			for (int prt : mod)
+				maet.ma.parts[prt].ints[1] = ind;
+			maet.anim.unSave("maanim edit part");
+			changing = false;
+		});
 
 		remp.addActionListener(arg0 -> change(0, x -> {
 			if(maet.getCellEditor() != null) {
@@ -876,8 +888,8 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		int[][] data = p.moves;
 		p.moves = new int[++p.n][];
 		System.arraycopy(data, 0, p.moves, 0, data.length);
-
-		int[] newPart = new int[]{(int)(p.frame-p.off), (int)p.vd, 0, 0};
+        int ind = (int)(p.ints[2] <= 0 ? p.frame-p.off : p.frame % (ab.getEntity().len() / p.ints[1]));
+		int[] newPart = new int[]{ind, (int)p.vd, 0, 0};
 		int si = 0;
 		for (int i = p.n - 2; i >= 0; i--) {
 			if (p.moves[i][0] <= newPart[0]) {
