@@ -345,7 +345,6 @@ public class StageEditPage extends Page {
 		});
 
 		adds.setLnr(jlst::addItem);
-
 		rems.setLnr(jlst::deleteItem);
 
 		data.setLnr(x -> {
