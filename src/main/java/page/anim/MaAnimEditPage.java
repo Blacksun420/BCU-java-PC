@@ -190,15 +190,16 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 				if (ind == -1)
 					continue;
 				Part pt = maet.ma.parts[ind];
-				if (pt.moves.length == 0 || pt.moves[0][0] > t || pt.moves[pt.n - 1][0] < t) {
-					currow = pt.moves.length == 0 || pt.moves[0][0] > t ? 0 : pt.n;
-					addLine(pt);
+				int idx = (int)(pt.ints[2] <= 0 ? pt.frame-pt.off : pt.frame % (ab.getEntity().len() / pt.ints[1]));
+				if (pt.moves.length == 0 || pt.moves[0][0] > idx || pt.moves[pt.n - 1][0] < idx) {
+					currow = pt.moves.length == 0 || pt.moves[0][0] > idx ? 0 : pt.n;
+					addLine(pt, idx);
 				} else
 					for (int i = 0; i < pt.n; i++)
-						if (pt.moves[i][0] >= t) {
+						if (pt.moves[i][0] >= idx) {
 							currow = i;
-							if (pt.moves[i][0] > t)
-								addLine(pt);
+							if (pt.moves[i][0] > idx)
+								addLine(pt, idx);
 							break;
 						}
 
@@ -268,28 +269,27 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 			ab.setSiz(ab.getSiz() * (float) Math.pow(res, d));
 		else {
 			int currow = mpet.getSelectedRow();
-			int t = (int)ab.getEntity().ind() % ab.getEntity().len();
 			for (int r : rows) {
 				if (r == -1)
 					continue;
 				Part pt = maet.ma.parts[r];
-
-				if (pt.moves.length == 0 || pt.moves[0][0] > t || pt.moves[pt.n - 1][0] < t) {
-					currow = pt.moves.length == 0 || pt.moves[0][0] > t ? 0 : pt.n;
-					addLine(pt);
+				int idx = (int)(pt.ints[2] <= 0 ? pt.frame-pt.off : pt.frame % (ab.getEntity().len() / pt.ints[1]));
+				if (pt.moves.length == 0 || pt.moves[0][0] > idx || pt.moves[pt.n - 1][0] < idx) {
+					currow = pt.moves.length == 0 || pt.moves[0][0] > idx ? 0 : pt.n;
+					addLine(pt, idx);
 				} else
 					for (int i = 0; i < pt.n; i++)
-						if (pt.moves[i][0] >= t) {
+						if (pt.moves[i][0] >= idx) {
 							currow = i;
-							if (pt.moves[i][0] > t)
-								addLine(pt);
+							if (pt.moves[i][0] > idx)
+								addLine(pt, idx);
 							break;
 						}
 
 				dragged = true;
 				pt.moves[currow][1] = (int) (pt.moves[currow][1] * Math.pow(res, d));
 				ab.getEntity().organize();
-				ab.getEntity().setTime(t, false);
+				ab.getEntity().setTime(idx, false);
 			}
 		}
 	}
@@ -631,7 +631,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		});
 
 		addl.addActionListener(arg0 -> {
-			addLine(mpet.part);
+			addLine(mpet.part, (int)(mpet.part.ints[2] <= 0 ? mpet.part.frame-mpet.part.off : mpet.part.frame % (ab.getEntity().len() / mpet.part.ints[1])));
 			maet.anim.unSave("maanim add line");
 		});
 
@@ -884,11 +884,10 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		}
 	}
 
-	private void addLine(Part p) {
+	private void addLine(Part p, int ind) {
 		int[][] data = p.moves;
 		p.moves = new int[++p.n][];
 		System.arraycopy(data, 0, p.moves, 0, data.length);
-        int ind = (int)(p.ints[2] <= 0 ? p.frame-p.off : p.frame % (ab.getEntity().len() / p.ints[1]));
 		int[] newPart = new int[]{ind, (int)p.vd, 0, 0};
 		int si = 0;
 		for (int i = p.n - 2; i >= 0; i--) {
