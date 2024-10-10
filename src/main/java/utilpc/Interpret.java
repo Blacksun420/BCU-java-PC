@@ -1103,16 +1103,20 @@ public class Interpret extends Data {
 			ans.append("<br> Total Bank: ").append(sl.maxMoney);
 		if (sl.globalCooldown > 0)
 			ans.append("<br> Universal CD: ").append(sl.globalCooldown);
-		if (!sl.defMoney() || !sl.defCD()) {
+		if (sl.globalCost > 0)
+			ans.append("<br> Universal Cost: ").append(sl.globalCost);
+		if (!sl.defMoney() || !sl.defCD() || !sl.defDeploy()) {
 			ans.append("<br><table><tr><th>")
 					.append(MainLocale.getLoc(MainLocale.INFO, "ht10")).append("</th><th>")
 					.append(MainLocale.getLoc(MainLocale.INFO, "price")).append("</th><th>")
-					.append(MainLocale.getLoc(MainLocale.INFO, "cdo")).append("</th></tr>");
+					.append(MainLocale.getLoc(MainLocale.INFO, "cdo")).append("</th><th>")
+					.append(MainLocale.getLoc(MainLocale.INFO, "ht11")).append("</th><th>");
 			for (byte i = 0; i < RARITY_TOT; i++)
 				ans.append("<tr><td>")
 						.append(RARITY[i]).append("</td><td>")
 						.append(sl.costMultiplier[i]).append("%</td><td>")
-						.append(sl.cooldownMultiplier[i]).append("%</td></tr>");
+						.append(sl.cooldownMultiplier[i]).append("%</td><td>")
+						.append(sl.rarityDeployLimit[i]).append("</td></tr>");
 			ans.append("</table>");
 		}
 		return ans.toString();

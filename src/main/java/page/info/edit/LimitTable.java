@@ -52,12 +52,17 @@ public class LimitTable extends Page {
 
 	private final JL bank = new JL(MainLocale.INFO, "ht20");
 	private final JL cres = new JL(MainLocale.INFO, "ht21");
+	private final JL ccos = new JL(MainLocale.INFO, "ht23");
 	private final JTF jban = new JTF();
 	private final JTF jcre = new JTF();
+	private final JTF jcco = new JTF();
 
 	private final CrossList<String> jlco = new CrossList<>(Interpret.getComboFilter(0));
 	private final JScrollPane jsco = new JScrollPane(jlco);
 	private final JBTN banc = new JBTN(MainLocale.PAGE, "ban0");
+
+	private final JL rard = new JL(MainLocale.INFO, "ht11");
+	private final JTF[] brard = new JTF[6];
 
 	private final JBTN ppage = new JBTN("<");
 	private final JBTN npage = new JBTN(">");
@@ -98,6 +103,9 @@ public class LimitTable extends Page {
 		gcd.setEnabled(b);
 		jban.setEnabled(b);
 		jcre.setEnabled(b);
+		jcco.setEnabled(b);
+		for (JTF jtf : brard)
+			jtf.setEnabled(b);
 
 		jlco.setEnabled(b);
 		banc.setEnabled(b && jlco.getSelectedIndex() != -1);
@@ -162,7 +170,18 @@ public class LimitTable extends Page {
 		set(jsco, x, y, w * 2, 0, w * 2, 100);
 		set(banc, x, y, w * 4, 50, w, 50);
 		set(gcd, x, y, w * 5, 50, w, 50);
+		set(ccos, x, y, w * 6, 0, w, 50);
+		set(jcco, x, y, w * 7, 0, w, 50);
 		if (page == 2) {
+			set(ppage, x, y, w * 6, 50, w, 50);
+			set(npage, x, y, w * 7, 50, w, 50);
+		}
+		w = page == 3 ? 1400 / 8 : 0;
+		set(rard, x, y, 0, 0, w, 50);
+		for (int i = 0; i < brard.length; i++)
+			set(brard[i], x, y, w + w * i, 0, w, 50);
+
+		if (page == 3) {
 			set(ppage, x, y, w * 6, 50, w, 50);
 			set(npage, x, y, w * 7, 50, w, 50);
 		}
@@ -187,6 +206,9 @@ public class LimitTable extends Page {
 			jlr.setText("");
 			jban.setText("");
 			jcre.setText("");
+			jcco.setText("");
+			for (int i = 0; i < brard.length; i++)
+				set(brard[i] = new JTF(trar[i] + ":"));
 			jlco.repaint();
 			abler(false);
 			return;
@@ -207,6 +229,10 @@ public class LimitTable extends Page {
         gcd.setSelected(stli.coolStart);
         jban.setText(String.valueOf(stli.maxMoney));
         jcre.setText(String.valueOf(stli.globalCooldown));
+		jcco.setText(String.valueOf(stli.globalCost));
+
+		for (int i = 0; i < brard.length; i++)
+			brard[i].setText(trar[i] + ": " + stli.rarityDeployLimit[i]);
 
         jcmax.setText(limits[4] + ": " + lim.max);
 		jcmin.setText(limits[3] + ": " + lim.min);
@@ -292,7 +318,7 @@ public class LimitTable extends Page {
 		npage.addActionListener(l -> {
 			page++;
 			ppage.setEnabled(true);
-			npage.setEnabled(page < 2);
+			npage.setEnabled(page < 3);
 			main.fireDimensionChanged();
 		});
 	}
@@ -326,6 +352,12 @@ public class LimitTable extends Page {
 
 		add(jsco);
 		add(banc);
+		set(jcco);
+		add(ccos);
+
+		add(rard);
+		for (int i = 0; i < brard.length; i++)
+			set(brard[i] = new JTF(trar[i] + ":"));
 
 		add(ppage);
 		ppage.setEnabled(false);
@@ -361,18 +393,26 @@ public class LimitTable extends Page {
 					bitmask |= 1 << (j-1);
 			lim.star = bitmask;
 		} else if (jtf == jban)
-			lim.stageLimit.maxMoney = Math.max(CommonStatic.parseIntN(str), 0);
+			lim.stageLimit.maxMoney = Math.max(val, 0);
 		else if (jtf == jcre)
-			lim.stageLimit.globalCooldown = Math.max(CommonStatic.parseIntN(str), 0);
+			lim.stageLimit.globalCooldown = Math.max(val, 0);
+		else if (jtf == jcco)
+			lim.stageLimit.globalCost = Math.max(val, 0);
 		for (int i = 0; i < bcost.length; i++) {
 			if (jtf == bcost[i]) {
-				lim.stageLimit.costMultiplier[i] = Math.max(0, CommonStatic.parseIntN(str));
+				lim.stageLimit.costMultiplier[i] = Math.max(0, val);
 				break;
 			}
 		}
 		for (int i = 0; i < bcd.length; i++) {
 			if (jtf == bcd[i]) {
-				lim.stageLimit.cooldownMultiplier[i] = Math.max(0, CommonStatic.parseIntN(str));
+				lim.stageLimit.cooldownMultiplier[i] = Math.max(0, val);
+				break;
+			}
+		}
+		for (int i = 0; i < brard.length; i++) {
+			if (jtf == brard[i]) {
+				lim.stageLimit.rarityDeployLimit[i] = Math.max(-1, val);
 				break;
 			}
 		}
