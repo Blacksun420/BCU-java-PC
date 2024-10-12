@@ -3,6 +3,7 @@ package jogl.util;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES3;
+import common.CommonStatic;
 import common.system.P;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeImage;
@@ -311,8 +312,12 @@ public class GLGraphics implements GeoAuto {
 	public void drawImage(FakeImage bimg, float x, float y, float w, float h) {
 		checkMode(IMG);
 		GLImage gl = (GLImage) bimg.gl();
-		if (gl == null)
+		if (gl == null || w == 0 || h == 0)
 			return;
+		x -= w > 0 ? 0.5f : -0.5f;
+		y -= h > 0 ? 0.5f : -0.5f;
+		w += w > 0 ? 1 : -1;
+		h += h > 0 ? 1 : -1;
 		compImpl();
 		bind(tm.load(this, gl));
 		g.glBegin(GL2ES3.GL_QUADS);
@@ -408,6 +413,10 @@ public class GLGraphics implements GeoAuto {
 		if (bind == id)
 			return;
 		g.glBindTexture(GL_TEXTURE_2D, id);
+		if (CommonStatic.getConfig().ints[3] == 0) {
+			g.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			g.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		}
 		bind = id;
 	}
 

@@ -1031,7 +1031,7 @@ public interface BattleBox {
 				if(bf.sb.st.timeLimit != 0)
 					drawTime(g, snam.img.getHeight() * 0.9f);
 			} else if(bf.sb.st.timeLimit != 0)
-				drawTime(g, 0 - (bf.endFrames * box.getHeight() * 0.01f));
+				drawTime(g, -(bf.endFrames * box.getHeight() * 0.01f));
 		}
 
 		private void drawTime(FakeGraphics g, float nameheight) {

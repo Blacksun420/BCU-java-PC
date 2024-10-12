@@ -130,13 +130,12 @@ public class ConfigPage extends DefaultPage {
 		set(prel, x, y, 50, 300, 300, 50);
 		set(perfo, x, y, 50,  350, 300, 50);
 
-		if (!MainBCU.USE_JOGL)
-			for (byte i = 0; i < 4; i++) {
-				set(name[i], x, y, 350, 100 + i * 75, 200, 50);
-				set(left[i], x, y, 575, 100 + i * 75, 75, 50);
-				set(vals[i], x, y, 650, 100 + i * 75, 200, 50);
-				set(right[i], x, y, 850, 100 + i * 75, 75, 50);
-			}
+		for (byte i = (byte) (MainBCU.USE_JOGL ? 3 : 0); i < 4; i++) {
+			set(name[i], x, y, 350, 100 + i * 75, 200, 50);
+			set(left[i], x, y, 575, 100 + i * 75, 75, 50);
+			set(vals[i], x, y, 650, 100 + i * 75, 200, 50);
+			set(right[i], x, y, 850, 100 + i * 75, 75, 50);
+		}
 
 		set(jlmin, x, y, 50, 425, 300, 50);
 		set(jsmin, x, y, 350, 425, 750, 75);
@@ -279,24 +278,22 @@ public class ConfigPage extends DefaultPage {
 				stat.setSelected(CommonStatic.getConfig().stat);
 		});
 
-		if (!MainBCU.USE_JOGL)
-			for (byte i = 0; i < 4; i++) {
-				byte I = i;
+		for (byte i = (byte)(MainBCU.USE_JOGL ? 3 : 0); i < 4; i++) {
+			byte I = i;
 
-				left[i].addActionListener(arg0 -> {
-					cfg().ints[I]--;
-					vals[I].setText(0, ImgCore.VAL[cfg().ints[I]]);
-					left[I].setEnabled(cfg().ints[I] > 0);
-					right[I].setEnabled(cfg().ints[I] < 2);
-				});
-
-				right[i].addActionListener(arg0 -> {
-					cfg().ints[I]++;
-					vals[I].setText(0, ImgCore.VAL[cfg().ints[I]]);
-					left[I].setEnabled(cfg().ints[I] > 0);
-					right[I].setEnabled(cfg().ints[I] < 2);
-				});
-			}
+			left[i].addActionListener(arg0 -> {
+				cfg().ints[I]--;
+				vals[I].setText(0, ImgCore.VAL[cfg().ints[I]]);
+				left[I].setEnabled(cfg().ints[I] > 0);
+				right[I].setEnabled(cfg().ints[I] < 2);
+			});
+			right[i].addActionListener(arg0 -> {
+				cfg().ints[I]++;
+				vals[I].setText(0, ImgCore.VAL[cfg().ints[I]]);
+				left[I].setEnabled(cfg().ints[I] > 0);
+				right[I].setEnabled(cfg().ints[I] < 2);
+			});
+		}
 
 		jsmin.addChangeListener(arg0 -> cfg().deadOpa = jsmin.getValue());
 
