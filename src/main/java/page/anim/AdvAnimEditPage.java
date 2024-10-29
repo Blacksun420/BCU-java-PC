@@ -26,7 +26,7 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 
 	private final JTree jlm = new JTree();
 	private final JScrollPane jspm = new JScrollPane(jlm);
-	private final JList<String> jlv = new JList<>(Page.get(MainLocale.PAGE, "maepm", 17));
+	private final JList<String> jlv = new JList<>(Page.get(MainLocale.PAGE, "maepm", 20));
 	private final JScrollPane jspv = new JScrollPane(jlv);
 	private final MaAnimEditTable maet = new MaAnimEditTable(this);
 	private final JScrollPane jspma = new JScrollPane(maet);

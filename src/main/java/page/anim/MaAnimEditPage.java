@@ -510,6 +510,8 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 			if (isAdj() || changing || ind == -1)
 				return;
 			changing = true;
+			if (ind >= 15)
+				ind += 35;
 			for (int prt : mod)
 				maet.ma.parts[prt].ints[1] = ind;
 			maet.anim.unSave("maanim edit part");
