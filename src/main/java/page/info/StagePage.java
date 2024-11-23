@@ -90,7 +90,7 @@ public class StagePage extends DefaultPage {
 		strt.addActionListener(arg0 -> {
 			if (stage == null)
 				return;
-			changePanel(new BattleSetupPage(getThis(), stage, 1));
+			changePanel(new BattleSetupPage(getThis(), stage, false));
 		});
 
 		binf.setLnr(x -> Opts.pop(getInfo(), stage + " info"));
@@ -104,7 +104,7 @@ public class StagePage extends DefaultPage {
 			str = new StringBuilder(Interpret.stageLimHTML(stage.getLim(star).stageLimit));
 
 		if (stage.getCont().list.indexOf(stage) == stage.getCont().list.size() - 1) {
-			if (stage.info == null && stage.getLim(star).stageLimit == null)
+			if (str.length() == 0)
 				str.append("<html>");
 			LinkedList<StageMap> newUnlocks = stage.getCont().getUnlockableMaps();
 			if (!newUnlocks.isEmpty()) {
@@ -113,7 +113,7 @@ public class StagePage extends DefaultPage {
 					str.append("<tr><td>").append(newUnlock).append("</td></tr>");
 			}
 		} else if (stage.getCont().list.indexOf(stage) == 0 && !stage.getCont().unlockReq.isEmpty()) {
-			if (stage.info == null && stage.getLim(star).stageLimit == null)
+			if (str.length() == 0)
 				str.append("<html>");
 			str.append("<table><tr><th>Unlock Chapter Clear requirements:</th></tr> ");
 			for (StageMap newUnlock : stage.getCont().unlockReq)

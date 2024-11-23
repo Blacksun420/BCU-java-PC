@@ -163,7 +163,7 @@ public class StageEditPage extends DefaultPage {
 	}
 
 	private void addListeners$0() {
-		strt.setLnr(x -> changePanel(new BattleSetupPage(getThis(), stage, 1)));
+		strt.setLnr(x -> changePanel(new BattleSetupPage(getThis(), stage, false)));
 
 		advs.setLnr(x -> changePanel(new AdvStEditPage(getThis(), stage)));
 

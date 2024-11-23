@@ -45,7 +45,7 @@ public class StageRandPage extends DefaultPage {
 		strt.setLnr(x -> {
 			int s = jls.getSelectedIndex();
 			Stage sta = RandStage.getStage(stages, s);
-			changePanel(new BattleSetupPage(getThis(), sta, 0));
+			changePanel(new BattleSetupPage(getThis(), sta, true));
 		});
 	}
 

@@ -971,7 +971,7 @@ public class BasisPage extends LubCont {
 		bsjtf.setText(bs.name);
 		bsrem.setEnabled(bs != BasisSet.def());
 		setB(b);
-		jlcn.setBasis(bs);
+		jlcn.setBasis(bs.sele);
 		trea.callBack(null);
 	}
 

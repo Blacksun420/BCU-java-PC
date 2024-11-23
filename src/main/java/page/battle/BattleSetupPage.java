@@ -45,14 +45,14 @@ public class BattleSetupPage extends LubCont {
 	private final StageTable sttb;
 	private final JScrollPane jstt;
 
-	private final int conf;
+	private final boolean rand;
 
-	public BattleSetupPage(Page p, Stage s, int confs) {
+	public BattleSetupPage(Page p, Stage s, boolean randa) {
 		super(p);
 		sttb = new StageTable(this);
 		jstt = new JScrollPane(sttb);
 		st = s;
-		conf = confs;
+		rand = randa;
 		ini();
 	}
 
@@ -63,14 +63,18 @@ public class BattleSetupPage extends LubCont {
 
 	@Override
 	public void callBack(Object obj) {
-		BasisSet b = BasisSet.current();
-		jl.setText(b + "-" + b.sele);
+		BasisLU bu = getLU();
+		if (st.preset == null) {
+			BasisSet b = BasisSet.current();
+			jl.setText(b + "-" + bu);
+		} else
+			jl.setText("Preset Lineup");
 		if (st.lim != null) {
-			boolean val = st.lim.valid(b.sele.lu);
+			boolean val = st.lim.valid(bu.lu);
 			strt.setEnabled(val);
 			if (!val) {
 				if (st.lim.group != null && st.lim.group.type % 2 != 0) {
-					SortedPackSet<Form> fSet = st.lim.getValid(b.sele.lu);
+					SortedPackSet<Form> fSet = st.lim.getValid(bu.lu);
 					if (fSet.size() - st.lim.fa != 0)
 						if (st.lim.group.type == 3)
 							strt.setToolTipText("Remove at least " + (fSet.size() - st.lim.fa) + " of these units from the lineup: " + fSet);
@@ -81,7 +85,7 @@ public class BattleSetupPage extends LubCont {
 							strt.setToolTipText((st.lim.fa - fSet.size()) + " more of these units is required in the lineup: " + ffSet);
 						}
 				}
-				if (st.lim.lvr != null && !st.lim.lvr.isValid(b.sele.lu))
+				if (st.lim.lvr != null && !st.lim.lvr.isValid(bu.lu))
 					strt.setToolTipText((strt.getToolTipText() == null ? "" : strt.getToolTipText() + ", and ") + " some units' Lv is above limits");
 			} else
 				strt.setToolTipText(null);
@@ -93,13 +97,17 @@ public class BattleSetupPage extends LubCont {
 
 	@Override
 	protected void renew() {
-		BasisSet b = BasisSet.current();
+		BasisLU b = getLU();
 		callBack(null);
-		lub.setLU(b.sele.lu);
+		lub.setLU(b.lu);
 
-		mod.setBasis(BasisSet.current());
-		mod.setComboList(BasisSet.current().sele.lu.coms);
+		mod.setBasis(b);
+		mod.setComboList(b.lu.coms);
 		mod.setBanned(lub.getLim().stageLimit != null ? lub.getLim().stageLimit.bannedCatCombo : null);
+	}
+
+	private BasisLU getLU() {
+		return st.preset == null ? BasisSet.current().sele : st.preset.apply();
 	}
 
 	@Override
@@ -144,7 +152,7 @@ public class BattleSetupPage extends LubCont {
 			renew();
 		});
 
-		jlu.addActionListener(arg0 -> changePanel(new BasisPage(getThis(), st, conf == 1 ? jls.getSelectedIndex() : -1, testMode.isSelected())));
+		jlu.addActionListener(arg0 -> changePanel(new BasisPage(getThis(), st, !rand ? jls.getSelectedIndex() : -1, testMode.isSelected())));
 
 		strt.addActionListener(arg0 -> {
 			int star = jls.getSelectedIndex();
@@ -153,8 +161,8 @@ public class BattleSetupPage extends LubCont {
 				cfg |= 1;
 			if (snip.isSelected())
 				cfg |= 2;
-			BasisLU b = BasisSet.current().sele;
-			if (conf == 0) {
+			BasisLU b = getLU();
+			if (rand) {
 				b = RandStage.getLU(star);
 				star = 0;
 			}
@@ -163,7 +171,7 @@ public class BattleSetupPage extends LubCont {
 		});
 
 		tmax.addActionListener(arg0 -> {
-			st.lim.lvr.validate(BasisSet.current().sele.lu);
+			st.lim.lvr.validate(getLU().lu);
 			renew();
 		});
 
@@ -181,7 +189,8 @@ public class BattleSetupPage extends LubCont {
 	private void ini() {
 		add(jsps);
 		add(jl);
-		add(jlu);
+		if (st.preset == null)
+			add(jlu);
 		add(strt);
 		add(rich);
 		add(snip);
@@ -214,13 +223,13 @@ public class BattleSetupPage extends LubCont {
 			plus.setSelected(CommonStatic.getConfig().plus);
 			lvlim.setSelectedIndex(CommonStatic.getConfig().levelLimit);
 		}
-		if (conf == 1) {
+		if (!rand) {
 			String[] tit = new String[st.getCont().stars.length];
 			String star = get(1, "star");
 			for (int i = 0; i < st.getCont().stars.length; i++)
 				tit[i] = (i + 1) + star + ": " + st.getCont().stars[i] + "%";
 			jls.setListData(tit);
-		} else if (conf == 0) {
+		} else {
 			String[] tit = new String[5];
 			String star = get(1, "attempt");
 			for (int i = 0; i < 5; i++)
@@ -228,7 +237,7 @@ public class BattleSetupPage extends LubCont {
 			jls.setListData(tit);
 		}
 		jls.setSelectedIndex(0);
-		lub.setLimit(st.getLim(conf == 1 ? jls.getSelectedIndex() : -1), st.getMC().getSave(false), st.getCont().price);
+		lub.setLimit(st.getLim(!rand ? jls.getSelectedIndex() : -1), st.getMC().getSave(false), st.getCont().price);
 		addListeners();
 	}
 

@@ -2,8 +2,6 @@ package page.basis;
 
 import common.CommonStatic;
 import common.battle.BasisLU;
-import common.battle.BasisSet;
-import common.pack.Identifier;
 import common.pack.SortedPackSet;
 import common.util.unit.Combo;
 import page.MainLocale;
@@ -16,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 public class ModifierList extends JList<Object> {
-    private BasisSet lineup;
+    private BasisLU lineup;
     private SortedPackSet<Combo> combos;
     private Set<Integer> banned;
 
@@ -54,7 +52,7 @@ public class ModifierList extends JList<Object> {
         List<Object> list = new ArrayList<>();
 
         if (lineup != null) {
-            BasisLU lu = lineup.sele;
+            BasisLU lu = lineup;
             int[] lvls = lu.nyc;
             if (lvls[1] > 0 && lu.t().deco[lvls[1] - 1] > 0)
                 list.add("Lv. " + lu.t().deco[lvls[1] - 1] + " "
@@ -82,7 +80,7 @@ public class ModifierList extends JList<Object> {
         reset();
     }
 
-    public void setBasis(BasisSet b) {
+    public void setBasis(BasisLU b) {
         lineup = b;
         reset();
     }

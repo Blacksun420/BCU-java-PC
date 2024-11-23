@@ -13,6 +13,7 @@ import common.util.Data.Proc.ProcItem;
 import common.util.lang.Formatter;
 import common.util.lang.MultiLangCont;
 import common.util.lang.ProcLang;
+import common.util.stage.BattlePreset;
 import common.util.stage.Limit;
 import common.util.stage.MapColc;
 import common.util.stage.StageLimit;
@@ -170,16 +171,16 @@ public class Interpret extends Data {
 			TMAX[43 + i] = Treasure.decorationData.get(i).getMax();
 	}
 
-	public static String comboInfo(Combo c, BasisSet b) {
+	public static String comboInfo(Combo c, BasisLU b) {
 		return combo(c.type, CommonStatic.getBCAssets().values[c.type][c.lv], b);
 	}
 
-	public static String deco(int type, BasisSet b) { // 0 = slow
+	public static String deco(int type, BasisLU b) { // 0 = slow
 		double mag = ((int) ((1.0 - b.t().getDecorationMagnification(type + 1)) * 1000)) / 10.0;
 		return MainLocale.getLoc(MainLocale.UTIL, "dec" + type) + " +" + mag + "%";
 	}
 
-	public static String base(int type, BasisSet b) {
+	public static String base(int type, BasisLU b) {
 		double mag = ((int) ((1.0 - b.t().getBaseMagnification(type + 1, new SortedPackSet<>(UserProfile.getBCData().traits.getList()))) * 1000)) / 10.0;
 		return MainLocale.getLoc(MainLocale.UTIL, "bas" + type) + " +" + mag + "%";
 	}
@@ -655,7 +656,7 @@ public class Interpret extends Data {
 			setVal(ind, v, bl.t());
 	}
 
-	private static String combo(int t, int val, BasisSet b) {
+	private static String combo(int t, int val, BasisLU b) {
 		byte[] con = CDC[t];
 		if (t == C_RESP) {
 			double research = (b.t().tech[LV_RES] - 1) * 6 + b.t().trea[T_RES] * 0.3;
@@ -926,6 +927,8 @@ public class Interpret extends Data {
 		Limit l = si.st.getLim(star);
 		if (l.stageLimit != null)
 			ans.append(stageLimHTML(l.stageLimit));
+		if (si.st.preset != null)
+			ans.append(presetString(si.st.preset));
 
 		if (si.exConnection) {
 			ans.append("<hr><br> ").append(MainLocale.getLoc(MainLocale.INFO, "exmap")).append(": ")
@@ -1060,10 +1063,12 @@ public class Interpret extends Data {
 	public static String customHTML(CustomStageInfo csi, int star) {
 		StringBuilder ans = new StringBuilder();
 		ans.append("<html>");
+		if (csi.st.preset != null)
+			ans.append(presetString(csi.st.preset));
 		if (csi.st.getLim(star).stageLimit != null) {
 			ans.append(stageLimHTML(csi.st.getLim(star).stageLimit));
-		if (!csi.stages.isEmpty() || !csi.rewards.isEmpty())
-			ans.append("<hr>");
+			if (!csi.stages.isEmpty() || !csi.rewards.isEmpty())
+				ans.append("<hr>");
 		}
 		if (!csi.stages.isEmpty()) {
 			ans.append("<table><tr><th>").append(MainLocale.getLoc(MainLocale.INFO, "exstage")).append("</th></tr>");
@@ -1105,6 +1110,8 @@ public class Interpret extends Data {
 			ans.append("<br> Universal CD: ").append(sl.globalCooldown);
 		if (sl.globalCost > 0)
 			ans.append("<br> Universal Cost: ").append(sl.globalCost);
+		if (sl.maxUnitSpawn > 0)
+			ans.append("<br> Unit Spawn Cap: ").append(sl.maxUnitSpawn);
 		if (!sl.defMoney() || !sl.defCD() || !sl.defDeploy()) {
 			ans.append("<br><table><tr><th>")
 					.append(MainLocale.getLoc(MainLocale.INFO, "ht10")).append("</th><th>")
@@ -1119,6 +1126,53 @@ public class Interpret extends Data {
 						.append(sl.rarityDeployLimit[i]).append("</td></tr>");
 			ans.append("</table>");
 		}
+		return ans.toString();
+	}
+
+	private static final int[] treaData = {2, 3, 4, 5, 24, 25, 26, 27, 28, -1, -1};
+	private static final int[] techData = {0, 1, 18, 19, 20, 21, 22, 23, -1};
+
+	private static String presetString(BattlePreset p) {
+		StringBuilder ans = new StringBuilder();
+		ans.append("<hr><b><h2><center>Preset Lineup</center></h2></b>").append("<table><tr><th>")
+				.append(MainLocale.getLoc(MainLocale.INFO, "unit")).append("</th><th>")
+				.append(MainLocale.getLoc(MainLocale.INFO, "ur1")).append("</th></tr>");
+		for (byte i = 0; i < 2; i++)
+			for (byte j = 0; j < 5; j++) {
+				if (p.fs[i][j] == null)
+					break;
+				ans.append("<tr><td>")
+					.append(p.fs[i][j]).append("</td><td>")
+					.append(UtilPC.lvText(p.fs[i][j], p.levels[i][j])[0]).append("</td></tr>");
+				}
+		ans.append("</table>");
+		ans.append("Preset Cannon: ").append(p.cannonType);
+		ans.append("<hr><b><h2><center>Preset Treasures</center></h2></b>").append("<table><tr><th>")
+				.append(MainLocale.getLoc(MainLocale.INFO, "name")).append("</th><th>")
+				.append(MainLocale.getLoc(MainLocale.INFO, "eff")).append("</th><th>");
+		ans.append("<tr><td>").append(MainLocale.getLoc(MainLocale.UTIL, "t13")).append("</td><td>").append(p.alien).append("%</td></tr>")
+				.append("<tr><td>").append(MainLocale.getLoc(MainLocale.UTIL, "t14")).append("</td><td>").append(p.star).append("%</td></tr>");
+		for (byte i = 0; i < p.gods.length; i++)
+			ans.append("<tr><td>").append(MainLocale.getLoc(MainLocale.UTIL, "t" + (i + 15))).append("</td><td>").append(p.gods[i]).append("%</td></tr>");
+		for (byte i = 0; i < p.trea.length; i++)
+			ans.append("<tr><td>").append(MainLocale.getLoc(MainLocale.UTIL, treaData[i] == -1 ? "nb13" : "t" + treaData[i])).append("</td><td>").append(p.trea[i]).append("%</td></tr>");
+		for (byte i = 0; i < p.fruit.length; i++)
+			ans.append("<tr><td>").append(MainLocale.getLoc(MainLocale.UTIL, "t" + (i + 6))).append("</td><td>")
+					.append(p.fruit[i]).append("%</td></tr>");
+		ans.append("</table>");
+		ans.append("<hr><b><h2><center>Preset ").append(MainLocale.getLoc(MainLocale.UTIL, "tc0")).append("</center></h2></b>").append("<table><tr><th>")
+				.append(MainLocale.getLoc(MainLocale.INFO, "name")).append("</th><th>")
+				.append(MainLocale.getLoc(MainLocale.INFO, "ur1")).append("</th><th>");
+		for (byte i = 0; i < p.tech.length; i++)
+			ans.append("<tr><td>").append(MainLocale.getLoc(MainLocale.UTIL, techData[i] == -1 ? "nb13" : "t" + techData[i])).append("</td><td>")
+					.append(p.tech[i]).append("</td></tr>");
+		ans.append("</table>");
+		ans.append("<hr><b><h2><center>Preset Construction").append("</center></h2></b>").append("<table><tr><th>")
+				.append(MainLocale.getLoc(MainLocale.INFO, "name")).append("</th><th>")
+				.append(MainLocale.getLoc(MainLocale.INFO, "ur1")).append("</th><th>");
+		for (byte i = 0; i < p.bslv.length; i++)
+			ans.append("<tr><td>").append(MainLocale.getLoc(MainLocale.UTIL, "t" + (i + 29))).append("</td><td>").append(p.bslv[i]).append("</td></tr>");
+
 		return ans.toString();
 	}
 

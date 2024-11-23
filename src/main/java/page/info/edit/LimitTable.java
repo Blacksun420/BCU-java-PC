@@ -63,6 +63,8 @@ public class LimitTable extends Page {
 
 	private final JL rard = new JL(MainLocale.INFO, "ht11");
 	private final JTF[] brard = new JTF[6];
+	private final JL sptot = new JL(MainLocale.INFO, "sptot");
+	private final JTF jptot = new JTF();
 
 	private final JBTN ppage = new JBTN("<");
 	private final JBTN npage = new JBTN(">");
@@ -180,6 +182,8 @@ public class LimitTable extends Page {
 		set(rard, x, y, 0, 0, w, 50);
 		for (int i = 0; i < brard.length; i++)
 			set(brard[i], x, y, w + w * i, 0, w, 50);
+		set(sptot, x, y, 0, 50, w, 50);
+		set(jptot, x, y, w, 50, w, 50);
 
 		if (page == 3) {
 			set(ppage, x, y, w * 6, 50, w, 50);
@@ -358,6 +362,8 @@ public class LimitTable extends Page {
 		add(rard);
 		for (int i = 0; i < brard.length; i++)
 			set(brard[i] = new JTF(trar[i] + ":"));
+		add(sptot);
+		set(jptot);
 
 		add(ppage);
 		ppage.setEnabled(false);
@@ -398,6 +404,8 @@ public class LimitTable extends Page {
 			lim.stageLimit.globalCooldown = Math.max(val, 0);
 		else if (jtf == jcco)
 			lim.stageLimit.globalCost = Math.max(val, 0);
+		else if (jtf == jptot)
+			lim.stageLimit.maxUnitSpawn = Math.max(val, 0);
 		for (int i = 0; i < bcost.length; i++) {
 			if (jtf == bcost[i]) {
 				lim.stageLimit.costMultiplier[i] = Math.max(0, val);

@@ -152,7 +152,7 @@ public class StageViewPage extends StagePage {
 				changePanel(new StageRandPage(getThis(), jlmc.getSelectedValue()));
 			else {
 				Stage s = RandStage.getStage(sm);
-				changePanel(new BattleSetupPage(getThis(), s, 0));
+				changePanel(new BattleSetupPage(getThis(), s, true));
 			}
 		});
 
