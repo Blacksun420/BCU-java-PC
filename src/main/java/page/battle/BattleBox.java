@@ -285,7 +285,7 @@ public interface BattleBox {
 		}
 
 		private void deployWarn(FakeGraphics g) {
-			if (StageNamePainter.deploy != null && sb.entityCount(-1) >= sb.max_num) {
+			if (StageNamePainter.deploy != null && (sb.entityCount(-1) >= sb.max_num || sb.rem_spawns == 0)) {
 				int w = box.getWidth();
 				int h = box.getHeight();
 
