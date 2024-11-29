@@ -499,12 +499,11 @@ public interface BattleBox {
 					if (cool > 0) {
 						int dw = (int) (hr * 10);
 						int dh = (int) (hr * 12);
-						float cd = (float)(1f * cool / sb.elu.maxC[i][j]);
-						int xw = (int) (cd * (iw - dw * 2));
-						int xw2 = iw - dw * 2;
+						float cd = 1f - (float)(cool / sb.elu.maxC[i][j]);
+						int cw = iw - dw * 2;
 
-						g.colRect(x + iw - dw - xw2, y + ih - dh * 2, xw2, dh, 0, 0, 0, -1);
-						g.colRect((x + dw + 2f), (y + ih - dh * 2) + 2f, (iw - dw * 2 - xw) - 4, dh - 4, 0, 255, 255, -1);
+						g.colRect(x + iw - dw - cw, y + ih - dh * 2, cw, dh, 0, 0, 0, -1);
+						g.colRect((x + dw + 2f), (y + ih - dh * 2) + 2f, (int)((cd * cw) - (cd * 4)), dh - 4, 0, 255, 255, -1);
 					} else if (pri != -1 && pri != -2 && !(sb.elu.validSpirit(i,j) && !sb.elu.readySpirit(i,j)))
 						Res.getCost(pri / 100, !b, setSym(g, hr, x + iw * 1.05f, y + ih * 1.05f, 3));
 				}
@@ -591,11 +590,10 @@ public interface BattleBox {
 					if (cool > 0) {
 						int dw = (int) (hr * 10);
 						int dh = (int) (hr * 12);
-						float cd = (float)(1f * cool / sb.elu.maxC[index][i]);
+						float cd = 1f - (float)(cool / sb.elu.maxC[index][i]);
 						int cw = iw - dw * 2;
-						int xw = (int) (cd * cw);
 						g.colRect(x + iw - dw - cw, y + ih - dh * 2, cw, dh, 0, 0, 0, -1);
-						g.colRect(x + dw + 2f, (y + ih - dh * 2) + 2f, (iw - dw * 2 - xw) - 4, dh - 4, 0, 255, 255, -1);
+						g.colRect(x + dw + 2f, (y + ih - dh * 2) + 2f, (int)((cd * cw) - (cd * 4)), dh - 4, 0, 255, 255, -1);
 					} else if (pri != -1 && pri != -2 && !(sb.elu.validSpirit(index,i) && !sb.elu.readySpirit(index,i)))
 						Res.getCost(pri / 100, !b, setSym(g, hr, x + iw, y + ih, 3));
 				}
