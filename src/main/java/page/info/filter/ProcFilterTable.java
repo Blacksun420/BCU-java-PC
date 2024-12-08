@@ -4,12 +4,16 @@ import common.CommonStatic;
 import common.pack.Context;
 import common.pack.Identifier;
 import common.pack.IndexContainer;
+import common.pack.SortedPackSet;
 import common.util.Data;
+import common.util.Data.Proc;
 import common.util.lang.Editors;
 import common.util.lang.Formatter;
 import common.util.lang.ProcLang;
+import common.util.unit.Trait;
 import main.MainBCU;
 import page.*;
+import page.info.edit.BlessPage;
 import page.info.edit.SwingEditor;
 import page.support.ListJtfPolicy;
 import utilpc.Interpret;
@@ -129,6 +133,124 @@ public class ProcFilterTable extends Page {
         }
     }
 
+    public static class ProcFilter extends SwingEditor {
+
+        public final JBTN btn;
+        private final JTG rej = new JTG("!");
+        private final FilterCtrl cont;
+        private BlessPage edi;
+
+        public ProcFilter(Editors.EditorGroup eg, Editors.EdiField field, String f, boolean edit, FilterCtrl ec) {
+            super(eg, field, f, edit);
+            cont = ec;
+            btn = new JBTN(ProcLang.get().get(eg.proc).get(f));
+            btn.setLnr(e -> MainFrame.changePanel(edi));
+        }
+
+        @Override
+        public void setVisible(boolean res) {
+            btn.setVisible(res);
+            rej.setVisible(res);
+        }
+
+        @Override
+        public boolean isInvisible() {
+            return !btn.isVisible();
+        }
+
+        @Override
+        public void resize(int x, int y, int x0, int y0, int w0, int h0) {
+            Page.set(btn, x, y, x0, y0, w0, h0);
+            set(btn, x, y, x0, y0, w0 - 85, h0);
+            set(rej, x, y, x0 + w0 - 85, y0, 85, h0);
+        }
+
+        @Override
+        public void setData() {
+            field.setData(par.obj);
+            if (edi != null)
+                edi.setData(field.get() == null ? Data.Proc.blank() : (Data.Proc)field.get());
+            else if (par.obj.exists())
+                ini();
+        }
+        private void ini() {
+            edi = new BlessPage(cont.table, cont.isEnemy);
+            edi.exitter = l -> {
+                if (par.callback != null)
+                    par.callback.run();
+            };
+            edi.setData(field.get() == null ? Proc.blank() : (Proc)field.get());
+        }
+
+        @Override
+        public void add(Consumer<JComponent> con) {
+            con.accept(btn);
+        }
+    }
+
+    public static class TraitFilter extends SwingEditor {
+
+        private final TraitList traitList;
+        private final JScrollPane tpane;
+        public final JL label;
+        boolean setting = true;
+
+        public TraitFilter(Editors.EditorGroup eg, Editors.EdiField field, String f, boolean edit, FilterCtrl ec) {
+            super(eg, field, f, edit);
+            traitList = new TraitList(edit);
+            tpane = new JScrollPane(traitList);
+            label = new JL(ProcLang.get().get(eg.proc).get(f));
+            traitList.setup(null, ec.isEnemy);
+            traitList.addListSelectionListener(arg0 -> {
+                if (setting)
+                    return;
+                if (par.callback != null)
+                    par.callback.run();
+            });
+        }
+
+        @Override
+        public void setVisible(boolean res) {
+            tpane.setVisible(res);
+            label.setVisible(res);
+        }
+
+        @Override
+        public boolean isInvisible() {
+            return !tpane.isVisible();
+        }
+
+        @Override
+        public void resize(int x, int y, int x0, int y0, int w0, int h0) {
+            Page.set(label, x, y, x0, y0, w0, 50);
+            Page.set(tpane, x, y, x0, y0 + 50, w0, h0 - 50);
+        }
+
+        @Override
+        public int getH() {
+            return 350;
+        }
+
+        @Override
+        public void setData() {
+            setting = true;
+            field.setData(par.obj);
+            SortedPackSet<Trait> lt = (SortedPackSet<Trait>)field.get();
+            for (int k = 0; k < traitList.list.size(); k++)
+                if (lt.contains(traitList.list.get(k)))
+                    traitList.addSelectionInterval(k, k);
+                else
+                    traitList.removeSelectionInterval(k, k);
+            setting = false;
+        }
+
+        @Override
+        public void add(Consumer<JComponent> con) {
+            con.accept(tpane);
+            con.accept(label);
+        }
+    }
+
     public static class IDFilter<T extends IndexContainer.Indexable<?, T>> extends SwingEditor.IdEditor<T> {
         private final JTG btn = new JTG("!");
 
@@ -186,6 +308,10 @@ public class ProcFilterTable extends Page {
                     } else if (group.proc.equals("SUMMON") || group.proc.equals("SPIRIT"))
                         return new IDFilter<>(group, field, f, table::getEntitySup, edit);
                 }
+                if (fc == Proc.class)
+                    return new ProcFilter(group, field, f, edit, this);
+                if (fc == SortedPackSet.class)
+                    return new TraitFilter(group, field, f, edit, this);
                 throw new Exception("unexpected class " + fc);
             } catch (Exception e) {
                 CommonStatic.ctx.noticeErr(e, Context.ErrType.ERROR, "failed to generate editor");
@@ -254,7 +380,7 @@ public class ProcFilterTable extends Page {
         return null;
     }
 
-    public void setData(Data.Proc ints) {
+    public void setData(Proc ints) {
         for (int i = 0; i < inds.length; i++)
             group[i].setData(ints.getArr(inds[i]));
     }
@@ -273,12 +399,12 @@ public class ProcFilterTable extends Page {
         setFocusCycleRoot(true);
     }
 
-    public boolean compare(Data.Proc proc) {
+    public boolean compare(Proc proc) {
         for (int i = 0; i < inds.length; i++) {
             SwingEditor.SwingEG group = this.group[i];
             if (group.obj == null || !group.obj.exists())
                 continue;
-            Data.Proc.ProcItem itm = proc.getArr(inds[i]);
+            Proc.ProcItem itm = proc.getArr(inds[i]);
             ProcLang.ItemLang item = ProcLang.get().get(inds[i]);
             String[] arr = item.list();
 
@@ -368,8 +494,12 @@ public class ProcFilterTable extends Page {
                                     return false;
                         }
                     } else if (f.getType().equals(boolean.class)) {
-                        if (!((BoolFilter)group.list[j]).btn.isSelected() && (boolean)pf0 != (boolean)pf1)
+                        if (!((BoolFilter) group.list[j]).btn.isSelected() && (boolean) pf0 != (boolean) pf1)
                             return false;
+                    } else if (f.getType().equals(Proc.class)) {
+                        return compare((Proc) pf0);//TODO
+                    } else if (f.getType().equals(SortedPackSet.class)) {
+                        //TODO
                     } else {
                         boolean ign = ((IDFilter<?>)group.list[j]).btn.isSelected();
                         if (ign)

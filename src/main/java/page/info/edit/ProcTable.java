@@ -21,9 +21,9 @@ public abstract class ProcTable extends Page {
 		private static final int SEC = 17;
 
 		private static final int[] INDS = new int[] { Data.P_KB, Data.P_STOP, Data.P_SLOW, Data.P_CRIT, Data.P_WAVE, Data.P_MINIWAVE, Data.P_WEAK, Data.P_LETHARGY, Data.P_BREAK,
-				Data.P_SHIELDBREAK, Data.P_WARP, Data.P_CURSE, Data.P_SATK, Data.P_POIATK, Data.P_VOLC, Data.P_MINIVOLC, Data.P_BLAST, Data.P_METALKILL, Data.P_BOUNTY, Data.P_CDSETTER,
-				Data.P_ATKBASE, Data.P_SEAL, Data.P_RAGE, Data.P_SUMMON, Data.P_MOVEWAVE, Data.P_HYPNO, Data.P_SNIPER, Data.P_BOSS, Data.P_TIME, Data.P_THEME, Data.P_POISON, Data.P_ARMOR,
-				Data.P_SPEED, Data.P_WORKERLV};
+				Data.P_SHIELDBREAK, Data.P_WARP, Data.P_CURSE, Data.P_SATK, Data.P_POIATK, Data.P_VOLC, Data.P_MINIVOLC, Data.P_BLAST, Data.P_METALKILL, Data.P_BOUNTY, Data.P_DRAIN,
+				Data.P_CDSETTER, Data.P_ATKBASE, Data.P_SEAL, Data.P_RAGE, Data.P_SUMMON, Data.P_MOVEWAVE, Data.P_HYPNO, Data.P_SNIPER, Data.P_BOSS, Data.P_TIME, Data.P_THEME,
+				Data.P_POISON, Data.P_ARMOR, Data.P_SPEED, Data.P_BLESS, Data.P_WORKERLV};
 
 		protected AtkProcTable(Page p, boolean edit, boolean unit) {
 			super(p, INDS, edit, unit);
@@ -45,8 +45,8 @@ public abstract class ProcTable extends Page {
 					SwingEditor se = (SwingEditor) group[i].list[j];
 					if (se.isInvisible())
 						continue;
-					se.resize(x, y, c, h, 350, 50);
-					h += 50;
+					se.resize(x, y, c, h, 350, se.getH());
+					h += se.getH();
 				}
 
 				if (h > height)
@@ -54,6 +54,7 @@ public abstract class ProcTable extends Page {
 				if (i == SEC - 1)
 					h = 0;
 			}
+			setPreferredSize(size(x, y, 750, height).toDimension());
 		}
 
 	}
@@ -95,8 +96,8 @@ public abstract class ProcTable extends Page {
 					if (se.isInvisible())
 						continue;
 
-					se.resize(x, y, 0, h, 300, 50);
-					h += 50;
+					se.resize(x, y, 0, h, 300, se.getH());
+					h += se.getH();
 				}
 			}
 			setPreferredSize(size(x, y, 300, h).toDimension());

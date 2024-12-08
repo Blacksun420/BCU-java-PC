@@ -4,6 +4,7 @@ import common.CommonStatic;
 import common.pack.Context.ErrType;
 import common.pack.Identifier;
 import common.pack.IndexContainer;
+import common.pack.SortedPackSet;
 import common.util.Data;
 import common.util.lang.Editors;
 import common.util.lang.Editors.EditControl;
@@ -13,7 +14,9 @@ import common.util.lang.Editors.EditorSupplier;
 import common.util.lang.Formatter;
 import common.util.lang.ProcLang;
 import common.util.unit.EneRand;
+import common.util.unit.Trait;
 import page.*;
+import page.info.filter.TraitList;
 import utilpc.UtilPC;
 
 import javax.swing.*;
@@ -64,7 +67,6 @@ public abstract class SwingEditor extends Editor {
 			field.set(input.isSelected());
 			update();
 		}
-
 	}
 
 	public static class EditCtrl implements EditorSupplier {
@@ -101,6 +103,10 @@ public abstract class SwingEditor extends Editor {
 							return new IdEditor<>(group, field, f, table::getUnitSup, edit);
 					}
 				}
+				if (fc == Data.Proc.class)
+					return new ProcEditor(group, field, f, edit, this);
+				if (fc == SortedPackSet.class)
+					return new TraitEditor(group, field, f, edit, this);
 				throw new Exception("unexpected class " + fc);
 			} catch (Exception e) {
 				CommonStatic.ctx.noticeErr(e, ErrType.ERROR, "failed to generate editor");
@@ -281,13 +287,134 @@ public abstract class SwingEditor extends Editor {
 			con.accept(input);
 		}
 
-		@SuppressWarnings("ConstantConditions")
 		private void edit(FocusEvent fe) {
 			if (field.getType() == float.class) {
 				field.set(Data.ignore(() -> CommonStatic.parseFloatN(input.getText())));
 			} else
 				field.set(Data.ignore(() -> CommonStatic.parseDoubleN(input.getText())));
 			update();
+		}
+	}
+
+	public static class ProcEditor extends SwingEditor {
+
+		private final EditCtrl ed;
+		public final JBTN btn;
+		private BlessPage edi;
+
+		public ProcEditor(EditorGroup eg, Editors.EdiField field, String f, boolean edit, EditCtrl ec) {
+			super(eg, field, f, edit);
+			ed = ec;
+			btn = new JBTN(ProcLang.get().get(eg.proc).get(f));
+			btn.setLnr(e -> {
+				if (edi == null)
+					ini();
+				MainFrame.changePanel(edi);
+			});
+		}
+
+		@Override
+		public void setVisible(boolean res) {
+			btn.setVisible(res);
+		}
+
+		@Override
+		public boolean isInvisible() {
+			return !btn.isVisible();
+		}
+
+		@Override
+		public void resize(int x, int y, int x0, int y0, int w0, int h0) {
+			Page.set(btn, x, y, x0, y0, w0, h0);
+		}
+
+		@Override
+		public void setData() {
+			field.setData(par.obj);
+			if (edi != null)
+				edi.setData(field.get() == null ? Data.Proc.blank() : (Data.Proc)field.get());
+			else if (par.obj.exists())
+				ini();
+		}
+
+		private void ini() {
+			edi = new BlessPage(ed.table, ed.isEnemy);
+			edi.exitter = field::set;
+			edi.setData(field.get() == null ? Data.Proc.blank() : (Data.Proc)field.get());
+		}
+
+		@Override
+		public void add(Consumer<JComponent> con) {
+			con.accept(btn);
+		}
+	}
+
+	public static class TraitEditor extends SwingEditor {
+
+		private final TraitList traitList;
+		private final JScrollPane tpane;
+		public final JL label;
+		boolean setting = true;
+
+		public TraitEditor(EditorGroup eg, Editors.EdiField field, String f, boolean edit, EditCtrl ec) {
+			super(eg, field, f, edit);
+			traitList = new TraitList(edit);
+			tpane = new JScrollPane(traitList);
+			label = new JL(ProcLang.get().get(eg.proc).get(f));
+			traitList.setup(ec.table.pack, ec.isEnemy);
+			traitList.addListSelectionListener(arg0 -> {
+				if (setting)
+					return;
+				SortedPackSet<Trait> lt = (SortedPackSet<Trait>)field.get();
+				for (int i = 0; i < traitList.list.size(); i++)
+					if (traitList.isSelectedIndex(i)) {
+						lt.add(traitList.list.get(i));
+					} else
+						lt.remove(traitList.list.get(i));
+				field.set(lt);
+				update();
+			});
+		}
+
+		@Override
+		public void setVisible(boolean res) {
+			tpane.setVisible(res);
+			label.setVisible(res);
+		}
+
+		@Override
+		public boolean isInvisible() {
+			return !tpane.isVisible();
+		}
+
+		@Override
+		public void resize(int x, int y, int x0, int y0, int w0, int h0) {
+			Page.set(label, x, y, x0, y0, w0, 50);
+			Page.set(tpane, x, y, x0, y0 + 50, w0, h0 - 50);
+		}
+
+		@Override
+		public int getH() {
+			return 350;
+		}
+
+		@Override
+		public void setData() {
+			setting = true;
+			field.setData(par.obj);
+			SortedPackSet<Trait> lt = (SortedPackSet<Trait>)field.get();
+			for (int k = 0; k < traitList.list.size(); k++)
+				if (lt.contains(traitList.list.get(k)))
+					traitList.addSelectionInterval(k, k);
+				else
+					traitList.removeSelectionInterval(k, k);
+			setting = false;
+		}
+
+		@Override
+		public void add(Consumer<JComponent> con) {
+			con.accept(tpane);
+			con.accept(label);
 		}
 	}
 
@@ -327,6 +454,10 @@ public abstract class SwingEditor extends Editor {
 	public abstract boolean isInvisible();
 
 	public abstract void resize(int x, int y, int x0, int y0, int w0, int h0);
+
+	public int getH() {
+		return 50;
+	}
 
 	public abstract void add(Consumer<JComponent> con);
 

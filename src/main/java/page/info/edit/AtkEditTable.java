@@ -19,9 +19,6 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.Vector;
 
-import static common.util.Data.TRAIT_EVA;
-import static common.util.Data.TRAIT_RED;
-
 class AtkEditTable extends Page {
 
 	private static final long serialVersionUID = 1L;
@@ -194,7 +191,7 @@ class AtkEditTable extends Page {
 						+ "+32 to attack ghost<br>"
 						+ "+64 to attack entities that can revive others<br>"
 						+ "+128 to attack enter animations</html>");
-		fdr.setToolTipText("direction, 1 means attack enemies, 0 means not an attack, -1 means assist allies");
+		fdr.setToolTipText("attack direction, 1 to attack enemies, 0 to not attack, -1 to assist allies, 2 to attack both sides, and -2 to only target self");
 
 		fpre.setToolTipText(
 				"<html>use 0 for random attack attaching to previous one.<br>pre=0 for first attack will invalidate it</html>");
@@ -281,10 +278,7 @@ class AtkEditTable extends Page {
 					v = 1;
 				adm.targ = v;
 			} else if (jtf == fdr) {
-				if (v < -1)
-					v = -1;
-				if (v > 1)
-					v = 1;
+				v = Math.max(-2, Math.min(v, 2));
 				adm.dire = v;
 			} else if (jtf == fct) {
 				if (v < 0)
