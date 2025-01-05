@@ -6,10 +6,7 @@ import common.pack.PackData.UserPack;
 import common.pack.UserProfile;
 import common.util.stage.Music;
 import main.MainBCU;
-import page.JL;
-import page.JTF;
-import page.JTG;
-import page.Page;
+import page.*;
 import page.info.filter.TraitList;
 import page.support.ListJtfPolicy;
 import utilpc.Interpret;
@@ -37,7 +34,7 @@ class AtkEditTable extends Page {
 	private final JTF fp0 = new JTF();
 	private final JTF fp1 = new JTF();
 	private final JTF ftp = new JTF();
-	private final JTF fdr = new JTF();
+	private final JComboBox<String> fdr = new JComboBox<>(get(MainLocale.INFO, "at", 5));
 	private final JTF fct = new JTF();
 	private final JTF fab = new JTF();
 	private final JTF fmv = new JTF();
@@ -114,7 +111,7 @@ class AtkEditTable extends Page {
 		fp0.setText(String.valueOf(adm.ld0));
 		fp1.setText(String.valueOf(adm.ld1));
 		ftp.setText(String.valueOf(adm.targ));
-		fdr.setText(String.valueOf(adm.dire));
+		fdr.setSelectedIndex(adm.dire + 2);
 		fct.setText(String.valueOf(adm.count));
 		fmv.setText(String.valueOf(adm.move));
 		apt.setData(adm.ce.common ? adm.ce.rep.proc : adm.proc);
@@ -173,7 +170,7 @@ class AtkEditTable extends Page {
 		set(fp0);
 		set(fp1);
 		set(ftp);
-		set(fdr);
+		add(fdr);
 		set(fct);
 		set(fab);
 		set(fmv);
@@ -191,10 +188,7 @@ class AtkEditTable extends Page {
 						+ "+32 to attack ghost<br>"
 						+ "+64 to attack entities that can revive others<br>"
 						+ "+128 to attack enter animations</html>");
-		fdr.setToolTipText("attack direction, 1 to attack enemies, 0 to not attack, -1 to assist allies, 2 to attack both sides, and -2 to only target self");
-
-		fpre.setToolTipText(
-				"<html>use 0 for random attack attaching to previous one.<br>pre=0 for first attack will invalidate it</html>");
+		fpre.setToolTipText("<html>use 0 for random attack attaching to previous one.<br>pre=0 for first attack will invalidate it</html>");
 		StringBuilder ttt = new StringBuilder("<html>enter ID of abilities separated by comma or space.<br>" + "it changes the ability state"
 				+ "(has to not having, and viceversa)<br>"
 				+ "it won't change back until you make another attack to change it<br>");
@@ -242,10 +236,19 @@ class AtkEditTable extends Page {
 						adm.traits.remove(atktr.list.get(i));
 			}
 		});
+
+		fdr.addActionListener(x -> {
+			if (changing)
+				return;
+			changing = true;
+			adm.dire = fdr.getSelectedIndex() - 2;
+			callBack(null);
+			changing = false;
+		});
 	}
 
 	private void input(JTF jtf, String text) {
-		if (text.length() > 0) {
+		if (!text.isEmpty()) {
 			if (jtf == fab) {
 				int[] ent = CommonStatic.parseIntsN(text);
 				int ans = 0;
@@ -277,9 +280,6 @@ class AtkEditTable extends Page {
 				if (v < 1)
 					v = 1;
 				adm.targ = v;
-			} else if (jtf == fdr) {
-				v = Math.max(-2, Math.min(v, 2));
-				adm.dire = v;
 			} else if (jtf == fct) {
 				if (v < 0)
 					v = -1;

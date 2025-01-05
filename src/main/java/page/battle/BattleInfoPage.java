@@ -460,7 +460,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		if (basis instanceof SBRply)
 			change((SBRply) basis, b -> jsl.setValue(b.prog()));
 		ecount.setText(sb.entityCount(1) + "/" + sb.st.max);
-		ucount.setText(sb.entityCount(-1) + "/" + sb.max_num);
+		ucount.setText(sb.entityCount(-1) + "/" + sb.max_num + (sb.rem_spawns >= 0 ? "(Rem: " + sb.rem_spawns + ")" : ""));
 		respawn.setText("respawn timer: " + MainBCU.convertTime(sb.respawnTime));
 	}
 	private void updateTablesL() {
