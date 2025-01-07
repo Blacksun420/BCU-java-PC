@@ -19,6 +19,7 @@ import java.util.List;
 class PartEditTable extends AnimTable<int[]> {
 
 	private static final long serialVersionUID = 1L;
+	private static final String[] eases = new String[]{"0: Linear", "1: Instant", "2: Exponential", "3: Polynomial", "4: Sinusoidal"};
 
 	protected AnimCE anim;
 	protected MaAnim ma;
@@ -31,6 +32,13 @@ class PartEditTable extends AnimTable<int[]> {
 		page = p;
 		selectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		setTransferHandler(new AnimTableTH<>(this, 3));
+
+		getColumnModel().getColumn(2).setCellRenderer((table, value, isSelected, hasFocus, row, column) -> {
+            JComboBox<String> e = new JComboBox<>(eases);
+            e.setSelectedIndex(part.moves[row][2] >= 5 || part.moves[row][2] < 0 ? 0 : part.moves[row][2]);
+            return e;
+        });
+		getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(new JComboBox<>(eases)));
 	}
 
 	@Override
@@ -46,6 +54,8 @@ class PartEditTable extends AnimTable<int[]> {
 
 	@Override
 	public Class<?> getColumnClass(int c) {
+		if (lnk[c] == 2)
+			return String.class;
 		return Integer.class;
 	}
 
@@ -71,6 +81,8 @@ class PartEditTable extends AnimTable<int[]> {
 			return null;
 		if (lnk[c] == 0)
 			return part.moves[r][0] - part.off;
+		if (lnk[c] == 2)
+			return eases[part.moves[r][lnk[c]]];
 		return part.moves[r][lnk[c]];
 	}
 
@@ -93,7 +105,7 @@ class PartEditTable extends AnimTable<int[]> {
 
 	@Override
 	public boolean isCellEditable(int r, int c) {
-		return true;
+		return lnk[c] != 3 || part.moves[r][2] == 2 || part.moves[r][2] == 4;
 	}
 
 	@Override
@@ -125,7 +137,11 @@ class PartEditTable extends AnimTable<int[]> {
 		if (part == null || r >= part.n)
 			return;
 		c = lnk[c];
-		int v = (int) val;
+		int v;
+		if (val instanceof Integer)
+			v = (int) val;
+		else
+			v = ((String)val).charAt(0) - '0';
 		int m = part.ints[1];
 		if (c == 1) {
 			if (m == 0) {
@@ -141,8 +157,6 @@ class PartEditTable extends AnimTable<int[]> {
 				v = anim.mamodel.ints[2];
 		} else if (c == 0)
 			v += part.off;
-		else if (c == 2)
-			v = Math.min(Math.max(0,v),4);
 		else if (c == 3)
 			if (part.moves[r][2] != 2 && part.moves[r][2] != 4)
 				v = 0;

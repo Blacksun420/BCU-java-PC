@@ -485,10 +485,6 @@ public class GLGraphics implements GeoAuto {
 						g.glBlendFunc(GL_ONE, GL_ONE);
 						g.glUniform1i(tm.mode, 1);// sA=-sA*p
 						break;
-					case -2:// sA=-sA*p
-						g.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-						g.glUniform1i(tm.mode, 1);
-						break;
 				}
 				break;
 			case MASK:

@@ -111,6 +111,7 @@ public class LimitTable extends Page {
 
 		jlco.setEnabled(b);
 		banc.setEnabled(b && jlco.getSelectedIndex() != -1);
+		jptot.setEnabled(b);
 	}
 
 	@Override
@@ -211,6 +212,7 @@ public class LimitTable extends Page {
 			jban.setText("");
 			jcre.setText("");
 			jcco.setText("");
+			jptot.setText("");
 			for (int i = 0; i < brard.length; i++)
 				set(brard[i] = new JTF(trar[i] + ":"));
 			jlco.repaint();
@@ -244,7 +246,8 @@ public class LimitTable extends Page {
 		star.setText(l.toString());//l.star == -1 ? "all stars" : ((l.star + 1) + " star"));
 		one.setText(MainLocale.getLoc(MainLocale.INFO, "row" + lim.line));
 		jcg.setText(lim.group + (lim.group != null && lim.group.type % 2 != 0 ? ": " + lim.fa : ""));
-		jlr.setText("" + lim.lvr);
+		jlr.setText(String.valueOf(lim.lvr));
+		jptot.setText(String.valueOf(stli.maxUnitSpawn));
 		jlco.repaint();
 	}
 
