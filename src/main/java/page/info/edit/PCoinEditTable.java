@@ -199,6 +199,23 @@ class PCoinEditTable extends Page {
                                     ((JTF) tchance.get(fi - 2 + ind - fpen)).setText("" + par.unit.pcoin.info.get(par.talent)[fi + ind]);
                                 par.unit.pcoin.update();
                             });
+                        } else if (f.getType().equals(Data.Proc.ProcID.class)) {//The same but 1 elem
+                            JTF num = new JTF("" + val);
+                            add(num);
+                            tchance.add(num);
+                            num.setLnr(c -> {
+                                int[] v = CommonStatic.parseIntsN(num.getText().trim());
+                                if (v.length == 0) {
+                                    num.setText("" + val);
+                                    return;
+                                }
+                                par.unit.pcoin.info.get(par.talent)[fi] = par.unit.pcoin.info.get(par.talent)[fi + 1] = v[0];
+                                par.unit.pcoin.info.set(par.talent, par.unit.getProc().getArr(pdata[1]).setTalent(par.unit.pcoin.info.get(par.talent)));
+                                num.setText("" + par.unit.pcoin.info.get(par.talent)[fi]);
+                                par.unit.pcoin.update();
+                            });
+                            penalty++;
+                            i++;
                         } else if (f.getType().equals(boolean.class)) {
                             JTG tgl = new JTG("Apply");
                             tgl.setSelected(val != 0);

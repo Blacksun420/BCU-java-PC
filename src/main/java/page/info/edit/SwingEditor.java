@@ -107,6 +107,8 @@ public abstract class SwingEditor extends Editor {
 					return new ProcEditor(group, field, f, edit, this);
 				if (fc == SortedPackSet.class)
 					return new TraitEditor(group, field, f, edit, this);
+				if (fc == Data.Proc.ProcID.class)
+					return new PIDEditor(group, field, f, edit);
 				throw new Exception("unexpected class " + fc);
 			} catch (Exception e) {
 				CommonStatic.ctx.noticeErr(e, ErrType.ERROR, "failed to generate editor");
@@ -236,7 +238,7 @@ public abstract class SwingEditor extends Editor {
 		}
 
 		@SuppressWarnings("ConstantConditions")
-		private void edit(FocusEvent fe) {
+		protected void edit(FocusEvent fe) {
 			field.setInt(Data.ignore(() -> CommonStatic.parseIntN(input.getText())));
 			update();
 		}
@@ -346,6 +348,31 @@ public abstract class SwingEditor extends Editor {
 		@Override
 		public void add(Consumer<JComponent> con) {
 			con.accept(btn);
+		}
+	}
+
+	/** For ProcID objects */
+	public static class PIDEditor extends IntEditor {
+
+		public PIDEditor(EditorGroup eg, Editors.EdiField field, String f, boolean edit) {
+			super(eg, field, f, edit);
+		}
+
+		@Override
+		public void setData() {
+			field.setData(par.obj);
+			if (field.obj == null)
+				input.setText("");
+			else
+				input.setText(field.get().toString());
+			input.setEnabled(edit && field.obj != null);
+		}
+
+		@Override
+		@SuppressWarnings("ConstantConditions")
+		protected void edit(FocusEvent fe) {
+			((Data.Proc.ProcID)field.get()).setData(CommonStatic.parseIntsN(input.getText()));
+			update();
 		}
 	}
 

@@ -20,6 +20,7 @@ import utilpc.Interpret;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.FocusEvent;
 import java.lang.reflect.Field;
 import java.util.function.Consumer;
 
@@ -251,6 +252,31 @@ public class ProcFilterTable extends Page {
         }
     }
 
+    /** For ProcID objects */
+    public static class PIDFilter extends IntFilter {
+
+        public PIDFilter(Editors.EditorGroup eg, Editors.EdiField field, String f, boolean edit) {
+            super(eg, field, f, edit);
+        }
+
+        @Override
+        public void setData() {
+            field.setData(par.obj);
+            if (field.obj == null)
+                input.setText("");
+            else
+                input.setText(field.get().toString());
+            input.setEnabled(edit && field.obj != null);
+        }
+
+        @Override
+        @SuppressWarnings("ConstantConditions")
+        protected void edit(FocusEvent fe) {
+            ((Data.Proc.ProcID)field.get()).setData(CommonStatic.parseIntsN(input.getText()));
+            update();
+        }
+    }
+
     public static class IDFilter<T extends IndexContainer.Indexable<?, T>> extends SwingEditor.IdEditor<T> {
         private final JTG btn = new JTG("!");
 
@@ -312,6 +338,8 @@ public class ProcFilterTable extends Page {
                     return new ProcFilter(group, field, f, edit, this);
                 if (fc == SortedPackSet.class)
                     return new TraitFilter(group, field, f, edit, this);
+                if (fc == Proc.ProcID.class)
+                    return new PIDFilter(group, field, f, edit);
                 throw new Exception("unexpected class " + fc);
             } catch (Exception e) {
                 CommonStatic.ctx.noticeErr(e, Context.ErrType.ERROR, "failed to generate editor");
