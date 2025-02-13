@@ -338,26 +338,7 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 			changing = true;
 
 			ImgCut ic = icet.anim.imgcut;
-
-			int[][] data = ic.cuts;
-			String[] name = ic.strs;
-
-			ic.cuts = new int[++ic.n][];
-			ic.strs = new String[ic.n];
-
-			for (int i = 0; i < data.length; i++) {
-				ic.cuts[i] = data[i];
-				ic.strs[i] = name[i];
-			}
-
-			int ind = icet.getSelectedRow();
-
-			if (ind >= 0)
-				ic.cuts[ic.n - 1] = ic.cuts[ind].clone();
-			else
-				ic.cuts[ic.n - 1] = new int[] { 0, 0, 1, 1 };
-
-			ic.strs[ic.n - 1] = "";
+			ic.addLine(icet.getSelectedRow());
 
 			icet.anim.unSave("imgcut add line");
 			lsm.setSelectionInterval(ic.n - 1, ic.n - 1);
@@ -375,44 +356,12 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 			changing = true;
 
 			ImgCut ic = icet.anim.imgcut;
-
 			int ind = sb.sele;
-			int[][] data = ic.cuts;
-
-			String[] name = ic.strs;
-
-			ic.cuts = new int[--ic.n][];
-			ic.strs = new String[ic.n];
-
-			for (int i = 0; i < ind; i++) {
-				ic.cuts[i] = data[i];
-				ic.strs[i] = name[i];
-			}
-
-			for (int i = ind + 1; i < data.length; i++) {
-				ic.cuts[i - 1] = data[i];
-				ic.strs[i - 1] = name[i];
-			}
-
-			for (int[] ints : icet.anim.mamodel.parts)
-				if (ints[2] > ind)
-					ints[2]--;
-
-			for (MaAnim ma : icet.anim.anims)
-				for (Part part : ma.parts)
-					if (part.ints[1] == 2)
-						for (int[] ints : part.moves)
-							if (ints[1] > ind)
-								ints[1]--;
-
-			icet.anim.ICedited();
-			icet.anim.unSave("imgcut remove line");
-
+			icet.anim.removeICline(ind);
 			if (ind >= ic.n)
 				ind--;
 
 			lsm.setSelectionInterval(ind, ind);
-
 			setB();
 
 			changing = false;
