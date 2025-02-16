@@ -272,23 +272,7 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 	private void addLine() {
 		change(0, o -> {
 			int ind = mmet.getSelectedRow() + 1;
-			if (ind == 0)
-				ind++;
-			MaModel mm = mmet.mm;
-			int[] inds = new int[mm.n];
-			for (int i = 0; i < mm.n; i++)
-				inds[i] = i < ind ? i : i + 1;
-			mmet.anim.reorderModel(inds);
-			mm.n++;
-			int[] move = new int[mm.n];
-			for (int i = 0; i < mm.n; i++)
-				move[i] = i < ind ? i : i - 1;
-			mm.reorder(move);
-			int[] newl = new int[14];
-			newl[2] = Math.max(jlp.getSelectedIndex(), 0);
-			newl[8] = newl[9] = newl[11] = 1000;
-			mm.parts[ind] = newl;
-			mmet.anim.unSave("mamodel add line");
+			mmet.anim.addMMline(ind, jlp.getSelectedIndex());
 			callBack(null);
 			mmet.setRowSelectionInterval(ind, ind);
 			setB(ind);
