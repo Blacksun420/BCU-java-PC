@@ -66,6 +66,11 @@ public class LimitTable extends Page {
 	private final JL sptot = new JL(MainLocale.INFO, "sptot");
 	private final JTF jptot = new JTF();
 
+	private final JL datot = new JL(MainLocale.INFO, "dptot");
+	private final JTF[] jatot = new JTF[6];
+	private final JL dctot = new JL(MainLocale.INFO, "dpdel");
+	private final JTF[] jctot = new JTF[6];
+
 	private final JBTN ppage = new JBTN("<");
 	private final JBTN npage = new JBTN(">");
 
@@ -77,6 +82,7 @@ public class LimitTable extends Page {
 
 	private Limit lim;
 	private int page = 0;
+	private static final int MAX_PAGE = 4;
 
 	protected LimitTable(Page p0, Page p1, UserPack p) {
 		super(null);
@@ -108,6 +114,10 @@ public class LimitTable extends Page {
 		jcco.setEnabled(b);
 		for (JTF jtf : brard)
 			jtf.setEnabled(b);
+		for (JTF jtf : jatot)
+			jtf.setEnabled(b);
+		for (int i = 0; i < jctot.length; i++)
+			jctot[i].setEnabled(b && lim != null && lim.stageLimit != null && lim.stageLimit.deployDuplicationTimes[i] != 0);
 
 		jlco.setEnabled(b);
 		banc.setEnabled(b && jlco.getSelectedIndex() != -1);
@@ -190,6 +200,18 @@ public class LimitTable extends Page {
 			set(ppage, x, y, w * 6, 50, w, 50);
 			set(npage, x, y, w * 7, 50, w, 50);
 		}
+		w = page == 4 ? 1400 / 8 : 0;
+
+		set(datot, x, y, 0, 0, w, 50);
+		for (int i = 0; i < jatot.length; i++)
+			set(jatot[i], x, y, w + w * i, 0, w, 50);
+		set(dctot, x, y, 0, 50, w, 50);
+		for (int i = 0; i < jctot.length; i++)
+			set(jctot[i], x, y, w + w * i, 50, w, 50);
+		if (page == 4) {
+			set(ppage, x, y, w * 7, 0, w, 50);
+			set(npage, x, y, w * 7, 50, w, 50);
+		}
 	}
 
 	protected void setLimit(Limit l) {
@@ -215,6 +237,13 @@ public class LimitTable extends Page {
 			jptot.setText("");
 			for (int i = 0; i < brard.length; i++)
 				set(brard[i] = new JTF(trar[i] + ":"));
+
+			datot.setText("");
+			for (int i = 0; i < jatot.length; i++)
+				set(jatot[i] = new JTF(trar[i] + ":"));
+			dctot.setText("");
+			for (int i = 0; i < jctot.length; i++)
+				set(jctot[i] = new JTF(trar[i] + ":"));
 			jlco.repaint();
 			abler(false);
 			return;
@@ -239,6 +268,11 @@ public class LimitTable extends Page {
 
 		for (int i = 0; i < brard.length; i++)
 			brard[i].setText(trar[i] + ": " + stli.rarityDeployLimit[i]);
+
+		for (int i = 0; i < jatot.length; i++)
+			jatot[i].setText(trar[i] + ": " + stli.deployDuplicationTimes[i]);
+		for (int i = 0; i < jctot.length; i++)
+			jctot[i].setText(trar[i] + ": " + stli.deployDuplicationDelay[i]);
 
         jcmax.setText(limits[4] + ": " + lim.max);
 		jcmin.setText(limits[3] + ": " + lim.min);
@@ -325,7 +359,7 @@ public class LimitTable extends Page {
 		npage.addActionListener(l -> {
 			page++;
 			ppage.setEnabled(true);
-			npage.setEnabled(page < 3);
+			npage.setEnabled(page < MAX_PAGE);
 			main.fireDimensionChanged();
 		});
 	}
@@ -365,6 +399,13 @@ public class LimitTable extends Page {
 		add(rard);
 		for (int i = 0; i < brard.length; i++)
 			set(brard[i] = new JTF(trar[i] + ":"));
+
+		add(datot);
+		for (int i = 0; i < jatot.length; i++)
+			set(jatot[i] = new JTF(trar[i] + ":"));
+		add(dctot);
+		for (int i = 0; i < jctot.length; i++)
+			set(jctot[i] = new JTF(trar[i] + ":"));
 		add(sptot);
 		set(jptot);
 
@@ -424,6 +465,24 @@ public class LimitTable extends Page {
 		for (int i = 0; i < brard.length; i++) {
 			if (jtf == brard[i]) {
 				lim.stageLimit.rarityDeployLimit[i] = Math.max(-1, val);
+				break;
+			}
+		}
+		for (int i = 0; i < jatot.length; i++) {
+			if (jtf == jatot[i]) {
+				lim.stageLimit.deployDuplicationTimes[i] = Math.max(0, val);
+
+				if (lim.stageLimit.deployDuplicationTimes[i] == 0)
+					lim.stageLimit.deployDuplicationDelay[i] = 0;
+				else if (lim.stageLimit.deployDuplicationDelay[i] == 0)
+					lim.stageLimit.deployDuplicationDelay[i] = 1;
+
+				break;
+			}
+		}
+		for (int i = 0; i < jctot.length; i++) {
+			if (jtf == jctot[i]) {
+				lim.stageLimit.deployDuplicationDelay[i] = Math.max(1, val);
 				break;
 			}
 		}

@@ -574,7 +574,7 @@ public class AdvStEditPage extends DefaultPage {
 			bossType.setText(get(MainLocale.INFO, "b" + rev.boss));
 		} else {
 			revEne.setIcon(null);
-			revEne.setText("N/A");
+			revEne.setText(get(MainLocale.INFO, "rev"));
 
 			revBGM.setText("N/A");
 			revSoul.setSelectedIndex(0);

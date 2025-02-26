@@ -6,11 +6,13 @@ import common.pack.PackData;
 import common.pack.UserProfile;
 import common.system.ENode;
 import common.util.Data;
+import common.util.stage.Revival;
 import common.util.stage.SCDef.Line;
 import common.util.stage.SCGroup;
 import common.util.stage.Stage;
 import common.util.unit.EneRand;
 import common.util.unit.Enemy;
+import main.Opts;
 import page.MainFrame;
 import page.MainLocale;
 import page.Page;
@@ -38,6 +40,8 @@ public class StageTable extends AbJTable {
 	}
 
 	protected Object[][] data;
+	private Revival[] revs;
+	private int baseHP = 0;
 
 	private final Page page;
 
@@ -78,9 +82,11 @@ public class StageTable extends AbJTable {
 	public String getToolTipText(MouseEvent e) {
 		if (lnk[columnAtPoint(e.getPoint())] == 2) {
 			return "{hp, atk}";
-		} else {
+		} else if (lnk[columnAtPoint(e.getPoint())] == 4 && rowAtPoint(e.getPoint()) != -1) {
+			int[] hps = CommonStatic.parseIntsN((String)data[rowAtPoint(e.getPoint())][4]);
+			return Math.floor(baseHP * (hps[0] / 100f)) + (hps.length == 1 ? "" : "~" + Math.floor(baseHP * (hps[1] / 100f)));
+		} else
 			return null;
-		}
 	}
 
 	@Override
@@ -102,59 +108,65 @@ public class StageTable extends AbJTable {
 
 		int r = p.y / getRowHeight();
 
-		if (r < 0 || r >= data.length || c != 1)
+		if (r < 0 || r >= data.length)
 			return;
 
-		if(data[r][c] instanceof Enemy) {
-			Enemy e = (Enemy) data[r][c];
+		if (c == 1) {
+			if (data[r][c] instanceof Enemy) {
+				Enemy e = (Enemy) data[r][c];
 
-			if(e.anim == null)
-				return;
+				if (e.anim == null)
+					return;
 
-			if (!(data[r][2] instanceof String))
-				return;
+				if (!(data[r][2] instanceof String))
+					return;
 
-			List<Enemy> eList = new ArrayList<>();
-			List<int[]> muls = new ArrayList<>();
-			for (Object[] datum : data) {
-				if (!(datum[c] instanceof Enemy) || eList.contains(datum[c]))
-					continue;
-				eList.add((Enemy) datum[c]);
+				List<Enemy> eList = new ArrayList<>();
+				List<int[]> muls = new ArrayList<>();
+				for (Object[] datum : data) {
+					if (!(datum[c] instanceof Enemy) || eList.contains(datum[c]))
+						continue;
+					eList.add((Enemy) datum[c]);
 
-				final int[] b;
-				if (datum[c] == e)
-					b = CommonStatic.parseIntsN((String) data[r][2]);
-				else
-					b = CommonStatic.parseIntsN((String) datum[2]);
+					final int[] b;
+					if (datum[c] == e)
+						b = CommonStatic.parseIntsN((String) data[r][2]);
+					else
+						b = CommonStatic.parseIntsN((String) datum[2]);
 
-				if (b.length == 1)
-					muls.add(new int[]{b[0], b[0]});
-				else
-					muls.add(new int[]{b[0], b[1]});
+					if (b.length == 1)
+						muls.add(new int[]{b[0], b[0]});
+					else
+						muls.add(new int[]{b[0], b[1]});
+				}
+				MainFrame.changePanel(new EnemyInfoPage(page, ENode.getListE(eList, e, muls)));
+			} else if (data[r][c] instanceof EneRand) {
+				EneRand e = (EneRand) data[r][c];
+
+				PackData.UserPack pac = UserProfile.getUserPack(e.id.pack);
+
+				if (pac != null) {
+					MainFrame.changePanel(new EREditPage(page, pac));
+				}
 			}
-			MainFrame.changePanel(new EnemyInfoPage(page, ENode.getListE(eList, e, muls)));
-		} else if(data[r][c] instanceof EneRand) {
-			EneRand e = (EneRand) data[r][c];
-
-			PackData.UserPack pac = UserProfile.getUserPack(e.id.pack);
-
-			if (pac != null) {
-				MainFrame.changePanel(new EREditPage(page, pac));
-			}
-		}
+		} else if (c == 0 && revs[r] != null)
+			Opts.showRevivalData(page, revs[r]);
 	}
 
 	public void setData(Stage st, int starId) {
 		Line[] info = st.data.getSimple();
-
-		data = new Object[info.length][11];
+		baseHP = st.trail ? -1 : st.getMC().getSID().equals("000003") ? st.health * (starId + 1) : st.health;
 		if (st.getMC().getSID().equals("000003") && st.getCont().id.id == 9)
 			st.getCont().price = starId; //Temp fix to EoC price problem
 
+		data = new Object[info.length][11];
+		revs = new Revival[info.length];
+
 		for (int i = 0; i < info.length; i++) {
 			int ind = info.length - i - 1;
+			revs[ind] = info[i].rev;
 			data[ind][1] = Identifier.get(info[i].enemy);
-			data[ind][0] = info[i].boss >= 1 ? MainLocale.getLoc(MainLocale.INFO,"b" + info[i].boss) : "";
+			data[ind][0] = (info[i].boss >= 1 ? MainLocale.getLoc(MainLocale.INFO,"b" + info[i].boss) : "") + (revs[ind] != null ? "(" + MainLocale.getLoc(MainLocale.INFO, "rev") + ")" : "");
 			data[ind][2] = info[i].multiple == info[i].mult_atk ? info[i].multiple * st.getCont().stars[starId] / 100 +""
 					: CommonStatic.toArrayFormat(info[i].multiple * st.getCont().stars[starId] / 100, info[i].mult_atk * st.getCont().stars[starId] / 100);
 			data[ind][3] = info[i].number == 0 ? MainLocale.getLoc(MainLocale.UTIL, "inf") : info[i].number;
@@ -163,6 +175,8 @@ public class StageTable extends AbJTable {
 				data[ind][4] = info[i].castle_0 + "%";
 			else
 				data[ind][4] = info[i].castle_0 + "~" + info[i].castle_1 + "%";
+			if (info[i].castle_0 == 0 && data[ind][1] instanceof Enemy)
+				baseHP = (int)(((Enemy) data[ind][1]).de.getHp() * info[i].multiple * (st.getCont().stars[starId] * 0.01f) * 0.01f);
 
 			if (Math.abs(info[i].spawn_0) >= Math.abs(info[i].spawn_1))
 				data[ind][5] = info[i].spawn_0;

@@ -1,12 +1,14 @@
 package main;
 
 import common.CommonStatic;
-import common.pack.PackData;
+import common.pack.PackData.UserPack;
 import common.pack.Source;
+import common.util.stage.Revival;
 import common.util.stage.Stage;
 import common.util.stage.info.DefStageInfo;
 import page.*;
 import page.battle.BattleInfoPage;
+import page.info.RevivalPage;
 import page.pack.DescPage;
 import utilpc.UtilPC;
 
@@ -208,10 +210,62 @@ public class Opts {
 		}
 	}
 
-	public static void showPackDescPage(Page pg, PackData.UserPack pack) {
+	public static void showRevivalData(Page pg, Revival rev) {
+		RevivalPage rp = new RevivalPage(pg, rev);
+
+		Thread thread = new Thread(new Runnable() {
+			public int inter = 0;
+			@SuppressWarnings("BusyWait")
+			@Override
+			public void run() {
+				while (true) {
+					long m = System.currentTimeMillis();
+					try {
+						rp.timer(0);
+						int delay = (int) (System.currentTimeMillis() - m);
+						inter = (inter * 9 + 100 * delay / Timer.fps) / 10;
+						int sle = delay >= Timer.fps ? 1 : Timer.fps - delay;
+						Thread.sleep(sle);
+					} catch (InterruptedException e) {
+						return;
+					}
+				}
+			}
+		});
+		thread.start();
+
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+		int w = 420, h = rp.getHeight();
+
+		rp.setPreferredSize(new Dimension(w, h));
+		rp.setBounds(25, 25, w, h);
+
+		panel.add(rp);
+		panel.setPreferredSize(new Dimension(w, h));
+
+		panel.setBackground(new Color(64, 64, 64));
+		int depth = 1;
+		Revival par = rev.par;
+		while (par != null) {
+			depth++;
+			par = par.par;
+		}
+		JOptionPane.showOptionDialog(
+				null,
+				panel,  MainLocale.getLoc(MainLocale.INFO, "rev")+ " " + depth,
+				JOptionPane.DEFAULT_OPTION,
+				JOptionPane.PLAIN_MESSAGE,
+				null,
+				null,
+				null
+		);
+	}
+
+	public static void showPackDescPage(Page pg, UserPack pack) {
 		DescPage p = new DescPage(pg, pack);
 
-		Runnable run = new Runnable() {
+		Thread thread = new Thread(new Runnable() {
 			public int inter = 0;
 			@SuppressWarnings("BusyWait")
 			@Override
@@ -229,8 +283,7 @@ public class Opts {
 					}
 				}
 			}
-		};
-		Thread thread = new Thread(run);
+		});
 		thread.start();
 
 		JPanel panel = new JPanel();

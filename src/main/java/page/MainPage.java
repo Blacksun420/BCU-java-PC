@@ -58,6 +58,7 @@ public class MainPage extends Page {
 
 	private final JBTN refr = new JBTN(MainLocale.PAGE, "refrtips");
 	private final JLabel tips = new JLabel();
+	private final JScrollPane stips = new JScrollPane(tips);
 
 	public MainPage() {
 		super(null);
@@ -92,7 +93,7 @@ public class MainPage extends Page {
 		set(vbgr, x, y, 600, 600, 200, 50);
 		set(vmsc, x, y, 600, 700, 200, 50);
 		set(allf, x, y, 600, 800, 200, 50);
-		set(tips, x, y, 600, 1050, 1200, 200);
+		set(stips, x, y, 600, 1050, 1200, 200);
 
 		set(conf, x, y, 900, 200, 200, 50);
 		set(save, x, y, 900, 300, 200, 50);
@@ -246,7 +247,7 @@ public class MainPage extends Page {
 		logs.setToolTipText(""); // TODO: Logs tool tip
 
 		add(refr);
-		add(tips);
+		add(stips);
 
 		add(ui);
 		ui.setToolTipText(get(MainLocale.PAGE,"ui-tip"));
