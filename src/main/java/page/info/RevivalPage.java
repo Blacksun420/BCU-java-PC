@@ -14,6 +14,7 @@ import javax.swing.*;
 public class RevivalPage extends Page {
 
     private final Revival rev;
+    private final float mul;
     private final JL eData = new JL();
     private final JL rBGM = new JL();
     private final JL rSOL = new JL();
@@ -22,9 +23,10 @@ public class RevivalPage extends Page {
     private final JBTN nRev = new JBTN(MainLocale.PAGE, "next");
 
 
-    public RevivalPage(Page p, Revival r) {
+    public RevivalPage(Page p, Revival r, float starMult) {
         super(p);
         rev = r;
+        mul = starMult;
         ini();
     }
 
@@ -64,13 +66,13 @@ public class RevivalPage extends Page {
         add(rSOL);
         rSOL.setText(get(MainLocale.PAGE, "soul") + ": " + (rev.soul == null ? "N/A" : rev.soul.get().toString()));
         add(rStt);
-        rStt.setText(get(MainLocale.INFO, "t2") + ": " + rev.mhp + "% / " + rev.matk + "%");
+        rStt.setText(get(MainLocale.INFO, "t2") + ": " + (int)(rev.mhp * mul) + "% / " + (int)(rev.matk * mul) + "%");
         add(rBos);
         rBos.setText(MainLocale.INFO, "b" + rev.boss);
 
         if (rev.rev != null) {
             add(nRev);
-            nRev.setLnr(x -> Opts.showRevivalData(this, rev.rev));
+            nRev.setLnr(x -> Opts.showRevivalData(this, rev.rev, mul));
         }
     }
 }

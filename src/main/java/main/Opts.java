@@ -210,8 +210,8 @@ public class Opts {
 		}
 	}
 
-	public static void showRevivalData(Page pg, Revival rev) {
-		RevivalPage rp = new RevivalPage(pg, rev);
+	public static void showRevivalData(Page pg, Revival rev, float starMult) {
+		RevivalPage rp = new RevivalPage(pg, rev, starMult);
 
 		Thread thread = new Thread(new Runnable() {
 			public int inter = 0;

@@ -41,13 +41,12 @@ public class StageTable extends AbJTable {
 
 	protected Object[][] data;
 	private Revival[] revs;
-	private int baseHP = 0;
+	private int baseHP = 0, starMult = 0;
 
 	private final Page page;
 
 	public StageTable(Page p) {
 		super(title);
-
 		page = p;
 
 		setDefaultRenderer(Enemy.class, new EnemyTCR());
@@ -150,7 +149,7 @@ public class StageTable extends AbJTable {
 				}
 			}
 		} else if (c == 0 && revs[r] != null)
-			Opts.showRevivalData(page, revs[r]);
+			Opts.showRevivalData(page, revs[r], starMult / 100f);
 	}
 
 	public void setData(Stage st, int starId) {
@@ -158,6 +157,7 @@ public class StageTable extends AbJTable {
 		baseHP = st.trail ? -1 : st.getMC().getSID().equals("000003") ? st.health * (starId + 1) : st.health;
 		if (st.getMC().getSID().equals("000003") && st.getCont().id.id == 9)
 			st.getCont().price = starId; //Temp fix to EoC price problem
+		starMult = st.getCont().stars[starId];
 
 		data = new Object[info.length][11];
 		revs = new Revival[info.length];
@@ -167,8 +167,8 @@ public class StageTable extends AbJTable {
 			revs[ind] = info[i].rev;
 			data[ind][1] = Identifier.get(info[i].enemy);
 			data[ind][0] = (info[i].boss >= 1 ? MainLocale.getLoc(MainLocale.INFO,"b" + info[i].boss) : "") + (revs[ind] != null ? "(" + MainLocale.getLoc(MainLocale.INFO, "rev") + ")" : "");
-			data[ind][2] = info[i].multiple == info[i].mult_atk ? info[i].multiple * st.getCont().stars[starId] / 100 +""
-					: CommonStatic.toArrayFormat(info[i].multiple * st.getCont().stars[starId] / 100, info[i].mult_atk * st.getCont().stars[starId] / 100);
+			data[ind][2] = info[i].multiple == info[i].mult_atk ? info[i].multiple * starMult / 100 +""
+					: CommonStatic.toArrayFormat(info[i].multiple * starMult / 100, info[i].mult_atk * starMult / 100);
 			data[ind][3] = info[i].number == 0 ? MainLocale.getLoc(MainLocale.UTIL, "inf") : info[i].number;
 
 			if (info[i].castle_0 >= info[i].castle_1)
@@ -176,7 +176,7 @@ public class StageTable extends AbJTable {
 			else
 				data[ind][4] = info[i].castle_0 + "~" + info[i].castle_1 + "%";
 			if (info[i].castle_0 == 0 && data[ind][1] instanceof Enemy)
-				baseHP = (int)(((Enemy) data[ind][1]).de.getHp() * info[i].multiple * (st.getCont().stars[starId] * 0.01f) * 0.01f);
+				baseHP = (int)(((Enemy) data[ind][1]).de.getHp() * info[i].multiple * (starMult * 0.01f) * 0.01f);
 
 			if (Math.abs(info[i].spawn_0) >= Math.abs(info[i].spawn_1))
 				data[ind][5] = info[i].spawn_0;
