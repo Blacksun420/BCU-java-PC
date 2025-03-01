@@ -511,7 +511,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 			if (basis instanceof SBCtrl) {
 				Replay r = ((SBCtrl) basis).getData();
 				changePanel(new BattleInfoPage(getThis(), r.rl == null ? r : r.clone(), 0));
-			} if (basis instanceof SBRply)
+			} else if (basis instanceof SBRply)
 				if (recd.rl == null)
 					changePanel(new RecdSavePage(getThis(), recd));
 				else
