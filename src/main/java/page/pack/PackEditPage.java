@@ -459,7 +459,7 @@ public class PackEditPage extends DefaultPage {
 
 		sdiy.addActionListener(arg0 -> {
 			if (pac.editable)
-				changePanel(new StageEditPage(getThis(), pac.mc, pac));
+				changePanel(new StageEditPage(getThis(), pac.mc, pac, jls.getSelectedIndex()));
 			else {
 				List<MapColc> lmc = Arrays.asList(new MapColc[] { pac.mc });
 				changePanel(new StageViewPage(getThis(), lmc));
