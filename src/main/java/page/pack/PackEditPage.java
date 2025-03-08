@@ -245,7 +245,7 @@ public class PackEditPage extends DefaultPage {
 
 		cbge.setLnr(x -> changePanel(new BGEffectEditPage(this, pac)));
 
-		csav.setLnr(x -> changePanel(new PackSavePage(this, pac)));
+		csav.setLnr(x -> changePanel(new PackSavePage(this, pac, jls.getSelectedValue())));
 
 		vcas.addActionListener(arg0 -> {
 			if (pac != null && pac.editable)
@@ -459,7 +459,7 @@ public class PackEditPage extends DefaultPage {
 
 		sdiy.addActionListener(arg0 -> {
 			if (pac.editable)
-				changePanel(new StageEditPage(getThis(), pac.mc, pac, jls.getSelectedIndex()));
+				changePanel(new StageEditPage(getThis(), pac.mc, pac, jls.getSelectedValue()));
 			else {
 				List<MapColc> lmc = Arrays.asList(new MapColc[] { pac.mc });
 				changePanel(new StageViewPage(getThis(), lmc));
@@ -798,7 +798,7 @@ public class PackEditPage extends DefaultPage {
 				}
 			}
 
-			reme.setEnabled(e.findApp(pac.mc).size() == 0 && !cont);
+			reme.setEnabled(e.findApp(pac.mc).isEmpty() && !cont);
 		}
 	}
 

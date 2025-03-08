@@ -76,7 +76,7 @@ public class StageEditPage extends DefaultPage {
 	private boolean changing = false;
 	private Stage stage;
 
-	public StageEditPage(Page p, MapColc map, UserPack pac, int selection) {
+	public StageEditPage(Page p, MapColc map, UserPack pac, StageMap selection) {
 		super(p);
 		mc = map;
 		pack = pac;
@@ -88,10 +88,7 @@ public class StageEditPage extends DefaultPage {
 		jle.setListData(UserProfile.getAll(pack.getSID(), Enemy.class).toArray(new Enemy[0]));
 		efp = new EnemyFindPage(getThis(), true, pac);
 		ini();
-        if (selection != -1) {
-            jlsm.setSelectedIndex(selection);
-			jlsm.ensureIndexIsVisible(selection);
-        }
+		jlsm.setSelectedValue(selection, true);
 	}
 
 	@Override

@@ -75,20 +75,19 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 			if (mb.getEntity() != null)
 				mb.getEntity().organize();
 			if (o instanceof SpriteBox) {
-				if (sb.sele >= 0) {
-					jlp.getSelectionModel().setSelectionInterval(sb.sele, sb.sele);
+				if (!sb.sele.isEmpty()) {
+					int ind = sb.sele.getLast();
+					jlp.getSelectionModel().setSelectionInterval(ind, ind);
 					int[] selected = mmet.getSelectedRows();
 					int[][] cells = mmet.mm.parts;
 					for (int i : selected)
-						cells[i][2] = sb.sele;
+						cells[i][2] = ind;
 					mmet.anim.unSave("mamodel sprite select");
-				} else {
+				} else
 					jlp.clearSelection();
-				}
 			}
 			setTree(mmet.anim);
 		});
-
 	}
 
 	private void selectAnimNode(AnimCE ac) {
@@ -379,6 +378,13 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 	protected void keyPressed(KeyEvent e) {
 		super.keyPressed(e);
 		aep.hotkey(e);
+		sb.keyPressed(e);
+	}
+
+	@Override
+	protected void keyReleased(KeyEvent e) {
+		super.keyReleased(e);
+		sb.keyReleased(e);
 	}
 
 	private void ini() {

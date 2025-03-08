@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.LinkedList;
 
 class SpriteBox extends JPanel implements KeyListener, MouseInputListener, MouseWheelListener {
 
@@ -21,9 +22,9 @@ class SpriteBox extends JPanel implements KeyListener, MouseInputListener, Mouse
 	private AnimCE anim;
 	private Point c;
 	private int skip = 0;
-	private boolean drag;
+	private boolean drag, pvtchage;
 	private final Page page;
-	protected int sele = -1;
+	protected final LinkedList<Integer> sele = new LinkedList<>();
 	protected boolean white = true;
 
 	protected double x = 0, y = 0;
@@ -57,9 +58,9 @@ class SpriteBox extends JPanel implements KeyListener, MouseInputListener, Mouse
 
 			calculateSize(true);
 
-			sele = -1;
-		} else if (anim != null && sele >= anim.imgcut.n)
-			sele = -1;
+			sele.clear();
+		} else if (anim != null)
+			sele.removeIf(i -> i >= anim.imgcut.n);
 	}
 
 	protected synchronized BufferedImage getImage() {
@@ -97,7 +98,7 @@ class SpriteBox extends JPanel implements KeyListener, MouseInputListener, Mouse
 				int sy = (int) (val[1] * size - 1);
 				int sw = (int) (val[2] * size + 2);
 				int sh = (int) (val[3] * size + 2);
-				if (i == sele) {
+				if (sele.contains(i)) {
 					gra.setColor(Color.RED);
 					gra.fillRect(sx - 5, sy - 5, sw + 5, 5);
 					gra.fillRect(sx - 5, sy, 5, sh + 5);
@@ -235,15 +236,26 @@ class SpriteBox extends JPanel implements KeyListener, MouseInputListener, Mouse
 	public void keyTyped(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_TAB) {
 			skip++;
-			sele = findSprite(c);
+			int id = findSprite(c);
+			if (id != -1) {
+				if (!sele.contains(id))
+					sele.add(id);
+			}else
+				sele.clear();
 		}
 	}
 
 	@Override
-	public void keyPressed(KeyEvent e) {}
+	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_Q)
+			pvtchage = true;
+	}
 
 	@Override
-	public void keyReleased(KeyEvent e) {}
+	public void keyReleased(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_Q)
+			pvtchage = false;
+	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {}
@@ -256,18 +268,20 @@ class SpriteBox extends JPanel implements KeyListener, MouseInputListener, Mouse
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		Point p = e.getPoint();
-		if (drag && sele >= 0) {
+		if (drag && !sele.isEmpty()) {
 			anim.unSave("imgcut drag");
 		} else if(!drag) {
 			skip = 0;
 			c = p;
 			Point p2 = new Point(p.x + (int) x, p.y + (int) y);
-			sele = findSprite(p2);
+			int id = findSprite(p2);
+			if (SwingUtilities.isLeftMouseButton(e) || id == -1)
+				sele.clear();
+			if (id != -1 && !sele.removeFirstOccurrence(id))
+				sele.add(id);
 			page.callBack(this);
 		}
-
-		if(drag)
-			drag = false;
+		drag = false;
 	}
 
 	@Override
@@ -281,7 +295,11 @@ class SpriteBox extends JPanel implements KeyListener, MouseInputListener, Mouse
 		Point p = e.getPoint();
 		if (!drag) {
 			Point p2 = new Point(p.x + (int) x, p.y + (int) y);
-			sele = findSprite(p2);
+			int id = findSprite(p2);
+			if (SwingUtilities.isLeftMouseButton(e) || id == -1)
+				sele.clear();
+			if (id != -1 && !sele.contains(id))
+				sele.add(id);
 			page.callBack(this);
 		}
 
@@ -289,19 +307,27 @@ class SpriteBox extends JPanel implements KeyListener, MouseInputListener, Mouse
 		Point p0 = getPoint(c);
 		Point p1 = getPoint(c = p);
 
-		if	(sele == -1 || e.isShiftDown()) {
+		if	(sele.isEmpty() || e.isShiftDown()) {
 			x -= (p1.x - p0.x) * size;
 			y -= (p1.y - p0.y) * size;
 			limit();
 		} else {
-			int[] line = anim.imgcut.cuts[sele];
-			int modifier = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-			if ((e.getModifiers() & modifier) > 0) {
-				line[2] = Math.max(line[2] + (p1.x - p0.x), 1);
-				line[3] = Math.max(line[3] + (p1.y - p0.y), 1);
-			} else {
-				line[0] += p1.x - p0.x;
-				line[1] += p1.y - p0.y;
+			for (int sl : sele) {
+				int[] line = anim.imgcut.cuts[sl];
+				int modifier = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+				if ((e.getModifiers() & modifier) > 0) {
+					line[2] = Math.max(line[2] + (p1.x - p0.x), 1);
+					line[3] = Math.max(line[3] + (p1.y - p0.y), 1);
+				} else {
+					line[0] += p1.x - p0.x;
+					line[1] += p1.y - p0.y;
+					if (pvtchage)
+						for (int[] part : anim.mamodel.parts)
+							if (part[2] == sl) {
+								part[6] -= p1.x - p0.x;
+								part[7] -= p1.y - p0.y;
+							}
+				}
 			}
 			anim.ICedited();
 		}
@@ -320,7 +346,9 @@ class SpriteBox extends JPanel implements KeyListener, MouseInputListener, Mouse
 	}
 
 	public void setSprite(int id, boolean callback) {
-		sele = id;
+		sele.clear();
+		if (id != -1)
+			sele.add(id);
 		if (callback)
 			page.callBack(this);
 	}

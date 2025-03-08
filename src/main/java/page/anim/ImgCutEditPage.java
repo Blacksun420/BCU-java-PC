@@ -87,12 +87,14 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 	@Override
 	public void callBack(Object o) {
 		changing = true;
-		if (o instanceof SpriteBox && sb.sele >= 0) {
-			icet.getSelectionModel().setSelectionInterval(sb.sele, sb.sele);
-			int h = icet.getRowHeight();
-			icet.scrollRectToVisible(new Rectangle(0, h * sb.sele, 1, h));
-		} else
+		if (o instanceof SpriteBox) {
 			icet.clearSelection();
+			for (int sele : sb.sele) {
+				icet.getSelectionModel().addSelectionInterval(sele, sele);
+				int h = icet.getRowHeight();
+				icet.scrollRectToVisible(new Rectangle(0, h * sele, 1, h));
+			}
+		}
 		setB();
 		changing = false;
 	}
@@ -356,11 +358,11 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 			changing = true;
 
 			ImgCut ic = icet.anim.imgcut;
-			int ind = sb.sele;
-			icet.anim.removeICline(ind);
-			if (ind >= ic.n)
-				ind--;
-
+			int ind = 0;
+			for (int sele : sb.sele) {
+				icet.anim.removeICline(sele);
+				ind = sele >= ic.n ? ic.n - 1 : sele;
+			}
 			lsm.setSelectionInterval(ind, ind);
 			setB();
 
@@ -446,6 +448,13 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 	protected void keyPressed(KeyEvent e) {
 		super.keyPressed(e);
 		aep.hotkey(e);
+		sb.keyPressed(e);
+	}
+
+	@Override
+	protected void keyReleased(KeyEvent e) {
+		super.keyReleased(e);
+		sb.keyReleased(e);
 	}
 
 	private void ini() {
@@ -586,7 +595,7 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		white.setEnabled(anim != null);
 		icet.setCut(anim);
 		sb.setAnim(anim);
-		if (sb.sele == -1)
+		if (sb.sele.isEmpty())
 			icet.clearSelection();
 		sb.setEnabled(anim != null);
 		name.setEnabled(anim != null);
@@ -633,19 +642,22 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 	}
 
 	private void setB() {
-		sb.sele = icet.getSelectedRow();
+		sb.sele.clear();
+		for (int i : icet.getSelectedRows())
+			sb.sele.add(i);
 
-		reml.setEnabled(sb.sele != -1);
-		if (sb.sele >= 0) {
-			for (int[] ints : icet.anim.mamodel.parts)
-				if (ints[2] == sb.sele)
-					reml.setEnabled(false);
-			for (MaAnim ma : icet.anim.anims)
-				for (Part part : ma.parts)
-					if (part.ints[1] == 2)
-						for (int[] ints : part.moves)
-							if (ints[1] == sb.sele)
-								reml.setEnabled(false);
-		}
+		reml.setEnabled(!sb.sele.isEmpty());
+		if (!sb.sele.isEmpty())
+			for (int sele : sb.sele) {
+				for (int[] ints : icet.anim.mamodel.parts)
+					if (ints[2] == sele)
+						reml.setEnabled(false);
+				for (MaAnim ma : icet.anim.anims)
+					for (Part part : ma.parts)
+						if (part.ints[1] == 2)
+							for (int[] ints : part.moves)
+								if (ints[1] == sele)
+									reml.setEnabled(false);
+			}
 	}
 }

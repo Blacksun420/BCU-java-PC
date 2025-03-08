@@ -87,8 +87,9 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 	@Override
 	public void callBack(Object o) {
 		if (o instanceof SpriteBox) {
-			if (sb.sele >= 0) {
-				jlp.getSelectionModel().setSelectionInterval(sb.sele, sb.sele);
+			if (!sb.sele.isEmpty()) {
+				int s = sb.sele.getLast();
+				jlp.getSelectionModel().setSelectionInterval(s, s);
 				jlp.ensureIndexIsVisible(jlp.getSelectedIndex());
 				int[] rows = maet.getSelectedRows();
 				if (rows.length != 1 || maet.ma.parts[rows[0]].ints[1] != 2)
@@ -98,7 +99,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 				int[] selected = mpet.getSelectedRows();
 				int[][] cells = mpet.part.moves;
 				for (int i : selected)
-					cells[i][1] = sb.sele;
+					cells[i][1] = s;
 				maet.anim.unSave("maanim sprite select");
 				changing = false;
 			} else
@@ -698,6 +699,13 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 	protected void keyPressed(KeyEvent e) {
 		super.keyPressed(e);
 		aep.hotkey(e);
+		sb.keyPressed(e);
+	}
+
+	@Override
+	protected void keyReleased(KeyEvent e) {
+		super.keyReleased(e);
+		sb.keyReleased(e);
 	}
 
 	private void ini() {

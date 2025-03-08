@@ -3,6 +3,7 @@ package page.anim;
 import common.util.anim.AnimCE;
 import page.support.AbJTable;
 
+import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -18,6 +19,7 @@ class ImgCutEditTable extends AbJTable {
 
 	public ImgCutEditTable() {
 		super(strs);
+		selectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 	}
 
 	@Override
