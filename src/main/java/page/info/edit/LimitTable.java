@@ -249,12 +249,8 @@ public class LimitTable extends Page {
 			return;
 		}
 		abler(true);
-		if (lim.rare > 0) {
-			for (int i = 0; i < brars.length; i++)
-				brars[i].setSelected(((lim.rare >> i) & 1) > 0);
-		} else
-			for (JTG brar : brars)
-				brar.setSelected(true);
+		for (int i = 0; i < brars.length; i++)
+			brars[i].setSelected(lim.rare == 0 || ((lim.rare >> i) & 1) > 0);
 		StageLimit stli = lim.stageLimit == null ? lim.stageLimit = new StageLimit() : lim.stageLimit;
 
         for (int i = 0; i < bcost.length; i++)
