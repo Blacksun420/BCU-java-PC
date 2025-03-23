@@ -76,7 +76,7 @@ public class StageEditTable extends AbJTable implements Reorderable {
 		JTextComponent jtf = ((JTextComponent) editor);
 		if (e instanceof KeyEvent)
 			jtf.selectAll();
-		if (lnk[c] == 1 && jtf.getText().length() > 0) {
+		if (lnk[c] == 1 && !jtf.getText().isEmpty()) {
 			Object obj = get(r, c);
 
 			if(obj != null)
@@ -248,16 +248,8 @@ public class StageEditTable extends AbJTable implements Reorderable {
 
 		if (enemy == null && sind < info.length && getSelectedRow() >= 0)
 			ans[sind] = info[sind].clone();
-		else {
-			ans[sind] = new Line();
-			ans[sind].enemy = enemy == null ? null : enemy.getID();
-			ans[sind].number = 1;
-			ans[sind].castle_0 = 100;
-			ans[sind].layer_0 = 0;
-			ans[sind].layer_1 = 9;
-			ans[sind].multiple = 100;
-			ans[sind].mult_atk = 100;
-		}
+		else
+			ans[sind] = new Line(enemy == null ? null : enemy.getID());
 
 		stage.datas = ans;
 

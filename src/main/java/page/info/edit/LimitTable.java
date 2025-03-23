@@ -273,7 +273,7 @@ public class LimitTable extends Page {
         jcmax.setText(limits[4] + ": " + lim.max);
 		jcmin.setText(limits[3] + ": " + lim.min);
 		jnum.setText(limits[1] + ": " + lim.num);
-		star.setText(l.toString());//l.star == -1 ? "all stars" : ((l.star + 1) + " star"));
+		star.setText(l.starString());//l.star == -1 ? "all stars" : ((l.star + 1) + " star"));
 		one.setText(MainLocale.getLoc(MainLocale.INFO, "row" + lim.line));
 		jcg.setText(lim.group + (lim.group != null && lim.group.type % 2 != 0 ? ": " + lim.fa : ""));
 		jlr.setText(String.valueOf(lim.lvr));
@@ -425,7 +425,7 @@ public class LimitTable extends Page {
 				return;
 			lim.min = val;
 		} else if (jtf == jnum) {
-			if (val < 0 || val > 50)
+			if (val < 0)
 				return;
 			lim.num = val;
 		} else if (jtf == star) {

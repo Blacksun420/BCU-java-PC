@@ -24,6 +24,7 @@ public class StageLimitTable extends Page {
     private final JScrollPane jspl = new JScrollPane(jll);
     private final JBTN addl = new JBTN(0, "addlim");
     private final JBTN reml = new JBTN(0, "remlim");
+    private final JTF lname = new JTF();
     private final LimitTable lt;
 
     private final JBTN prog = new JBTN(MainLocale.PAGE, "csav");
@@ -54,12 +55,14 @@ public class StageLimitTable extends Page {
             set(jspl, x, y, 0, 50, w * 2, 200);
             set(addl, x, y, 0, 250, w, 50);
             set(reml, x, y, w, 250, w, 50);
+            set(lname, x, y, 0, 0, 0, 0);
         } else {
             set(lt, x, y, 0, 200, 1400, 100);
 
             set(jspl, x, y, 0, 50, w * 2, 150);
             set(addl, x, y, w * 2, 100, w, 50);
             set(reml, x, y, w * 3, 100, w, 50);
+            set(lname, x, y, w * 2, 150, w * 2, 50);
         }
         set(jnam, x, y, 0, 0, w * 2, 50);
         for (int i = 0; i < 4; i++)
@@ -87,6 +90,8 @@ public class StageLimitTable extends Page {
         add(addl);
         add(reml);
         add(lt);
+        reg(lname);
+        lname.setHintText(get(MainLocale.PAGE,"mampm10"));
 
         add(prog);
         addListeners();
@@ -123,6 +128,9 @@ public class StageLimitTable extends Page {
 
     private void setLimit(Limit l) {
         reml.setEnabled(l != null);
+        lname.setEnabled(l instanceof Limit.PackLimit);
+        if (l instanceof Limit.PackLimit)
+            lname.setText(((Limit.PackLimit)l).name);
         lt.setLimit(l);
         getFront().fireDimensionChanged();
     }
@@ -155,6 +163,8 @@ public class StageLimitTable extends Page {
             getFront().callBack(map);
         } else if (jtf == cos)
             map.price = Math.max(0 , Math.min(CommonStatic.parseIntN(text) - 1, 9));
+        else if (jtf == lname)
+            ((Limit.PackLimit)jll.getSelectedValue()).name = text;
 
         for (int i = 0; i < 4; i++)
             if (jtf == star[i]) {
@@ -188,7 +198,7 @@ public class StageLimitTable extends Page {
         prog.setLnr(p -> changePanel(new PackSavePage(getFront(), pac, map)));
 
         addl.setLnr(e -> {
-            map.lim.add(new Limit());
+            map.lim.add(new Limit.PackLimit());
             setListL();
         });
 

@@ -856,11 +856,10 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 					ce.loop = v[0];
 				}
 				if (jtf == fwp) {
+
 					if (v[0] < 0)
 						v[0] = 0;
-					if (v[0] > 50)
-						v[0] = 50;
-					ce.will = v[0] - 1;
+					ce.will = Math.min(v[0] - 1, 49);
 				}
 				if (jtf == josh) {
 					boolean nz = v[0] == 0;
