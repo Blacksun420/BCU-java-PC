@@ -733,7 +733,7 @@ public interface BattleBox {
 				}
 
 				for (DoorCont d : sb.doors)
-					if (d.ECheck(e)) {
+					if (d.ECheck(e.getLayer())) {
 						gra.setTransform(at);
 						d.draw(gra, setP(getX(d.pos), midh - (road_h - d.layer * DEP) * bf.sb.siz), psiz);
 					}

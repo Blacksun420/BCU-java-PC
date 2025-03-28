@@ -601,7 +601,7 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		name.setEnabled(anim != null);
 		name.setText(anim == null ? "" : anim.id.id);
 		boolean del = anim != null && anim.deletable();
-		rem.setEnabled(anim != null && del);
+		rem.setEnabled(del);
 		loca.setEnabled(anim != null && !del && anim.inPool());
 		copy.setEnabled(anim != null);
 		impt.setEnabled(anim != null);
