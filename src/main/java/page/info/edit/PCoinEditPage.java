@@ -70,6 +70,9 @@ public class PCoinEditPage extends DefaultPage {
 
             int slot = uni.pcoin.info.size();
             uni.pcoin.info.add(getCoinParams(slot + 1));
+            int[] c = Data.get_CORRES(uni.pcoin.info.get(slot)[0]);
+            if (c[0] == Data.PC_P && !Data.procSharable[c[1]])
+                uni.pcoin.atks.add(new int[0][]);
 
             uni.pcoin.max = new int[uni.pcoin.info.size()];
             for (int i = 0; i < uni.pcoin.info.size(); i++)

@@ -171,7 +171,7 @@ class PCoinEditTable extends Page {
                     add(stTxt);
                     chance.add(stTxt);
 
-                    int fi = (i + offset) + 2, val = par.unit.pcoin.info.get(par.talent)[fi];
+                    int fi = i + 2, val = par.unit.pcoin.info.get(par.talent)[fi];
                     try {
                         Field f = pfs[ri];
                         if (f.getType().equals(int.class) || f.getType().equals(float.class) || f.getType().equals(double.class)) {
@@ -536,8 +536,11 @@ class PCoinEditTable extends Page {
         if (pc) {
             PCoinLV.setText("" + unit.pcoin.max[talent]);
             superLv.setText("" + unit.pcoin.getReqLv(talent));
-            if (!unit.common && type[0] == Data.PC_P && !Data.procSharable[type[1]])
-                atks.setText(Arrays.deepToString(unit.pcoin.atks.get(unit.pcoin.getAtkInd(talent))));
+            if (!unit.common && type[0] == Data.PC_P && !Data.procSharable[type[1]]) {
+                int i = unit.pcoin.getAtkInd(talent);
+                if (i != -1)
+                    atks.setText(Arrays.deepToString(unit.pcoin.atks.get(i)));
+            }
             int tal = unit.pcoin.info.get(talent)[0];
             ListModel<talentData> listModel = ctypes.getModel();
             for (int i = 0; i < listModel.getSize(); i++)
