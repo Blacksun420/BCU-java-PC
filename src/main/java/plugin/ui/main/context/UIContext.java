@@ -205,16 +205,16 @@ public abstract class UIContext {
             try {
                 JsonElement json = WebFileIO.read(JAR_CHECK_URL);
                 if (json != null) {
-                    UpdateJson j = JsonUtils.get("latest", json.getAsJsonObject(), UpdateJson.class);
-                    UpdateJson[] olds = JsonUtils.getArr("past", json.getAsJsonObject(), UpdateJson.class);
-                    ArrayList<String> volds = new ArrayList<>(olds.length);
-                    for (int i = olds.length - 1; i >= 0; i--) {
-                        if (olds[i].getVer() <= MainBCU.ver)
+                    UpdateJson[] history = JsonUtils.getArr("history", json.getAsJsonObject(), UpdateJson.class);
+                    UpdateJson upd = history[0];
+                    StringBuilder volds = new StringBuilder(upd.info);
+                    for (int i = 1; i < history.length; i++) {
+                        if (history[i].getVer() <= MainBCU.ver)
                             break;
-                        volds.add(olds[i].getDescription());
+                        volds.append("\n\n").append(history[i].getDescription());
                     }
-                    j.olds = volds.toArray(new String[0]);
-                    return j;
+                    upd.info = volds.toString();
+                    return upd;
                 }
             } catch (Exception e) {
                 UIPlugin.popError("Failed to check update, try again later on a stable WI-FI connection");
@@ -238,7 +238,6 @@ public abstract class UIContext {
             public Byte forkver;
             public String CORE_VER;
             public String info;
-            public String[] olds = new String[0];
 
             public int getVer() {
                 int[] digs = CommonStatic.parseIntsN(ver);
@@ -260,7 +259,7 @@ public abstract class UIContext {
             }
 
             public String getDescription() {
-                return this.ver + " info:\n" + this.info + (olds.length == 0 ?"":"\n\n" + String.join("\n\n",olds));
+                return this.ver + " info:\n" + this.info;
             }
 
             @Override
