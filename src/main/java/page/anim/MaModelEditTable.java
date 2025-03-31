@@ -22,6 +22,7 @@ class MaModelEditTable extends AnimTable<int[]> {
 	protected AnimCE anim;
 	protected MaModel mm;
 	private final Page page;
+	private final String[] eases;
 
 	protected MaModelEditTable(Page p) {
 		super(Page.get(MainLocale.PAGE, "mampm", 11));
@@ -29,6 +30,14 @@ class MaModelEditTable extends AnimTable<int[]> {
 		selectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		setTransferHandler(new AnimTableTH<>(this, 1));
 		page = p;
+		eases = Page.get(MainLocale.PAGE, "mamgl", 5);
+
+		getColumnModel().getColumn(9).setCellRenderer((table, value, isSelected, hasFocus, row, column) -> {
+			JComboBox<String> e = new JComboBox<>(eases);
+			e.setSelectedIndex(mm.parts[row][12] >= 4 || mm.parts[row][12] <= -2 ? 0 : mm.parts[row][12] + 1);
+			return e;
+		});
+		getColumnModel().getColumn(9).setCellEditor(new DefaultCellEditor(new JComboBox<>(eases)));
 	}
 
 	@Override
@@ -78,6 +87,8 @@ class MaModelEditTable extends AnimTable<int[]> {
 			return r;
 		if (lnk[c] == 1)
 			return mm.parts[r][0];
+		if (lnk[c] == 9)
+			return eases[mm.parts[r][12] + 1];
 		if (lnk[c] == 10)
 			return mm.strs0[r];
 		if (lnk[c] >= 4 && lnk[c] <= 6) {
@@ -203,7 +214,7 @@ class MaModelEditTable extends AnimTable<int[]> {
 			if (ints.length >= 2)
 				mm.parts[r][par + 1] = ints[1];
 		} else {
-			int v = (int) val;
+			int v = val instanceof Integer ? (int)val : CommonStatic.parseIntN((String)val);
 			if (c == 1 && (v < -1 || r == 0))
 				v = -1;
 			else if (c == 2)

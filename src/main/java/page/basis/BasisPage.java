@@ -5,6 +5,7 @@ import common.battle.BasisLU;
 import common.battle.BasisSet;
 import common.battle.LineUp;
 import common.battle.data.MaskUnit;
+import common.battle.data.Orb;
 import common.pack.UserProfile;
 import common.system.Node;
 import common.util.Data;
@@ -65,7 +66,7 @@ public class BasisPage extends LubCont {
 		return res.toString();
 	}
 	private static String getType(int type) {
-		if (type <= 4)
+		if (type < Data.ORB_TYPE_TOTAL)
 			return MainLocale.getLoc(MainLocale.UTIL, "ot"+type);
 		return "Unknown Type " + type;
 	}
@@ -840,6 +841,10 @@ public class BasisPage extends LubCont {
 		if (data.length == 0) {
 			if (!setLists)
 				return;
+			for (byte i = Data.ORB_MINIDEATHSURGE; i < Data.ORB_TYPE_TOTAL; i++) {
+				typeText.add(MainLocale.getLoc(MainLocale.UTIL, "ot"+i));
+				typeData.add(i);
+			}
 			type.setModel(new DefaultComboBoxModel<>(typeText.toArray(new String[0])));
 			type.setEnabled(f.orbs.getSlots() != -1);
 			type.setSelectedIndex(0);
@@ -858,6 +863,11 @@ public class BasisPage extends LubCont {
 		String[] traits;
 		String[] grades;
 		byte otype = (byte)data[Data.ORB_TYPE];
+		for (byte i = Data.ORB_MINIDEATHSURGE; i < Data.ORB_TYPE_TOTAL; i++)
+			if (!Orb.onlyOne(i) || otype == i || !lv.equippingOrb(i)) {
+				typeText.add(MainLocale.getLoc(MainLocale.UTIL, "ot" + i));
+				typeData.add(i);
+			}
 		if (!typeData.contains(otype))
 			data[Data.ORB_TYPE] = otype = Data.ORB_ATK;
 
@@ -892,8 +902,11 @@ public class BasisPage extends LubCont {
 				traitData = new ArrayList<>(aux.ORB.get(otype).keySet());
 
 			traits = new String[traitData.size()];
-			for (int i = 0; i < traits.length; i++)
+			for (int i = 0; i < traits.length; i++) {
 				traits[i] = getTrait(traitData.get(i));
+				if (traits[i].isEmpty())
+					traits[i] = get(MainLocale.PAGE, "none");
+			}
 
 			if (!traitData.contains(data[Data.ORB_TRAIT]))
 				data[Data.ORB_TRAIT] = traitData.get(0);
@@ -917,6 +930,7 @@ public class BasisPage extends LubCont {
 			trait.setModel(new DefaultComboBoxModel<>(traits));
 			grade.setModel(new DefaultComboBoxModel<>(grades));
 
+			trait.setEnabled(traits.length > 1);
 			if (f.orbs.getSlots() != -1)
 				type.setSelectedIndex(typeData.indexOf(otype) + 1);
 			else
