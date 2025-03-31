@@ -23,14 +23,13 @@ public class BCJSON {
 	public static void check() {
 		LoadPage.prog("checking update information");
 		UpdateJson json = Data.ignore(UpdateCheck::checkUpdate);
-		List<Downloader> assets = null, musics = null, libs = null, lang = null;
+		List<Downloader> assets = null, musics, libs = null, lang;
 		try {
 			libs = UpdateCheck.checkPCLibs(json);
 			assets = UpdateCheck.checkAsset(json, "pc");
 		} catch (Exception e) {
 			Opts.pop(e.getMessage(), "FATAL ERROR");
-			e.printStackTrace();
-			CommonStatic.def.save(false, false, true);
+			CommonStatic.ctx.noticeErr(e, ErrType.FATAL, "FATAL ERROR");
 		}
 
 		int count = json != null ? json.music : -1;//Null json usually means error or no connection, there's no point on checking anything given the case
@@ -56,7 +55,7 @@ public class BCJSON {
 				if (!Opts.conf("failed to download fonts, retry?"))
 					break;
 		}
-
+		AssetLoader.removeTemp();
 		while (!Data.err(AssetLoader::merge))
 			if (!Opts.conf("failed to process assets, retry?"))
 				CommonStatic.def.save(false, false, true);
@@ -64,7 +63,7 @@ public class BCJSON {
 
 	private static int getMusicTotal() {
 		File music = CommonStatic.ctx.getAssetFile("./music/");
-		if (music.exists())
+		if (music.exists() && music.listFiles() != null)
 			return music.listFiles().length;
 		return -1;
 	}
