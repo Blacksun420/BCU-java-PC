@@ -260,7 +260,7 @@ public class BCUReader extends DataIO {
 								if(qs != null)
 									for (String str : qs) {
 										String[] strs = str.trim().split("\t");
-										Unit u = UserProfile.getBCData().units.get(CommonStatic.parseIntN(strs[0]));
+										Unit u = UserProfile.getBCData().units.getFromID(CommonStatic.parseIntN(strs[0]));
 										if (u == null)
 											continue;
 										for (int i = 0; i < Math.min(u.forms.length, strs.length - 1); i++)
@@ -285,7 +285,7 @@ public class BCUReader extends DataIO {
 								if(qs != null)
 									for (String str : qs) {
 										String[] strs = str.trim().split("\t");
-										Unit u = UserProfile.getBCData().units.get(CommonStatic.parseIntN(strs[0]));
+										Unit u = UserProfile.getBCData().units.getFromID(CommonStatic.parseIntN(strs[0]));
 										if (u == null)
 											continue;
 										for (int i = 0; i < Math.min(u.forms.length, strs.length - 1); i++)
@@ -300,7 +300,7 @@ public class BCUReader extends DataIO {
 										String[] strs = str.trim().split("\t", 3);
 										if (strs.length < 2 || strs[1].equals("<br><br>"))
 											continue;
-										Unit u = UserProfile.getBCData().units.get(CommonStatic.parseIntN(strs[0]));
+										Unit u = UserProfile.getBCData().units.getFromID(CommonStatic.parseIntN(strs[0]));
 										if (u != null) {
 											MultiLangCont.getStatic().CFEXP.put(locale, u.info, strs[1]);
 											if (strs.length == 3 && !strs[2].equals("<br><br>"))

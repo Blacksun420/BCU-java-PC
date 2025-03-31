@@ -14,7 +14,7 @@ import page.MainLocale;
 import page.Page;
 import page.info.EnemyInfoPage;
 import page.support.AbJTable;
-import page.support.EnemyTCR;
+import page.support.CharaTCR;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ class ComingTable extends AbJTable {
 		super(title);
 
 		page = p;
-		setDefaultRenderer(Enemy.class, new EnemyTCR());
+		setDefaultRenderer(Enemy.class, new CharaTCR(lnk));
 	}
 
 	@Override

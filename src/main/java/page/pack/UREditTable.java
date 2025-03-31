@@ -12,9 +12,9 @@ import page.MainLocale;
 import page.Page;
 import page.info.UnitInfoPage;
 import page.support.AbJTable;
+import page.support.CharaTCR;
 import page.support.InTableTH;
 import page.support.Reorderable;
-import page.support.UnitTCR;
 import utilpc.UtilPC;
 
 import javax.swing.text.JTextComponent;
@@ -46,7 +46,7 @@ public class UREditTable extends AbJTable implements Reorderable {
 
         page = p;
         setTransferHandler(new InTableTH(this));
-        setDefaultRenderer(Integer.class, new UnitTCR(new int[title.length], 0));
+        setDefaultRenderer(AbCharacter.class, new CharaTCR(new int[title.length], 0));
         this.pack = pack == null ? null : pack.desc.id;
     }
 
@@ -59,7 +59,7 @@ public class UREditTable extends AbJTable implements Reorderable {
         JTextComponent jtf = ((JTextComponent) editor);
         if (e instanceof KeyEvent)
             jtf.selectAll();
-        if (lnk[c] == 0 && jtf.getText().length() > 0) {
+        if (lnk[c] == 0 && !jtf.getText().isEmpty()) {
             Form frm = (Form) get(r, c);
 
             if(frm != null) {
@@ -73,7 +73,7 @@ public class UREditTable extends AbJTable implements Reorderable {
 
     @Override
     public Class<?> getColumnClass(int c) {
-        return lnk[c] == 0 ? Integer.class : String.class;
+        return lnk[c] == 0 ? AbCharacter.class : String.class;
     }
 
     @Override

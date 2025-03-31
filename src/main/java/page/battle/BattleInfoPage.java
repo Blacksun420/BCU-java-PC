@@ -7,7 +7,7 @@ import common.pack.SaveData;
 import common.util.Data;
 import common.util.stage.Replay;
 import common.util.stage.Stage;
-import common.util.unit.AbForm;
+import common.util.unit.Character;
 import common.util.unit.Form;
 import io.BCMusic;
 import main.MainBCU;
@@ -36,20 +36,19 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 	public static void redefine() {
 		ComingTable.redefine();
 		TotalDamageTable.redefine();
-		EnemyDamageTable.redefine();
 	}
 
 	private final JBTN paus = new JBTN(MainLocale.PAGE, "pause");
 	private final JBTN next = new JBTN(MainLocale.PAGE, "nextf");
 	private final JBTN rply = new JBTN();
 	private final JBTN row = new JBTN();
-	private final EntityTable ut = new EntityTable(-1, false);
-	private final EntityTable ust = new EntityTable(-1, true);
+	private final EntityTable ut = new EntityTable(false);
+	private final EntityTable ust = new EntityTable(true);
 	private final ComingTable ct = new ComingTable(this);
-	private final EntityTable et = new EntityTable(1, false);
-	private final EntityTable est = new EntityTable(1, true);
+	private final EntityTable et = new EntityTable(false);
+	private final EntityTable est = new EntityTable(true);
 	private final TotalDamageTable utd;
-	private final EnemyDamageTable etd;
+	private final TotalDamageTable etd;
 	private final JScrollPane eup = new JScrollPane(ut);
 	private final JScrollPane eusp = new JScrollPane(ust);
 	private final JScrollPane eep = new JScrollPane(et);
@@ -100,7 +99,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		ct.setData(basis.sb.st, rec.star);
 		utd = new TotalDamageTable(basis);
 		utdsp = new JScrollPane(utd);
-		etd = new EnemyDamageTable(basis);
+		etd = new TotalDamageTable(basis);
 		etdsp = new JScrollPane(etd);
 
 		jsl.setMaximum(((SBRply) basis).size());
@@ -118,7 +117,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		ct.setData(basis.sb.st, basis.sb.est.star);
 		utd = new TotalDamageTable(basis);
 		utdsp = new JScrollPane(utd);
-		etd = new EnemyDamageTable(basis);
+		etd = new TotalDamageTable(basis);
 		etdsp = new JScrollPane(etd);
 		jtb.setSelected(DEF_LARGE);
 
@@ -144,7 +143,7 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		jtb.setSelected(DEF_LARGE);
 		utd = new TotalDamageTable(basis);
 		utdsp = new JScrollPane(utd);
-		etd = new EnemyDamageTable(basis);
+		etd = new TotalDamageTable(basis);
 		etdsp = new JScrollPane(etd);
 
 		ini();
@@ -454,8 +453,13 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 
 		(estat.isSelected() ? est : et).setList(le);
 		(ustat.isSelected() ? ust : ut).setList(lu);
-		utd.sort();
-		etd.setList(new ArrayList<>(sb.enemyStatistics.keySet()));
+
+		List<Character> ue = new ArrayList<>(sb.dmgStatistics.size() / 2);
+		List<Character> uu = new ArrayList<>(sb.dmgStatistics.size() / 2);
+		for (Character c : sb.dmgStatistics.keySet())
+			(c instanceof Form ? uu : ue).add(c);
+		utd.setList(uu);
+		etd.setList(ue);
 
 		if (basis instanceof SBRply)
 			change((SBRply) basis, b -> jsl.setValue(b.prog()));
@@ -596,14 +600,6 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 				jsl.setEnabled(pause);
 			}
 		}
-		List<AbForm> lf = new ArrayList<>(basis.sb.ubase instanceof Entity ? 11 : 5);
-		for (AbForm[] fs : basis.sb.b.lu.fs)
-			for(AbForm f : fs)
-				if(f != null)
-					lf.add(f);
-		if (basis.sb.est.getBase() != null)
-			lf.add(basis.sb.est.getBase());
-		utd.setList(lf);
 
 		addListeners();
 	}

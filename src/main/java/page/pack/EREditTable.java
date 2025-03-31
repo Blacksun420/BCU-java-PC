@@ -5,20 +5,13 @@ import common.pack.Identifier;
 import common.pack.PackData;
 import common.pack.UserProfile;
 import common.system.ENode;
-import common.util.unit.AbForm;
+import common.util.unit.*;
 import common.util.unit.rand.EREnt;
-import common.util.unit.AbEnemy;
-import common.util.unit.EneRand;
-import common.util.unit.Enemy;
-import common.util.unit.rand.UREnt;
 import page.MainFrame;
 import page.MainLocale;
 import page.Page;
 import page.info.EnemyInfoPage;
-import page.support.AbJTable;
-import page.support.EnemyTCR;
-import page.support.InTableTH;
-import page.support.Reorderable;
+import page.support.*;
 
 import javax.swing.text.JTextComponent;
 import java.awt.*;
@@ -50,7 +43,7 @@ class EREditTable extends AbJTable implements Reorderable {
 
 		page = p;
 		setTransferHandler(new InTableTH(this));
-		setDefaultRenderer(Integer.class, new EnemyTCR());
+		setDefaultRenderer(AbCharacter.class, new CharaTCR(lnk, 0));
 		this.pack = pack == null ? null : pack.desc.id;
 	}
 
@@ -63,7 +56,7 @@ class EREditTable extends AbJTable implements Reorderable {
 		JTextComponent jtf = ((JTextComponent) editor);
 		if (e instanceof KeyEvent)
 			jtf.selectAll();
-		if (lnk[c] == 0 && jtf.getText().length() > 0) {
+		if (lnk[c] == 0 && !jtf.getText().isEmpty()) {
 			AbEnemy enemy = (AbEnemy) get(r, c);
 
 			if(enemy != null) {
@@ -77,7 +70,7 @@ class EREditTable extends AbJTable implements Reorderable {
 
 	@Override
 	public Class<?> getColumnClass(int c) {
-		return lnk[c] == 0 ? Integer.class : String.class;
+		return lnk[c] == 0 ? AbCharacter.class : String.class;
 	}
 
 	@Override

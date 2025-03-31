@@ -6,13 +6,16 @@ import common.battle.data.MaskUnit;
 import common.pack.UserProfile;
 import common.system.Node;
 import common.util.Data;
-import common.util.unit.*;
+import common.util.unit.AbForm;
+import common.util.unit.Form;
+import common.util.unit.UniRand;
+import common.util.unit.Unit;
 import page.MainFrame;
 import page.MainLocale;
 import page.Page;
 import page.info.UnitInfoPage;
 import page.pack.UREditPage;
-import page.support.UnitTCR;
+import page.support.CharaTCR;
 
 import java.awt.*;
 
@@ -34,7 +37,7 @@ public class UnitListTable extends EntityListTable<AbForm> {
 
 	public UnitListTable(Page p) {
 		super(p, tit);
-		setDefaultRenderer(Enemy.class, new UnitTCR(lnk));
+		setDefaultRenderer(AbForm.class, new CharaTCR(lnk));
 	}
 
 	@Override
@@ -60,7 +63,7 @@ public class UnitListTable extends EntityListTable<AbForm> {
 	public Class<?> getColumnClass(int c) {
 		c = lnk[c];
 		if (c == 1)
-			return Enemy.class;
+			return AbForm.class;
 		return String.class;
 	}
 

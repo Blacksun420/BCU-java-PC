@@ -8,7 +8,7 @@ import common.util.stage.SCGroup;
 import common.util.unit.AbEnemy;
 import page.MainLocale;
 import page.support.AbJTable;
-import page.support.EnemyTCR;
+import page.support.CharaTCR;
 
 import javax.swing.text.JTextComponent;
 import java.awt.*;
@@ -36,14 +36,14 @@ class SCGroupEditTable extends AbJTable {
 		super(title);
 
 		scd = sc;
-		setDefaultRenderer(Integer.class, new EnemyTCR());
+		setDefaultRenderer(Integer.class, new CharaTCR(lnk, 0));
 	}
 
 	@Override
 	public boolean editCellAt(int r, int c, EventObject e) {
 		boolean result = super.editCellAt(r, c, e);
 		Component editor = getEditorComponent();
-		if (editor == null || !(editor instanceof JTextComponent))
+		if (!(editor instanceof JTextComponent))
 			return result;
 		JTextComponent jtf = ((JTextComponent) editor);
 		if (e instanceof KeyEvent)

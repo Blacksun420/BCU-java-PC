@@ -5,13 +5,11 @@ import common.battle.data.MaskEnemy;
 import common.battle.data.MaskUnit;
 import common.battle.entity.Entity;
 import common.pack.Identifier;
-import common.util.unit.Enemy;
-import common.util.unit.Form;
+import common.util.unit.Character;
 import main.MainBCU;
 import page.MainLocale;
-import page.support.EnemyTCR;
+import page.support.CharaTCR;
 import page.support.SortTable;
-import page.support.UnitTCR;
 
 import java.text.DecimalFormat;
 
@@ -19,29 +17,20 @@ class EntityTable extends SortTable<Entity> {
 
 	private static final long serialVersionUID = 1L;
 	private static final DecimalFormat df = new DecimalFormat("#.##");
-
 	private final boolean statistics;
 
-	private final int dir;
-
-	protected EntityTable(int dire, boolean statistics) {
+	protected EntityTable(boolean statistics) {
 		super(MainLocale.getLoc(MainLocale.INFO, statistics ? "us" : "u", statistics ? 5 : 3));
 
-		dir = dire;
 		this.statistics = statistics;
-
-		if (dire == 1)
-			setDefaultRenderer(Enemy.class, new EnemyTCR());
-		else
-			setDefaultRenderer(Form.class, new UnitTCR(lnk));
-
+		setDefaultRenderer(Character.class, new CharaTCR(lnk));
 		sign = -1;
 	}
 
 	@Override
 	public Class<?> getColumnClass(int c) {
 		if (lnk[c] == 1)
-			return dir == 1 ? Enemy.class : Form.class;
+			return Character.class;
 		else
 			return Object.class;
 	}

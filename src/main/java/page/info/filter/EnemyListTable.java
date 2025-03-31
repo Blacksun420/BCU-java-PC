@@ -13,7 +13,7 @@ import page.MainLocale;
 import page.Page;
 import page.info.EnemyInfoPage;
 import page.pack.EREditPage;
-import page.support.EnemyTCR;
+import page.support.CharaTCR;
 
 import java.awt.*;
 
@@ -36,7 +36,7 @@ public class EnemyListTable extends EntityListTable<AbEnemy> {
 
 	protected EnemyListTable(Page p) {
 		super(p, tit);
-		setDefaultRenderer(Enemy.class, new EnemyTCR());
+		setDefaultRenderer(Enemy.class, new CharaTCR(lnk));
 	}
 
 	@Override

@@ -18,7 +18,7 @@ import page.MainLocale;
 import page.Page;
 import page.pack.EREditPage;
 import page.support.AbJTable;
-import page.support.EnemyTCR;
+import page.support.CharaTCR;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -49,7 +49,7 @@ public class StageTable extends AbJTable {
 		super(title);
 		page = p;
 
-		setDefaultRenderer(Enemy.class, new EnemyTCR());
+		setDefaultRenderer(Enemy.class, new CharaTCR(lnk));
 	}
 
 	@Override
