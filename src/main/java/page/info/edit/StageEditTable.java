@@ -7,6 +7,7 @@ import common.pack.PackData.UserPack;
 import common.pack.UserProfile;
 import common.system.ENode;
 import common.util.Data;
+import common.util.stage.CastleImg;
 import common.util.stage.SCDef;
 import common.util.stage.SCDef.Line;
 import common.util.stage.SCGroup;
@@ -47,6 +48,7 @@ public class StageEditTable extends AbJTable implements Reorderable {
 	}
 
 	private SCDef stage;
+	private Stage s;
 	private final StageEditPage page;
 	private EnemyFindPage efp;
 	private final UserPack pack;
@@ -174,12 +176,16 @@ public class StageEditTable extends AbJTable implements Reorderable {
 			if (is.length == 0)
 				return;
 			Line data = stage.datas[stage.datas.length - r - 1];
-
 			data.doorchance = (byte) Math.min(Math.abs(is[0]), 100);
-			data.doordis_0 = is.length < 2 ? 0 : (byte) Math.min(Math.abs(is[1]), 100);
-			data.doordis_1 = is.length < 3 ? data.doordis_0 : (byte) Math.min(Math.abs(is[2]), 100);
+
+			int basepos = 800;
+			if (s.data.datas.length > 0 && s.data.getSimple(s.data.datas.length - 1).castle_0 == 0)
+				basepos = s.data.getSimple(s.data.datas.length - 1).boss >= 1 ? (int)Math.ceil(Identifier.getOr(s.castle, CastleImg.class).boss_spawn) : 700;
+
+			data.doordis_0 = is.length < 2 ? 0 : Math.min(is[1], s.len - 500 - basepos);
+			data.doordis_1 = is.length < 3 ? data.doordis_0 : Math.min(is[2], s.len - 500 - basepos);
 			if (data.doordis_0 > data.doordis_1) {
-				byte d = data.doordis_0;
+				int d = data.doordis_0;
 				data.doordis_0 = data.doordis_1;
 				data.doordis_1 = d;
 			}
@@ -333,6 +339,7 @@ public class StageEditTable extends AbJTable implements Reorderable {
 		if (cellEditor != null)
 			cellEditor.stopCellEditing();
 		changing = false;
+		s = st;
 		stage = st == null ? null : st.data;
 		clearSelection();
 	}

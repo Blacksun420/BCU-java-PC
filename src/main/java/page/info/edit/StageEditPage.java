@@ -340,8 +340,8 @@ public class StageEditPage extends DefaultPage {
 		Set<String> set = new TreeSet<>();
 		for (Stage st : sm.list)
 			set.addAll(st.isSuitable(pack));
-		ptsm.setEnabled(set.size() == 0);
-		if (set.size() > 0)
+		ptsm.setEnabled(set.isEmpty());
+		if (!set.isEmpty())
 			ptsm.setToolTipText("requires: " + set);
 
 	}
@@ -407,7 +407,7 @@ public class StageEditPage extends DefaultPage {
 			return;
 		}
 		jlst.setListData(sm, sm.list);
-		if (sm.list.size() == 0) {
+		if (sm.list.isEmpty()) {
 			jlst.clearSelection();
 			cpsm.setEnabled(false);
 			adds.setEnabled(true);
@@ -471,7 +471,7 @@ public class StageEditPage extends DefaultPage {
 		}
 		lpst.setListData(sm.list.toArray());
 		rmsm.setEnabled(sm != Stage.CLIPSM);
-		if (sm.list.size() == 0) {
+		if (sm.list.isEmpty()) {
 			lpst.clearSelection();
 			ptsm.setEnabled(false);
 			setBB(null);

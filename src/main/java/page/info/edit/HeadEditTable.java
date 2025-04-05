@@ -312,7 +312,16 @@ class HeadEditTable extends Page {
 				sta.timeLimit = val;
 		}
 		if (jtf == jlen) {
-			sta.len = Math.max(1600, val);
+			int basepos = 800;
+			if (sta.data.datas.length > 0 && sta.data.getSimple(sta.data.datas.length - 1).castle_0 == 0)
+				basepos = sta.data.getSimple(sta.data.datas.length - 1).boss >= 1 ? (int)Math.ceil(Identifier.getOr(sta.castle, CastleImg.class).boss_spawn) : 700;
+			sta.len = Math.max(basepos + 800, val);
+
+			for (SCDef.Line l : sta.data.datas)
+				if (l.doorchance > 0) {
+					l.doordis_0 = Math.min(l.doordis_0, sta.len - 500 - basepos);
+					l.doordis_1 = Math.min(l.doordis_1, sta.len - 500 - basepos);
+				}
 		}
 		if (jtf == jmax) {
 			if (val <= 0)

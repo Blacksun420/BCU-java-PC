@@ -670,11 +670,7 @@ public class PackEditPage extends DefaultPage {
 		boolean b = pac.editable && rel != null && rel != pac;
 
 		merge.setEnabled(b && rel.editable);
-		b &= rel != null && !pac.desc.dependency.contains(rel.getSID());
-		if (b)
-			for (String id : rel.desc.dependency)
-				if (id.equals(pac.getSID()))
-					b = false;
+		b &= rel != null && !pac.desc.dependency.contains(rel.getSID()) && !rel.desc.dependency.contains(pac.getSID());
 		addr.setEnabled(b);
 	}
 

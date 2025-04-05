@@ -838,7 +838,7 @@ public class BasisPage extends LubCont {
 			typeText.add(MainLocale.getLoc(MainLocale.UTIL, "ot4"));
 			typeData.add(Data.ORB_RESISTANT);
 		}
-		if (data.length == 0) {
+		if (data.length != Data.ORB_TOT) {
 			if (!setLists)
 				return;
 			for (byte i = Data.ORB_MINIDEATHSURGE; i < Data.ORB_TYPE_TOTAL; i++) {

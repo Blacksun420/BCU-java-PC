@@ -88,7 +88,7 @@ class MaModelEditTable extends AnimTable<int[]> {
 		if (lnk[c] == 1)
 			return mm.parts[r][0];
 		if (lnk[c] == 9)
-			return eases[mm.parts[r][12] + 1];
+			return eases[mm.parts[r][12] + 1 >= eases.length ? 0 : mm.parts[r][12] + 1];
 		if (lnk[c] == 10)
 			return mm.strs0[r];
 		if (lnk[c] >= 4 && lnk[c] <= 6) {

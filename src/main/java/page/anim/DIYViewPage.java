@@ -88,7 +88,7 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 	@Override
 	protected void keyPressed(KeyEvent ke) {
 		super.keyPressed(ke);
-
+		aep.hotkey(ke);
 		if(ke.getSource() == jlt)
 			if(ke.getKeyCode() == KeyEvent.VK_DELETE)
 				if(remgroup.isEnabled()) {
