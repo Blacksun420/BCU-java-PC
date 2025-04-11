@@ -74,8 +74,7 @@ public class MainBCU {
 			if (f.exists())
 				return Data.err(() -> new FileInputStream(f));
 
-			String path = "common/util/lang/assets/" + file;
-			return ClassLoader.getSystemResourceAsStream(path);
+			return Thread.currentThread().getContextClassLoader().getResourceAsStream(file);
 		}
 
 		@Override
