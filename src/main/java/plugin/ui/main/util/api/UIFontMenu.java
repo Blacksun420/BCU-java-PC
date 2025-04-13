@@ -2,6 +2,10 @@ package plugin.ui.main.util.api;
 
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.ui.FlatUIUtils;
+import common.CommonStatic;
+import main.Opts;
+import page.support.Importer;
+import plugin.ui.common.config.StaticConfig;
 import plugin.ui.common.util.Analyser;
 import plugin.ui.main.UIPlugin;
 import plugin.ui.main.context.BasicConfig;
@@ -12,6 +16,9 @@ import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -68,10 +75,10 @@ public class UIFontMenu extends JMenu {
         //---- useCustomFontMenuItem ----
         customFontMenuItem.setText("Use Custom Font");
         customFontMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        // customFontMenuItem.addActionListener(System.out::println);
+        customFontMenuItem.addActionListener(e -> customFont());
         add(customFontMenuItem);
 
-        if (cfg.getString("fontFamily") == null)
+        if (cfg.getString("fontFamily") == null && cfg.getString("fontFile") == null)
             cfg.set("fontFamily", UIManager.getFont("Label.font").getFamily());
         if (cfg.getInteger("fontSize") == null)
             cfg.set("fontSize", 16);
@@ -109,6 +116,35 @@ public class UIFontMenu extends JMenu {
         update();
     }
 
+    private void customFont() {
+        File font = new Importer("Add custom font", Importer.IMP_FONT).get();
+        if (font == null)
+            return;
+        try {
+            File dest = CommonStatic.ctx.newFile(StaticConfig.UI_DIRECTORY + font.getName());
+            if (!dest.exists())
+                if (!dest.createNewFile())
+                    throw new Exception("Failed creating destination file: " + dest.getPath());
+            if (!font.getAbsolutePath().equals(dest.getAbsolutePath())) {
+                //The check is in case the player is using a file from the UI_DIRECTORY
+                FileInputStream is = new FileInputStream(font);
+                FileOutputStream os = new FileOutputStream(dest);
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = is.read(buffer)) > 0)
+                    os.write(buffer, 0, length);
+                is.close();
+                os.close();
+            }
+
+            P.putDefaultFont(Font.createFont(Font.TRUETYPE_FONT, dest).deriveFont(Font.PLAIN, P.getFontSize()));
+            cfg.set("fontFile", dest.getName());
+        } catch (Exception e) {
+            Opts.pop("Couldn't create file for Custom Font\n\n" + Arrays.toString(e.getStackTrace()), "Font Error");
+            e.printStackTrace();
+        }
+    }
+
     public void updateFontMenuItems() {
 
         if (initialFontMenuItemCount < 0)
@@ -128,6 +164,7 @@ public class UIFontMenu extends JMenu {
         // get current font
         Font currentFont = UIManager.getFont("defaultFont");
         String currentFamily = currentFont.getFamily();
+        boolean def = cfg.getString("fontFile").isEmpty();
 
         String currentSize = Integer.toString(cfg.getInteger("fontSize"));
 
@@ -146,9 +183,8 @@ public class UIFontMenu extends JMenu {
                 // System.out.println("not available: " + family);
                 continue;
             }
-
             JCheckBoxMenuItem item = new JCheckBoxMenuItem(family);
-            item.setSelected(family.equals(currentFamily));
+            item.setSelected(def && family.equals(currentFamily));
             item.addActionListener(this::fontFamilyChanged);
             add(item);
 
@@ -158,7 +194,7 @@ public class UIFontMenu extends JMenu {
         // add font sizes
         addSeparator();
         ArrayList<String> sizes = new ArrayList<>(Arrays.asList(
-                "10", "11", "12", "14", "16", "18", "20", "24", "28", "32", "36"));
+                "08","09","10", "11", "12", "14", "16", "18", "20", "24", "28", "32", "36"));
         if (!sizes.contains(currentSize))
             sizes.add(currentSize);
         sizes.sort(String.CASE_INSENSITIVE_ORDER);
@@ -184,6 +220,7 @@ public class UIFontMenu extends JMenu {
     private void fontFamilyChanged(ActionEvent e) {
         String fontFamily = e.getActionCommand();
         cfg.set("fontFamily", fontFamily);
+        cfg.set(String.class, "fontFile", "");
 
         UIPlugin.execAnimated(() -> {
             Font font = UIManager.getFont("defaultFont");

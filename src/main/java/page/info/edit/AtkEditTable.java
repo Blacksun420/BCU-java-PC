@@ -41,11 +41,12 @@ class AtkEditTable extends Page {
 	private final JTG isr = new JTG(1, "isr");
 	private final TraitList atktr = new TraitList(false);
 	private final JScrollPane scrtr = new JScrollPane(atktr);
+
+	private final JTF jau = new JTF();
 	private final JComboBox<Music> aud = new JComboBox<>();
-	private final JComboBox<Music> aud1 = new JComboBox<>();
 
 	private final ListJtfPolicy ljp = new ListJtfPolicy();
-	private final boolean editable;
+	private final UserPack pk;
 
 	private double mul;
 	private double lvMul;
@@ -56,9 +57,8 @@ class AtkEditTable extends Page {
 
 	protected AtkEditTable(Page p, UserPack pack) {
 		super(p);
-		editable = pack.editable;
-
-		pini(pack);
+		pk = pack;
+		atktr.setup(pack, false);
 		ini();
 	}
 
@@ -84,7 +84,7 @@ class AtkEditTable extends Page {
 		set(lab, x, y, 0, 350, 200, 50);
 		set(lmv, x, y, 0, 400, 200, 50);
 		set(isr, x, y, 0, 450, 400, 50);
-		set(aud, x, y, 0, 500, 200, 50);
+		set(jau, x, y, 0, 500, 200, 50);
 		set(scrtr, x, y, 0, 550, 400, 350);
 		set(fatk, x, y, 200, 0, 200, 50);
 		set(fpre, x, y, 200, 50, 200, 50);
@@ -95,7 +95,7 @@ class AtkEditTable extends Page {
 		set(fct, x, y, 200, 300, 200, 50);
 		set(fab, x, y, 200, 350, 200, 50);
 		set(fmv, x, y, 200, 400, 200, 50);
-		set(aud1, x, y, 200, 500, 200, 50);
+		set(aud, x, y, 200, 500, 200, 50);
 	}
 
 	protected void setData(AtkDataModel data, double multi, double lvMulti) {
@@ -106,8 +106,7 @@ class AtkEditTable extends Page {
 
 		fatk.setText(String.valueOf((int) (Math.round(adm.atk * lvMul) * mul)));
 		fpre.setText(MainBCU.convertTime(adm.pre));
-		aud.setSelectedItem(adm.audio == null ? null : adm.audio.get());
-		aud1.setSelectedItem(adm.audio1 == null ? null : adm.audio1.get());
+		setAudio(Math.max(0, Math.min(CommonStatic.parseIntN(jau.getText()) - 1, adm.audios.size())));
 		fp0.setText(String.valueOf(adm.ld0));
 		fp1.setText(String.valueOf(adm.ld1));
 		ftp.setText(String.valueOf(adm.targ));
@@ -138,21 +137,19 @@ class AtkEditTable extends Page {
 		changing = false;
 	}
 
-	private void pini(UserPack pack) {
-		atktr.setup(pack, false);
+	private void setAudio(int se) {
 		Vector<Music> vs = new Vector<>();
 		vs.add(null);
 		vs.addAll(UserProfile.getBCData().musics.getList());
-		if (pack != null) {
-			vs.addAll(pack.musics.getList());
-			for (String dep : pack.desc.dependency) {
-				UserPack pacc = UserProfile.getUserPack(dep);
-				vs.addAll(pacc.musics.getList());
-			}
-		}
+		vs.addAll(pk.musics.getList());
+		for (String dep : pk.desc.dependency)
+			vs.addAll(UserProfile.getUserPack(dep).musics.getList());
+
+		vs.removeIf(e -> (se >= adm.audios.size() || adm.audios.get(se) != e) && adm.audios.contains(e));
 		aud.setModel(new DefaultComboBoxModel<>(vs));
-		aud1.setModel(new DefaultComboBoxModel<>(vs));
-		fireDimensionChanged();
+
+		jau.setText(get(MainLocale.INFO, "csfx") + (se + 1) + "/" + (adm.audios.size() + 1));
+		aud.setSelectedItem(se < adm.audios.size() ? adm.audios.get(se) : null);
 	}
 
 	private void ini() {
@@ -176,8 +173,8 @@ class AtkEditTable extends Page {
 		set(fmv);
 		add(isr);
 		add(scrtr);
+		set(jau);
 		add(aud);
-		add(aud1);
 
 		ftp.setToolTipText(
 				"<html>" + "+1 for normal attack<br>"
@@ -197,8 +194,9 @@ class AtkEditTable extends Page {
 			ttt.append(i).append(": ").append(Interpret.SABIS[i]).append("<br>");
 		fab.setToolTipText(ttt + "</html>");
 
-		isr.setEnabled(editable);
-		atktr.setEnabled(editable);
+		isr.setEnabled(pk.editable);
+		atktr.setEnabled(pk.editable);
+		aud.setEnabled(pk.editable);
 		setFocusTraversalPolicy(ljp);
 		setFocusCycleRoot(true);
 
@@ -214,16 +212,20 @@ class AtkEditTable extends Page {
 			if (changing)
 				return;
 			changing = true;
+			boolean rd = false;
 			Music m = (Music) aud.getSelectedItem();
-			adm.audio = m != null ? m.getID() : null;
-			changing = false;
-		});
-		aud1.addActionListener(x -> {
-			if (changing)
-				return;
-			changing = true;
-			Music m = (Music) aud.getSelectedItem();
-			adm.audio1 = m != null ? m.getID() : null;
+			int sfx = CommonStatic.parseIntN(jau.getText()) - 1;
+			if (m == null) {
+				if (sfx != adm.audios.size())
+					rd = adm.audios.remove(sfx) != null;
+			} else if (sfx == adm.audios.size())
+				rd = adm.audios.add(m);
+			else if (m != adm.audios.get(sfx)) {
+				adm.audios.set(sfx, m);
+				rd = true;
+			}
+			if (rd)
+				setAudio(sfx);
 			changing = false;
 		});
 
@@ -287,7 +289,6 @@ class AtkEditTable extends Page {
 			} else if (jtf == fmv)
 				adm.move = v;
 		}
-		callBack(null);
 	}
 
 	private void set(JLabel jl) {
@@ -297,7 +298,7 @@ class AtkEditTable extends Page {
 	}
 
 	private void set(JTF jtf) {
-		jtf.setEditable(editable);
+		jtf.setEditable(pk.editable);
 		add(jtf);
 		ljp.add(jtf);
 

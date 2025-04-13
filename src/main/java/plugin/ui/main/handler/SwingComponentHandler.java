@@ -304,7 +304,7 @@ public abstract class SwingComponentHandler {
     protected File selectFileAsIcon() {
         File file;
         while (true) {
-            file = FileUtil.getFile("plugin/ui/", ".png/jpg file", "png", "jpg");
+            file = FileUtil.getFile(StaticConfig.UI_DIRECTORY, ".png/jpg file", "png", "jpg");
 
             if (file == null) {
                 return null;
@@ -327,7 +327,7 @@ public abstract class SwingComponentHandler {
     }
 
     public File selectFileAsBG() {
-        File file = FileUtil.getFile("plugin/ui/", ".png/jpg file", "png", "jpg", "gif");
+        File file = FileUtil.getFile(StaticConfig.UI_DIRECTORY, ".png/jpg file", "png", "jpg", "gif");
 
         if (file == null || file.getName().endsWith(".gif")) {
             setFileAsGIF(file);

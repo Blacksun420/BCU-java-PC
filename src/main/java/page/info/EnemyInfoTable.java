@@ -112,6 +112,7 @@ public class EnemyInfoTable extends CharacterInfoTable {
 
 		inis[0].setText(e.id + e.toString().replace(Data.trio(e.getID().id), ""));
 		inis[2].setText(Interpret.getTrait(TraitBox, e.de.getStar()));
+		inis[1].setToolTipText(inis[2].getText());
 		main[0][0].setText(MainLocale.INFO, "mult");
 		main[0][2].setText(MainLocale.INFO, "HP");
 		main[0][4].setText(MainLocale.INFO, "hb");

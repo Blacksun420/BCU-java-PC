@@ -12,7 +12,7 @@ public interface StaticConfig {
     String KEY_USER_SELECTED_IMAGE = "userSelected";
     String SRC_IMAGE_PREFIX = "src_";
     String SEPARATOR_THEME_NAME_TYPE = ",";
-    String THEME_FLAT_REGISTER_SOURCE = "plugin/ui/flat_custom";
+    String THEME_FLAT_REGISTER_SOURCE = UI_DIRECTORY + "flat_custom";
 
     String COLOR_CD_LINE_LOADING = "cd_loading";
     String COLOR_CD_LINE_BACKDROP = "cd_backdrop";

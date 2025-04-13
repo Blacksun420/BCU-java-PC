@@ -103,6 +103,14 @@ public abstract class AbViewPage extends DefaultPage {
 		vb.resize((float) Math.pow(res, d));
 	}
 
+	@Override
+	public void callBack(Object o) {
+		if (vb.getEnt() == null)
+			return;
+		if (o instanceof String && o.equals("fps"))
+			setJTL();
+	}
+
 	protected void preini() {
 		add(camres);
 		add(copy);
@@ -178,6 +186,10 @@ public abstract class AbViewPage extends DefaultPage {
 		if (jlt.getSelectedIndex() == -1)
 			return;
 		vb.setEntity(a.getEAnim(a.types()[jlt.getSelectedIndex()]));
+		setJTL();
+	}
+
+	public void setJTL() {
 		jtl.setMinimum(0);
 		jtl.setMaximum((int)CommonStatic.fltFpsMul(vb.getEnt().len()));
 

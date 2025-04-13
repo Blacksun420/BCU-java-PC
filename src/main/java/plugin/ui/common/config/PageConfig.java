@@ -8,7 +8,7 @@ public class PageConfig{
     private static final PageConfig instance = new PageConfig();
 
     private PageConfig(){
-        config = JsonUtils.fromClasspath("plugin/ui/page.json", new TypeToken<Config<Class<?>>>(){}.getType());
+        config = JsonUtils.fromClasspath(StaticConfig.UI_DIRECTORY + "page.json", new TypeToken<Config<Class<?>>>(){}.getType());
     }
 
     public static PageConfig getInstance() {

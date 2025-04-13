@@ -11,10 +11,10 @@ public class Importer extends JFileChooser {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final int IMP_MUS = 0, IMP_IMG = 1;
-	public static final File[] curs = new File[2];
+	public static final int IMP_MUS = 0, IMP_IMG = 1, IMP_FONT = 2;
+	public static final File[] curs = new File[3];
 
-	public File file;
+	private final File file;
 
 	public Importer(String str, int imp) {
 		setDialogTitle(str);
@@ -22,6 +22,9 @@ public class Importer extends JFileChooser {
 
 		if (imp == IMP_MUS) {
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("OGG Music", "ogg");
+			setFileFilter(filter);
+		} else if (imp == IMP_FONT) {
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("Font Files", "otf", "ttf");
 			setFileFilter(filter);
 		} else {
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("PNG Images", "png");
@@ -37,7 +40,8 @@ public class Importer extends JFileChooser {
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			file = getSelectedFile();
 			curs[imp] = getCurrentDirectory();
-		}
+		} else
+			file = null;
 	}
 
 	public File get() {

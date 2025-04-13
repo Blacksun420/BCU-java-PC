@@ -106,6 +106,7 @@ public class UnitInfoTable extends CharacterInfoTable {
 		main[0][7].setText("" + ef.getPrice(1));
 		String[] TraitBox = Interpret.getTrait(ef.du.getTraits());
 		inis[2].setText(Interpret.getTrait(TraitBox, 0));
+		inis[1].setToolTipText(inis[2].getText());
 		MaskAtk[] atkData = ef.du.getAtks(dispAtk);
 		for (int i = 0; i < atks.length; i++) {
 			int a = (int) (Math.round((i < atkData.length ? atkData[i] : atkList.get(i - atkData.length)).getAtk() * mul) * b.t().getAtkMulti());

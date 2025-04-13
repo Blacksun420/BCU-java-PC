@@ -198,7 +198,7 @@ public abstract class CharacterInfoTable extends Page {
                     atks[i][12].setText(MainLocale.INFO, "trait");
                     String[] Atraits = Interpret.getTrait(atrs);
                     atks[i][13].setText(Arrays.toString(Atraits));
-                    atks[i][12].setToolTipText(atks[i][12].getText());
+                    atks[i][12].setToolTipText(atks[i][13].getText());
                 }
             }
         }
