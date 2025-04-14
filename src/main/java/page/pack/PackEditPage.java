@@ -1017,7 +1017,7 @@ public class PackEditPage extends DefaultPage {
 				if (atk.getProc().THEME.mus != null && atk.getProc().THEME.mus.pack.equals(src.getSID()))
 					atk.getProc().THEME.mus = new Identifier<>(dest.getSID(), Music.class, atk.getProc().THEME.mus.id);
 				for (int i = 0; i < atk.audios.size(); i++)
-					atk.audios.set(i, dest.musics.get(atk.audios.get(i).id.id));
+					atk.audios.set(i, dest.musics.get(atk.audios.get(i).id).id);
 				for (int i = 0; i < atk.traits.size(); i++)
 					if (atk.traits.get(i).id.pack.equals(src.getSID())) {
 						Trait t = atk.traits.get(i);
@@ -1113,7 +1113,7 @@ public class PackEditPage extends DefaultPage {
 					if (atk.getProc().THEME.mus != null && atk.getProc().THEME.mus.pack.equals(src.getSID()))
 						atk.getProc().THEME.mus = new Identifier<>(dest.getSID(), Music.class, atk.getProc().THEME.mus.id);
 					for (int i = 0; i < atk.audios.size(); i++)
-						atk.audios.set(i, dest.musics.get(atk.audios.get(i).id.id));
+						atk.audios.set(i, dest.musics.get(atk.audios.get(i).id).id);
 					for (int i = 0; i < atk.traits.size(); i++)
 						if (atk.traits.get(i).id.pack.equals(src.getSID())) {
 							Trait t = atk.traits.get(i);

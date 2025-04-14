@@ -145,11 +145,11 @@ class AtkEditTable extends Page {
 		for (String dep : pk.desc.dependency)
 			vs.addAll(UserProfile.getUserPack(dep).musics.getList());
 
-		vs.removeIf(e -> (se >= adm.audios.size() || adm.audios.get(se) != e) && adm.audios.contains(e));
+		vs.removeIf(e -> e != null && (se >= adm.audios.size() || adm.audios.get(se) != e.id) && adm.audios.contains(e.id));
 		aud.setModel(new DefaultComboBoxModel<>(vs));
 
 		jau.setText(get(MainLocale.INFO, "csfx") + (se + 1) + "/" + (adm.audios.size() + 1));
-		aud.setSelectedItem(se < adm.audios.size() ? adm.audios.get(se) : null);
+		aud.setSelectedItem(se < adm.audios.size() ? adm.audios.get(se).get() : null);
 	}
 
 	private void ini() {
@@ -219,9 +219,9 @@ class AtkEditTable extends Page {
 				if (sfx != adm.audios.size())
 					rd = adm.audios.remove(sfx) != null;
 			} else if (sfx == adm.audios.size())
-				rd = adm.audios.add(m);
-			else if (m != adm.audios.get(sfx)) {
-				adm.audios.set(sfx, m);
+				rd = adm.audios.add(m.id);
+			else if (m.id != adm.audios.get(sfx)) {
+				adm.audios.set(sfx, m.id);
 				rd = true;
 			}
 			if (rd)
