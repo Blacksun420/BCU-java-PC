@@ -151,7 +151,7 @@ public class EnemyInfoTable extends CharacterInfoTable {
 				if (su.id.cls == EneRand.class)
 					changePanel(new EREditPage(getFront(), UserProfile.getUserPack(su.id.pack), (EneRand)su.id.get()));
 				else
-					changePanel(new EnemyInfoPage(getFront(), new ENode(Identifier.getOr(su.id, Enemy.class), su.type.fix_buff ? new int[]{su.mult, su.mult} : new int[]{(int)((su.mult / 100.0) * multi), (int)((su.mult / 100.0) * mulatk)})));
+					changePanel(new EnemyInfoPage(getFront(), new ENode(Identifier.getOr(su.id, Enemy.class), su.fix_buff ? new int[]{su.mult, su.mult} : new int[]{(int)((su.mult / 100.0) * multi), (int)((su.mult / 100.0) * mulatk)})));
 			else if (su.id.cls == UniRand.class)
 				changePanel(new UREditPage(getFront(), UserProfile.getUserPack(su.id.pack), (UniRand)su.id.get()));
 			else

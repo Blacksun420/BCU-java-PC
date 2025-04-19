@@ -71,7 +71,7 @@ public class UnitInfoTable extends CharacterInfoTable {
 			else if (su.id.cls == EneRand.class)
 				changePanel(new EREditPage(getFront(), UserProfile.getUserPack(su.id.pack), (EneRand)su.id.get()));
 			else
-				changePanel(new EnemyInfoPage(getFront(), new ENode((Enemy)su.id.get(), su.type.fix_buff ? new int[]{su.mult, su.mult}
+				changePanel(new EnemyInfoPage(getFront(), new ENode((Enemy)su.id.get(), su.fix_buff ? new int[]{su.mult, su.mult}
 						: new int[]{(int)(su.mult / 100.0 * ((multi.getTotalLv() - 1) * 20)), (int)(su.mult / 100.0 * ((multi.getTotalLv() - 1) * 20))})));
 		}
 	}

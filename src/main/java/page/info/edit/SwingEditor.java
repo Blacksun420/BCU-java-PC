@@ -103,12 +103,14 @@ public abstract class SwingEditor extends Editor {
 							return new IdEditor<>(group, field, f, table::getUnitSup, edit);
 					}
 				}
+				if (fc == Data.Proc.ProcID.class)
+					return new PIDEditor(group, field, f, edit);
+				if (Enum.class.isAssignableFrom(fc))
+					return new EnumEditor(group, field, f, edit);
 				if (fc == Data.Proc.class)
 					return new ProcEditor(group, field, f, edit, this);
 				if (fc == SortedPackSet.class)
 					return new TraitEditor(group, field, f, edit, this);
-				if (fc == Data.Proc.ProcID.class)
-					return new PIDEditor(group, field, f, edit);
 				throw new Exception("unexpected class " + fc);
 			} catch (Exception e) {
 				CommonStatic.ctx.noticeErr(e, ErrType.ERROR, "failed to generate editor");
@@ -295,6 +297,59 @@ public abstract class SwingEditor extends Editor {
 			} else
 				field.set(Data.ignore(() -> CommonStatic.parseDoubleN(input.getText())));
 			update();
+		}
+	}
+
+	public static class EnumEditor extends SwingEditor {
+
+		public final JL label;
+		private final JComboBox<Object> opts;
+		private boolean setting = false;
+
+		public EnumEditor(EditorGroup eg, Editors.EdiField field, String f, boolean edit) {
+			super(eg, field, f, edit);
+			label = new JL(ProcLang.get().get(eg.proc).get(f));
+			String[] op = ProcLang.get().get(eg.proc).get(f).getOptionValues();
+			opts = new JComboBox<>(op != null ? op : field.getType().getEnumConstants());
+			opts.addActionListener(l -> {
+				if (setting)
+					return;
+				field.set(opts.getSelectedItem());
+				update();
+			});
+		}
+
+		@Override
+		public void setVisible(boolean res) {
+			opts.setVisible(res);
+			label.setVisible(res);
+		}
+
+		@Override
+		public boolean isInvisible() {
+			return !opts.isVisible();
+		}
+
+		@Override
+		public void resize(int x, int y, int x0, int y0, int w0, int h0) {
+			Page.set(label, x, y, x0, y0, 150, h0);
+			Page.set(opts, x, y, x0 + 150, y0, w0 - 150, h0);
+		}
+
+		@Override
+		public void setData() {
+			setting = true;
+			field.setData(par.obj);
+			opts.setEnabled(edit && field.obj != null);
+			if (field.obj != null)
+				opts.setSelectedItem(field.get());
+			setting = false;
+		}
+
+		@Override
+		public void add(Consumer<JComponent> con) {
+			con.accept(label);
+			con.accept(opts);
 		}
 	}
 

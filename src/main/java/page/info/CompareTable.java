@@ -273,7 +273,7 @@ public class CompareTable extends Page {
                 effectiveDMG *= b.t().getEKAtk(b.getInc(Data.C_EKILL));
             if (spTraits.contains(DefTraits.get(Data.TRAIT_BARON)) && (me.getAbi() & Data.AB_BAKILL) > 0)
                 effectiveDMG *= 1.6;
-            if (spTraits.contains(DefTraits.get(Data.TRAIT_BEAST)) && me.getProc().BSTHUNT.type.active)
+            if (spTraits.contains(DefTraits.get(Data.TRAIT_BEAST)) && me.getProc().BSTHUNT.active)
                 effectiveDMG *= 2.5;
             if (spTraits.contains(DefTraits.get(Data.TRAIT_SAGE)) && (me.getAbi() & Data.AB_SKILL) > 0)
                 effectiveDMG = (int)(effectiveDMG * Data.SUPER_SAGE_HUNTER_ATTACK);
@@ -292,7 +292,7 @@ public class CompareTable extends Page {
             effectiveHP /= b.t().getEKDef(b.getInc(Data.C_EKILL));
         if (spTraits.contains(DefTraits.get(Data.TRAIT_BARON)) && (me.getAbi() & Data.AB_BAKILL) > 0)
             effectiveHP /= 0.7;
-        if (spTraits.contains(DefTraits.get(Data.TRAIT_BEAST)) && me.getProc().BSTHUNT.type.active)
+        if (spTraits.contains(DefTraits.get(Data.TRAIT_BEAST)) && me.getProc().BSTHUNT.active)
             effectiveHP /= 0.6;
         if (spTraits.contains(DefTraits.get(Data.TRAIT_SAGE)) && (me.getAbi() & Data.AB_SKILL) > 0)
             effectiveHP = (int)(effectiveHP * Data.SUPER_SAGE_HUNTER_HP);

@@ -334,6 +334,8 @@ public class ProcFilterTable extends Page {
                     } else if (group.proc.equals("SUMMON") || group.proc.equals("SPIRIT"))
                         return new IDFilter<>(group, field, f, table::getEntitySup, edit);
                 }
+                if (Enum.class.isAssignableFrom(fc))
+                    return new SwingEditor.EnumEditor(group, field, f, edit);
                 if (fc == Proc.class)
                     return new ProcFilter(group, field, f, edit, this);
                 if (fc == SortedPackSet.class)
