@@ -84,8 +84,11 @@ public abstract class SwingEditor extends Editor {
 			try {
 				Editors.EdiField field = ctrl.getField(f);
 				Class<?> fc = field.getType();
-				if (fc == int.class)
+				if (fc == int.class) {
+					if (field.getRaw().getAnnotation(Data.Proc.ProcItem.BitMasked.class) != null)
+						return new BitMaskEditor(group, field, f, edit);
 					return new IntEditor(group, field, f, edit);
+				}
 				if (fc == float.class || fc == double.class)
 					return new DoubleEditor(group, field, f, edit);
 				if (fc == boolean.class)
@@ -246,6 +249,73 @@ public abstract class SwingEditor extends Editor {
 		}
 	}
 
+	public static class BitMaskEditor extends SwingEditor {
+
+		public final JL label;
+		public final JCB[] checks;
+		private boolean setting = false;
+
+		public BitMaskEditor(EditorGroup eg, Editors.EdiField field, String f, boolean edit) {
+			super(eg, field, f, edit);
+			label = new JL(ProcLang.get().get(eg.proc).get(f));
+			String[] op = ProcLang.get().get(eg.proc).get(f).getOptionValues();
+			checks = new JCB[op.length];
+			for (int i = 0; i < checks.length; i++) {
+				int I = i;
+				checks[I] = new JCB(op[I]);
+				checks[I].addActionListener(a -> {
+					if (setting)
+						return;
+					field.set(field.getInt() ^ (1 << I));
+					update();
+				});
+			}
+		}
+
+		@Override
+		public void setVisible(boolean res) {
+			label.setVisible(res);
+			for (JCB check : checks)
+				check.setVisible(res);
+		}
+
+		@Override
+		public boolean isInvisible() {
+			return !label.isVisible();
+		}
+
+		@Override
+		public void resize(int x, int y, int x0, int y0, int w0, int h0) {
+			int rh = h0 / ((int)Math.ceil(checks.length / 2.0) + 1);
+			Page.set(label, x, y, x0, y0, w0, rh);
+			for (int i = 0; i < checks.length; i++)
+				Page.set(checks[i], x, y, x0 + ((i % 2) * (w0 / 2)), y0 + 50 * ((i/2)+1), i + 1 == checks.length && i % 2 == 0 ? w0 : w0 / 2, rh);
+		}
+
+		@Override
+		public int getH() {
+			return ((int)Math.ceil(checks.length / 2.0) + 1) * 50;
+		}
+
+		@Override
+		public void setData() {
+			setting = true;
+			field.setData(par.obj);
+			for (int i = 0; i < checks.length; i++) {
+				checks[i].setSelected(field.obj != null && (field.getInt() & (1 << i)) != 0);
+				checks[i].setEnabled(edit && field.obj != null);
+			}
+			setting = false;
+		}
+
+		@Override
+		public void add(Consumer<JComponent> con) {
+			con.accept(label);
+            for (JCB check : checks)
+				con.accept(check);
+		}
+	}
+
 	public static class DoubleEditor extends SwingEditor {
 		public final JL label;
 		public final JTF input = new JTF();
@@ -310,11 +380,12 @@ public abstract class SwingEditor extends Editor {
 			super(eg, field, f, edit);
 			label = new JL(ProcLang.get().get(eg.proc).get(f));
 			String[] op = ProcLang.get().get(eg.proc).get(f).getOptionValues();
-			opts = new JComboBox<>(op != null ? op : field.getType().getEnumConstants());
+			Object[] consts = field.getType().getEnumConstants();
+			opts = new JComboBox<>(op != null ? op : consts);
 			opts.addActionListener(l -> {
-				if (setting)
+				if (setting || opts.getSelectedIndex() == -1)
 					return;
-				field.set(opts.getSelectedItem());
+				field.set(consts[opts.getSelectedIndex()]);
 				update();
 			});
 		}
@@ -341,8 +412,8 @@ public abstract class SwingEditor extends Editor {
 			setting = true;
 			field.setData(par.obj);
 			opts.setEnabled(edit && field.obj != null);
-			if (field.obj != null)
-				opts.setSelectedItem(field.get());
+			if (field.get() != null)
+				opts.setSelectedIndex(((Enum<?>)field.get()).ordinal());
 			setting = false;
 		}
 
@@ -364,9 +435,13 @@ public abstract class SwingEditor extends Editor {
 			ed = ec;
 			btn = new JBTN(ProcLang.get().get(eg.proc).get(f));
 			btn.setLnr(e -> {
-				if (edi == null)
-					ini();
+				if (edi == null) {
+					edi = new BlessPage(ed.table, ed.isEnemy);
+					edi.exitter = field::set;
+				}
+				Editors.def = false;
 				MainFrame.changePanel(edi);
+				edi.setData(field.get() == null ? Data.Proc.blank() : (Data.Proc)field.get());
 			});
 		}
 
@@ -388,16 +463,6 @@ public abstract class SwingEditor extends Editor {
 		@Override
 		public void setData() {
 			field.setData(par.obj);
-			if (edi != null)
-				edi.setData(field.get() == null ? Data.Proc.blank() : (Data.Proc)field.get());
-			else if (par.obj.exists())
-				ini();
-		}
-
-		private void ini() {
-			edi = new BlessPage(ed.table, ed.isEnemy);
-			edi.exitter = field::set;
-			edi.setData(field.get() == null ? Data.Proc.blank() : (Data.Proc)field.get());
 		}
 
 		@Override

@@ -160,7 +160,7 @@ class PCoinEditTable extends Page {
                 ProcLang.ItemLang lang = ProcLang.get().get(pdata[1]);
                 String[] langText = lang.list();
                 int offset = pdata.length >= 3 ? pdata[2] * 2 : 0, penalty = 0;
-                Field[] pfs = par.unit.getProc().getArr(pdata[1]).getAllFields();
+                Field[] pfs = par.unit.getProc().getArr(pdata[1]).getDeclaredFields();
 
                 for (int i = 0; i < fieldTOT; i++) {
                     if (i % 2 == 1 && maxLv == 1)
@@ -222,6 +222,16 @@ class PCoinEditTable extends Page {
                             add(tgl);
                             tchance.add(tgl);
                             tgl.setLnr(r -> par.unit.pcoin.info.get(par.talent)[fi] = par.unit.pcoin.info.get(par.talent)[fi + 1] = tgl.isSelected() ? 1 : 0);
+                            penalty++;
+                            i++;
+                        } else if (Enum.class.isAssignableFrom(f.getType())) {
+                            String[] op = lang.get(langText[ri]).getOptionValues();
+                            Object[] consts = f.getType().getEnumConstants();
+                            JComboBox<Object> opts = new JComboBox<>(op != null ? op : consts);
+                            opts.setSelectedIndex(val);
+                            add(opts);
+                            tchance.add(opts);
+                            opts.addActionListener(l -> par.unit.pcoin.info.get(par.talent)[fi] = par.unit.pcoin.info.get(par.talent)[fi + 1] = opts.getSelectedIndex());
                             penalty++;
                             i++;
                         } else {
@@ -412,7 +422,7 @@ class PCoinEditTable extends Page {
             int[] neww;
 
             if (vals[0] == Data.PC_P) {
-                int tots = unit.getProc().getArr(vals[1]).getAllFields().length;
+                int tots = unit.getProc().getArr(vals[1]).getDeclaredFields().length;
                 neww = Arrays.copyOf(old, 3 + (tots - (vals.length >= 3 ? vals[2] : 0)) * 2);
 
                 Data.Proc.ProcItem itm = unit.getProc().getArr(vals[1]);

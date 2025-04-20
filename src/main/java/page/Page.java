@@ -163,6 +163,8 @@ public abstract class Page extends JPanel implements RetFunc {
 
 	public void fireDimensionChanged() {
 		needResize = true;
+		for (Page subPage : subPages)
+			subPage.fireDimensionChanged();
 	}
 
 	@Override

@@ -134,7 +134,7 @@ public class PCoinEditPage extends DefaultPage {
         else if (talent[0] == Data.PC_BASE)
             return new int[]{slot, 1, 2, 20, 0}; //[0],[1],[2],[3],[13]
 
-        int params = uni.getProc().getArr(talent[1]).getAllFields().length * 2;
+        int params = uni.getProc().getArr(talent[1]).getDeclaredFields().length * 2;
         if (talent.length >= 3)
             params -= talent[2] * 2;
         int[] nps = new int[params + 3];

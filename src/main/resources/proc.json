@@ -296,7 +296,7 @@
             "[(revive_others){ This ability will be applicable to other ",
             "[(revive_non_zombie){allies}]",
             "[(!revive_non_zombie){zombie allies}] ",
-            "[((_strEqual(range_type,`ALIVE))|(_strEqual(range_type,`FOREVER))){that once being }]",
+            "[(range_type>=2){that once being }]",
             "in the range of (dis_0)~(dis_1) ",
             "[((_strEqual(range_type,`ACTIVE))){when this entity is on the stage and walking/waiting/attacking}]",
             "[((_strEqual(range_type,`PRESENT))){when this entity is present on the stage}]",
@@ -446,7 +446,7 @@
             "[(mult<100&mult>0){ (_left)Decreases duration by (mult)%(_right)}(mult<0){ (_left)Increases duration by (_abs(mult))%(_right)}]",
             "[(block!=0&block<100){ & }]}][(block!=0){Weaken [(block==100){blocker}(block<100&block>0){absorber}(block<0){increaser}]",
             "[(block<100&block>0){ (_left)Decreases duration by (block)%(_right)}(block<0){ (_left)Increases duration by (_abs(block))%(_right)}]}]",
-            "[(smartImu!=0){. Only affects attack [(smartImu>0){debuffs}(smartImu<0){buffs}]}]"
+            "[(focus.effect!=0){. Only resists [(focus.effect>0){de}]buffs}]"
         ],
         "class": {
             "mult": {
@@ -457,8 +457,8 @@
                 "name": "Blocker",
                 "tooltip": "Set from 1 to 99 to reduce duration amongst all units. Set to 100 to completely block weaken"
             },
-            "smartImu": {
-                "name": "Ignore",
+            "focus": {
+                "name": "Selective",
                 "tooltip": "0 = Resist buffs and debuffs, 1 = Only resistant to attack debuffs, -1 = Only resistant to attack buffs"
             }
         }
@@ -472,7 +472,7 @@
             "[(mult<100&mult>0){ (_left)Decreases duration by (mult)%(_right)}(mult<0){ (_left)Increases duration by (_abs(mult))%(_right)}]",
             "[(block!=0&block<100){ & }]}][(block!=0){Lethargy [(block==100){blocker}(block<100&block>0){absorber}(block<0){increaser}]",
             "[(block<100&block>0){ (_left)Decreases duration by (block)%(_right)}(block<0){ (_left)Increases duration by (_abs(block))%(_right)}]}]",
-            "[(smartImu!=0){. Only affects attack [(smartImu>0){debuffs}(smartImu<0){buffs}]}]"
+            "[(focus.effect!=0){. Only resists [(focus.effect>0){de}]buffs}]"
         ],
         "class": {
             "mult": {
@@ -483,8 +483,8 @@
                 "name": "Blocker",
                 "tooltip": "Set from 1 to 99 to reduce duration amongst all units. Set to 100 to completely block Lethargy"
             },
-            "smartImu": {
-                "name": "Ignore",
+            "focus": {
+                "name": "Selective",
                 "tooltip": "0 = Resist buffs and debuffs, 1 = Only resistant to debuffs, -1 = Only resistant to buffs"
             }
         }
@@ -723,7 +723,8 @@
             },
             "pass_proc": {
                 "name": "Pass procs",
-                "tooltip": "Passes all inflicted status to summoned units. 0 = none, 1 = from summoner, 2 = from attacked entities, 3 = from both"
+                "tooltip": "Passes all inflicted status to summoned units. 0 = none, 1 = from summoner, 2 = from attacked entities, 3 = from both",
+                "options": ["From Summoner","From Attacked"]
             },
             "amount": {
                 "name": "Amount",
@@ -855,7 +856,8 @@
             },
             "damage_type": {
                 "name": "damage type",
-                "tooltip": "0 for fixed damage (burn), 1 for a % of total health (poison), 2 for a % of current health, 3 for a % of lost health (corrode)."
+                "tooltip": "0 for fixed damage (burn), 1 for a % of total health (poison), 2 for a % of current health, 3 for a % of lost health (corrode).",
+                "options": ["Burn (Fixed)","Poison (HP% Total)","Bleed (HP% Current)","Corrode (HP% Lost)"]
             },
             "unstackable": {
                 "name": "unstackable",
@@ -880,7 +882,7 @@
             "[(mult<100&mult>0){ (_left)Decreases duration by (mult)%(_right)}(mult<0){ (_left)Increases duration by (_abs(mult))%(_right)}]",
             "[(block!=0&block<100){ & }]}][(block!=0){Poison [(block==100){blocker}(block<100&block>0){absorber}(block<0){increaser}]",
             "[(block<100&block>0){ (_left)Decreases duration by (block)%(_right)}(block<0){ (_left)Increases duration by (_abs(block))%(_right)}]}]",
-            "[(smartImu!=0){. Only affects [(smartImu>0){harmful}(smartImu<0){healing}] venom}]"
+            "[(focus.effect!=0){. Only resists [(focus.effect>0){harmful}(focus.effect<0){healing}] venom}]"
         ],
         "class": {
             "mult": {
@@ -891,8 +893,8 @@
                 "name": "Blocker",
                 "tooltip": "Set from 1 to 99 to reduce damage over time. Set to 100 to completely block poison"
             },
-            "smartImu": {
-                "name": "Ignore",
+            "focus": {
+                "name": "Selective",
                 "tooltip": "0 = Resist all venom, 1 = Only resistant to harmful venom, -1 = Only resistant to healing venom"
             }
         }
@@ -1127,7 +1129,7 @@
             "[(mult<100&mult>0){ (_left)Decreases duration by (mult)%(_right)}(mult<0){ (_left)Increases duration by (_abs(mult))%(_right)}]",
             "[(block!=0&block<100){ & }]}][(block!=0){Armor Break [(block==100){blocker}(block<100&block>0){absorber}(block<0){increaser}]",
             "[(block<100&block>0){ (_left)Decreases duration by (block)%(_right)}(block<0){ (_left)Increases duration by (_abs(block))%(_right)}]}]",
-            "[(smartImu!=0){. Only affects armor [(smartImu>0){debuffs}(smartImu<0){buffs}]}]"
+            "[(focus.effect!=0){. Only resists armor [(focus.effect>0){de}]buffs}]"
         ],
         "class": {
             "mult": {
@@ -1138,8 +1140,8 @@
                 "name": "Blocker",
                 "tooltip": "Set from 1 to 99 to reduce damage. Set to 100 to completely block armor break"
             },
-            "smartImu": {
-                "name": "Ignore",
+            "focus": {
+                "name": "Selective",
                 "tooltip": "0 = Resist buffs and debuffs, 1 = Only resistant to armor debuffs, -1 = Only resistant to armor buffs"
             }
         }
@@ -1153,7 +1155,7 @@
             "[(mult<100&mult>0){ (_left)Decreases duration by (mult)%(_right)}(mult<0){ (_left)Increases duration by (_abs(mult))%(_right)}]",
             "[(block!=0&block<100){ & }]}][(block!=0){Haste [(block==100){blocker}(block<100&block>0){absorber}(block<0){increaser}]",
             "[(block<100&block>0){ (_left)Decreases duration by (block)%(_right)}(block<0){ (_left)Increases duration by (_abs(block))%(_right)}]}]",
-            "[(smartImu!=0){. Only affects speed [(smartImu>0){debuffs}(smartImu<0){buffs}]}]"
+            "[(focus.effect!=0){. Only resists speed [(focus.effect>0){de}]buffs}]"
         ],
         "class": {
             "mult": {
@@ -1164,8 +1166,8 @@
                 "name": "Blocker",
                 "tooltip": "Set from 1 to 99 to reduce damage. Set to 100 to completely block Haste"
             },
-            "smartImu": {
-                "name": "Ignore",
+            "focus": {
+                "name": "Selective",
                 "tooltip": "0 = Resist buffs and debuffs, 1 = Only resistant to speed debuffs, -1 = Only resistant to speed buffs"
             }
         }
@@ -1332,7 +1334,8 @@
             "[(prob<100){(prob)% chance to counterattack}(prob==100){Counterattacks}], ",
             "dealing (damage)% [(!useOwnDamage){of the damage received from an attack [(maxDamage!=0){(_left)Up to (_abs(maxDamage))(_right)}]}",
             "(useOwnDamage){of this unit's damage}] back. [(maxDamage<0){Counter damage will not exceed this unit's remaining HP. }]",
-            "[(counterWave!=0){This unit will also [(counterWave==1){counter}(counterWave==2){reflect}] wave/surge attacks. }][(procType!=0){This counterattack will ",
+            "[(!(_strEqual(counterWave,`NONE))){This unit will also [((_strEqual(counterWave,`COUNTER))){counter}",
+            "((_strEqual(counterWave,`REFLECT))){reflect}] wave/surge attacks. }][(procType!=0){This counterattack will ",
             "[(procType==1|procType==3){have}(procType==2){replace}] ",
             "the original attack's procs[(procType==2){ with this unit's procs}(procType==3){ and this entity's procs}]. }]",
             "The counter will hit [(areaAttack){ all enemies}(!areaAttack){ only the attacker}][(areaAttack|!outRange){[(!areaAttack){ if they're}] standing ",
@@ -1357,11 +1360,13 @@
             },
             "procType": {
                 "name": "Proc Type",
-                "tooltip": "The parameter here affects how attack procs are handled. 0 = Removes all procs. 1 = Reflects all procs back to the attacker. 2 = Replaces all the attack's procs with this unit's procs. 3 = Uses both this entity and the attacker's procs. Useless if there's a hit registered as counter"
+                "tooltip": "The parameter here affects how attack procs are handled. 0 = Removes all procs. 1 = Reflects all procs back to the attacker. 2 = Replaces all the attack's procs with this unit's procs. 3 = Uses both this entity and the attacker's procs. Useless if there's a hit registered as counter",
+                "options": ["Reflect","Attacker's"]
             },
             "counterWave": {
                 "name": "Counter Waves",
-                "tooltip": "Toggle response when hit with a Wave or Surge. 0 = Do Nothing. 1 = Counter. 2 = Reflect."
+                "tooltip": "Toggle response when hit with a Wave or Surge. 0 = Do Nothing. 1 = Counter. 2 = Reflect.",
+                "options": ["No","Yes","Reflect"]
             },
             "useOwnDamage": {
                 "name": "Use Own Damage",
@@ -1474,7 +1479,8 @@
             },
             "type": {
                 "name": "type",
-                "tooltip": "+1 for regular cannon immunity, +2 for slow beam immunity, +4 for thunderbolt immunity, +8 for waterblast immunity, +16 for holy blast immunity, +32 for breakerblast immunity, +64 for curseblast immunity"
+                "tooltip": "+1 for regular cannon immunity, +2 for slow beam immunity, +4 for thunderbolt immunity, +8 for waterblast immunity, +16 for holy blast immunity, +32 for breakerblast immunity, +64 for curseblast immunity",
+                "options": ["Cat Cannon","Slow Beam","Thunderbolt","Waterblast","Holy Blast","Breakerblast","Curseblast"]
             }
         }
     },

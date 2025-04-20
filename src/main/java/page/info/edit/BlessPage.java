@@ -4,12 +4,12 @@ import common.pack.Identifier;
 import common.pack.IndexContainer;
 import common.pack.PackData.UserPack;
 import common.util.Data.Proc;
+import common.util.lang.Editors;
 import common.util.pack.Background;
 import common.util.stage.Music;
 import common.util.unit.AbUnit;
 import main.Opts;
 import page.DefaultPage;
-import page.Page;
 import page.SupPage;
 import page.info.filter.AdvProcFilterPage;
 import page.info.filter.EnemyFindPage;
@@ -74,6 +74,7 @@ public class BlessPage extends DefaultPage implements EntSupInt {
     @Override
     public void exit() {
         exitter.accept(p.isBlank() ? null : p);
+        Editors.def = !(getFront() instanceof BlessPage);
     }
 
     @Override
