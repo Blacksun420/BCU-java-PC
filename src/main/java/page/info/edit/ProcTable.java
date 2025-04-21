@@ -43,7 +43,7 @@ public abstract class ProcTable extends Page {
 				h += 50;
 				for (int j = 0; j < group[i].list.length; j++) {
 					SwingEditor se = (SwingEditor) group[i].list[j];
-					if (se.isInvisible())
+					if (se == null || se.isInvisible())
 						continue;
 					se.resize(x, y, c, h, 350, se.getH());
 					h += se.getH();
@@ -93,7 +93,7 @@ public abstract class ProcTable extends Page {
 				h += 50;
 				for (int j = 0; j < group[i].list.length; j++) {
 					SwingEditor se = (SwingEditor) group[i].list[j];
-					if (se.isInvisible())
+					if (se == null || se.isInvisible())
 						continue;
 
 					se.resize(x, y, 0, h, 300, se.getH());
@@ -142,7 +142,8 @@ public abstract class ProcTable extends Page {
 			add(group[i].jlm);
 			for (int j = 0; j < group[i].list.length; j++) {
 				SwingEditor se = (SwingEditor) group[i].list[j];
-				se.add(this::add);
+				if (se != null)
+					se.add(this::add);
 			}
 		}
 		setFocusTraversalPolicy(ljp);

@@ -85,7 +85,7 @@ public abstract class SwingEditor extends Editor {
 				Editors.EdiField field = ctrl.getField(f);
 				Class<?> fc = field.getType();
 				if (fc == int.class) {
-					if (field.getRaw().getAnnotation(Data.Proc.ProcItem.BitMasked.class) != null)
+					if (field.getRaw().getAnnotation(Data.Proc.ProcItem.BitMasked.class) != null && ProcLang.get().get(group.proc).get(f).getOptionValues() != null)
 						return new BitMaskEditor(group, field, f, edit);
 					return new IntEditor(group, field, f, edit);
 				}
@@ -116,7 +116,7 @@ public abstract class SwingEditor extends Editor {
 					return new TraitEditor(group, field, f, edit, this);
 				throw new Exception("unexpected class " + fc);
 			} catch (Exception e) {
-				CommonStatic.ctx.noticeErr(e, ErrType.ERROR, "failed to generate editor");
+				CommonStatic.ctx.noticeErr(e, ErrType.ERROR, "failed to generate editor for " + group.proc + ":" + f);
 			}
 			return null;
 		}

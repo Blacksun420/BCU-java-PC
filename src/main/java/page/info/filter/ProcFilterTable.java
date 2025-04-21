@@ -344,7 +344,7 @@ public class ProcFilterTable extends Page {
                     return new PIDFilter(group, field, f, edit);
                 throw new Exception("unexpected class " + fc);
             } catch (Exception e) {
-                CommonStatic.ctx.noticeErr(e, Context.ErrType.ERROR, "failed to generate editor");
+                CommonStatic.ctx.noticeErr(e, Context.ErrType.ERROR, "failed to generate editor for " + group.obj + ":" + f);
             }
             return null;
         }
@@ -395,7 +395,7 @@ public class ProcFilterTable extends Page {
             h[di] += 50;
             for (int j = 0; j < group[i].list.length; j++) {
                 SwingEditor se = (SwingEditor) group[i].list[j];
-                if (se.isInvisible())
+                if (se == null || se.isInvisible())
                     continue;
                 se.resize(x, y, c, h[di], tabW, 50);
                 h[di] += 50;
@@ -422,7 +422,8 @@ public class ProcFilterTable extends Page {
             add(group[i].jlm);
             for (int j = 0; j < group[i].list.length; j++) {
                 SwingEditor se = (SwingEditor) group[i].list[j];
-                se.add(this::add);
+                if (se != null)
+                    se.add(this::add);
             }
         }
         setFocusTraversalPolicy(ljp);
@@ -453,8 +454,9 @@ public class ProcFilterTable extends Page {
                         pf0 = f.get(itm);
                         pf1 = f.get(group.obj);
                     }
-
                     if (f.getType().equals(int.class)) {
+                        if (group.list[j] == null)
+                            continue;
                         int fil = ((IntFilter) group.list[j]).filter;
                         switch (fil) {
                             case 0:
@@ -478,6 +480,8 @@ public class ProcFilterTable extends Page {
                                     return false;
                         }
                     } else if (f.getType().equals(double.class)) {
+                        if (group.list[j] == null)
+                            continue;
                         int fil = ((DoubleFilter)group.list[j]).filter;
                         switch (fil) {
                             case 0:
@@ -501,6 +505,8 @@ public class ProcFilterTable extends Page {
                                     return false;
                         }
                     } else if (f.getType().equals(float.class)) {
+                        if (group.list[j] == null)
+                            continue;
                         int fil = ((DoubleFilter)group.list[j]).filter;
                         switch (fil) {
                             case 0:
@@ -524,6 +530,8 @@ public class ProcFilterTable extends Page {
                                     return false;
                         }
                     } else if (f.getType().equals(boolean.class)) {
+                        if (group.list[j] == null)
+                            continue;
                         if (!((BoolFilter) group.list[j]).btn.isSelected() && (boolean) pf0 != (boolean) pf1)
                             return false;
                     } else if (f.getType().equals(Proc.class)) {
@@ -531,6 +539,8 @@ public class ProcFilterTable extends Page {
                     } else if (f.getType().equals(SortedPackSet.class)) {
                         //TODO
                     } else {
+                        if (group.list[j] == null)
+                            continue;
                         boolean ign = ((IDFilter<?>)group.list[j]).btn.isSelected();
                         if (ign)
                             continue;
