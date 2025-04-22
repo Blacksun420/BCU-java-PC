@@ -537,7 +537,9 @@ public class ProcFilterTable extends Page {
                     } else if (f.getType().equals(Proc.class)) {
                         return compare((Proc) pf0);//TODO
                     } else if (f.getType().equals(SortedPackSet.class)) {
-                        //TODO
+                        return ((SortedPackSet<?>)pf0).containsAll((SortedPackSet<?>)pf1);
+                    } else if (f.getType().equals(Proc.ProcID.class)) {
+                        return ((Proc.ProcID)pf0).l.containsAll(((Proc.ProcID)pf1).l);
                     } else {
                         if (group.list[j] == null)
                             continue;
@@ -551,7 +553,7 @@ public class ProcFilterTable extends Page {
                             return false;
                     }
                 } catch (Exception e) {
-                    CommonStatic.ctx.noticeErr(e, Context.ErrType.ERROR, "lmao");
+                    CommonStatic.ctx.noticeErr(e, Context.ErrType.ERROR, "lmao: " + item.abbr_name + " :: " + arr[j]);
                 }
             }
         }

@@ -1,7 +1,5 @@
 package page.support;
 
-import main.MainBCU;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.function.Function;

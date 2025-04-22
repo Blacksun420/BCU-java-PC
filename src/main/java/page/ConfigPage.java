@@ -101,9 +101,7 @@ public class ConfigPage extends DefaultPage {
 
 	private final JScrollPane jsps = new JScrollPane(jls);
 
-	private boolean changing = false;
-
-	protected ConfigPage(Page p) {
+    protected ConfigPage(Page p) {
 		super(p);
 
 		ini();
@@ -345,8 +343,7 @@ public class ConfigPage extends DefaultPage {
 			@Override
 			public void reordered(int ori, int fin) {
 				change(false);
-				changing = true;
-				CommonStatic.Lang.Locale og = cfg().langs[ori];
+                CommonStatic.Lang.Locale og = cfg().langs[ori];
 				if (ori < fin)
 					for (int i = ori; i < fin; i++)
 						cfg().langs[i] = cfg().langs[i+1];
@@ -359,8 +356,7 @@ public class ConfigPage extends DefaultPage {
 				MainBCU.getSettingMenu().updateLoc();
 				for (int i = 0; i < prfr.length; i++)
 					prfr[i].setText(RARITY[i]);
-				changing = false;
-			}
+            }
 			@Override
 			public void reordering() {
 				change(true);

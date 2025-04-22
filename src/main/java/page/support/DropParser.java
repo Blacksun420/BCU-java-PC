@@ -19,7 +19,7 @@ public abstract class DropParser extends DropTarget {
             f = ((java.util.List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor)).get(0);
             evt.dropComplete(process(f));
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
             evt.dropComplete(false);
         }
     }

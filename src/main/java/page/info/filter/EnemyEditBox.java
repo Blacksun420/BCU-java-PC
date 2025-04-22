@@ -3,7 +3,6 @@ package page.info.filter;
 import common.battle.data.CustomEnemy;
 import common.pack.PackData.UserPack;
 import common.pack.SortedPackSet;
-import common.pack.UserProfile;
 import common.util.unit.Trait;
 import page.Page;
 
@@ -11,7 +10,8 @@ import javax.swing.*;
 import java.util.Arrays;
 import java.util.Vector;
 
-import static utilpc.Interpret.*;
+import static utilpc.Interpret.EABI;
+import static utilpc.Interpret.EABIIND;
 
 public class EnemyEditBox extends Page {
 

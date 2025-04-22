@@ -71,7 +71,7 @@ public class UnitFLUPage extends LubCont {
 
 	@Override
 	protected void keyTyped(KeyEvent e) {
-		if (!seatf.isFocusOwner() && !ffrm.isFocusOwner()) {
+		if (lub.isFocusOwner()) {
 			super.keyTyped(e);
 			e.consume();
 		}
@@ -129,12 +129,7 @@ public class UnitFLUPage extends LubCont {
 				remove(ufb);
 		});
 
-		advs.addActionListener(arg0 -> {
-			if (advs.isSelected())
-				add(adv);
-			else
-				remove(adv);
-		});
+		advs.addActionListener(arg0 -> fireDimensionChanged());
 
 		ListSelectionModel lsm = ult.getSelectionModel();
 		ult.setRowSelectionAllowed(false);

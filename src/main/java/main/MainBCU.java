@@ -141,7 +141,7 @@ public class MainBCU {
 		public void noticeErr(Exception e, ErrType t, String str) {
 			if (noNeedToShow(t)) {
 				System.out.println(str);
-				e.printStackTrace();
+				e.printStackTrace(System.out);
 				return;
 			}
 			(t == ErrType.INFO ? System.out : System.err).println(str);
@@ -300,7 +300,7 @@ public class MainBCU {
 		}
 	}
 
-	public static final int ver = 60213;
+	public static final int ver = 60214;
 	private static final DecimalFormat df = new DecimalFormat("#.##");
 	public static int autoSaveTime = 0, searchTolerance = 4;
 	public static final boolean WRITE = !new File("./.idea").exists();

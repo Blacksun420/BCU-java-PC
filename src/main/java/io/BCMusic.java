@@ -227,7 +227,7 @@ public class BCMusic extends Data {
 
 	public static void preload() {
 		for (short i : SE_ALL)
-			BCMusic.CACHE[i] = UserProfile.getBCData().musics.get(i).data.getBytes();
+			CACHE[i] = UserProfile.getBCData().musics.get(i).data.getBytes();
 	}
 
 	public static synchronized void setBG(Music f) {

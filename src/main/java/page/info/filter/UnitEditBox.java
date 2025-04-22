@@ -3,15 +3,13 @@ package page.info.filter;
 import common.battle.data.CustomUnit;
 import common.pack.PackData.UserPack;
 import common.pack.SortedPackSet;
-import common.pack.UserProfile;
 import common.util.unit.Trait;
 import page.Page;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.Collections;
+import java.util.Vector;
 
-import static common.util.Data.TRAIT_EVA;
-import static common.util.Data.TRAIT_RED;
 import static utilpc.Interpret.SABIS;
 
 public class UnitEditBox extends Page {

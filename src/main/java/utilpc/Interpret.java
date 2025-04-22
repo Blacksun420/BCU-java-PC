@@ -361,7 +361,7 @@ public class Interpret extends Data {
 					if (!item.exists())
 						continue;
 					boolean p = false;
-					if (proc.sharable(i))
+					if (Proc.sharable(i))
 						p = true;
 					else
 						for (int pr : BCShareable)
@@ -386,7 +386,7 @@ public class Interpret extends Data {
 				for (int i = 0; i < Data.PROC_TOT; i++) {
 					ProcItem item = ma.getProc().getArr(i);
 
-					if (!item.exists() || !ma.getProc().sharable(i))
+					if (!Proc.sharable(i) || !item.exists())
 						continue;
 
 					String format = ProcLang.get().get(i).format;
@@ -400,7 +400,7 @@ public class Interpret extends Data {
 					for (int j = 0; j < Data.PROC_TOT; j++) {
 						ProcItem item = ma.getProc().getArr(j);
 
-						if (!item.exists() || ma.getProc().sharable(j))
+						if (Proc.sharable(j) || !item.exists())
 							continue;
 
 						String format = ProcLang.get().get(j).format;
@@ -442,7 +442,7 @@ public class Interpret extends Data {
 					if (rev != null)
 						for (int k = 0; k < Data.PROC_TOT; k++) {
 							ProcItem item = rev.getProc().getArr(k);
-							if (!item.exists() || rev.getProc().sharable(k))
+							if (Proc.sharable(k) || !item.exists())
 								continue;
 
 							String format = ProcLang.get().get(k).format;
