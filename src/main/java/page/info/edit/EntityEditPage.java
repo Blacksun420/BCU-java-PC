@@ -153,6 +153,35 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		}
 		setData(ce);
 	}
+	public void sortSpecial(String str) {
+		if (!isSp())
+			return;
+		for (int i = 0; i < spNames.length; i++)
+			if (str.contains(spNames[i].toLowerCase())) {
+				Comparator<AtkDataModel> comp = Comparator.comparingInt(adm -> -adm.pre);
+				switch (i) {
+					case 0:
+						Arrays.sort(ce.revs, comp);
+						break;
+					case 1:
+						Arrays.sort(ce.ress, comp);
+						break;
+					case 2:
+						Arrays.sort(ce.burs, comp);
+						break;
+					case 3:
+						Arrays.sort(ce.resus, comp);
+						break;
+					case 4:
+						Arrays.sort(ce.revis, comp);
+						break;
+					case 5:
+						Arrays.sort(ce.entrs, comp);
+						break;
+				}
+				break;
+			}
+	}
 
 	@Override
 	public SupPage<Music> getMusicSup(IdEditor<Music> edi) {

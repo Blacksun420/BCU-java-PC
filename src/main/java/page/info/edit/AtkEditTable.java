@@ -268,6 +268,7 @@ class AtkEditTable extends Page {
 			} else if (jtf == fpre) {
 				double w = CommonStatic.parseDoubleN(text);
 				adm.pre = w < 0 ? 1 : convertPreTime(w);
+				((EntityEditPage)getFront()).sortSpecial(adm.str);
 			} else if (jtf == fp0) {
 				adm.ld0 = v;
 				if (adm.ld0 != 0 || adm.ld1 != 0)
