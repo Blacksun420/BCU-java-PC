@@ -85,9 +85,10 @@ public class BattleSetupPage extends LubCont {
 							strt.setToolTipText((st.lim.fa - fSet.size()) + " more of these units is required in the lineup: " + ffSet);
 						}
 				}
-				if (st.lim.lvr != null && !st.lim.lvr.isValid(bu.lu))
-					strt.setToolTipText((strt.getToolTipText() == null ? "" : strt.getToolTipText() + ", and ") + " some units' Lv is above limits");
-			} else
+			}
+			if (st.lim.lvr != null && !st.lim.lvr.isValid(bu.lu))
+				strt.setToolTipText((strt.getToolTipText() == null ? "" : strt.getToolTipText() + ", and ") + "some units' Lv is above limits");
+			else if (val)
 				strt.setToolTipText(null);
 		}
 		if (obj instanceof String)

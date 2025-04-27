@@ -97,19 +97,15 @@ public class AmbImage implements FakeImage {
 
 	@Override
 	public void mark(Marker str) {
-
-		if (str == Marker.UNI)
-			forceBI();
 		if (str == Marker.BG) {
 			checkBI();
 			if (bimg.bimg().getWidth() % 4 != 0)
 				force = true;
-		}
-		if (str == Marker.EDI)
+		} else if (str == Marker.EDI || str == Marker.ICO)
 			forceBI();
-		if (str == Marker.RECOLOR)
+		else if (str == Marker.RECOLOR)
 			checkBI();
-		if (str == Marker.RECOLORED) {
+		else if (str == Marker.RECOLORED) {
 			// TODO if graphics is faster?
 			ByteArrayOutputStream abos = new ByteArrayOutputStream();
 			try {

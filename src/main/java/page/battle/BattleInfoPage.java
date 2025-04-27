@@ -134,6 +134,8 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 		BasisLU lu = bl.copy();
 		if (CommonStatic.getConfig().realLevel)
 			lu.simulateBCLeveling();
+		if (st.lim.lvr != null)
+			st.lim.lvr.validate(lu.lu);
 
 		packData = st.getMC().getSave(false);
 		SBCtrl sb = new SBCtrl(this, st, star, lu, conf, seed, saveMode);

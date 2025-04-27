@@ -129,11 +129,16 @@ public class UnitFLUPage extends LubCont {
 				remove(ufb);
 		});
 
-		advs.addActionListener(arg0 -> fireDimensionChanged());
+		advs.addActionListener(arg0 -> {
+			if (advs.isSelected())
+				add(adv);
+			else {
+				remove(adv);
+				revalidate();
+			}
+		});
 
 		ListSelectionModel lsm = ult.getSelectionModel();
-		ult.setRowSelectionAllowed(false);
-
 		lsm.addListSelectionListener(e -> {
 			if (lsm.getValueIsAdjusting())
 				return;
@@ -191,6 +196,7 @@ public class UnitFLUPage extends LubCont {
 		add(show);
 		add(ufb);
 		add(jsp);
+		ult.setRowSelectionAllowed(false);
 		add(lub);
 		add(seatf);
 		add(fbtn);

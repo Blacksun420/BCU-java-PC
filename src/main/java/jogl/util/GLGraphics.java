@@ -314,10 +314,6 @@ public class GLGraphics implements GeoAuto {
 		GLImage gl = (GLImage) bimg.gl();
 		if (gl == null || w == 0 || h == 0)
 			return;
-		x -= w > 0 ? 0.5f : -0.5f;
-		y -= h > 0 ? 0.5f : -0.5f;
-		w += w > 0 ? 1 : -1;
-		h += h > 0 ? 1 : -1;
 		compImpl();
 		bind(tm.load(this, gl));
 		g.glBegin(GL2ES3.GL_QUADS);
