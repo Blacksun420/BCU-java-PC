@@ -201,15 +201,14 @@ public class CGLREditPage extends DefaultPage {
 		});
 
 		remus.addActionListener(arg0 -> {
-			Form u = jlus.getSelectedValue();
+			List<Form> u = jlus.getSelectedValuesList();
 			if (cg == null || u == null)
 				return;
 			changing = true;
-			List<Form> list = new ArrayList<>(cg.fset);
-			int ind = list.indexOf(u) - 1;
-			if (ind < 0 && list.size() > 1)
+			int ind = jlus.getSelectedIndex() - 1;
+			if (ind < 0 && cg.fset.size() > 1)
 				ind = 0;
-			cg.fset.remove(u);
+			u.forEach(cg.fset::remove);
 			updateCG();
 			jlus.setSelectedIndex(ind);
 			changing = false;
