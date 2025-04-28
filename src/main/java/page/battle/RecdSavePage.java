@@ -41,7 +41,7 @@ public class RecdSavePage extends DefaultPage {
 			@Override
 			public void focusLost(FocusEvent arg0) {
 				String str = jtf.getText().trim();
-				if (str.length() == 0)
+				if (str.isEmpty())
 					str = "new " + recd.st.get().toString() + " replay";
 				str = Context.validate(str, '-');
 				jtf.setText(name = str);
