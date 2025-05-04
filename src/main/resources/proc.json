@@ -748,8 +748,8 @@
         "format": [
             "[(prob<100){(prob)% chance to have}(prob==100){Has}] moving hitbox[(pid){ with (_toString(pid)) IDs}], ",
             "originated at a distance of (dis) from this entity ",
-            "with (width) widths, ",
-            " (speed) speed, and (_dispTime(itv)) interval for (_dispTime(time))"
+            "with (width) widths, (speed) speed, and (_dispTime(itv)) interval for (_dispTime(time))",
+            "[(hit_base){(_left)Can hit the enemy base(_right)}]"
         ],
         "class": {
             "prob": {
@@ -779,6 +779,10 @@
             "pid": {
                 "name": "ID",
                 "tooltip": "Sets the IDs of moving attack, allowing for type-based resistance discrimination"
+            },
+            "hit_base": {
+                "name": "Hit Base",
+                "tooltip": "Hits the enemy base if it's in attack range"
             }
         }
     },

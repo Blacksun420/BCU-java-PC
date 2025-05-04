@@ -310,7 +310,7 @@ public class AdvStEditPage extends DefaultPage {
 			for (Form f : jrwd.getSelectedValuesList())
 				csi.rewards.remove(f);
 			setRwd(csi);
-			if (st.getMC().getSave(true).cSt.getOrDefault(st.getCont(), -1) > st.getCont().list.indexOf(st))
+			if (st.getMC().getSave(true).cSt.getOrDefault(st.getCont(), -1) > st.id())
 				st.getMC().getSave(true).resetUnlockedUnits();
 		});
 
@@ -645,7 +645,7 @@ public class AdvStEditPage extends DefaultPage {
 						csi.rewards.add(fr);
 						csi.destroy(true);
 						setRwd(csi);
-						if (st.getMC().getSave(true).cSt.getOrDefault(st.getCont(), -1) > st.getCont().list.indexOf(st))
+						if (st.getMC().getSave(true).cSt.getOrDefault(st.getCont(), -1) > st.id())
 							st.getMC().getSave(true).resetUnlockedUnits();
 					} else
 						Opts.pop(fr + " is already unlocked at " + pr, "Failed to add");

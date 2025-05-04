@@ -103,7 +103,7 @@ public class StagePage extends DefaultPage {
 		else if (stage.getLim(star).stageLimit != null)
 			str = new StringBuilder(Interpret.stageLimHTML(stage.getLim(star).stageLimit));
 
-		if (stage.getCont().list.indexOf(stage) == stage.getCont().list.size() - 1) {
+		if (stage.id() == stage.getCont().list.size() - 1) {
 			if (str.length() == 0)
 				str.append("<html>");
 			LinkedList<StageMap> newUnlocks = stage.getCont().getUnlockableMaps();
@@ -112,7 +112,7 @@ public class StagePage extends DefaultPage {
 				for (StageMap newUnlock : newUnlocks)
 					str.append("<tr><td>").append(newUnlock).append("</td></tr>");
 			}
-		} else if (stage.getCont().list.indexOf(stage) == 0 && !stage.getCont().unlockReq.isEmpty()) {
+		} else if (stage.id() == 0 && !stage.getCont().unlockReq.isEmpty()) {
 			if (str.length() == 0)
 				str.append("<html>");
 			str.append("<table><tr><th>Unlock Chapter Clear requirements:</th></tr> ");

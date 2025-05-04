@@ -442,8 +442,12 @@ public class StageEditPage extends DefaultPage {
 
 			if (st.info != null)
 				((CustomStageInfo)st.info).destroy(false);
-			for (CustomStageInfo si : pmc.si)
+			for (int i = 0; i < pmc.si.size(); i++) {
+				CustomStageInfo si = pmc.si.get(i);
 				si.remove(st);
+				if (si.useless())
+					i--;
+			}
 		}
 	}
 
