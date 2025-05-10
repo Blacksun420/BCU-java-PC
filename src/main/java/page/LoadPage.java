@@ -1,5 +1,8 @@
 package page;
 
+import common.CommonStatic;
+import main.MainBCU.AdminContext;
+
 import javax.swing.*;
 
 public class LoadPage extends Page {
@@ -13,11 +16,7 @@ public class LoadPage extends Page {
     }
 
     public static void prog(String str) {
-        lp.set(str);
-    }
-
-    public static void packProg(String str) {
-        lp.jl.setText(str);
+        lp.temp = str;
     }
 
     private final JLabel jl = new JLabel();
@@ -32,6 +31,10 @@ public class LoadPage extends Page {
         add(jl);
         add(jpb);
         lp.jpb.setMaximum(1000);
+        ((AdminContext)CommonStatic.ctx).loadProg = (pair -> {
+            jpb.setValue((int)(pair.getFirst() * 1000));
+            jl.setText(pair.getSecond());
+        });
     }
 
     public void accept(double dl) {
@@ -58,9 +61,4 @@ public class LoadPage extends Page {
             jpb.setValue(0);
         }
     }
-
-    private void set(String str) {
-        temp = str;
-    }
-
 }

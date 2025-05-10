@@ -15,7 +15,11 @@ public class DownloadProgressFrame extends JFrame {
     public BCULabel text_below;
 
     public DownloadProgressFrame(String text_above, String text_below) {
-        super("DOWNLOAD");
+        this("DOWNLOAD", text_above, text_below);
+    }
+
+    public DownloadProgressFrame(String title, String text_above, String text_below) {
+        super(title);
         if (MainFrame.F != null) {
             int w = MainFrame.F.getRootPane().getWidth();
             Rectangle r = MainFrame.F.getBounds();
@@ -33,7 +37,7 @@ public class DownloadProgressFrame extends JFrame {
         this.text_above.setHtmlText(text_above);
         this.text_below.setHtmlText(text_below);
 
-        progress = new JProgressBar(0, 100);
+        progress = new JProgressBar(0, 1000);
         progress.setStringPainted(true);
 
 //        setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
@@ -46,7 +50,6 @@ public class DownloadProgressFrame extends JFrame {
     }
 
     public void setProgress(double value){
-        progress.setValue((int) (100 * value));
+        progress.setValue((int) (1000 * value));
     }
-
 }

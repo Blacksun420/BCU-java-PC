@@ -213,7 +213,7 @@ public class Opts {
 	public static void showRevivalData(Page pg, Revival rev, float starMult) {
 		RevivalPage rp = new RevivalPage(pg, rev, starMult);
 
-		Thread thread = new Thread(new Runnable() {
+		new Thread(new Runnable() {
 			public int inter = 0;
 			@SuppressWarnings("BusyWait")
 			@Override
@@ -231,8 +231,7 @@ public class Opts {
 					}
 				}
 			}
-		});
-		thread.start();
+		}).start();
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
@@ -324,7 +323,7 @@ public class Opts {
 			p.picker.setHex(Math.max(0, Math.min(0xFFFFFF, rgb[0])));
 		}
 
-		Runnable run = new Runnable() {
+		Thread thread = new Thread(new Runnable() {
 			public int inter = 0;
 
 			@SuppressWarnings("BusyWait")
@@ -343,8 +342,7 @@ public class Opts {
 					}
 				}
 			}
-		};
-		Thread thread = new Thread(run);
+		});
 		thread.start();
 
 		JPanel panel = new JPanel();

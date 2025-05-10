@@ -660,7 +660,7 @@ public class BasisPage extends LubCont {
 	}
 
 	private void changeLU() {
-		jlcn.setComboList(lu().coms);
+		jlcn.setBasis(current().sele);
 		jlc.setLU(lu());
 		setCN();
 		updateSetC();

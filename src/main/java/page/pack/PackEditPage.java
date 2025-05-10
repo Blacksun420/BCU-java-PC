@@ -138,6 +138,7 @@ public class PackEditPage extends DefaultPage {
 	private final JBTN cbge = new JBTN(MainLocale.PAGE, "cbge");
 	private final JBTN csav = new JBTN(MainLocale.PAGE, "csav");
 	private final JTG cmbo = new JTG(MainLocale.PAGE, "usecombo");
+	private final JBTN skld = new JBTN(MainLocale.PAGE, "packload");
 	private final JBTN cdesc = new JBTN(MainLocale.PAGE, "pinfo");
 	private final JBTN merge = new JBTN(MainLocale.PAGE, "merge");
 
@@ -226,6 +227,7 @@ public class PackEditPage extends DefaultPage {
 		set(addr, x, y, w, 800, 175, 50);
 		set(remr, x, y, w + 175, 800, 175, 50);
 
+		set(skld, x, y, w, 850, 300, 50);
 		set(recd, x, y, w, 950, 300, 50);
 		set(tdiy, x, y, w, 1050, 300, 50);
 		set(csol, x, y, w, 1150, 300, 50);
@@ -380,6 +382,7 @@ public class PackEditPage extends DefaultPage {
 				b.lu.renewCombo();
 		});
 
+		skld.setLnr(x -> changePanel(new PackLoadPage(this, pac)));
 	}
 
 	private void addListeners$2() {
@@ -751,10 +754,12 @@ public class PackEditPage extends DefaultPage {
 		add(cbge);
 		add(csav);
 		add(cmbo);
+		add(skld);
 		add(cdesc);
 		add(merge);
 
 		cmbo.setToolTipText("Decide whether to apply or not this pack's custom CatCombos onto your lineups");
+		skld.setToolTipText("Decide which packs load when BCU starts");
 
 		add(pid);
 		add(pauth);

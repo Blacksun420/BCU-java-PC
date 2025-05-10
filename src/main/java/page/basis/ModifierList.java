@@ -70,11 +70,6 @@ public class ModifierList extends JList<Object> {
         setListData(list.toArray(new Object[0]));
     }
 
-    public void setComboList(SortedPackSet<Combo> lf) {
-        combos = lf;
-        reset();
-    }
-
     public void setBanned(Set<Integer> lb) {
         banned = lb;
         reset();
@@ -82,6 +77,7 @@ public class ModifierList extends JList<Object> {
 
     public void setBasis(BasisLU b) {
         lineup = b;
+        combos = b.lu.coms;
         reset();
     }
 }

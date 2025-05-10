@@ -20,6 +20,7 @@ import common.util.stage.Replay;
 import io.BCJSON;
 import io.BCUReader;
 import io.BCUWriter;
+import kotlin.Pair;
 import jogl.GLBBB;
 import jogl.util.GLIB;
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +48,8 @@ import java.util.function.Consumer;
 public class MainBCU {
 
 	public static class AdminContext implements Context {
+
+		public Consumer<Pair<Double, String>> loadProg;
 
 		@Override
 		public boolean confirm(String str) {
@@ -167,8 +170,7 @@ public class MainBCU {
 
 		@Override
 		public void loadProg(double d, String str) {
-			LoadPage.prog(d);
-			LoadPage.packProg(str);
+			loadProg.accept(new Pair<>(d, str));
 		}
 
 		private boolean noNeedToShow(ErrType t) {
