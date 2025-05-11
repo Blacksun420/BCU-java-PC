@@ -3,6 +3,7 @@ package main;
 import common.CommonStatic;
 import common.pack.PackData.UserPack;
 import common.pack.Source;
+import common.util.stage.Music;
 import common.util.stage.Revival;
 import common.util.stage.Stage;
 import common.util.stage.info.DefStageInfo;
@@ -23,6 +24,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -313,36 +315,35 @@ public class Opts {
 		);
 	}
 
-	public static void showMusicPopup(Page pg, UserPack pack) {
+	public static void showMusicPopup(UserPack pack, Collection<Music> mus) {
 		Thread thread = new Thread(new Runnable() {
 			public int inter = 0;
 			@SuppressWarnings("BusyWait")
 			@Override
 			public void run() {
-				MusicPopup p = new MusicPopup(pg, pack);
-
 				JFrame panel = new JFrame();
 				panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-				int w = 300, h = 600;
-				panel.setBounds(new Rectangle(MainFrame.F.getWidth() / 2 - 175, 200, 275, 525));
-
-				p.setPreferredSize(new Dimension(w, h));
-				p.setBounds(25, 25, w, h);
-
+				panel.setBounds(new Rectangle(MainFrame.F.getWidth() / 2 - 175, 200, MusicPopup.W, MusicPopup.H));
 				panel.getContentPane().setLayout(new BoxLayout(panel.getContentPane(), BoxLayout.PAGE_AXIS));
-				panel.add(p);
 				panel.setBackground(new Color(64, 64, 64));
 				panel.setIconImage(MainFrame.F.getIconImage());
 				panel.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				panel.setVisible(true);
+
+				MusicPopup p = new MusicPopup(pack, mus);
+				p.setPreferredSize(new Dimension(MusicPopup.W, MusicPopup.H));
+				p.setBounds(25, 25, MusicPopup.W, MusicPopup.H);
+				panel.add(p);
+				final boolean[] open = {true};
 				panel.addWindowListener(new WindowAdapter() {
 					@Override
 					public void windowClosing(WindowEvent arg0) {
 						p.close();
+						open[0] = false;
 					}
 				});
 
-				while (true) {
+				while (open[0]) {
 					long m = System.currentTimeMillis();
 					try {
 						p.timer(0);

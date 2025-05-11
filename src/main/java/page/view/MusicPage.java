@@ -8,7 +8,6 @@ import io.BCMusic;
 import main.Opts;
 import page.*;
 
-import javax.sound.sampled.LineEvent;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,9 +23,11 @@ public class MusicPage extends DefaultPage implements SupPage<Music> {
 
 	private final JList<Music> jlf = new JList<>();
 	private final JScrollPane jsp = new JScrollPane(jlf);
+	private final Collection<Music> mus;
 
 	public MusicPage(Page p) {
 		super(p);
+		mus = null;
 		List<Music> mus = new ArrayList<>();
 		for (PackData pac : UserProfile.getAllPacks())
 			mus.addAll(pac.musics.getList());
@@ -37,6 +38,7 @@ public class MusicPage extends DefaultPage implements SupPage<Music> {
 
 	public MusicPage(Page p, Collection<Music> mus) {
 		super(p);
+		this.mus = mus;
 		jlf.setListData(mus.toArray(new Music[0]));
 		ini();
 	}
@@ -84,7 +86,7 @@ public class MusicPage extends DefaultPage implements SupPage<Music> {
 			stop.setEnabled(false);
 		});
 
-		popout.setLnr(arg -> Opts.showMusicPopup(this, null));
+		popout.setLnr(arg -> Opts.showMusicPopup(null, mus));
 	}
 
 	private void ini() {

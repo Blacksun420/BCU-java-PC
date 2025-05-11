@@ -128,7 +128,7 @@ public class MusicEditPage extends DefaultPage {
 			stop.setEnabled(false);
 		});
 
-		popout.setLnr(e -> Opts.showMusicPopup(this, pack));
+		popout.setLnr(e -> Opts.showMusicPopup(pack, null));
 
 		jlst.addListSelectionListener(arg0 -> {
 			if (isAdj() || arg0.getValueIsAdjusting())

@@ -8,10 +8,13 @@ import io.BCPlayer;
 import page.JBTN;
 import page.MainLocale;
 import page.Page;
+import utilpc.PP;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class MusicPopup extends Page {
@@ -23,10 +26,14 @@ public class MusicPopup extends Page {
     private final JBTN stop = new JBTN(MainLocale.PAGE, "stop");
 
     private ThreadPlayer BG = null;
+    private PP previousDimension = new PP(0, 0);
+    public static final int W = 300, H = 600;
 
-    public MusicPopup(Page p, PackData.UserPack ac) {
-        super(p);
-        if (ac == null) {
+    public MusicPopup(PackData.UserPack ac, Collection<Music> mu) {
+        super(null);
+        if (mu != null) {
+            jlf.setListData(mu.toArray(new Music[0]));
+        } else if (ac == null) {
             List<Music> mus = new ArrayList<>();
             for (PackData pac : UserProfile.getAllPacks())
                 mus.addAll(pac.musics.getList());
@@ -59,9 +66,23 @@ public class MusicPopup extends Page {
 
     @Override
     protected void resized(int x, int y) {
-        set(jsp, x, y, 0, 0, 300, 500);
-        set(play, x, y, 0, 550, 150, 50);
-        set(stop, x, y, 150, 550, 150, 50);
+        put(jsp, x, y, 0, 0, 300, 500);
+        put(play, x, y, 0, 550, 150, 50);
+        put(stop, x, y, 150, 550, 150, 50);
+    }
+
+    public static void put(Component jc, int winx, int winy, int x, int y, int w, int h) {
+        jc.setBounds(x * winx / W, y * winy / H, w * winx / W, h * winy / H);
+    }
+
+    @Override
+    protected void resized() {
+        PP dimension = new PP(getRootPane().getWidth(), getRootPane().getHeight());
+        if (!dimension.equals(previousDimension)) {
+            previousDimension = dimension;
+            Point p = dimension.toPoint();
+            componentResized(p.x, p.y);
+        }
     }
 
     @Override
