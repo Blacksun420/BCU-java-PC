@@ -23,6 +23,7 @@ import page.view.ViewBox;
 import javax.swing.*;
 
 import plugin.ui.main.util.BCUSettingMenu;
+import plugin.ui.main.util.DownloadProgressFrame;
 
 import java.awt.*;
 
@@ -394,7 +395,19 @@ public class ConfigPage extends DefaultPage {
 		});
 
 		jceff.addActionListener(a -> cfg().drawBGEffect = !cfg().drawBGEffect);
-		rlpk.addActionListener(l -> UserProfile.reloadExternalPacks());
+		rlpk.setLnr(l -> new Thread(() -> {
+            DownloadProgressFrame frame = new DownloadProgressFrame("Reloading Packs",
+                    "reloading packs", "reloading packs");
+
+            ((MainBCU.AdminContext)CommonStatic.ctx).loadProg = (pair -> {
+                frame.setProgress(pair.getFirst());
+                frame.text_above.setHtmlText(pair.getSecond());
+				frame.text_below.setHtmlText((UserProfile.profile().pending.size() - UserProfile.profile().df + 1) + " Remaining");
+            });
+
+            UserProfile.reloadExternalPacks();
+			frame.dispose();
+        }).start());
 
 		vcol.addActionListener(l -> {
 			if(cfg().viewerColor != -1)

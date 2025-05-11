@@ -144,49 +144,32 @@ public class PackLoadPage extends DefaultPage {
             changing = false;
         });
 
-        pkld.setLnr(a -> new Thread(new Runnable() {
-            public int inter = 0;
-            @SuppressWarnings("BusyWait")
-            @Override
-            public void run() {
-                LinkedList<UserPack> ps = new LinkedList<>();
-                UserPack p = llp.getSelectedValue();
-                ps.add(p);
-                for (String s : p.preGetDependencies())
-                    if (UserProfile.profile().skipped.containsKey(s))
-                        ps.add(UserProfile.profile().skipped.get(s));
+        pkld.setLnr(a -> new Thread(() -> {
+            LinkedList<UserPack> ps = new LinkedList<>();
+            UserPack p = llp.getSelectedValue();
+            ps.add(p);
+            for (String s : p.preGetDependencies())
+                if (UserProfile.profile().skipped.containsKey(s))
+                    ps.add(UserProfile.profile().skipped.get(s));
 
-                getBackButton().setEnabled(false);
-                fireDimensionChanged();
+            getBackButton().setEnabled(false);
+            fireDimensionChanged();
 
-                DownloadProgressFrame frame = new DownloadProgressFrame("Reading Packs",
-                        "Packs: " + ps, "Reading " + p);
-                frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            DownloadProgressFrame frame = new DownloadProgressFrame("Reading Packs",
+                    "Reading " + p, "Packs: " + ps);
 
-                ((MainBCU.AdminContext)CommonStatic.ctx).loadProg = (pair -> {
-                    frame.setProgress(pair.getFirst());
-                    frame.text_below.setHtmlText(pair.getSecond());
-                });
+            ((MainBCU.AdminContext)CommonStatic.ctx).loadProg = (pair -> {
+                frame.setProgress(pair.getFirst());
+                frame.text_above.setHtmlText(pair.getSecond());
+            });
 
-                while (changing) {
-                    long m = System.currentTimeMillis();
-                    try {
-                        int delay = (int) (System.currentTimeMillis() - m);
-                        inter = (inter * 9 + 100 * delay / Timer.fps) / 10;
-                        int sle = delay >= Timer.fps ? 1 : Timer.fps - delay;
-                        Thread.sleep(sle);
-                    } catch (InterruptedException e) {
-                        return;
-                    }
-                }
-                UserProfile.loadPacks(ps);
-                getBackButton().setEnabled(true);
+            UserProfile.loadPacks(ps);
+            getBackButton().setEnabled(true);
 
-                llp.clearSelection();
-                jlp.setListData(new Vector<>(UserProfile.getUserPacks()));
-                llp.setListData(new Vector<>(UserProfile.profile().skipped.values()));
-                frame.dispose();
-            }
+            llp.clearSelection();
+            jlp.setListData(new Vector<>(UserProfile.getUserPacks()));
+            llp.setListData(new Vector<>(UserProfile.profile().skipped.values()));
+            frame.dispose();
         }).start());
     }
 

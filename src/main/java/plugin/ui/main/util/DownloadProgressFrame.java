@@ -47,6 +47,7 @@ public class DownloadProgressFrame extends JFrame {
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setVisible(true);
+        setIconImage(MainFrame.F.getIconImage());
     }
 
     public void setProgress(double value){
