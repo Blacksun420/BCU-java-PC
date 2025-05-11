@@ -29,17 +29,17 @@ public class MusicPopup extends Page {
     private PP previousDimension = new PP(0, 0);
     public static final int W = 300, H = 600;
 
-    public MusicPopup(PackData.UserPack ac, Collection<Music> mu) {
+    public MusicPopup(Collection<Music> mu, Music sele) {
         super(null);
         if (mu != null) {
             jlf.setListData(mu.toArray(new Music[0]));
-        } else if (ac == null) {
+        } else {
             List<Music> mus = new ArrayList<>();
             for (PackData pac : UserProfile.getAllPacks())
                 mus.addAll(pac.musics.getList());
             jlf.setListData(mus.toArray(new Music[0]));
-        } else
-           jlf.setListData(ac.musics.toArray());
+        }
+        jlf.setSelectedValue(sele, true);
 
         add(jsp);
         add(play);

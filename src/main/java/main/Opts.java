@@ -315,7 +315,7 @@ public class Opts {
 		);
 	}
 
-	public static void showMusicPopup(UserPack pack, Collection<Music> mus) {
+	public static void showMusicPopup(Collection<Music> mus, Music sele) {
 		Thread thread = new Thread(new Runnable() {
 			public int inter = 0;
 			@SuppressWarnings("BusyWait")
@@ -330,7 +330,7 @@ public class Opts {
 				panel.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				panel.setVisible(true);
 
-				MusicPopup p = new MusicPopup(pack, mus);
+				MusicPopup p = new MusicPopup(mus, sele);
 				p.setPreferredSize(new Dimension(MusicPopup.W, MusicPopup.H));
 				p.setBounds(25, 25, MusicPopup.W, MusicPopup.H);
 				panel.add(p);

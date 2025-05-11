@@ -119,7 +119,7 @@ public class MusicEditPage extends DefaultPage {
 				if (event.getType() == LineEvent.Type.STOP)
 					stop.setEnabled(false);
 			});
-			stop.setEnabled(true);
+			stop.setEnabled(BCMusic.BG != null);
 		});
 
 		stop.addActionListener(arg -> {
@@ -128,7 +128,7 @@ public class MusicEditPage extends DefaultPage {
 			stop.setEnabled(false);
 		});
 
-		popout.setLnr(e -> Opts.showMusicPopup(pack, null));
+		popout.setLnr(e -> Opts.showMusicPopup(pack.musics.getList(), sele));
 
 		jlst.addListSelectionListener(arg0 -> {
 			if (isAdj() || arg0.getValueIsAdjusting())

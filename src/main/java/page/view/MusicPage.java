@@ -77,7 +77,7 @@ public class MusicPage extends DefaultPage implements SupPage<Music> {
 			if (jlf.getSelectedValue() == null)
 				return;
 			BCMusic.setBG(jlf.getSelectedValue());
-			stop.setEnabled(true);
+			stop.setEnabled(BCMusic.BG != null);
 		});
 
 		stop.setLnr(arg -> {
@@ -86,7 +86,7 @@ public class MusicPage extends DefaultPage implements SupPage<Music> {
 			stop.setEnabled(false);
 		});
 
-		popout.setLnr(arg -> Opts.showMusicPopup(null, mus));
+		popout.setLnr(arg -> Opts.showMusicPopup(mus, jlf.getSelectedValue()));
 	}
 
 	private void ini() {
