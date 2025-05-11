@@ -5,11 +5,10 @@ import common.pack.PackData;
 import common.pack.UserProfile;
 import common.util.stage.Music;
 import io.BCMusic;
-import page.DefaultPage;
-import page.JBTN;
-import page.Page;
-import page.SupPage;
+import main.Opts;
+import page.*;
 
+import javax.sound.sampled.LineEvent;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +18,9 @@ public class MusicPage extends DefaultPage implements SupPage<Music> {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JBTN strt = new JBTN(0, "start");
+	private final JBTN strt = new JBTN(MainLocale.PAGE, "start");
+	private final JBTN stop = new JBTN(MainLocale.PAGE, "stop");
+	private final JBTN popout = new JBTN(MainLocale.PAGE, "popout");
 
 	private final JList<Music> jlf = new JList<>();
 	private final JScrollPane jsp = new JScrollPane(jlf);
@@ -63,6 +64,8 @@ public class MusicPage extends DefaultPage implements SupPage<Music> {
 		super.resized(x, y);
 		set(jsp, x, y, 50, 100, 300, 800);
 		set(strt, x, y, 400, 100, 200, 50);
+		set(stop, x, y, 400, 200, 200, 50);
+		set(popout, x, y, 400, 300, 200, 50);
 	}
 
 	private void addListeners() {
@@ -72,11 +75,22 @@ public class MusicPage extends DefaultPage implements SupPage<Music> {
 			if (jlf.getSelectedValue() == null)
 				return;
 			BCMusic.setBG(jlf.getSelectedValue());
+			stop.setEnabled(true);
 		});
+
+		stop.setLnr(arg -> {
+			BCMusic.BG.stop();
+			BCMusic.clear();
+			stop.setEnabled(false);
+		});
+
+		popout.setLnr(arg -> Opts.showMusicPopup(this, null));
 	}
 
 	private void ini() {
 		add(strt);
+		add(stop);
+		add(popout);
 		add(jsp);
 		addListeners();
 	}

@@ -35,6 +35,7 @@ public class MusicEditPage extends DefaultPage {
 	private final JBTN relo = new JBTN(MainLocale.PAGE, "read list");
 	private final JBTN play = new JBTN(MainLocale.PAGE, "start");
 	private final JBTN stop = new JBTN(MainLocale.PAGE, "stop");
+	private final JBTN popout = new JBTN(MainLocale.PAGE, "popout");
 	private final JBTN show = new JBTN(MainLocale.PAGE, "show");
 	private final JL jlp = new JL(MainLocale.INFO, "loop");
 	private final JTF jtp = new JTF();
@@ -59,6 +60,7 @@ public class MusicEditPage extends DefaultPage {
 		set(rem, x, y, 500, 450, 200, 50);
 		set(play, x, y, 750, 100, 200, 50);
 		set(stop, x, y, 750, 200, 200, 50);
+		set(popout, x, y, 750, 350, 200, 50);
 		set(jlp, x, y, 500, 600, 200, 50);
 		set(jtp, x, y, 500, 650, 200, 50);
 		set(jtn, x, y, 50, 1100, 400, 50);
@@ -126,6 +128,8 @@ public class MusicEditPage extends DefaultPage {
 			stop.setEnabled(false);
 		});
 
+		popout.setLnr(e -> Opts.showMusicPopup(this, pack));
+
 		jlst.addListSelectionListener(arg0 -> {
 			if (isAdj() || arg0.getValueIsAdjusting())
 				return;
@@ -151,6 +155,7 @@ public class MusicEditPage extends DefaultPage {
 		add(relo);
 		add(play);
 		add(stop);
+		add(popout);
 		add(jlp);
 		add(jtp);
 		add(jtn);

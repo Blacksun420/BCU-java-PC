@@ -157,8 +157,8 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		if (!isSp())
 			return;
 		for (int i = 0; i < spNames.length; i++)
-			if (str.contains(spNames[i].toLowerCase())) {
-				Comparator<AtkDataModel> comp = Comparator.comparingInt(adm -> -adm.pre);
+			if (str.startsWith(spNames[i].toLowerCase())) {
+				Comparator<AtkDataModel> comp = Comparator.comparingInt(adm -> adm.pre);
 				switch (i) {
 					case 0:
 						Arrays.sort(ce.revs, comp);
@@ -792,7 +792,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 			while (ind >= sps[real].length)
 				ind -= sps[real++].length;
 
-			return sps[real][sps[real].length - 1 - ind];
+			return sps[real][ind];
 		}
 		return getSelMask()[ind];
 	}
@@ -931,7 +931,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 				for (int i = 0; i < sps.length; i++) {
 					if (sps[i].length == 0)
 						continue;
-					if (rematk.str.contains(spNames[i].toLowerCase())) {
+					if (rematk.str.startsWith(spNames[i].toLowerCase())) {
 						for (int j = 0; j < sps[i].length; j++)
 							if (sps[i][j] == rematk) {
 								if (sps[i].length == 1)
@@ -997,7 +997,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 			return;
 
 		setA(get(ind));
-		boolean b = pack.editable && ind < getSelMask().length;
+		boolean b = pack.editable && !isSp();
 		link.setEnabled(b);
 		copy.setEnabled(b);
 		atkn.setEnabled(b);
