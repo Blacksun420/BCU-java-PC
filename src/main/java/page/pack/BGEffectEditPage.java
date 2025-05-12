@@ -6,6 +6,7 @@ import common.pack.PackData.UserPack;
 import common.pack.Source;
 import common.pack.UserProfile;
 import common.util.anim.AnimCE;
+import common.util.anim.AnimCI;
 import common.util.pack.Background;
 import common.util.pack.bgeffect.BackgroundEffect;
 import common.util.pack.bgeffect.CustomBGEffect;
@@ -67,7 +68,7 @@ public class BGEffectEditPage extends DefaultPage {
     private final JBTN changebg = new JBTN(MainLocale.PAGE, "change");
     private final JTF bgsp = new JTF();
     private final JTF fgsp = new JTF();
-    private final JList<AnimCE> jld = new JList<>(new Vector<>(AnimCE.map().values().stream().filter(a -> a.id.base.equals(Source.BasePath.BGEffect)).collect(Collectors.toList())));
+    private final JList<AnimCI> jld = new JList<>();
     private final JScrollPane jspd = new JScrollPane(jld);
 
     private final EffectList jlme = new EffectList(); //addable ones
@@ -215,6 +216,10 @@ public class BGEffectEditPage extends DefaultPage {
         add(rembg);
         add(jspbg);
         add(bgena);
+
+        Vector<AnimCI> bgs = AnimCE.map().values().stream().filter(a -> a.id.base.equals(Source.BasePath.BGEffect)).collect(Collectors.toCollection(Vector::new));
+        bgs.addAll(pack.source.getAnims(Source.BasePath.BGEffect));
+        jld.setListData(bgs);
         jld.setCellRenderer(new AnimLCR());
         jlbg.setListData(pack.bgEffects.toArray());
         setBGE(null);
@@ -277,6 +282,7 @@ public class BGEffectEditPage extends DefaultPage {
         }
 
         bge = be;
+        fireDimensionChanged();
     }
 
     private void setMBELists(MixedBGEffect be, int sel0, int sel1) {
