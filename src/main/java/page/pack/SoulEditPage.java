@@ -5,6 +5,7 @@ import common.pack.PackData.UserPack;
 import common.pack.Source;
 import common.pack.UserProfile;
 import common.util.anim.AnimCE;
+import common.util.anim.AnimCI;
 import common.util.anim.AnimU;
 import common.util.pack.Soul;
 import common.util.stage.Music;
@@ -35,13 +36,13 @@ public class SoulEditPage extends AbViewPage {
 
     private final JTF jtfs = new JTF();
 
-    private final Vector<UserPack> vpack = new Vector<>(UserProfile.getUserPacks().stream().filter(p -> p.souls.size() > 0 || p.editable).collect(Collectors.toList()));
+    private final Vector<UserPack> vpack = new Vector<>(UserProfile.getUserPacks().stream().filter(p -> !p.souls.isEmpty() || p.editable).collect(Collectors.toList()));
     private final PackEditPage.PackList jlp = new PackEditPage.PackList(vpack);
     private final JScrollPane jspp = new JScrollPane(jlp);
     private final JList<Soul> jls = new JList<>();
     private final JScrollPane jsps = new JScrollPane(jls);
 
-    private final JList<AnimCE> jld = new JList<>(new Vector<>(AnimCE.map().values().stream().filter(a -> a.id.base.equals(Source.BasePath.SOUL)).collect(Collectors.toList())));
+    private final JList<AnimCI> jld = new JList<>();
     private final JComboBox<Music> jcbm = new JComboBox<>();
     private final JScrollPane jspd = new JScrollPane(jld);
 
@@ -318,8 +319,12 @@ public class SoulEditPage extends AbViewPage {
             vs.add(null);
             vs.addAll(UserProfile.getAll(pac.getSID(), Music.class));
             jcbm.setModel(new DefaultComboBoxModel<>(vs));
+            Vector<AnimCI> souls = AnimCE.map().values().stream().filter(a -> a.id.base.equals(Source.BasePath.SOUL)).collect(Collectors.toCollection(Vector::new));
+            souls.addAll(pack.source.getAnims(Source.BasePath.SOUL));
+            jld.setListData(souls);
         } else {
             jls.setListData(new Soul[0]);
+            jld.setListData(new AnimCI[0]);
             jcbm.removeAllItems();
         }
 

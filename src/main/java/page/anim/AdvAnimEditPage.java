@@ -272,7 +272,7 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 					ma.parts[ind++] = datum;
 			ind = rows[rows.length - 1];
 			ma.validate();
-			maet.anim.unSave("maanim remove part");
+			maet.anim.unSave("maanim remove part " + maet.getSelectedRow());
 			callBack(null);
 			if (ind >= ma.n)
 				ind = ma.n - 1;

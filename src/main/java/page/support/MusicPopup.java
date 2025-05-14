@@ -45,7 +45,7 @@ public class MusicPopup extends Page {
         add(play);
         add(stop);
 
-        play.setEnabled(false);
+        play.setEnabled(sele != null);
         stop.setEnabled(false);
         setListeners();
     }

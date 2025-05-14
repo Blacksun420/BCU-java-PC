@@ -307,6 +307,38 @@ public class ProcFilterTable extends Page {
             con.accept(btn);
         }
     }
+    public static class EnumFilter extends SwingEditor.EnumEditor {
+        private final JTG btn = new JTG("!");
+
+        public EnumFilter(Editors.EditorGroup eg, Editors.EdiField field, String f, boolean edit) {
+            super(eg, field, f, edit);
+            btn.setLnr(l -> {
+                if (par.callback != null)
+                    par.callback.run();
+            });
+        }
+
+        @Override
+        public void setVisible(boolean res) {
+            super.setVisible(res);
+            btn.setVisible(res);
+        }
+
+        @Override
+        public void resize(int x, int y, int x0, int y0, int w0, int h0) {
+            int w1 = (int)(w0 * 0.8);
+            Page.set(label, x, y, x0, y0, w1 / 2, h0);
+            Page.set(opts, x, y, x0 + (w1 / 2), y0, w1 / 2, h0);
+            set(btn, x, y, x0 + w1, y0, w0 - w1, h0);
+        }
+
+        @Override
+        public void add(Consumer<JComponent> con) {
+            super.add(con);
+            con.accept(btn);
+        }
+    }
+
     public static class FilterCtrl implements Editors.EditorSupplier {
         private final boolean isEnemy;
         private final AdvProcFilterPage table;
@@ -335,7 +367,7 @@ public class ProcFilterTable extends Page {
                         return new IDFilter<>(group, field, f, table::getEntitySup, edit);
                 }
                 if (Enum.class.isAssignableFrom(fc))
-                    return new SwingEditor.EnumEditor(group, field, f, edit);
+                    return new EnumFilter(group, field, f, edit);
                 if (fc == Proc.class)
                     return new ProcFilter(group, field, f, edit, this);
                 if (fc == SortedPackSet.class)
@@ -539,7 +571,12 @@ public class ProcFilterTable extends Page {
                     } else if (f.getType().equals(SortedPackSet.class)) {
                         return ((SortedPackSet<?>)pf0).containsAll((SortedPackSet<?>)pf1);
                     } else if (f.getType().equals(Proc.ProcID.class)) {
-                        return ((Proc.ProcID)pf0).l.containsAll(((Proc.ProcID)pf1).l);
+                        return ((Proc.ProcID) pf0).l.containsAll(((Proc.ProcID) pf1).l);
+                    } else if (Enum.class.isAssignableFrom(f.getType())) {
+                        if (group.list[j] == null)
+                            continue;
+                        if (!((EnumFilter) group.list[j]).btn.isSelected() && pf0 != pf1)
+                            return false;
                     } else {
                         if (group.list[j] == null)
                             continue;

@@ -372,8 +372,8 @@ public abstract class SwingEditor extends Editor {
 
 	public static class EnumEditor extends SwingEditor {
 
-		public final JL label;
-		private final JComboBox<Object> opts;
+		protected final JL label;
+		protected final JComboBox<Object> opts;
 		private boolean setting = false;
 
 		public EnumEditor(EditorGroup eg, Editors.EdiField field, String f, boolean edit) {

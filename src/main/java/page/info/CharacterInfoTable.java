@@ -209,7 +209,7 @@ public abstract class CharacterInfoTable extends Page {
             atks[ind][3].setText(MainBCU.convertTime(atkList.get(i).pre));
             if (!isBC) {
                 atks[ind][4].setText(MainLocale.INFO, "dire");
-                atks[ind][5].setText(atkList.get(i).dire == 1 ? get(MainLocale.PAGE, "unit") : atkList.get(i).dire == -1 ? get(MainLocale.PAGE, "enemy") : "N/A");
+                atks[ind][5].setText(MainLocale.INFO, "at" + (atkList.get(i).getDire()+2));
                 atks[ind][0].setIcon(UtilPC.getIcon(2, atkList.get(i).range ? Data.ATK_AREA : Data.ATK_SINGLE));
             }
         }
