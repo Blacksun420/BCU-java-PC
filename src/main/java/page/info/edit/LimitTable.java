@@ -71,6 +71,10 @@ public class LimitTable extends Page {
 	private final JL dctot = new JL(MainLocale.INFO, "dpdel");
 	private final JTF[] jctot = new JTF[6];
 
+	private final JTF jccan = new JTF();
+	private final JTF jcuspd = new JTF();
+	private final JTF jcespd = new JTF();
+
 	private final JBTN ppage = new JBTN("<");
 	private final JBTN npage = new JBTN(">");
 
@@ -82,7 +86,7 @@ public class LimitTable extends Page {
 
 	private Limit lim;
 	private int page = 0;
-	private static final int MAX_PAGE = 4;
+	private static final int MAX_PAGE = 5;
 
 	protected LimitTable(Page p0, Page p1, UserPack p) {
 		super(null);
@@ -122,6 +126,9 @@ public class LimitTable extends Page {
 		jlco.setEnabled(b);
 		banc.setEnabled(b && jlco.getSelectedIndex() != -1);
 		jptot.setEnabled(b);
+		jccan.setEnabled(b);
+		jcuspd.setEnabled(b);
+		jcespd.setEnabled(b);
 	}
 
 	@Override
@@ -212,6 +219,15 @@ public class LimitTable extends Page {
 			set(ppage, x, y, w * 7, 0, w, 50);
 			set(npage, x, y, w * 7, 50, w, 50);
 		}
+
+		w = page == 5 ? 1400 / 8 : 0;
+		set(jccan, x, y, 0, 50, w, 50);
+		set(jcuspd, x, y, w, 50, w, 50);
+		set(jcespd, x, y, w*2, 50, w, 50);
+		if (page == 5) {
+			set(ppage, x, y, w * 6, 50, w, 50);
+			set(npage, x, y, w * 7, 50, w, 50);
+		}
 	}
 
 	protected void setLimit(Limit l) {
@@ -235,6 +251,9 @@ public class LimitTable extends Page {
 			jcre.setText("");
 			jcco.setText("");
 			jptot.setText("");
+			jccan.setText(MainLocale.getLoc(MainLocale.INFO, "ht24") + ": ");
+			jcuspd.setText(MainLocale.getLoc(MainLocale.INFO, "ht25") + ": ");
+			jcespd.setText(MainLocale.getLoc(MainLocale.INFO, "ht26") + ": ");
 			for (int i = 0; i < brard.length; i++)
 				set(brard[i] = new JTF(trar[i] + ":"));
 
@@ -273,6 +292,9 @@ public class LimitTable extends Page {
         jcmax.setText(limits[4] + ": " + lim.max);
 		jcmin.setText(limits[3] + ": " + lim.min);
 		jnum.setText(limits[1] + ": " + lim.num);
+		jccan.setText(MainLocale.getLoc(MainLocale.INFO, "ht24") + ": " + stli.cannonMultiplier + "%");
+		jcuspd.setText(MainLocale.getLoc(MainLocale.INFO, "ht25") + ": " + stli.unitSpeedLimit);
+		jcespd.setText(MainLocale.getLoc(MainLocale.INFO, "ht26") + ": " + stli.enemySpeedLimit);
 		star.setText(l.starString());//l.star == -1 ? "all stars" : ((l.star + 1) + " star"));
 		one.setText(MainLocale.getLoc(MainLocale.INFO, "row" + lim.line));
 		jcg.setText(lim.group + (lim.group != null && lim.group.type % 2 != 0 ? ": " + lim.fa : ""));
@@ -405,6 +427,10 @@ public class LimitTable extends Page {
 		add(sptot);
 		set(jptot);
 
+		set(jccan);
+		set(jcuspd);
+		set(jcespd);
+
 		add(ppage);
 		ppage.setEnabled(false);
 		add(npage);
@@ -446,6 +472,12 @@ public class LimitTable extends Page {
 			lim.stageLimit.globalCost = Math.max(val, 0);
 		else if (jtf == jptot)
 			lim.stageLimit.maxUnitSpawn = Math.max(val, 0);
+		else if (jtf == jccan)
+			lim.stageLimit.cannonMultiplier = Math.max(val, 0);
+		else if (jtf == jcuspd)
+			lim.stageLimit.unitSpeedLimit = Math.max(val, -1);
+		else if (jtf == jcespd)
+			lim.stageLimit.enemySpeedLimit = Math.max(val, -1);
 		for (int i = 0; i < bcost.length; i++) {
 			if (jtf == bcost[i]) {
 				lim.stageLimit.costMultiplier[i] = Math.max(0, val);
