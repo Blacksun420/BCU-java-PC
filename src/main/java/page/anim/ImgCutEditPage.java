@@ -43,6 +43,7 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 	private final JBTN addl = new JBTN(0, "addl");
 	private final JBTN reml = new JBTN(0, "reml");
 	private final JBTN relo = new JBTN(0, "relo");
+	private final JBTN reload = new JBTN(0, "reload");
 	private final JBTN impt = new JBTN(0, "import");
 	private final JBTN expt = new JBTN(0, "export");
 	private final JBTN ico = new JBTN(0, "icondi");
@@ -139,6 +140,7 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		super.resized(x, y);
 		set(aep, x, y, 800, 0, 1750, 50);
 		set(relo, x, y, 250, 0, 200, 50);
+		set(reload, x, y, 450, 0, 200, 50);
 		set(jspu, x, y, 50, 100, 300, 450);
 		set(name, x, y, 400, 100, 200, 50);
 		set(copy, x, y, 650, 100, 200, 50);
@@ -303,6 +305,13 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 			icet.anim.reloImg();
 			icet.anim.ICedited();
 		});
+		reload.addActionListener(arg0 -> {
+			if (icet.anim == null)
+				return;
+			icet.anim.reloadAnimations();
+			icet.anim.unSave("Reload animation");
+			icet.anim.ICedited();
+		});
 
 		ico.addActionListener(arg0 -> {
 			BufferedImage bimg = new Importer("select icon image", Importer.IMP_IMG).getImg();
@@ -461,6 +470,7 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		add(aep);
 		add(resz);
 		add(relo);
+		add(reload);
 		add(jspu);
 		add(jspic);
 		add(add);
@@ -592,6 +602,7 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 		addl.setEnabled(anim != null);
 		resz.setEnabled(anim != null);
 		relo.setEnabled(anim != null);
+		reload.setEnabled(anim != null);
 		white.setEnabled(anim != null);
 		icet.setCut(anim);
 		sb.setAnim(anim);

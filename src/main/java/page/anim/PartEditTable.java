@@ -19,7 +19,7 @@ import java.util.List;
 class PartEditTable extends AnimTable<int[]> {
 
 	private static final long serialVersionUID = 1L;
-	private final String[] eases = new String[5];
+	private final String[] eases = new String[6];
 
 	protected AnimCE anim;
 	protected MaAnim ma;
@@ -37,7 +37,7 @@ class PartEditTable extends AnimTable<int[]> {
 			eases[i] = i + ": " + Page.get(MainLocale.PAGE, "maaea" + i);
 		getColumnModel().getColumn(2).setCellRenderer((table, value, isSelected, hasFocus, row, column) -> {
             JComboBox<String> e = new JComboBox<>(eases);
-            e.setSelectedIndex(part.moves[row][2] >= 5 || part.moves[row][2] < 0 ? 0 : part.moves[row][2]);
+            e.setSelectedIndex(part.moves[row][2] >= eases.length || part.moves[row][2] < 0 ? 0 : part.moves[row][2]);
             return e;
         });
 		getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(new JComboBox<>(eases)));
@@ -107,7 +107,7 @@ class PartEditTable extends AnimTable<int[]> {
 
 	@Override
 	public boolean isCellEditable(int r, int c) {
-		return lnk[c] != 3 || part.moves[r][2] == 2 || part.moves[r][2] == 4;
+		return true;
 	}
 
 	@Override
@@ -156,7 +156,7 @@ class PartEditTable extends AnimTable<int[]> {
 		} else if (c == 0)
 			v += part.off;
 		else if (c == 3)
-			if (part.moves[r][2] != 2 && part.moves[r][2] != 4)
+			if (part.moves[r][2] == 0)
 				v = 0;
 			else if (part.moves[r][2] == 4)
 				v = Math.min(Math.max(-1,v),1);
