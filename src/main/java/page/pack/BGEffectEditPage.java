@@ -301,7 +301,7 @@ public class BGEffectEditPage extends DefaultPage {
     private String[] inUse(BackgroundEffect be) {
         StringBuilder bgss = new StringBuilder();
         for (Background b : pack.bgs)
-            if (b.bgEffect != null && b.bgEffect.get() == be)
+            if (b.bgEffect != null && b.getEffect() == be)
                 bgss.append(b);
         StringBuilder bges = new StringBuilder();
         for (BackgroundEffect bgeff : pack.bgEffects)
@@ -310,7 +310,7 @@ public class BGEffectEditPage extends DefaultPage {
         for (String s : pack.desc.dependency) {
             PackData p = UserProfile.getPack(s);
             for (Background b : p.bgs)
-                if (b.bgEffect != null && b.bgEffect.get() == be)
+                if (b.bgEffect != null && b.getEffect() == be)
                     bgss.append(b);
             for (BackgroundEffect bgeff : p.bgEffects)
                 if (bgeff instanceof MixedBGEffect && ((MixedBGEffect)bgeff).effects.contains(be))

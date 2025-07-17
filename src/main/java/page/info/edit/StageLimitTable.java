@@ -162,7 +162,7 @@ public class StageLimitTable extends Page {
             map.names.put(text);
             getFront().callBack(map);
         } else if (jtf == cos)
-            map.price = Math.max(0 , Math.min(CommonStatic.parseIntN(text) - 1, 9));
+            map.price = Math.max(-2, CommonStatic.parseIntN(text) - 1);
         else if (jtf == lname)
             ((Limit.PackLimit)jll.getSelectedValue()).name = text;
 

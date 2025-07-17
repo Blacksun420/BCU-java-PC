@@ -7,7 +7,6 @@ import common.pack.UserProfile;
 import common.util.unit.AbForm;
 import main.MainBCU;
 import main.Opts;
-import main.Timer;
 import page.*;
 import plugin.ui.main.util.DownloadProgressFrame;
 
@@ -144,33 +143,39 @@ public class PackLoadPage extends DefaultPage {
             changing = false;
         });
 
-        pkld.setLnr(a -> new Thread(() -> {
-            LinkedList<UserPack> ps = new LinkedList<>();
-            UserPack p = llp.getSelectedValue();
-            ps.add(p);
-            for (String s : p.preGetDependencies())
-                if (UserProfile.profile().skipped.containsKey(s))
-                    ps.add(UserProfile.profile().skipped.get(s));
+        pkld.setLnr(a -> {
+            if (changing)
+                return;
+            changing = true;
+            new Thread(() -> {
+                LinkedList<UserPack> ps = new LinkedList<>();
+                UserPack p = llp.getSelectedValue();
+                ps.add(p);
+                for (String s : p.preGetDependencies())
+                    if (UserProfile.profile().skipped.containsKey(s))
+                        ps.add(UserProfile.profile().skipped.get(s));
 
-            getBackButton().setEnabled(false);
-            fireDimensionChanged();
+                getBackButton().setEnabled(false);
+                fireDimensionChanged();
 
-            DownloadProgressFrame frame = new DownloadProgressFrame("Reading Packs",
-                    "Reading " + p, "Packs: " + ps);
+                DownloadProgressFrame frame = new DownloadProgressFrame("Reading Packs",
+                        "Reading " + p, "Packs: " + ps);
 
-            ((MainBCU.AdminContext)CommonStatic.ctx).loadProg = (pair -> {
-                frame.setProgress(pair.getFirst());
-                frame.text_above.setHtmlText(pair.getSecond());
-            });
+                ((MainBCU.AdminContext) CommonStatic.ctx).loadProg = (pair -> {
+                    frame.setProgress(pair.getFirst());
+                    frame.text_above.setHtmlText(pair.getSecond());
+                });
 
-            UserProfile.loadPacks(ps);
-            getBackButton().setEnabled(true);
+                UserProfile.loadPacks(ps);
+                getBackButton().setEnabled(true);
 
-            llp.clearSelection();
-            jlp.setListData(new Vector<>(UserProfile.getUserPacks()));
-            llp.setListData(new Vector<>(UserProfile.profile().skipped.values()));
-            frame.dispose();
-        }).start());
+                llp.clearSelection();
+                jlp.setListData(new Vector<>(UserProfile.getUserPacks()));
+                llp.setListData(new Vector<>(UserProfile.profile().skipped.values()));
+                frame.dispose();
+                changing = false;
+            }).start();
+        });
     }
 
     private void setPack(UserPack pack) {

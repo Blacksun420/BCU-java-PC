@@ -42,8 +42,11 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 	private final JBTN reml = new JBTN(MainLocale.PAGE, "reml");
 	private final JBTN revt = new JBTN(MainLocale.PAGE, "revt"); //Reverts a specific animation
 	private final JBTN polish = new JBTN(MainLocale.PAGE, "polish"); //Polshes maanims
+	private final JBTN merge = new JBTN(MainLocale.PAGE, "merge"); //Merges parts
 	private final JL addfs = new JL(MainLocale.PAGE, "addfs");
 	private final JTF jstfs = new JTF();
+	private final JL addvs = new JL(MainLocale.PAGE, "addvs");
+	private final JTF jstvs = new JTF();
 	private final JL trimfs = new JL(MainLocale.PAGE, "trim");
 	private final JTF jtrim = new JTF();
 	private final JL inft = new JL();
@@ -177,8 +180,11 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 		set(polish, x, y, 1600, 50, 200, 50);
 		set(addfs, x, y, 1400, 100, 200, 50);
 		set(jstfs, x, y, 1600, 100, 200, 50);
-		set(trimfs, x, y, 1400, 150, 200, 50);
-		set(jtrim, x, y, 1600, 150, 200, 50);
+		set(addvs, x, y, 1400, 150, 200, 50);
+		set(jstvs, x, y, 1600, 150, 200, 50);
+		set(trimfs, x, y, 1400, 200, 200, 50);
+		set(jtrim, x, y, 1600, 200, 200, 50);
+		set(merge, x, y, 1400, 250, 400, 50);
 
 		maet.setRowHeight(size(x, y, 50));
 		mpet.setRowHeight(size(x, y, 50));
@@ -328,6 +334,53 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 			change(ind, i -> lsp.setSelectionInterval(i, i));
 			setD(ind);
 		});
+
+		merge.setLnr(s -> {
+			change(true);
+			MaAnim ma = maet.ma;
+			int[] rows = maet.getSelectedRows();
+			Part[] data = ma.parts;
+			Part p = data[rows[0]];
+			for (int i = 1; i < rows.length; i++) {
+				for (int k = 0; k < data[rows[i]].n; k++) {
+					int[] move = data[rows[i]].moves[k];
+					int[][] datas = p.moves;
+					if (move[0] < p.moves[0][0]) {
+						p.moves = new int[++p.n][];
+						System.arraycopy(datas, 0, p.moves, 1, datas.length);
+						p.moves[0] = move.clone();
+					} else if (move[0] > p.moves[p.n-1][0]) {
+						p.moves = new int[++p.n][];
+						System.arraycopy(datas, 0, p.moves, 0, datas.length);
+						p.moves[p.n-1] = move.clone();
+					} else for (int j = 0; j < p.n; j++) {
+						if (move[0] < p.moves[j][0])
+							continue;
+						if (move[0] == p.moves[j][0]) {
+							//p.moves[j] += data[rows[i]].
+						}
+					}
+				}
+				p.max = Math.max(data[rows[i]].max, p.max);
+			}
+			/*for (int row : rows)
+				data[row] = null;
+			ma.n -= rows.length;
+			ma.parts = new Part[ma.n];
+			int ind = 0;
+			for (Part datum : data)
+				if (datum != null)
+					ma.parts[ind++] = datum;
+			ind = rows[rows.length - 1];
+			ma.validate();
+			maet.anim.unSave("maanim remove part " + maet.getSelectedRow());
+			callBack(null);
+			if (ind >= ma.n)
+				ind = ma.n - 1;
+			lsm.setSelectionInterval(ind, ind);
+			setC(ind);*/
+			change(false);
+		});
 	}
 
 	private void addListeners$1() {
@@ -391,48 +444,55 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 			change(true);
 			Part[] data = anim.parts;
 			for (int i = 0; i < data.length; i++) {
-				if (data[i].moves.length == 0) {
+				if (data[i].n == 0 || data[i].ints[1] == 1) {
 					data[i] = null;
 					anim.n--;
 					continue;
 				}
 				int[][] movs = data[i].moves;
-				int pre = 0;
+				int pre = 0, default_value = 0;
+				if (data[i].ints[1] <= 3)
+					default_value = ac.mamodel.parts[data[i].ints[0]][data[i].ints[1]];
+				else if (data[i].ints[1] >= 50 || (data[i].ints[1] >= 8 && data[i].ints[1] <= 12))
+					default_value = 1000;
+
 				if (data[i].ints[2] == 1)//Needed to not ruin loops
-					while (pre < movs.length && unecessarymove(data[i], pre) && (movs[pre][2] == 1 || pre == movs.length - 1 || movs[pre][1] == movs[pre + 1][1] || movs[pre][0] == movs[pre + 1][0] - 1)) {
+					while (data[i].n > 0 && movs[pre][1] == default_value && ((movs[pre][2] == 1 && movs[pre][3] == 0) || data[i].n == 1 || movs[pre][1] == movs[pre+1][1])) {
 						movs[pre] = null;
 						data[i].n--;
 						pre++;
 					}
-				for (int j = pre + 1; j < movs.length; j++)
-					if (movs[pre][1] == movs[j][1] && (j < movs.length - 1 || data[i].ints[2] == 1) && ((j < movs.length - 1 && movs[j + 1][1] == movs[j][1]) || (movs[pre][2] == 1 && movs[j][2] == 1))) {
+				for (int j = pre + 1; j < movs.length - 1; j++)
+					if (movs[pre][1] == movs[j][1] && ((movs[j][2] == 1 && movs[j][3] == 0) || movs[j][1] == movs[j+1][1])) {
 						movs[j] = null;
 						data[i].n--;
-					} else if (j < movs.length - 1 && movs[pre][1] == movs[j][1] && movs[j][0] == movs[j + 1][0] - 1) {
+					} else if (movs[pre][1] == movs[j][1] && movs[j][0] >= movs[j + 1][0] - 1) {
 						movs[pre][2] = 1;
 						movs[j] = null;
 						data[i].n--;
 					} else
 						pre = j;
-				if (data[i].n < movs.length) {
+				if (data[i].n > 1 && data[i].ints[2] == 1 && movs[movs.length-1][1] == movs[pre][1]) {
+					movs[movs.length-1] = null;
+					data[i].n--;
+				} else
+					pre = movs.length-1;
+				if (data[i].n <= 1) {
+					if (data[i].n == 0 || (data[i].ints[2] != 1 && movs[pre][0] > 0) || movs[pre][1] == default_value) {
+						data[i] = null;
+						anim.n--;
+						continue;
+					} else
+						data[i].ints[2] = 1;
+				}
+				if (data[i] != null && data[i].n < movs.length) {
 					data[i].moves = new int[data[i].n][];
 					pre = 0;
 					for (int[] mov : movs)
 						if (mov != null)
 							data[i].moves[pre++] = mov;
-				}
-				if (data[i].n == 1) {
-					if (unecessarymove(data[i], 0)) {
-						data[i] = null;
-						anim.n--;
-					} else if (data[i].moves[0][0] == 0 && data[i].ints[2] == -1)
-						data[i].ints[2] = 1;
-				} else if (data[i].moves.length == 0) {
-					data[i] = null;
-					anim.n--;
-				}
-				if (data[i] != null)
 					data[i].validate();
+				}
 			}
 			anim.parts = new Part[anim.n];
 			int ind = 0;
@@ -450,7 +510,9 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 				return;
 			boolean b = maet.getSelectedRows().length > 0;
 			jstfs.setEnabled(b);
+			jstvs.setEnabled(b);
 			jtrim.setEnabled(b);
+			merge.setEnabled(maet.getSelectedRows().length >= 2);
 		});
 
 		jstfs.setLnr(theJ -> {
@@ -462,8 +524,13 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 			if (add != 0 && Opts.conf((add > 0 ? "Add " : "Substract ") + Math.abs(add) + "f startup time for the selected parts?")) {
 				change(true);
 				for (int row : rows) {
-					for (int i = 0; i < anim.parts[row].n; i++)
-						anim.parts[row].moves[i][0] += add;
+					int[] prows = mpet.getSelectedRows();
+					if (prows.length == 0)
+						for (int i = 0; i < anim.parts[row].n; i++)
+							anim.parts[row].moves[i][0] += add;
+					else
+						for (int prow : prows)
+							anim.parts[row].moves[prow][0] += add;
 					anim.parts[row].validate();
 				}
 				anim.validate();
@@ -473,6 +540,32 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 				change(false);
 			}
         });
+
+		jstvs.setLnr(theJ -> {
+			MaAnim anim = ac.getMaAnim(animID);
+			if (anim == null || theJ.isTemporary() || isAdj() || jstvs.getText().isEmpty())
+				return;
+			int add = CommonStatic.parseIntN(jstvs.getText());
+			int[] rows = maet.getSelectedRows();
+			if (add != 0 && Opts.conf((add > 0 ? "Add " : "Substract ") + Math.abs(add) + "to selected parts' values?")) {
+				change(true);
+				for (int row : rows) {
+					int[] prows = mpet.getSelectedRows();
+					if (prows.length == 0)
+						for (int i = 0; i < anim.parts[row].n; i++)
+							anim.parts[row].moves[i][1] += add;
+					else
+						for (int prow : prows)
+							anim.parts[row].moves[prow][1] += add;
+					anim.parts[row].validate();
+				}
+				anim.validate();
+				maet.anim.unSave("Maanim " + (add > 0 ? "Add " : "Substract ") + Math.abs(add) + "to values of " + Arrays.toString(rows));
+				callBack(null);
+				setJTLs();
+				change(false);
+			}
+		});
 
 		jtrim.setLnr(theJ -> {
 			MaAnim anim = ac.getMaAnim(animID);
@@ -517,12 +610,6 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
         });
 	}
 
-	private boolean unecessarymove(Part data, int part) {
-		return (data.ints[1] <= 3 && data.moves[part][1] == ac.mamodel.parts[data.ints[0]][data.ints[1]]) ||
-				(data.moves[part][1] == 0 && ((data.ints[1] >= 4 && data.ints[1] <= 7) || data.ints[1] == 11 || data.ints[1] >= 13)) ||
-				(data.moves[part][1] == 1000 && ((data.ints[1] >= 8 && data.ints[1] <= 10) || data.ints[1] == 12 || data.ints[1] >= 50));
-	}
-
 	private void eupdate() {
 		ab.update();
 		if (ab.getEntity() != null) {
@@ -550,12 +637,17 @@ public class AdvAnimEditPage extends DefaultPage implements TreeCont {
 		add(infm);
 		add(revt);
 		add(polish);
+		//add(merge);
 		add(addfs);
 		add(jstfs);
+		add(addvs);
+		add(jstvs);
 		add(trimfs);
 		add(jtrim);
 		jstfs.setEnabled(false);
+		jstvs.setEnabled(false);
 		jtrim.setEnabled(false);
+		merge.setEnabled(false);
 		setA();
 
 		addListeners$0();

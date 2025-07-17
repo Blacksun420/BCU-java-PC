@@ -108,7 +108,7 @@ public class Interpret extends Data {
 			{ 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 } };
 
 	//Filters abilities and procs that are available for enemies. Also gives better organization to the UI
-	public static final byte[] EABIIND = { ABI_ONLY, ABI_SNIPERI, ABI_TIMEI, ABI_GHOST, ABI_GLASS, ABI_THEMEI };
+	public static final byte[] EABIIND = { ABI_ONLY, ABI_METALIC, ABI_SNIPERI, ABI_TIMEI, ABI_GHOST, ABI_GLASS, ABI_THEMEI };
 	public static final byte[] EPROCIND = { Data.P_METALKILL, Data.P_DMGINC, Data.P_DEFINC, Data.P_KB, Data.P_STOP, Data.P_SLOW, Data.P_WEAK, Data.P_LETHARGY, Data.P_BOUNTY, Data.P_CRIT, Data.P_WAVE,
 			Data.P_WORKERLV, Data.P_CDSETTER, Data.P_MINIWAVE, Data.P_VOLC, Data.P_MINIVOLC, Data.P_DEMONVOLC, Data.P_BLAST, Data.P_BARRIER, Data.P_DEMONSHIELD, Data.P_BREAK, Data.P_SHIELDBREAK,
 			Data.P_WARP, Data.P_CURSE, Data.P_SEAL, Data.P_BLESS, Data.P_SATK, Data.P_POIATK, Data.P_ATKBASE, Data.P_SUMMON, Data.P_MOVEWAVE, Data.P_SNIPER, Data.P_BOSS, Data.P_TIME, Data.P_THEME,

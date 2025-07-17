@@ -87,6 +87,7 @@ public class MaAnimEditTable extends AnimTable<Part> {
 		}
 		ma.parts = l.toArray(new Part[0]);
 		ma.n = ma.parts.length;
+		ma.validate();
 		anim.unSave("maanim paste part");
 		page.callBack(new int[] { 0, dst, dst + data.length - 1 });
 		return true;

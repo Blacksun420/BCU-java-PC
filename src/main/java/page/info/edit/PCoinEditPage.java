@@ -60,6 +60,8 @@ public class PCoinEditPage extends DefaultPage {
     }
 
     protected int getPTableWidth() {
+        if (pCoinEdits.isEmpty())
+            return 0;
         return Math.max(400, 2000 / pCoinEdits.size());
     }
 

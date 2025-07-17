@@ -164,10 +164,8 @@ public interface BattleBox {
 			if(CommonStatic.getConfig().twoRow)
 				midY += (h * 0.75f / 10.0f);
 
-			if(CommonStatic.getConfig().drawBGEffect && sb.bgEffect != null) {
+			if(CommonStatic.getConfig().drawBGEffect && sb.bgEffect != null)
 				sb.bgEffect.preDraw(g, setP(sb.pos, y), bf.sb.siz, midY);
-			}
-
 			drawCastle(g);
 			if(sb.cannon == sb.maxCannon && sb.canon.id == 0) {
 				drawCannonRange(g);
@@ -176,9 +174,8 @@ public interface BattleBox {
 			drawEntity(g);
 			drawCastleHealthIndicator(g);
 
-			if(CommonStatic.getConfig().drawBGEffect && sb.bgEffect != null) {
+			if(CommonStatic.getConfig().drawBGEffect && sb.bgEffect != null)
 				sb.bgEffect.postDraw(g, setP(sb.pos, y), bf.sb.siz, midY);
-			}
 
 			if(sb.bg.overlay != null) {
 				drawBGOverlay(g, midY);

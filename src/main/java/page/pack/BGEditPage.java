@@ -121,7 +121,7 @@ public class BGEditPage extends DefaultPage {
 				new Exporter((BufferedImage) bgr.img.getImg().bimg(), Exporter.EXP_IMG);
 		});
 
-		copy.addActionListener(arg0 -> changePanel(bvp = new BGViewPage(getThis(), null)));
+		copy.addActionListener(arg0 -> changePanel(bvp = new BGViewPage(getThis(), pack.getSID())));
 
 		jlst.addListSelectionListener(arg0 -> {
 			if (changing || jlst.getValueIsAdjusting())
@@ -322,7 +322,7 @@ public class BGEditPage extends DefaultPage {
 			if(bgr.bgEffect == null)
 				eff.setSelectedIndex(0);
 			else
-				eff.setSelectedItem(bgr.bgEffect.get());
+				eff.setSelectedItem(bgr.getEffect());
 		} else {
 			top.setEnabled(false);
 			for (int i = 0; i < 4; i++)

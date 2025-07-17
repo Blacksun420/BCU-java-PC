@@ -101,7 +101,7 @@ public interface ViewBox {
 				ms = h / minSiz;
 
 				if (bg.bgEffect != null)
-					bgEffect = bg.bgEffect.get();
+					bgEffect = bg.getEffect();
 			}
 			bgi = false;
 		}

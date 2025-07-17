@@ -191,7 +191,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 				if (ind == -1)
 					continue;
 				Part pt = maet.ma.parts[ind];
-				int idx = (int)(pt.ints[2] <= 0 ? pt.frame-pt.off : pt.frame % (ab.getEntity().len() / pt.ints[1]));
+				int idx = (int)(pt.frame-pt.off);
 				if (pt.moves.length == 0 || pt.moves[0][0] > idx || pt.moves[pt.n - 1][0] < idx) {
 					currow = pt.moves.length == 0 || pt.moves[0][0] > idx ? 0 : pt.n;
 					addLine(pt, idx);
@@ -274,7 +274,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 				if (r == -1)
 					continue;
 				Part pt = maet.ma.parts[r];
-				int idx = (int)(pt.ints[2] <= 0 ? pt.frame-pt.off : pt.frame % (ab.getEntity().len() / pt.ints[1]));
+				int idx = (int)(pt.frame-pt.off);
 				if (pt.moves.length == 0 || pt.moves[0][0] > idx || pt.moves[pt.n - 1][0] < idx) {
 					currow = pt.moves.length == 0 || pt.moves[0][0] > idx ? 0 : pt.n;
 					addLine(pt, idx);
@@ -634,7 +634,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		});
 
 		addl.addActionListener(arg0 -> {
-			addLine(mpet.part, (int)(mpet.part.ints[2] <= 0 ? mpet.part.frame-mpet.part.off : mpet.part.frame % (ab.getEntity().len() / mpet.part.ints[1])));
+			addLine(mpet.part, (int)(mpet.part.frame-mpet.part.off));
 			maet.anim.unSave("maanim add line");
 		});
 

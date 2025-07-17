@@ -172,7 +172,7 @@ public abstract class CharacterInfoTable extends Page {
 
         for (int i = 0; i < atks.length; i++) {
             MaskAtk matk = i < atkData.length ? atkData[i] : atkList.get(i - atkData.length);
-            atks[i][0].setText(matk.getName().toLowerCase().startsWith("combo") ? " [combo]" : get(MainLocale.INFO, "atk") + (i < atkData.length ? "" : " [" + matk.getName() + "]"));
+            atks[i][0].setText(matk.getName().startsWith("combo") ? " [combo]" : get(MainLocale.INFO, "atk") + (i < atkData.length ? "" : " [" + matk.getName() + "]"));
             atks[i][0].setIcon(UtilPC.getIcon(2, matk.isRange() ? Data.ATK_AREA : Data.ATK_SINGLE));
             atks[i][2].setText(MainLocale.INFO, "preaa");
             atks[i][3].setText(MainBCU.convertTime(matk.getPre()));
