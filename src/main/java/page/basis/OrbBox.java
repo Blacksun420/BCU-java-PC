@@ -37,17 +37,18 @@ public class OrbBox extends Canvas {
 
 		BufferedImage img = (BufferedImage) createImage((int) a, (int) a);
 		FG2D f = new FG2D(img.getGraphics());
-		paintOrb(f, orbs, 0, 0, a);
+		paintOrb(f, orbs, 0, 0, a, false);
 
 		g.drawImage(img, (int) ((w - a) / 2), (int) ((h - a) / 2), null);
 		g.dispose();
 	}
 
-	public static void paintOrb(FakeGraphics f, int[] orbs, float x, float y, float a) {
-		f.drawImage(CommonStatic.getBCAssets().TRAITS[0][OrbInfo.reverse(orbs[1])], x, y, a, a);
+	public static void paintOrb(FakeGraphics f, int[] orbs, float x, float y, float a, boolean small) {
+		byte i = (byte)(small ? 1 : 0);
+		f.drawImage(CommonStatic.getBCAssets().TRAITS[i][OrbInfo.reverse(orbs[1])], x, y, a, a);
 		f.setComposite(FakeGraphics.TRANS, 204, 0);
-		f.drawImage(CommonStatic.getBCAssets().TYPES[0][orbs[0]], x, y, a, a);
+		f.drawImage(CommonStatic.getBCAssets().TYPES[i][orbs[0]], x, y, a, a);
 		f.setComposite(FakeGraphics.DEF, 0, 0);
-		f.drawImage(CommonStatic.getBCAssets().GRADES[0][orbs[2]], x, y, a, a);
+		f.drawImage(CommonStatic.getBCAssets().GRADES[orbs[2]], x, y, a, a);
 	}
 }

@@ -149,10 +149,10 @@ public class LimitTable extends Page {
 	@Override
 	protected void resized(int x, int y) {
 		int w = 1400 / 8;
-		set(jcmin, x, y, 0, 50, w, 50);
-		set(jcmax, x, y, w, 50, w, 50);
-		set(jnum, x, y, w * 2, 50, w, 50);
-		set(one, x, y, w * 3, 50, w, 50);
+		set(jcmin, x, y, 0, 0, w, 50);
+		set(jcmax, x, y, w, 0, w, 50);
+		set(jnum, x, y, w * 2, 0, w, 50);
+		set(one, x, y, w * 3, 0, w, 50);
 		set(cgb, x, y, w * 4, 0, w, 50);
 		set(jcg, x, y, w * 5, 0, w, 50);
 		set(lrb, x, y, w * 6, 0, w, 50);
@@ -174,7 +174,7 @@ public class LimitTable extends Page {
 		set(jcespd, x, y, w*6, 100, w*2, 50);
 
 		set(jsco, x, y, 0, 150, w * 6, 100);
-		set(banc, x, y, w * 7, 150, w * 2, 100);
+		set(banc, x, y, w * 6, 150, w * 2, 100);
 
 		w = 1400 / (trar.length + 1);
 
@@ -226,8 +226,6 @@ public class LimitTable extends Page {
 			jcuspd.setText(MainLocale.getLoc(MainLocale.INFO, "ht25") + ": ");
 			jcespd.setText(MainLocale.getLoc(MainLocale.INFO, "ht26") + ": ");
 
-			datot.setText("");
-			dctot.setText("");
 			jlco.repaint();
 			abler(false);
 			return;

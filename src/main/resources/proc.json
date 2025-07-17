@@ -2101,7 +2101,7 @@
             }
         }
     },
-    "REFUND": {
+    "MONEYBACK": {
         "abbr_name": "Refund",
         "full_name": "Refund",
         "tooltip": null,
@@ -2118,6 +2118,26 @@
             "count": {
                 "name": "Deploy count",
                 "tooltip": "Amount of deploys needed for refund to trigger"
+            }
+        }
+    },
+    "CANONCHARGE": {
+        "abbr_name": "C. Charge",
+        "full_name": "Cannon Charge",
+        "tooltip": null,
+        "format": "[(count>1){Every (count)th deployed[(prob<100){ has}] }] [(prob<100){(prob)% chance to charge}(prob==100){charges}] (mult)% of the cat cannon when killed",
+        "class": {
+            "prob": {
+                "name": "chance",
+                "tooltip": null
+            },
+            "mult": {
+                "name": "multiplier",
+                "tooltip": "% of cannon to be recharged"
+            },
+            "count": {
+                "name": "Deploy count",
+                "tooltip": "Amount of deploys needed for cannon charge to trigger"
             }
         }
     },
