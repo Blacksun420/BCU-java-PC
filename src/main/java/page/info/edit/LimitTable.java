@@ -293,8 +293,8 @@ public class LimitTable extends Page {
 		jcmin.setText(limits[3] + ": " + lim.min);
 		jnum.setText(limits[1] + ": " + lim.num);
 		jccan.setText(MainLocale.getLoc(MainLocale.INFO, "ht24") + ": " + stli.cannonMultiplier + "%");
-		jcuspd.setText(MainLocale.getLoc(MainLocale.INFO, "ht25") + ": " + stli.unitSpeedLimit);
-		jcespd.setText(MainLocale.getLoc(MainLocale.INFO, "ht26") + ": " + stli.enemySpeedLimit);
+		jcuspd.setText(MainLocale.getLoc(MainLocale.INFO, "ht25") + ": " + stli.unitSpeedOverride);
+		jcespd.setText(MainLocale.getLoc(MainLocale.INFO, "ht26") + ": " + stli.enemySpeedOverride);
 		star.setText(l.starString());//l.star == -1 ? "all stars" : ((l.star + 1) + " star"));
 		one.setText(MainLocale.getLoc(MainLocale.INFO, "row" + lim.line));
 		jcg.setText(lim.group + (lim.group != null && lim.group.type % 2 != 0 ? ": " + lim.fa : ""));
@@ -475,9 +475,9 @@ public class LimitTable extends Page {
 		else if (jtf == jccan)
 			lim.stageLimit.cannonMultiplier = Math.max(val, 0);
 		else if (jtf == jcuspd)
-			lim.stageLimit.unitSpeedLimit = Math.max(val, -1);
+			lim.stageLimit.unitSpeedOverride = Math.max(val, -1);
 		else if (jtf == jcespd)
-			lim.stageLimit.enemySpeedLimit = Math.max(val, -1);
+			lim.stageLimit.enemySpeedOverride = Math.max(val, -1);
 		for (int i = 0; i < bcost.length; i++) {
 			if (jtf == bcost[i]) {
 				lim.stageLimit.costMultiplier[i] = Math.max(0, val);

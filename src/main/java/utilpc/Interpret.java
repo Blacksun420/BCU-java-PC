@@ -1114,10 +1114,10 @@ public class Interpret extends Data {
 			ans.append("<br> Unit Spawn Cap: ").append(sl.maxUnitSpawn);
 		if (sl.cannonMultiplier > 0)
 			ans.append("<br> Cat Cannon Power: ").append(sl.cannonMultiplier);
-		if (sl.unitSpeedLimit > 0)
-			ans.append("<br> Unit Speed Limit: ").append(sl.unitSpeedLimit);
-		if (sl.enemySpeedLimit > 0)
-			ans.append("<br> Enemy Speed Limit: ").append(sl.enemySpeedLimit);
+		if (sl.unitSpeedOverride > 0)
+			ans.append("<br> Unit Speed Limit: ").append(sl.unitSpeedOverride);
+		if (sl.enemySpeedOverride > 0)
+			ans.append("<br> Enemy Speed Limit: ").append(sl.enemySpeedOverride);
 		if (!sl.defMoney() || !sl.defCD() || !sl.defDeploy() || !sl.defDupe()) {
 			ans.append("<br><table><tr><th>")
 					.append(MainLocale.getLoc(MainLocale.INFO, "ht10")).append("</th><th>")
