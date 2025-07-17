@@ -1,7 +1,7 @@
 package page.basis;
 
 import common.CommonStatic;
-import common.battle.data.Orb;
+import common.battle.data.OrbInfo;
 import common.system.fake.FakeGraphics;
 import utilpc.awt.FG2D;
 
@@ -44,10 +44,10 @@ public class OrbBox extends Canvas {
 	}
 
 	public static void paintOrb(FakeGraphics f, int[] orbs, float x, float y, float a) {
-		f.drawImage(CommonStatic.getBCAssets().TRAITS[Orb.reverse(orbs[1])], x, y, a, a);
+		f.drawImage(CommonStatic.getBCAssets().TRAITS[0][OrbInfo.reverse(orbs[1])], x, y, a, a);
 		f.setComposite(FakeGraphics.TRANS, 204, 0);
-		f.drawImage(CommonStatic.getBCAssets().TYPES[orbs[0]], x, y, a, a);
+		f.drawImage(CommonStatic.getBCAssets().TYPES[0][orbs[0]], x, y, a, a);
 		f.setComposite(FakeGraphics.DEF, 0, 0);
-		f.drawImage(CommonStatic.getBCAssets().GRADES[orbs[2]], x, y, a, a);
+		f.drawImage(CommonStatic.getBCAssets().GRADES[0][orbs[2]], x, y, a, a);
 	}
 }

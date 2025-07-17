@@ -58,8 +58,15 @@ public class ResourcePage extends DefaultPage {
 	private void addListeners() {
 		rept.addActionListener(arg0 -> {
 			File f = new Exporter(Exporter.EXP_RES).file;
-			if (f != null)
-				filemove(f.getPath() + "/", sel);
+			if (f != null) {
+				String name = f.getName();
+				if (sel.getName().contains(".")) {
+					String suffix = "." + sel.getName().split("\\.")[1];
+					if (!name.endsWith(suffix))
+						name += suffix;
+				}
+				filemove(f.getParentFile() + "/", sel, name);
+			}
 		});
 
 		jls.addTreeSelectionListener(arg0 -> {
@@ -105,12 +112,12 @@ public class ResourcePage extends DefaultPage {
 		}
 	}
 
-	private void filemove(String dst, VFile src) {
+	private void filemove(String dst, VFile src, String name) {
 		if (src.list() != null)
 			for (VFile c : src.list())
-				filemove(dst + src.getName() + "/", c);
+				filemove(dst + src.getName() + "/", c, c.getName());
 		else
-			BCUWriter.writeBytes(src.getData().getBytes(), dst + src.getName());
+			BCUWriter.writeBytes(src.getData().getBytes(), dst + name);
 	}
 
 	private void ini() {

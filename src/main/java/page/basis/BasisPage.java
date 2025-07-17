@@ -5,7 +5,7 @@ import common.battle.BasisLU;
 import common.battle.BasisSet;
 import common.battle.LineUp;
 import common.battle.data.MaskUnit;
-import common.battle.data.Orb;
+import common.battle.data.OrbInfo;
 import common.pack.UserProfile;
 import common.system.Node;
 import common.util.Data;

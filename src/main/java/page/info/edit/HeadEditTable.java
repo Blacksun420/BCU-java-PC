@@ -46,6 +46,7 @@ class HeadEditTable extends Page {
 	private final JTG dojo = new JTG(MainLocale.PAGE, "dojo");
 	private final JTG bbrr = new JTG(MainLocale.INFO, "bossguard");
 	private final LimitTable lt;
+	private final JScrollPane jt;
 
 	private Stage sta;
 	private final UserPack pac;
@@ -60,6 +61,7 @@ class HeadEditTable extends Page {
 		super(p);
 		pac = pack;
 		lt = new LimitTable(p, this, pac);
+		jt = new JScrollPane(lt);
 		ini();
 	}
 
@@ -145,8 +147,12 @@ class HeadEditTable extends Page {
 		set(jres, x, y, w * 5, 150, w, 50);
 		set(ures, x, y, w * 6, 150, w, 50);
 		set(jures, x, y, w * 7, 150, w, 50);
-		set(lt, x, y, 0, 200, 1400, 100);
-		lt.componentResized(x, y);
+		set(jt, x, y, 0, 200, 1400, 100);
+		lt.resized(x, y);
+		lt.setPreferredSize(size(x, y, lt.getPWidth(), lt.getPHeight()).toDimension());
+		jt.getHorizontalScrollBar().setUnitIncrement(25);
+		jt.getVerticalScrollBar().setUnitIncrement(25);
+		jt.revalidate();
 	}
 
 	protected void setData(Stage st) {
@@ -278,7 +284,8 @@ class HeadEditTable extends Page {
 		set(jm0);
 		set(jmh);
 		set(jm1);
-		add(lt);
+		add(jt);
+		assignSubPage(lt);
 		set(res);
 		set(jres);
 		set(ures);

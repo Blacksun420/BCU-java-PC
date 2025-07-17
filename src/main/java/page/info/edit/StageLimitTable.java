@@ -26,6 +26,7 @@ public class StageLimitTable extends Page {
     private final JBTN reml = new JBTN(0, "remlim");
     private final JTF lname = new JTF();
     private final LimitTable lt;
+    private final JScrollPane jt;
 
     private final JBTN prog = new JBTN(MainLocale.PAGE, "csav");
     private final JTF jnam = new JTF();
@@ -38,6 +39,7 @@ public class StageLimitTable extends Page {
         super(p);
         pac = pack;
         lt = new LimitTable(p, this, pack);
+        jt = new JScrollPane(lt);
         ini();
     }
 
@@ -50,19 +52,24 @@ public class StageLimitTable extends Page {
     protected void resized(int x, int y) {
         int w = 1400 / 8;
         if (jll.isSelectionEmpty()) {
-            set(lt, x, y, 0, 0, 0, 0);
+            set(jt, x, y, 0, 0, 0, 0);
 
             set(jspl, x, y, 0, 50, w * 2, 200);
             set(addl, x, y, 0, 250, w, 50);
             set(reml, x, y, w, 250, w, 50);
             set(lname, x, y, 0, 0, 0, 0);
         } else {
-            set(lt, x, y, 0, 200, 1400, 100);
+            set(jt, x, y, 0, 150, 1400, 150);
+            lt.resized(x, y);
+            lt.setPreferredSize(size(x, y, lt.getPWidth(), lt.getPHeight()).toDimension());
+            jt.getHorizontalScrollBar().setUnitIncrement(25);
+            jt.getVerticalScrollBar().setUnitIncrement(25);
+            jt.revalidate();
 
-            set(jspl, x, y, 0, 50, w * 2, 150);
+            set(jspl, x, y, 0, 50, w * 2, 100);
             set(addl, x, y, w * 2, 100, w, 50);
             set(reml, x, y, w * 3, 100, w, 50);
-            set(lname, x, y, w * 2, 150, w * 2, 50);
+            set(lname, x, y, w * 4, 50, w * 2, 50);
         }
         set(jnam, x, y, 0, 0, w * 2, 50);
         for (int i = 0; i < 4; i++)
@@ -89,11 +96,12 @@ public class StageLimitTable extends Page {
         add(jspl);
         add(addl);
         add(reml);
-        add(lt);
+        add(jt);
         reg(lname);
         lname.setHintText(get(MainLocale.PAGE,"mampm10"));
 
         add(prog);
+        assignSubPage(lt);
         addListeners();
     }
 
@@ -217,5 +225,13 @@ public class StageLimitTable extends Page {
     @Override
     public JButton getBackButton() {
         return null;
+    }
+
+    public int getPWidth() {
+        return (int) (1400 / 7.5);
+    }
+
+    public int getPHeight() {
+        return 600;
     }
 }
