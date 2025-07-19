@@ -461,7 +461,7 @@ public interface BattleBox {
 					if(f == null)
 						continue;
 
-					int pri = sb.elu.price[i][j];
+					int pri = sb.rem_spawns == 0 || sb.cantDeploy(f.unit().getRarity(), sb.b.lu.efs[i][j].getWill()) ? -1 : sb.elu.price[i][j];
 					if (pri == -1 || pri == -2)
 						g.colRect(x, y, iw, ih, 255 / -pri, 0, 0, 100 * -pri);
 					else if (sb.elu.readySpirit(i,j)) {
@@ -503,6 +503,9 @@ public interface BattleBox {
 						g.colRect((x + dw + 2f), (y + ih - dh * 2) + 2f, (int)((cd * cw) - (cd * 4)), dh - 4, 0, 255, 255, -1);
 					} else if (pri != -1 && pri != -2 && !(sb.elu.validSpirit(i,j) && !sb.elu.readySpirit(i,j)))
 						Res.getCost(pri / 100, !b, setSym(g, hr, x + iw * 1.05f, y + ih * 1.05f, 3));
+
+					if (sb.est.lim.stageLimit != null && sb.est.lim.stageLimit.rarityDeployLimit[f.unit().getRarity()] != -1)
+						Res.getRarity(f.unit().getRarity(), setSym(g, hr, x + iw * 1.1f, y + ih / 4f, 3));
 				}
 			}
 		}
@@ -551,7 +554,7 @@ public interface BattleBox {
 				g.drawImage(img, x - (imw - iw) / 2f, y - (imh - ih) / 2f, imw, imh);
 				if (f == null)
 					continue;
-				int pri = sb.elu.price[index][i];
+				int pri = sb.rem_spawns == 0 || sb.cantDeploy(f.unit().getRarity(), sb.b.lu.efs[index][i].getWill()) ? -1 : sb.elu.price[index][i];
 				if (pri == -1 || pri == -2)
 					g.colRect(x, y, iw, ih, 255 / -pri, 0, 0, 100 * -pri);
 				else if (sb.elu.readySpirit(index,i)) {
@@ -593,6 +596,9 @@ public interface BattleBox {
 						g.colRect(x + dw + 2f, (y + ih - dh * 2) + 2f, (int)((cd * cw) - (cd * 4)), dh - 4, 0, 255, 255, -1);
 					} else if (pri != -1 && pri != -2 && !(sb.elu.validSpirit(index,i) && !sb.elu.readySpirit(index,i)))
 						Res.getCost(pri / 100, !b, setSym(g, hr, x + iw, y + ih, 3));
+
+					if (sb.est.lim.stageLimit != null && sb.est.lim.stageLimit.rarityDeployLimit[f.unit().getRarity()] != -1)
+						Res.getRarity(f.unit().getRarity(), setSym(g, hr, x + iw * 1.1f, y + ih / 4f, 3));
 				}
 			}
 		}
@@ -1028,6 +1034,9 @@ public interface BattleBox {
 					drawTime(g, snam.img.getHeight() * 0.9f);
 			} else if(bf.sb.st.timeLimit != 0)
 				drawTime(g, -(bf.endFrames * box.getHeight() * 0.01f));
+
+			if (sb.rem_spawns >= 0)
+				drawMaxSpawn(g);
 		}
 
 		private void drawTime(FakeGraphics g, float nameheight) {
@@ -1095,6 +1104,27 @@ public interface BattleBox {
 				}
 			}
 
+			P.delete(p);
+		}
+
+		protected synchronized void drawMaxSpawn(FakeGraphics gra) {
+			P p = P.newP(box.getWidth() / 2.1f, box.getHeight() * 0.01f);
+			float ratio = box.getHeight() * 0.1f / aux.timer[0].getImg().getHeight() * 0.8f;
+
+			FakeImage current = aux.maxcat[10].getImg();
+			FakeImage descriptor = aux.maxcat[11].getImg();
+			String maxSpawns = String.valueOf(sb.rem_spawns);
+
+			p.x -= maxSpawns.length() * aux.maxcat[0].getImg().getWidth() * ratio;
+
+			gra.drawImage(current, p.x, p.y + 10f * ratio, current.getWidth() * ratio, current.getHeight() * ratio);
+			int nWidth = 0;
+			for (int i = 0; i < maxSpawns.length(); i++) {
+				FakeImage n = aux.maxcat[maxSpawns.charAt(i) - '0'].getImg();
+				gra.drawImage(n, p.x + (4f + current.getWidth() + n.getWidth() * i) * ratio, p.y, n.getWidth() * ratio, n.getHeight() * ratio);
+				nWidth += n.getWidth();
+			}
+			gra.drawImage(descriptor, p.x + (7f + current.getWidth() + nWidth) * ratio, p.y + 10f * ratio, descriptor.getWidth() * ratio, descriptor.getHeight() * ratio);
 			P.delete(p);
 		}
 

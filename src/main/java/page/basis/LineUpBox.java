@@ -76,17 +76,18 @@ public class LineUpBox extends Canvas {
 				if (sf == null || sf != f || relative == null) {
 					IForm ef = i != 2 ? lu.efs[i][j] : IForm.newIns(f, lu.getLv(f));
 					byte unuse = unusable(f, ef, i);
+					int pri = lim.stageLimit == null || lim.stageLimit.globalCost == -1 ? (int)ef.getPrice(price) : lim.stageLimit.globalCost;
 					if (unuse != 0) {
 						gra.colRect(120 * j, 100 * i, img.getImg().getWidth(), img.getImg().getHeight(), 255 / unuse, 0, 0, 100 * unuse);
 						Res.getCost(-1, false,
 							new SymCoord(gra, 1, 120 * j, 100 * i + img.getImg().getHeight(), 2));
 					} else if (swap) {
-						Res.getCost((int) ef.getPrice(price), true,
+						Res.getCost(pri, true,
 							new SymCoord(gra, 0.8f, 120 * j, 100 * i + (img.getImg().getHeight() / 3.5f), 2));
 						Res.getLv(lu.getLv(f).getLv() + lu.getLv(f).getPlusLv(),
 							new SymCoord(gra, 1, 120 * j, 100 * i + img.getImg().getHeight(), 2));
 					} else {
-						Res.getCost((int) ef.getPrice(price), true,
+						Res.getCost(pri, true,
 							new SymCoord(gra, 1, 120 * j, 100 * i + img.getImg().getHeight(), 2));
 						Res.getLv(lu.getLv(f).getLv() + lu.getLv(f).getPlusLv(),
 							new SymCoord(gra, 0.8f, 120 * j, 100 * i + (img.getImg().getHeight() / 3.5f), 2));
@@ -104,16 +105,17 @@ public class LineUpBox extends Canvas {
 			gra.drawImage(uni, p.x, p.y);
 			IForm ef = IForm.newIns(sf, lu.getLv(sf));
 			byte unuse = unusable(sf, ef, (byte)(getPos(sf)/5));
+			int pri = lim.stageLimit == null || lim.stageLimit.globalCost == -1 ? (int)ef.getPrice(price) : lim.stageLimit.globalCost;
 			if (unuse != 0) {
 				gra.colRect(p.x, p.y, uni.getWidth(), uni.getHeight(), 255 / unuse, 0, 0, 100 * unuse);
 				Res.getCost(-1, true, new SymCoord(gra, 1, p.x, p.y + uni.getHeight(), 2));
 			} else if (swap) {
-				Res.getCost((int) ef.getPrice(price), true,
+				Res.getCost(pri, true,
 					new SymCoord(gra, 0.8f, p.x, p.y + (uni.getHeight() / 3.5f), 2));
 				Res.getLv(lu.getLv(sf).getLv() + lu.getLv(sf).getPlusLv(),
 					new SymCoord(gra, 1, p.x, p.y + uni.getHeight(), 2));
 			} else {
-				Res.getCost((int) ef.getPrice(price), true,
+				Res.getCost(pri, true,
 					new SymCoord(gra, 1, p.x, p.y + uni.getHeight(), 2));
 				Res.getLv(lu.getLv(sf).getLv() + lu.getLv(sf).getPlusLv(),
 					new SymCoord(gra, 0.8f, p.x, p.y + (uni.getHeight() / 3.5f), 2));
