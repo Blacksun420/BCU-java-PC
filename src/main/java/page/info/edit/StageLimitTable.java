@@ -59,7 +59,7 @@ public class StageLimitTable extends Page {
             set(reml, x, y, w, 250, w, 50);
             set(lname, x, y, 0, 0, 0, 0);
         } else {
-            set(jt, x, y, 0, 150, 1400, 150);
+            set(jt, x, y, 0, 150, 1400, 200);
             lt.resized(x, y);
             lt.setPreferredSize(size(x, y, lt.getPWidth(), lt.getPHeight()).toDimension());
             jt.getHorizontalScrollBar().setUnitIncrement(25);

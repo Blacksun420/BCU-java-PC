@@ -128,11 +128,11 @@ public class StageEditPage extends DefaultPage {
 	protected synchronized void resized(int x, int y) {
 		super.resized(x, y);
 		if (data.isSelected()) {
-			set(sinf, x, y, 900, 50, 1400, 300);
+			set(sinf, x, y, 900, 50, 1400, 350);
 			set(hinf, x, y, 900, 50, 0, 0);
 		} else {
 			set(sinf, x, y, 900, 50, 0, 0);
-			set(hinf, x, y, 900, 50, 1400, 300);
+			set(hinf, x, y, 900, 50, 1400, 350);
 		}
 		int mw = (int)(1400 / 8 * 1.5f);
 		set(addl, x, y, 900, 400, mw, 50);

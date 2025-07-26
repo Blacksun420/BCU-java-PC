@@ -25,6 +25,12 @@ public class Exporter extends JFileChooser {
 	public File file;
 
 	public Exporter(BufferedImage bimg, int t) {
+		this(bimg, t, "");
+	}
+
+	public Exporter(BufferedImage bimg, int t, String name) {
+		if (!name.isEmpty())
+			setSelectedFile(new File(name + ".png"));
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("PNG Images", "png");
 		setCurrentDirectory(curs[t]);
 		setFileFilter(filter);

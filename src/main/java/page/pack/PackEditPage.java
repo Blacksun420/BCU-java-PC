@@ -171,6 +171,12 @@ public class PackEditPage extends DefaultPage {
 	}
 
 	@Override
+	public void callBack(Object o) {
+		if (o instanceof UserPack)
+			vpack.add((UserPack)o);
+	}
+
+	@Override
 	protected void renew() {
 		if (efp != null && efp.getSelected() != null)
 			addCE(((Enemy)efp.getSelected()).anim);

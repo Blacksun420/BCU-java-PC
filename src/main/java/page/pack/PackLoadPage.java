@@ -167,6 +167,9 @@ public class PackLoadPage extends DefaultPage {
                 });
 
                 UserProfile.loadPacks(ps);
+                for (UserPack pp : ps)
+                    if (pp.loaded)
+                        getFront().callBack(pp);
                 getBackButton().setEnabled(true);
 
                 llp.clearSelection();

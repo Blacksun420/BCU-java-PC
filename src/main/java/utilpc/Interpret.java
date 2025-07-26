@@ -1109,11 +1109,11 @@ public class Interpret extends Data {
 			ans.append("<br> Total Bank: ").append(sl.maxMoney);
 		if (sl.globalCooldown > 0)
 			ans.append("<br> Universal CD: ").append(sl.globalCooldown);
-		if (sl.globalCost > 0)
+		if (sl.globalCost != -1)
 			ans.append("<br> Universal Cost: ").append(sl.globalCost);
-		if (sl.maxUnitSpawn > 0)
+		if (sl.maxUnitSpawn != -1)
 			ans.append("<br> Unit Spawn Cap: ").append(sl.maxUnitSpawn);
-		if (sl.cannonMultiplier > 0)
+		if (sl.cannonMultiplier != 100)
 			ans.append("<br> Cat Cannon Power: ").append(sl.cannonMultiplier);
 		if (sl.unitSpeedOverride > 0)
 			ans.append("<br> Unit Speed Limit: ").append(sl.unitSpeedOverride);

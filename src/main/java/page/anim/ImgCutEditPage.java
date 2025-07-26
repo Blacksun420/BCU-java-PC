@@ -191,7 +191,22 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 			}
 		});
 
-		expt.addActionListener(arg0 -> new Exporter((BufferedImage) icet.anim.getNum().bimg(), Exporter.EXP_IMG));
+		expt.addActionListener(arg0 -> {
+			BufferedImage bimg = (BufferedImage)icet.anim.getNum().bimg();
+			if (sb.sele.isEmpty() || !Opts.conf("Export selected sprites only?"))
+				new Exporter(bimg, Exporter.EXP_IMG, icet.anim.id.id + " sprite");
+			else {
+				int w = bimg.getWidth(), h = bimg.getHeight();
+				for (int s : sb.sele) {
+					int[] cut = icet.anim.imgcut.cuts[s].clone();
+					cut[0] = Math.max(0, Math.min(cut[0], w - 1));
+					cut[1] = Math.max(0, Math.min(cut[1], h - 1));
+					cut[2] = Math.max(1, Math.min(cut[2], w - cut[0]));
+					cut[3] = Math.max(1, Math.min(cut[3], h - cut[1]));
+					new Exporter(bimg.getSubimage(cut[0], cut[1], cut[2], cut[3]), Exporter.EXP_IMG, icet.anim.imgcut.strs[s]);
+				}
+			}
+		});
 
 		jta.addTreeSelectionListener(arg0 -> {
 			if (changing)
@@ -624,7 +639,7 @@ public class ImgCutEditPage extends DefaultPage implements AbEditPage {
 
 		TreePath[] paths = jta.getSelectionPaths();
 
-		if(paths == null)
+		if(paths == null || paths.length < 2)
 			mergeEnabled = false;
 		else {
 			for(TreePath path : paths) {

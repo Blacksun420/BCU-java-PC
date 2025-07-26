@@ -147,7 +147,7 @@ class HeadEditTable extends Page {
 		set(jres, x, y, w * 5, 150, w, 50);
 		set(ures, x, y, w * 6, 150, w, 50);
 		set(jures, x, y, w * 7, 150, w, 50);
-		set(jt, x, y, 0, 200, 1400, 100);
+		set(jt, x, y, 0, 200, 1400, 150);
 		lt.resized(x, y);
 		lt.setPreferredSize(size(x, y, lt.getPWidth(), lt.getPHeight()).toDimension());
 		jt.getHorizontalScrollBar().setUnitIncrement(25);
