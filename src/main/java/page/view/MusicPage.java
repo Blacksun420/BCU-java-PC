@@ -81,6 +81,8 @@ public class MusicPage extends DefaultPage implements SupPage<Music> {
 		});
 
 		stop.setLnr(arg -> {
+			if (BCMusic.BG == null || !BCMusic.BG.isPlaying())
+				return;
 			BCMusic.BG.stop();
 			BCMusic.clear();
 			stop.setEnabled(false);

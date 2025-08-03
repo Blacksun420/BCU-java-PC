@@ -318,12 +318,13 @@ public class Opts {
 	public static void showMusicPopup(Collection<Music> mus, Music sele) {
 		Thread thread = new Thread(new Runnable() {
 			public int inter = 0;
+			private static final int W = (int)(MusicPopup.W * 1.5);
 			@SuppressWarnings("BusyWait")
 			@Override
 			public void run() {
 				JFrame panel = new JFrame();
 				panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-				panel.setBounds(new Rectangle(MainFrame.F.getWidth() / 2 - 175, 200, MusicPopup.W, MusicPopup.H));
+				panel.setBounds(new Rectangle(MainFrame.F.getWidth() / 2 - 175, 200, W, MusicPopup.H));
 				panel.getContentPane().setLayout(new BoxLayout(panel.getContentPane(), BoxLayout.PAGE_AXIS));
 				panel.setBackground(new Color(64, 64, 64));
 				panel.setIconImage(MainFrame.F.getIconImage());
@@ -331,8 +332,8 @@ public class Opts {
 				panel.setVisible(true);
 
 				MusicPopup p = new MusicPopup(mus, sele);
-				p.setPreferredSize(new Dimension(MusicPopup.W, MusicPopup.H));
-				p.setBounds(25, 25, MusicPopup.W, MusicPopup.H);
+				p.setPreferredSize(new Dimension(W, MusicPopup.H));
+				p.setBounds(25, 25, W, MusicPopup.H);
 				panel.add(p);
 				final boolean[] open = {true};
 				panel.addWindowListener(new WindowAdapter() {
