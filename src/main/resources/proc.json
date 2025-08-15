@@ -2053,7 +2053,7 @@
         "abbr_name": "absorb",
         "full_name": "Absorber",
         "tooltip": "Drains HP per enemy damaged",
-        "format": "[(prob<100){(prob)% chance to absorb}(prob==100){Absorbs}] (mult)% of the damage dealt as HP",
+        "format": "[(prob<100){(prob)% chance to absorb}(prob==100){Absorbs}] (mult)% of the damage dealt[(traits){to (_toString(traits)) enemies}] as HP",
         "class": {
             "prob": {
                 "name": "chance",
@@ -2062,6 +2062,10 @@
             "mult": {
                 "name": "multiplier",
                 "tooltip": "What percent of damage dealt will be recovered as HP"
+            },
+            "traits": {
+                "name": "Traits",
+                "tooltip": "Targets all traits by default"
             }
         }
     },
