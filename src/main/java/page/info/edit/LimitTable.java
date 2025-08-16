@@ -42,6 +42,8 @@ public class LimitTable extends Page {
 	private final JBTN cgb = new JBTN(MainLocale.INFO, "ht15");
 	private final JBTN lrb = new JBTN(MainLocale.INFO, "ht16");
 	private final JBTN one = new JBTN(MainLocale.INFO, "row0");
+	private final JTG rich = new JTG(MainLocale.INFO, "ht17");
+	private final JTG snip = new JTG(MainLocale.INFO, "ht18");
 	private final JL rar = new JL(MainLocale.INFO, "ht10");
 	private final JTG[] brars = new JTG[trar.length];
 	private final JL costo = new JL(MainLocale.INFO, "price");
@@ -50,12 +52,9 @@ public class LimitTable extends Page {
 	private final JTF[] bcd = new JTF[trar.length];
 	private final JTG gcd = new JTG(MainLocale.INFO, "ht22");
 
-	private final JL bank = new JL(MainLocale.INFO, "ht20");
-	private final JL cres = new JL(MainLocale.INFO, "ht21");
-	private final JL ccos = new JL(MainLocale.INFO, "ht23");
-	private final JTF jban = new JTF();
-	private final JTF jcre = new JTF();
-	private final JTF jcco = new JTF();
+	private final JTF bank = new JTF();
+	private final JTF cres = new JTF();
+	private final JTF ccos = new JTF();
 
 	private final CrossList<String> jlco = new CrossList<>(Interpret.getComboFilter(0));
 	private final JScrollPane jsco = new JScrollPane(jlco);
@@ -109,9 +108,9 @@ public class LimitTable extends Page {
         for (JTF jtf : bcd)
 			jtf.setEnabled(b);
 		gcd.setEnabled(b);
-		jban.setEnabled(b);
-		jcre.setEnabled(b);
-		jcco.setEnabled(b);
+		bank.setEnabled(b);
+		cres.setEnabled(b);
+		ccos.setEnabled(b);
 		for (JTF jtf : brard)
 			jtf.setEnabled(b);
 		for (JTF jtf : jatot)
@@ -149,48 +148,49 @@ public class LimitTable extends Page {
 	@Override
 	protected void resized(int x, int y) {
 		int w = 1400 / 8;
-		set(jcmin, x, y, 0, 0, w, 50);
-		set(jcmax, x, y, w, 0, w, 50);
-		set(jnum, x, y, w * 2, 0, w, 50);
-		set(one, x, y, w * 3, 0, w, 50);
-		set(cgb, x, y, w * 4, 0, w, 50);
-		set(jcg, x, y, w * 5, 0, w, 50);
-		set(lrb, x, y, w * 6, 0, w, 50);
-		set(jlr, x, y, w * 7, 0, w, 50);
-
-		set(star, x, y, 0, 50, w, 50);
-		set(gcd, x, y, w, 50, w, 50);
-		set(bank, x, y, w * 2, 50, w, 50);
-		set(jban, x, y, w * 3, 50, w, 50);
-		set(cres, x, y, w * 4, 50, w, 50);
-		set(jcre, x, y, w * 5, 50, w, 50);
-		set(ccos, x, y, w * 6, 50, w, 50);
-		set(jcco, x, y, w * 7, 50, w, 50);
-
-		set(sptot, x, y, 0, 100, w, 50);
-		set(jptot, x, y, w, 100, w, 50);
-		set(jccan, x, y, w*2, 100, w*2, 50);
-		set(jcuspd, x, y, w*4, 100, w*2, 50);
-		set(jcespd, x, y, w*6, 100, w*2, 50);
-
-		set(jsco, x, y, 0, 150, w * 6, 100);
-		set(banc, x, y, w * 6, 150, w * 2, 100);
+		int yy = 0;
+		set(jcmin, x, y, 0, yy, w, 50);
+		set(jcmax, x, y, w, yy, w, 50);
+		set(jnum, x, y, w * 2, yy, w, 50);
+		set(one, x, y, w * 3, yy, w, 50);
+		set(cgb, x, y, w * 4, yy, w, 50);
+		set(jcg, x, y, w * 5, yy, w, 50);
+		set(lrb, x, y, w * 6, yy, w, 50);
+		set(jlr, x, y, w * 7, yy, w, 50);
+		yy += 50;//50
+		int ww = (int)(w * 1.5);
+		set(star, x, y, 0, yy, w, 50);
+		set(gcd, x, y, w, yy, w, 50);
+		set(rich, x, y, w*2, yy, w, 50);
+		set(bank, x, y, w * 3, yy, w * 2, 50);
+		set(cres, x, y, w * 5, yy, ww, 50);
+		set(ccos, x, y, w * 5 + ww, yy, ww, 50);
+		yy += 50;//100
+		set(sptot, x, y, 0, yy, w, 50);
+		set(jptot, x, y, w, yy, w, 50);
+		set(snip, x, y, w * 2, yy, w, 50);
+		set(jccan, x, y, w * 3, yy, w * 2, 50);
+		set(jcuspd, x, y, w * 5, yy, ww, 50);
+		set(jcespd, x, y, w * 5 + ww, yy, ww, 50);
+		yy += 50;//150
+		set(jsco, x, y, 0, yy, w * 6, 100);
+		set(banc, x, y, w * 6, yy, w * 2, 100);
 
 		w = 1400 / (trar.length + 1);
-
-		set(rar, x, y, 0, 250, w, 50);
-		set(costo, x, y, 0, 300, w, 50);
-		set(cdo, x, y, 0, 350, w, 50);
-		set(rard, x, y, 0, 400, w, 50);
-		set(datot, x, y, 0, 450, w, 50);
-		set(dctot, x, y, 0, 500, w, 50);
+		yy += 100;//250
+		set(rar, x, y, 0, yy, w, 50);
+		set(costo, x, y, 0, yy+50, w, 50);
+		set(cdo, x, y, 0, yy+100, w, 50);
+		set(rard, x, y, 0, yy+150, w, 50);
+		set(datot, x, y, 0, yy+200, w, 50);
+		set(dctot, x, y, 0, yy+250, w, 50);
 		for (int i = 0; i < trar.length; i++) {
-			set(brars[i], x, y, w + w * i, 250, w, 50);
-			set(bcost[i], x, y, w + w * i, 300, w, 50);
-			set(bcd[i], x, y, w + w * i, 350, w, 50);
-			set(brard[i], x, y, w + w * i, 400, w, 50);
-			set(jatot[i], x, y, w + w * i, 450, w, 50);
-			set(jctot[i], x, y, w + w * i, 500, w, 50);
+			set(brars[i], x, y, w + w * i, yy, w, 50);
+			set(bcost[i], x, y, w + w * i, yy+50, w, 50);
+			set(bcd[i], x, y, w + w * i, yy+100, w, 50);
+			set(brard[i], x, y, w + w * i, yy+150, w, 50);
+			set(jatot[i], x, y, w + w * i, yy+200, w, 50);
+			set(jctot[i], x, y, w + w * i, yy+250, w, 50);
 		}
 	}
 
@@ -218,9 +218,9 @@ public class LimitTable extends Page {
 			one.setText(MainLocale.getLoc(MainLocale.INFO, "row0"));
 			jcg.setText("");
 			jlr.setText("");
-			jban.setText("");
-			jcre.setText("");
-			jcco.setText("");
+			bank.setText(MainLocale.getLoc(MainLocale.INFO, "ht20") + ": ");
+			cres.setText(MainLocale.getLoc(MainLocale.INFO, "ht21") + ": ");
+			ccos.setText(MainLocale.getLoc(MainLocale.INFO, "ht23") + ": ");
 			jptot.setText("");
 			jccan.setText(MainLocale.getLoc(MainLocale.INFO, "ht24") + ": ");
 			jcuspd.setText(MainLocale.getLoc(MainLocale.INFO, "ht25") + ": ");
@@ -236,9 +236,9 @@ public class LimitTable extends Page {
 		StageLimit stli = lim.stageLimit == null ? lim.stageLimit = new StageLimit() : lim.stageLimit;
 
         gcd.setSelected(stli.coolStart);
-        jban.setText(String.valueOf(stli.maxMoney));
-        jcre.setText(String.valueOf(stli.globalCooldown));
-		jcco.setText(String.valueOf(stli.globalCost));
+		bank.setText(MainLocale.getLoc(MainLocale.INFO, "ht20") + ": " + stli.maxMoney);
+		cres.setText(MainLocale.getLoc(MainLocale.INFO, "ht21") + ": " + stli.globalCooldown);
+		ccos.setText(MainLocale.getLoc(MainLocale.INFO, "ht23") + ": " + stli.globalCost);
 
 		for (int i = 0; i < bcost.length; i++)
 			bcost[i].setText(trar[i] + ": " + stli.costMultiplier[i] + "%");
@@ -328,6 +328,9 @@ public class LimitTable extends Page {
 			}
 			jlco.repaint();
 		});
+
+		rich.addActionListener(arg0 -> lim.rich = rich.isSelected());
+		snip.addActionListener(arg0 -> lim.sniper = snip.isSelected());
 	}
 
 	private void ini() {
@@ -335,6 +338,8 @@ public class LimitTable extends Page {
 		add(cgb);
 		add(lrb);
 		add(one);
+		add(rich);
+		add(snip);
 		set(jcmin);
 		set(jcmax);
 		set(jnum);
@@ -352,15 +357,12 @@ public class LimitTable extends Page {
 			set(bcd[i] = new JTF(trar[i] + ":"));
 		add(costo);
 		add(cdo);
-		add(bank);
-		set(jban);
-		add(cres);
-		set(jcre);
+		set(bank);
+		set(cres);
 
 		add(jsco);
 		add(banc);
-		set(jcco);
-		add(ccos);
+		set(ccos);
 
 		add(rard);
 		for (int i = 0; i < brard.length; i++)
@@ -408,11 +410,11 @@ public class LimitTable extends Page {
 				if (j >= 1 && j <= 4)
 					bitmask |= 1 << (j-1);
 			lim.star = bitmask;
-		} else if (jtf == jban)
+		} else if (jtf == bank)
 			lim.stageLimit.maxMoney = Math.max(val, 0);
-		else if (jtf == jcre)
+		else if (jtf == cres)
 			lim.stageLimit.globalCooldown = Math.max(val, 0);
-		else if (jtf == jcco)
+		else if (jtf == ccos)
 			lim.stageLimit.globalCost = Math.max(val, 0);
 		else if (jtf == jptot)
 			lim.stageLimit.maxUnitSpawn = Math.max(val, 0);

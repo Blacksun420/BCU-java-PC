@@ -107,7 +107,7 @@ public class EnemyFilterBox extends EntityFilterBox {
 		}
 		boolean b1 = unchangeable(0);
 		for (int i : trait.getSelectedIndices()) {
-			b1 = processOperator(0, e.de.getTraits().contains(trait.list.get(i)));
+			b1 = processOperator(0, e.de.getTraits(false).contains(trait.list.get(i)));
 			if (b1 != unchangeable(0))
 				break;
 		}

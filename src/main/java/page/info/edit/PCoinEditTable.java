@@ -489,7 +489,7 @@ class PCoinEditTable extends Page {
                 } else if (type[0] == Data.PC_AB)
                     add = (unit.abi & type[1]) == 0;
                 else if (type[0] == Data.PC_TRAIT)
-                    add = !(unit.getTraits().contains(UserProfile.getBCData().traits.get(type[1])) || unit.pcoin.trait.contains(UserProfile.getBCData().traits.get(type[1])));
+                    add = !(unit.getTraits(true).contains(UserProfile.getBCData().traits.get(type[1])) || unit.pcoin.trait.contains(UserProfile.getBCData().traits.get(type[1])));
                 else if (type[0] == 5) {
                     Data.Proc p = unit.getPack().maxu() == null ? unit.getProc() : unit.getPack().maxu().getProc();
                     add = p.getArr(type[1]).exists() && p.DEFINC.mult != 0; //Also check talents for this one

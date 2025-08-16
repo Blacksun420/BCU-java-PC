@@ -106,7 +106,7 @@ public class EnemyInfoTable extends CharacterInfoTable {
 	@Override
 	protected void ini() {
 		super.ini();
-		String[] TraitBox = Interpret.getTrait(e.de.getTraits());
+		String[] TraitBox = Interpret.getTrait(e.de.getTraits(false));
 		add(jtf);
 		jtf.setText(CommonStatic.toArrayFormat(multi, mulatk) + "%");
 

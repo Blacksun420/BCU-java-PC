@@ -4,6 +4,7 @@ import common.CommonStatic;
 import common.battle.BasisLU;
 import common.battle.BasisSet;
 import common.pack.SortedPackSet;
+import common.util.stage.Limit;
 import common.util.stage.RandStage;
 import common.util.stage.Stage;
 import common.util.unit.Form;
@@ -69,31 +70,33 @@ public class BattleSetupPage extends LubCont {
 			jl.setText(b + "-" + bu);
 		} else
 			jl.setText("Preset Lineup");
-		if (st.lim != null) {
-			boolean val = st.lim.valid(bu.lu);
-			strt.setEnabled(val);
-			if (!val) {
-				if (st.lim.group != null && st.lim.group.type % 2 != 0) {
-					SortedPackSet<Form> fSet = st.lim.getValid(bu.lu);
-					if (fSet.size() - st.lim.fa != 0)
-						if (st.lim.group.type == 3)
-							strt.setToolTipText("Remove at least " + (fSet.size() - st.lim.fa) + " of these units from the lineup: " + fSet);
-						else if (st.lim.group.type == 1) {
-							SortedPackSet<Form> ffSet = new SortedPackSet<>(st.lim.group.fset);
-							for (Form f : ffSet.inCommon(fSet))
-								ffSet.remove(f);
-							strt.setToolTipText((st.lim.fa - fSet.size()) + " more of these units is required in the lineup: " + ffSet);
-						}
-				}
-			}
-			if (st.lim.lvr != null && !st.lim.lvr.isValid(bu.lu))
-				strt.setToolTipText((strt.getToolTipText() == null ? "" : strt.getToolTipText() + ", and ") + "some units' Lv is above limits");
-			else if (val)
-				strt.setToolTipText(null);
-		}
-		if (obj instanceof String)
+
+		Limit lim = st.getLim(jls.getSelectedIndex());
+		rich.setEnabled(!lim.rich);
+		snip.setEnabled(!lim.sniper);
+        boolean val = lim.valid(bu.lu);
+        strt.setEnabled(val);
+        if (!val) {
+            if (lim.group != null && lim.group.type % 2 != 0) {
+                SortedPackSet<Form> fSet = lim.getValid(bu.lu);
+                if (fSet.size() - lim.fa != 0)
+                    if (lim.group.type == 3)
+                        strt.setToolTipText("Remove at least " + (fSet.size() - lim.fa) + " of these units from the lineup: " + fSet);
+                    else if (lim.group.type == 1) {
+                        SortedPackSet<Form> ffSet = new SortedPackSet<>(lim.group.fset);
+                        for (Form f : ffSet.inCommon(fSet))
+                            ffSet.remove(f);
+                        strt.setToolTipText((lim.fa - fSet.size()) + " more of these units is required in the lineup: " + ffSet);
+                    }
+            }
+        }
+        if (lim.lvr != null && !lim.lvr.isValid(bu.lu))
+            strt.setToolTipText((strt.getToolTipText() == null ? "" : strt.getToolTipText() + ", and ") + "some units' Lv is above limits");
+        else if (val)
+            strt.setToolTipText(null);
+        if (obj instanceof String)
 			if (obj.equals("prog"))
-				lub.setLimit(st.getLim(jls.getSelectedIndex()), st.getMC().getSave(false), st.getCont().price);
+				lub.setLimit(lim, st.getMC().getSave(false), st.getCont().price);
 	}
 
 	@Override
@@ -171,7 +174,7 @@ public class BattleSetupPage extends LubCont {
 		});
 
 		tmax.addActionListener(arg0 -> {
-			st.lim.lvr.validate(getLU().lu);
+			st.getLim(jls.getSelectedIndex()).lvr.validate(getLU().lu);
 			renew();
 		});
 
@@ -201,7 +204,7 @@ public class BattleSetupPage extends LubCont {
 		add(testMode);
 		add(ulock);
 		sttb.setData(st, 0);
-		tmax.setEnabled(st.lim != null && st.lim.lvr != null);
+		tmax.setEnabled(st.getLim(jls.getSelectedIndex()).lvr != null);
 		testMode.setEnabled(st.getMC().getSave(true) != null);
 		if(st.isAkuStage()) {
 			add(plus);
@@ -223,20 +226,21 @@ public class BattleSetupPage extends LubCont {
 			plus.setSelected(CommonStatic.getConfig().plus);
 			lvlim.setSelectedIndex(CommonStatic.getConfig().levelLimit);
 		}
-		if (!rand) {
-			String[] tit = new String[st.getCont().stars.length];
-			String star = get(1, "star");
+        String[] tit;
+        String star;
+        if (!rand) {
+            tit = new String[st.getCont().stars.length];
+            star = get(1, "star");
 			for (int i = 0; i < st.getCont().stars.length; i++)
 				tit[i] = (i + 1) + star + ": " + st.getCont().stars[i] + "%";
-			jls.setListData(tit);
-		} else {
-			String[] tit = new String[5];
-			String star = get(1, "attempt");
+        } else {
+            tit = new String[5];
+            star = get(1, "attempt");
 			for (int i = 0; i < 5; i++)
 				tit[i] = star + (i + 1);
-			jls.setListData(tit);
-		}
-		jls.setSelectedIndex(0);
+        }
+        jls.setListData(tit);
+        jls.setSelectedIndex(0);
 		lub.setLimit(st.getLim(!rand ? jls.getSelectedIndex() : -1), st.getMC().getSave(false), st.getCont().price);
 		addListeners();
 	}

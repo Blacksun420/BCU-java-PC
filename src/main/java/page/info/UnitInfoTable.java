@@ -104,7 +104,7 @@ public class UnitInfoTable extends CharacterInfoTable {
 		main[0][5].setText(MainBCU.convertTime(respawn));
 
 		main[0][7].setText("" + ef.getPrice(1));
-		String[] TraitBox = Interpret.getTrait(ef.du.getTraits());
+		String[] TraitBox = Interpret.getTrait(ef.du.getTraits(false));
 		inis[2].setText(Interpret.getTrait(TraitBox, 0));
 		inis[1].setToolTipText(inis[2].getText());
 		MaskAtk[] atkData = ef.du.getAtks(dispAtk);

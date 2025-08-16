@@ -1868,7 +1868,7 @@
         "abbr_name": "C.Surge",
         "full_name": "CounterSurge",
         "tooltip": "Creates a surge when hit by a surge with the hitting surge's level and duration",
-        "format": "[(prob<100){(prob)% chance to make}(prob==100){Makes}] a surge when hit by a surge[(mult!=100){, with (mult)% of the surge's damage}]",
+        "format": "[(count>1){Every (count)th deployed[(prob<100){ has}] }][(prob<100){(prob)% chance to make}(prob==100){Makes}] a surge when hit by a surge[(mult!=100){, with (mult)% of the surge's damage}]",
         "class": {
             "prob": {
                 "name": "chance",
@@ -1877,6 +1877,10 @@
             "mult": {
                 "name": "multiplier",
                 "tooltip": null
+            },
+            "count": {
+                "name": "Deploy count",
+                "tooltip": "Amount of deploys needed to trigger"
             }
         }
     },
@@ -2109,7 +2113,7 @@
         "abbr_name": "Refund",
         "full_name": "Refund",
         "tooltip": null,
-        "format": "[(count>1){Every (count)th deployed[(prob<100){ has}] }] [(prob<100){(prob)% chance to refund}(prob==100){Refunds}] (mult)% of unit's cost when killed",
+        "format": "[(count>1){Every (count)th deployed[(prob<100){ has}] }][(prob<100){(prob)% chance to refund}(prob==100){Refunds}] (mult)% of unit's cost when killed",
         "class": {
             "prob": {
                 "name": "chance",
@@ -2129,7 +2133,7 @@
         "abbr_name": "C. Charge",
         "full_name": "Cannon Charge",
         "tooltip": null,
-        "format": "[(count>1){Every (count)th deployed[(prob<100){ has}] }] [(prob<100){(prob)% chance to charge}(prob==100){charges}] (mult)% of the cat cannon when killed",
+        "format": "[(count>1){Every (count)th deployed[(prob<100){ has}] }][(prob<100){(prob)% chance to charge}(prob==100){charges}] (mult)% of the cat cannon when killed",
         "class": {
             "prob": {
                 "name": "chance",
@@ -2190,6 +2194,67 @@
             "noHB": {
                 "name": "ignore hitback",
                 "tooltip": "Does not play hitback animations (useful if you want a timed entity like Iron Wall Cat or an instant soul spawner)"
+            }
+        }
+    },
+    "IMUATKANY": {
+        "abbr_name": "ALL Invi.",
+        "full_name": "Full Invincibility",
+        "tooltip": "Like invincibility, but ignores traits and healing",
+        "format": "[(prob<100){(prob)% chance to dodge}(prob==100){Dodges}] attacks for (_dispTimeF(time))[(cd>0){, with a cooldown of (_dispTimeF(cd)) per dodge}]",
+        "class": {
+            "prob": {
+                "name": "chance",
+                "tooltip": null
+            },
+            "time": {
+                "name": "duration",
+                "tooltip": null
+            },
+            "cd": {
+                "name": "cooldown",
+                "tooltip": "Unit will not be able to dodge after the given amount of frames after proc ends"
+            }
+        }
+    },
+    "KILLSTRENGTHEN": {
+        "abbr_name": "CD Reduction",
+        "full_name": "Insta-Respawn",
+        "tooltip": null,
+        "format": ["[(mult>0){In}(mult<0){De}]creases damage by (_abs(mult))% after killing (kill_count) enemies",
+        "[(max_stacks!=1){, [(max_stacks==0){stacks indefinitely}(max_stacks>1){up to (mult*max_stacks)%}]"],
+        "class": {
+            "prob": {
+                "name": "mult",
+                "tooltip": null
+            },
+            "mult": {
+                "name": "kill_count",
+                "tooltip": "% of CD reduced"
+            },
+            "count": {
+                "name": "max_stacks",
+                "tooltip": "Amount of deploys needed for CD Reduction to trigger"
+            }
+        }
+    },
+    "COMBOCOOLDOWN": {
+        "abbr_name": "CD Reduction",
+        "full_name": "Insta-Respawn",
+        "tooltip": null,
+        "format": "[(count>1){Every (count)th deployed[(prob<100){ has}] }][(prob<100){(prob)% chance to have }](mult)% less cooldown",
+        "class": {
+            "prob": {
+                "name": "chance",
+                "tooltip": null
+            },
+            "mult": {
+                "name": "multiplier",
+                "tooltip": "% of CD reduced"
+            },
+            "count": {
+                "name": "Deploy count",
+                "tooltip": "Amount of deploys needed for CD Reduction to trigger"
             }
         }
     }

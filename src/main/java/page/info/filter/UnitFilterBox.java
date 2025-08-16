@@ -193,7 +193,7 @@ public class UnitFilterBox extends EntityFilterBox {
 
 		boolean b0 = unchangeable(0);
 		for (Trait t : trait.getSelectedValuesList()) {
-			b0 = processOperator(0, checkTraitComp(du.getTraits(), t, f));
+			b0 = processOperator(0, checkTraitComp(du.getTraits(false), t, f));
 			if (b0 != unchangeable(0))
 				break;
 		}
@@ -235,7 +235,7 @@ public class UnitFilterBox extends EntityFilterBox {
 			return true;
 		if (t.BCTrait())
 			return false;
-		if (t.others.contains(f))
+		if (t.targetForms.contains(f))
 			return true;
 		if (!t.targetType)
 			return false;

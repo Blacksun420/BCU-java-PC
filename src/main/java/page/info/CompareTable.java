@@ -179,10 +179,7 @@ public class CompareTable extends Page {
         StringBuilder atkString = new StringBuilder();
         StringBuilder preString = new StringBuilder();
         List<Trait> DefTraits = UserProfile.getBCData().traits.getList();
-        SortedPackSet<Trait> traits = new SortedPackSet<>(trs), spTraits = new SortedPackSet<>();
-        traits.retainAll(me.getTraits());
-        if (Ent instanceof Form)
-            traits.addIf(trs, t -> !t.BCTrait() && t.others.contains((Form)Ent));
+        SortedPackSet<Trait> traits = trs.inCommon(me.getTraits(false)), spTraits = new SortedPackSet<>();
 
         if (isEnemy) {
             MaskEnemy enemy = (MaskEnemy)me;
@@ -320,7 +317,7 @@ public class CompareTable extends Page {
         main[8].setText(MainBCU.convertTime(me.getTBA()));
         main[9].setText(me.getSpeed() + "");
 
-        String[] TraitBox = Interpret.getTrait(me.getTraits());
+        String[] TraitBox = Interpret.getTrait(me.getTraits(false));
         seco.setText(Interpret.getTrait(TraitBox, Ent instanceof MaskEnemy ? ((MaskEnemy) Ent).getStar() : 0));
 
         requireResize();

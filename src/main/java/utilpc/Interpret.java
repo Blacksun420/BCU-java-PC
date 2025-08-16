@@ -328,7 +328,7 @@ public class Interpret extends Data {
 	}
 
 	public static List<ProcDisplay> getProc(MaskEntity du, boolean isEnemy, double[] magnification, int atkind) {
-		Formatter.Context ctx = new Formatter.Context(isEnemy, MainBCU.seconds, magnification, du.getTraits());
+		Formatter.Context ctx = new Formatter.Context(isEnemy, MainBCU.seconds, magnification, du.getTraits(false));
 
 		ArrayList<ProcDisplay> l = new ArrayList<>();
 

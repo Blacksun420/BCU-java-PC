@@ -117,8 +117,7 @@ public class ComparePage extends DefaultPage {
 
         Collection<PackData.UserPack> pacs = UserProfile.getUserPacks();
         for (PackData.UserPack pack : pacs)
-            for (Trait t : pack.traits)
-                trait.list.add(t);
+            trait.list.addAll(pack.traits.getList());
 
         trait.setListData();
         trait.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
