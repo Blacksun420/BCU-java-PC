@@ -2222,7 +2222,7 @@
         "full_name": "Insta-Respawn",
         "tooltip": null,
         "format": ["[(mult>0){In}(mult<0){De}]creases damage by (_abs(mult))% after killing (kill_count) enemies",
-        "[(max_stacks!=1){, [(max_stacks==0){stacks indefinitely}(max_stacks>1){up to (mult*max_stacks)%}]"],
+        "[(max_stacks!=1){, [(max_stacks==0){stacks indefinitely}(max_stacks>1){up to (max_stacks)x stacks (_left)(mult*max_stacks)%(_right)}]"],
         "class": {
             "prob": {
                 "name": "mult",
