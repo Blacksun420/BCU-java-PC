@@ -16,7 +16,7 @@ public class TotalDamageTable extends SortTable<Character> {
     }
 
     public static void redefine() {
-        title = Page.get(MainLocale.INFO, "ut", 4);
+        title = Page.get(MainLocale.INFO, "ut", 5);
     }
 
     private final BattleField bf;
@@ -52,6 +52,8 @@ public class TotalDamageTable extends SortTable<Character> {
             return ch;
         else if (c == 3)
             return bf.sb.spawns.get(ch);
+        else if (c > 3)
+            c--;
         return bf.sb.dmgStatistics.get(ch)[c - 1];
     }
 }

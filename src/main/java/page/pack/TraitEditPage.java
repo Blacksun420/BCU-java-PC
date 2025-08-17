@@ -71,12 +71,14 @@ public class TraitEditPage extends DefaultPage {
         if (ufp != null && ufp.getList() != null) {
             changing = true;
             ArrayList<AbForm> list = new ArrayList<>(ufp.getList());
-            if (t != null)
+            if (t != null) {
                 list.removeAll(t.targetForms);
-            for (Unit u : pack.units)
-                for (Form f : u.forms)
-                    list.remove(f);
-            list.removeIf(f -> ((Form)f).maxu().getTraits(false).isEmpty() || (t.targetType && Trait.targetTraited(((Form)f).maxu().getTraits(false))));
+                for (Unit u : pack.units)
+                    for (Form f : u.forms)
+                        list.remove(f);
+                list.removeIf(f -> ((Form) f).maxu().getTraits(false).isEmpty() || (t.targetType && Trait.targetTraited(((Form) f).maxu().getTraits(false))));
+            } else
+                list.clear();
 
             jlf.setListData(list.toArray(new AbForm[0]));
             jlf.clearSelection();
@@ -84,9 +86,6 @@ public class TraitEditPage extends DefaultPage {
                 jlf.setSelectedIndex(0);
             else
                 jlf.clearSelection();
-            boolean b = editable && t != null && !list.isEmpty();
-            addu.setEnabled(b);
-            remu.setEnabled(b);
             changing = false;
         }
     }
@@ -195,7 +194,7 @@ public class TraitEditPage extends DefaultPage {
 
         addu.addActionListener(arg0 -> {
             List<AbForm> formList = jlf.getSelectedValuesList();
-            if (formList.isEmpty() || changing || jlct.getValueIsAdjusting())
+            if (changing || jlct.getValueIsAdjusting())
                 return;
             changing = true;
             t.targetForms.addAll(formList);
@@ -205,13 +204,16 @@ public class TraitEditPage extends DefaultPage {
 
         remu.addActionListener(arg0 -> {
             List<Form> formList = tlf.getSelectedValuesList();
-            if (formList.isEmpty() ||changing || jlct.getValueIsAdjusting())
+            if (changing || jlct.getValueIsAdjusting())
                 return;
             changing = true;
             formList.forEach(t.targetForms::remove);
             updateCT();
             changing = false;
         });
+
+        jlf.addListSelectionListener(l -> addu.setEnabled(editable && jlf.getSelectedIndex() != -1));
+        tlf.addListSelectionListener(l -> remu.setEnabled(editable && tlf.getSelectedIndex() != -1));
 
         vuif.addActionListener(arg0 -> {
             if (ufp == null)

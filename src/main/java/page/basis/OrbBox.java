@@ -47,7 +47,7 @@ public class OrbBox extends Canvas {
 		byte i = (byte)(small ? 1 : 0);
 		f.drawImage(CommonStatic.getBCAssets().TRAITS[i][OrbInfo.reverse(orbs[1])], x, y, a, a);
 		f.setComposite(FakeGraphics.TRANS, 204, 0);
-		f.drawImage(CommonStatic.getBCAssets().TYPES[i][orbs[0]], x, y, a, a);
+		f.drawImage(orbs[0] < CommonStatic.getBCAssets().TYPES[i].length ? CommonStatic.getBCAssets().TYPES[i][orbs[0]] : CommonStatic.getBCAssets().TYPES[1-i][orbs[0]], x, y, a, a);
 		f.setComposite(FakeGraphics.DEF, 0, 0);
 		f.drawImage(CommonStatic.getBCAssets().GRADES[orbs[2]], x, y, a, a);
 	}

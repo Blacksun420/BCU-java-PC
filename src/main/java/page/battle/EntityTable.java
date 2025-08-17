@@ -20,7 +20,7 @@ class EntityTable extends SortTable<Entity> {
 	private final boolean statistics;
 
 	protected EntityTable(boolean statistics) {
-		super(MainLocale.getLoc(MainLocale.INFO, statistics ? "us" : "u", statistics ? 5 : 3));
+		super(MainLocale.getLoc(MainLocale.INFO, statistics ? "us" : "u", statistics ? 5 : 4));
 
 		this.statistics = statistics;
 		setDefaultRenderer(Character.class, new CharaTCR(lnk));
@@ -95,7 +95,9 @@ class EntityTable extends SortTable<Entity> {
 				return (t.hasBarrier() ? "[" : "") + t.health + (t.status.shield[0] > 0 ? " (+" + t.status.shield[0] + ")" : "") + (t.hasBarrier() ? "]" : "");
 			else if (c == 1)
 				return t.data.getPack();
-			return (long) t.getAtk();
+			else if (c == 2)
+				return (long) t.getAtk();
+			return t.kill_count;
 		}
 	}
 

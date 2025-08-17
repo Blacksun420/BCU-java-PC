@@ -83,7 +83,7 @@
         "abbr_name": "wave",
         "full_name": "Wave",
         "tooltip": null,
-        "format": "[(prob<100){(prob)% chance to create}(prob==100){Creates}] a Lv.(lv) [(inverted){inverted }]wave attack[(pid){ with (_toString(pid)) IDs}][(hitless){, even if this attack misses}]",
+        "format": "[(prob<100){(prob)% chance to create}(prob==100){Creates}] a Lv.(lv)[(lv!=maxlv){~(maxlv)}] [(inverted){inverted }]wave attack[(pid){ with (_toString(pid)) IDs}][(hitless){, even if this attack misses}]",
         "class": {
             "prob": {
                 "name": "chance",
@@ -91,6 +91,10 @@
             },
             "lv": {
                 "name": "level",
+                "tooltip": null
+            },
+            "maxlv": {
+                "name": "max level",
                 "tooltip": null
             },
             "hitless": {
@@ -997,7 +1001,7 @@
         "abbr_name": "surge",
         "full_name": "Surge",
         "tooltip": null,
-        "format": "[(prob<100){(prob)% chance to make}(prob==100){Makes}] a Lv (time/20) surge attack[(pid){ with (_toString(pid)) IDs}][(hitless){, even if this attack misses}] (_left)Lasts (_dispTime(time)), created within (dis_0) ~ (dis_1) range(_right)",
+        "format": "[(prob<100){(prob)% chance to make}(prob==100){Makes}] a Lv (time/20)[(time!=maxtime){~(maxtime/20)}] surge attack[(pid){ with (_toString(pid)) IDs}][(hitless){, even if this attack misses}] (_left)Lasts (_dispTime(time)), created within (dis_0) ~ (dis_1) range(_right)",
         "class": {
             "prob": {
                 "name": "chance",
@@ -1013,6 +1017,10 @@
             },
             "time": {
                 "name": "duration",
+                "tooltip": null
+            },
+            "maxtime": {
+                "name": "max duration",
                 "tooltip": null
             },
             "hitless": {
@@ -1186,7 +1194,7 @@
         "full_name": "Mini-Wave",
         "tooltip": "Creates small wave which moves twice faster than normal wave with dynamic damage multiplication parameter",
         "format": ["[(prob<100){(prob)% chance to create}(prob==100){Creates}] ",
-            "a lv.(lv) [(inverted){inverted }][(multi>100){mega}(multi<=100){mini}]-wave[(pid){ with (_toString(pid)) IDs}]",
+            "a lv.(lv)[(lv!=maxlv){~(maxlv)}] [(inverted){inverted }][(multi>100){mega}(multi<=100){mini}]-wave[(pid){ with (_toString(pid)) IDs}]",
             "[(hitless){, even if this attack misses}] [(multi!=20){(_left)Gives target (multi)% of activator's damage(_right)}]"],
         "class": {
             "prob": {
@@ -1195,6 +1203,10 @@
             },
             "lv": {
                 "name": "level",
+                "tooltip": null
+            },
+            "maxlv": {
+                "name": "max level",
                 "tooltip": null
             },
             "multi": {
@@ -1400,7 +1412,7 @@
         "full_name": "Death Surge",
         "tooltip": null,
         "format": ["[(spawns>1){Every (spawns)th deployed[(prob<100){ has}] }][(prob<100){(prob)% chance to make}(prob==100){Makes}] ",
-            "a surge attack[(pid){ with (_toString(pid)) IDs}] for (_dispTime(time)) when killed (_left)Created within (dis_0) ~ (dis_1) range(_right)"],
+            "a surge attack[(pid){ with (_toString(pid)) IDs}] for (_dispTime(time))[(time!=maxtime){~(_dispTime(maxtime))}] when killed (_left)Created within (dis_0) ~ (dis_1) range(_right)"],
         "class": {
             "prob": {
                 "name": "chance",
@@ -1416,6 +1428,10 @@
             },
             "time": {
                 "name": "duration",
+                "tooltip": null
+            },
+            "maxtime": {
+                "name": "max duration",
                 "tooltip": null
             },
             "pid": {
@@ -1433,8 +1449,8 @@
         "full_name": "Mini Death Surge",
         "tooltip": null,
         "format": ["[(spawns>1){Every (spawns)th deployed[(prob<100){ has}] }][(prob<100){(prob)% chance to make}(prob==100){Makes}] ",
-            "a mini-surge attack[(pid){ with (_toString(pid)) IDs}] for (_dispTime(time)) when killed (_left)Created within ",
-            "(dis_0) ~ (dis_1) range[(mult!=20){, deals (mult)% of attacker's damage}](_right)"],
+            "a mini-surge attack[(pid){ with (_toString(pid)) IDs}] for (_dispTime(time))[(time!=maxtime){~(_dispTime(maxtime))}] when ",
+            "killed (_left)Created within (dis_0) ~ (dis_1) range[(mult!=20){, deals (mult)% of attacker's damage}](_right)"],
         "class": {
             "prob": {
                 "name": "chance",
@@ -1450,6 +1466,10 @@
             },
             "time": {
                 "name": "duration",
+                "tooltip": null
+            },
+            "maxtime": {
+                "name": "max duration",
                 "tooltip": null
             },
             "mult": {
@@ -1832,7 +1852,7 @@
         "abbr_name": "M.Surge",
         "full_name": "Mini Surge",
         "tooltip": "Creates small surge that does exactly same behavior of normal surge, but with less damage",
-        "format": "[(prob<100){(prob)% chance to make}(prob==100){Makes}] a Lv(time/20) Mini Surge[(pid){ with (_toString(pid)) IDs}] within (dis_0) ~ (dis_1) range[(hitless){, even if this attack misses}] for (_dispTime(time))[(mult!=20){ (_left)Deals (mult)% of attacker's damage(_right)}]",
+        "format": "[(prob<100){(prob)% chance to make}(prob==100){Makes}] a Lv(time/20)[(time!=maxtime){~(maxtime/20)}] Mini Surge[(pid){ with (_toString(pid)) IDs}] within (dis_0) ~ (dis_1) range[(hitless){, even if this attack misses}] for (_dispTime(time))[(mult!=20){ (_left)Deals (mult)% of attacker's damage(_right)}]",
         "class": {
             "prob": {
                 "name": "chance",
@@ -1848,6 +1868,10 @@
             },
             "time": {
                 "name": "duration",
+                "tooltip": null
+            },
+            "maxtime": {
+                "name": "max duration",
                 "tooltip": null
             },
             "mult": {
@@ -1868,7 +1892,8 @@
         "abbr_name": "C.Surge",
         "full_name": "CounterSurge",
         "tooltip": "Creates a surge when hit by a surge with the hitting surge's level and duration",
-        "format": "[(count>1){Every (count)th deployed[(prob<100){ has}] }][(prob<100){(prob)% chance to make}(prob==100){Makes}] a surge when hit by a surge[(mult!=100){, with (mult)% of the surge's damage}]",
+        "format": ["[(count>1){Every (count)th deployed[(prob<100){ has}] }][(prob<100){(prob)% chance to make}(prob==100){Makes}] ",
+            "a surge when hit by a surge[(max_times>0){ up to (max_times) times}][(mult!=100){, with (mult)% of the surge's damage}]"],
         "class": {
             "prob": {
                 "name": "chance",
@@ -1881,6 +1906,10 @@
             "count": {
                 "name": "Deploy count",
                 "tooltip": "Amount of deploys needed to trigger"
+            },
+            "max_times": {
+                "name": "Max Times",
+                "tooltip": "Caps the amount of surges to counter. default is 0 (infinite)"
             }
         }
     },
@@ -2218,23 +2247,23 @@
         }
     },
     "KILLSTRENGTHEN": {
-        "abbr_name": "CD Reduction",
-        "full_name": "Insta-Respawn",
+        "abbr_name": "Kill Strengthen",
+        "full_name": "Strengthen When Defeating",
         "tooltip": null,
         "format": ["[(mult>0){In}(mult<0){De}]creases damage by (_abs(mult))% after killing (kill_count) enemies",
-        "[(max_stacks!=1){, [(max_stacks==0){stacks indefinitely}(max_stacks>1){up to (max_stacks)x stacks (_left)(mult*max_stacks)%(_right)}]"],
+        "[(max_stacks!=1){, [(max_stacks==0){stacks indefinitely}(max_stacks>1){up to (max_stacks)x stacks}]}]"],
         "class": {
-            "prob": {
-                "name": "mult",
+            "mult": {
+                "name": "Percentage",
                 "tooltip": null
             },
-            "mult": {
-                "name": "kill_count",
-                "tooltip": "% of CD reduced"
+            "kill_count": {
+                "name": "Kill Count",
+                "tooltip": null
             },
-            "count": {
-                "name": "max_stacks",
-                "tooltip": "Amount of deploys needed for CD Reduction to trigger"
+            "max_stacks": {
+                "name": "Max Stack",
+                "tooltip": "Use 0 for infinite stacks"
             }
         }
     },
