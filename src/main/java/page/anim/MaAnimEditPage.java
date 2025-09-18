@@ -65,6 +65,8 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 	private final JLabel infm = new JLabel();
 	private final JTG lmul = new JTG(MainLocale.PAGE, "selspeed");
 	private final JTF tmul = new JTF();
+	private final JLabel range = new JLabel(MainLocale.getLoc(MainLocale.INFO, "range"));
+	private final JTF jrange = new JTF("[0,0]");
 	private final EditHead aep;
 
 	private Point p = null;
@@ -121,7 +123,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 			return;
 		float time = ab.getEntity() == null ? 0 : ab.getEntity().ind();
 		setJTL();
-		ab.setEntity(ac.getEAnim(ac.types[ind]));
+		setEntity(ac,ind);
 		ab.getEntity().setTime(time);
 	}
 
@@ -297,6 +299,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 
 	@Override
 	protected void renew() {
+		setRange();
 		TreePath path = jta.getSelectionPath();
 		if(path == null)
 			return;
@@ -362,7 +365,9 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		set(jspt, x, y, 0, 450, 300, 300);
 		set(jspm, x, y, 0, 750, 300, 550);
 		set((Canvas) ab, x, y, 300, 50, 700, 500);
-		set(jspp, x, y, 1000, 50, 300, 500);
+		set(range,x,y,1000,50,75,50);
+		set(jrange,x,y,1075,50,225,50);
+		set(jspp, x, y, 1000, 100, 300, 450);
 		set(sb, x, y, 1300, 50, 1000, 500);
 		set(addl, x, y, 2100, 550, 200, 50);
 		set(reml, x, y, 2100, 600, 200, 50);
@@ -685,6 +690,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 
 		sort.setLnr(x -> Arrays.sort(maet.ma.parts));
 
+		jrange.setLnr(l -> aep.setRange(CommonStatic.parseIntsN(jrange.getText())));
 	}
 
 	private void eupdate() {
@@ -738,6 +744,8 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		add(tmul);
 		add(advs);
 		add(sort);
+		add(range);
+		add(jrange);
 		agt.renewNodes();
 		jta.setCellRenderer(new AnimTreeRenderer());
 		tmul.setHintText("Speed %");
@@ -754,6 +762,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 		jtl.setEnabled(false);
 		jtl.setPaintTicks(true);
 		jtl.setPaintLabels(true);
+		jrange.setEnabled(false);
 		addListeners();
 		addListeners$1();
 		addListeners$2();
@@ -799,6 +808,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 			advs.setEnabled(anim != null);
 			sort.setEnabled(anim != null);
 			jtl.setEnabled(anim != null);
+			jrange.setEnabled(anim != null);
 			inft.setEnabled(ab.getEntity() != null);
 			inft.setText(ab.getEntity() != null ? "frame: " + ab.getEntity().ind() : "");
 
@@ -810,7 +820,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 			}
 			int row = maet.getSelectedRow();
 			maet.setAnim(ac, anim);
-			ab.setEntity(ac.getEAnim(ac.types[ind]));
+			setEntity(ac, ind);
 			if (row >= maet.getRowCount()) {
 				maet.clearSelection();
 				row = -1;
@@ -818,6 +828,18 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 			setC(row);
 			setJTL();
 		});
+	}
+
+	private void setEntity(AnimCE ac, int ind) {
+		ab.setEntity(ac.getEAnim(ac.types[ind]));
+		setRange();
+	}
+
+	protected void setRange() {
+		jrange.setText(Arrays.toString(aep.ranges));
+		if (ab.getEntity() != null)
+			for (int i = 0; i < 2; i++)
+				ab.getEntity().rangePointers[i] = aep.ranges[i];
 	}
 
 	public void setJTL() {

@@ -78,7 +78,7 @@ public interface IconBox extends ViewBox {
 		@Override
 		public synchronized void mousePressed(MouseEvent e) {
 			super.mousePressed(e);
-			if (cont.isBlank() && !new PP(p).out(line, 1, -5))
+			if (blank() && !new PP(p).out(line, 1, -5))
 				drag = true;
 		}
 
@@ -89,7 +89,7 @@ public interface IconBox extends ViewBox {
 		}
 
 		public void postdraw(FakeGraphics gra) {
-			if (cont.isBlank()) {
+			if (blank()) {
 				BCAuxAssets aux = CommonStatic.getBCAssets();
 
 				int t = mode == 0 ? (type == 1 || type == 2) ? type : 0 : 4;
@@ -122,7 +122,7 @@ public interface IconBox extends ViewBox {
 		}
 
 		public void predraw(FakeGraphics gra) {
-			if (cont.isBlank()) {
+			if (blank()) {
 				BCAuxAssets aux = CommonStatic.getBCAssets();
 
 				if (mode == 0 && type > 2 || mode == 1) {
@@ -136,6 +136,10 @@ public interface IconBox extends ViewBox {
 					gra.drawImage(bimg, line[0], line[1], bw * r, bh * r);
 				}
 			}
+		}
+
+		public boolean blank() {
+			return cont.isBlank();
 		}
 
 		public void synchronizeDimension() {

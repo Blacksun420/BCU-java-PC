@@ -21,6 +21,7 @@ import java.awt.event.MouseWheelEvent;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
 
@@ -43,6 +44,8 @@ public abstract class AbViewPage extends DefaultPage {
 	protected final JTG larges = new JTG(MainLocale.PAGE, "larges");
 	private final JLabel scale = new JLabel(MainLocale.getLoc(MainLocale.PAGE, "zoom"));
 	private final JTF manualScale = new JTF();
+	private final JLabel range = new JLabel(MainLocale.getLoc(MainLocale.INFO, "range"));
+	protected final JTF jrange = new JTF("[0,0]");
 
 	protected final ViewBox vb;
 
@@ -126,6 +129,9 @@ public abstract class AbViewPage extends DefaultPage {
 		add(scale);
 		add(larges);
 		add(manualScale);
+		add(range);
+		add(jrange);
+		jrange.setEnabled(false);
 		jst.setPaintLabels(true);
 		jst.setPaintTicks(true);
 		jst.setMajorTickSpacing(100);
@@ -146,15 +152,17 @@ public abstract class AbViewPage extends DefaultPage {
 		set(larges, x, y , 900, 0, 200, 50);
 		if (larges.isSelected()) {
 			set((Canvas) vb, x, y, 500, 50, 1800, 1200);
-			set(jspt, x, y, 100, 100, 300, 400);
+			set(jspt, x, y, 100, 150, 300, 350);
 			set(jtb, x, y, 25, 550, 200, 50);
 			set(jtl, x, y, 0, 700, 500, 100);
 			set(nex, x, y, 275, 550, 200, 50);
 			set(png, x, y, 0, 650, 150, 50);
 			set(gif, x, y, 175, 650, 150, 50);
 			set(mp4, x, y, 350, 650, 150, 50);
-			set(scale, x, y, 100, 50, 100, 50);
-			set(manualScale, x, y, 200, 50, 150, 50);
+			set(scale, x, y, 100, 50, 75, 50);
+			set(manualScale, x, y, 175, 50, 225, 50);
+			set(range, x, y, 100, 100, 75, 50);
+			set(jrange, x, y, 175, 100, 225, 50);
 			set(jst, x, y, 0, 0, 0, 0);
 		} else {
 			set((Canvas) vb, x, y, cx, 100, 1000, 600);
@@ -168,6 +176,8 @@ public abstract class AbViewPage extends DefaultPage {
 			set(mp4, x, y, 1800, 1050, 200, 50);
 			set(scale, x, y, cx, 50, 100, 50);
 			set(manualScale, x, y, cx + 75, 50, 150, 50);
+			set(range, x, y, cx + 250, 50, 100, 50);
+			set(jrange, x, y, cx + 325, 50, 200, 50);
 		}
 	}
 
@@ -185,7 +195,13 @@ public abstract class AbViewPage extends DefaultPage {
 		}
 		if (jlt.getSelectedIndex() == -1)
 			return;
+		if (vb.getEnt() != null)
+			jrange.setText(Arrays.toString(vb.getEnt().rangePointers));
 		vb.setEntity(a.getEAnim(a.types()[jlt.getSelectedIndex()]));
+		int[] ranges = CommonStatic.parseIntsN(jrange.getText());
+		for (int i = 0; i < ranges.length; i++)
+			vb.getEnt().rangePointers[i] = ranges[i];
+		jrange.setEnabled(true);
 		setJTL();
 	}
 
@@ -294,6 +310,12 @@ public abstract class AbViewPage extends DefaultPage {
 			remove((Canvas) vb);
 			add((Canvas) vb);
 			fireDimensionChanged();
+		});
+
+		jrange.setLnr(l -> {
+			int[] ranges = CommonStatic.parseIntsN(jrange.getText());
+			for (int i = 0; i < Math.min(2, ranges.length); i++)
+				vb.getEnt().rangePointers[i] = ranges[i];
 		});
 
 		manualScale.addFocusListener(new FocusAdapter() {

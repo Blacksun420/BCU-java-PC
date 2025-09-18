@@ -44,7 +44,7 @@ class GLIconBox extends GLViewBox implements IconBox {
 	@Override
 	public void draw(FakeGraphics gra) {
 		boolean b = CommonStatic.getConfig().ref;
-		CommonStatic.getConfig().ref = false;
+		CommonStatic.getConfig().ref &= !getCtrl().blank();
 		getCtrl().predraw(gra);
 		FakeTransform at = gra.getTransform();
 		super.draw(gra);

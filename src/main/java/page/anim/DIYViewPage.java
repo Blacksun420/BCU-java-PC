@@ -1,5 +1,6 @@
 package page.anim;
 
+import common.CommonStatic;
 import common.system.VImg;
 import common.util.AnimGroup;
 import common.util.anim.AnimCE;
@@ -22,6 +23,7 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DIYViewPage extends AbViewPage implements AbEditPage {
 
@@ -122,6 +124,7 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 
 	@Override
 	protected void renew() {
+		setRange();
 		TreePath path = jlt.getSelectionPath();
 		preIni();
 		if (path != null && path.getLastPathComponent() instanceof DefaultMutableTreeNode && ((DefaultMutableTreeNode)path.getLastPathComponent()).getUserObject() instanceof AnimCE) {
@@ -279,6 +282,9 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 
 			renew();
 		});
+
+		jrange.removeFocusListener(jrange.getFocusListeners()[0]);
+		jrange.setLnr(l -> aep.setRange(CommonStatic.parseIntsN(jrange.getText())));
 	}
 
 	private void ini() {
@@ -304,4 +310,10 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 		addListeners();
 	}
 
+	protected void setRange() {
+		jrange.setText(Arrays.toString(aep.ranges));
+		if (vb.getEnt() != null)
+			for (int i = 0; i < 2; i++)
+				vb.getEnt().rangePointers[i] = aep.ranges[i];
+	}
 }

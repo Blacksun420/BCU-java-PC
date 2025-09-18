@@ -3,9 +3,7 @@ package page.anim;
 import common.CommonStatic;
 import common.system.P;
 import common.util.anim.*;
-import page.DefaultPage;
-import page.JBTN;
-import page.Page;
+import page.*;
 import page.support.AnimTreeRenderer;
 import page.support.TreeNodeExpander;
 import plugin.ui.main.util.MenuBarHandler;
@@ -36,13 +34,15 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 	private final JScrollPane jspmm = new JScrollPane(mmet);
 	private final SpriteBox sb = new SpriteBox(this);
 	private final ModelBox mb = ModelBox.getInstance();
-	private final JBTN revt = new JBTN(0, "revt");
-	private final JBTN addl = new JBTN(0, "addl");
-	private final JBTN reml = new JBTN(0, "reml");
-	private final JBTN rema = new JBTN(0, "rema");
-	private final JBTN sort = new JBTN(0, "sort");
-	private final JBTN camres = new JBTN(0, "rescam");
-	private final JBTN zomres = new JBTN(0, "reszom");
+	private final JBTN revt = new JBTN(MainLocale.PAGE, "revt");
+	private final JBTN addl = new JBTN(MainLocale.PAGE, "addl");
+	private final JBTN reml = new JBTN(MainLocale.PAGE, "reml");
+	private final JBTN rema = new JBTN(MainLocale.PAGE, "rema");
+	private final JBTN sort = new JBTN(MainLocale.PAGE, "sort");
+	private final JBTN camres = new JBTN(MainLocale.PAGE, "rescam");
+	private final JBTN zomres = new JBTN(MainLocale.PAGE, "reszom");
+	private final JLabel range = new JLabel(MainLocale.getLoc(MainLocale.INFO, "range"));
+	private final JTF jrange = new JTF("[0,0]");
 	private final EditHead aep;
 	private Point p = null;
 	private MMTree mmt;
@@ -210,6 +210,7 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 	@Override
 	protected void renew() {
 		change(this, page -> {
+			setRange();
 			TreePath path = jlt.getSelectionPath();
 			if (path == null)
 				return;
@@ -257,7 +258,9 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 		set(jspmm, x, y, 300, 550, 2000, 750);
 		set(jspu, x, y, 0, 50, 300, 500);
 		set((Canvas) mb, x, y, 300, 50, 700, 500);
-		set(jspp, x, y, 1000, 50, 300, 500);
+		set(range,x,y,1000,50,75,50);
+		set(jrange,x,y,1075,50,225,50);
+		set(jspp, x, y, 1000, 100, 300, 450);
 		set(sb, x, y, 1300, 50, 1000, 450);
 		set(sort, x, y, 1300, 500, 200, 50);
 		set(revt, x, y, 1500, 500, 200, 50);
@@ -372,6 +375,8 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 			}
 
 		});
+
+		jrange.setLnr(l -> aep.setRange(CommonStatic.parseIntsN(jrange.getText())));
 	}
 
 	@Override
@@ -402,6 +407,8 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 		add(sort);
 		add(sb);
 		add((Canvas) mb);
+		add(range);
+		add(jrange);
 		jlt.setCellRenderer(new AnimTreeRenderer());
 		SwingUtilities.invokeLater(() -> jlt.setUI(new TreeNodeExpander(jlt)));
 		jtr.setExpandsSelectedPaths(true);
@@ -496,16 +503,17 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 		addl.setEnabled(anim != null);
 		sort.setEnabled(anim != null);
 		revt.setEnabled(anim != null);
+		jrange.setEnabled(anim != null);
 		if (anim == null) {
 			mmet.setMaModel(null);
-			mb.setEntity(null);
+			setEntity(null);
 			sb.setAnim(null);
 			jlp.setListData(new String[0]);
 			setB(-1);
 			return;
 		}
 		mmet.setMaModel(anim);
-		mb.setEntity(new EAnimS(anim, anim.mamodel));
+		setEntity(new EAnimS(anim, anim.mamodel));
 		ImgCut ic = anim.imgcut;
 		String[] name = new String[ic.n];
 		for (int i = 0; i < ic.n; i++)
@@ -551,6 +559,18 @@ public class MaModelEditPage extends DefaultPage implements AbEditPage {
 				reml.setToolTipText("This part is " + (!pars.isEmpty() ? "parent of these parts: " + pars +
 						(!anims.isEmpty() ? ", and " : "") : "") + (!anims.isEmpty() ? "used in these animations: " + anims : ""));
 		}
+	}
+
+	private void setEntity(EAnimS a) {
+		mb.setEntity(a);
+		setRange();
+	}
+
+	protected void setRange() {
+		jrange.setText(Arrays.toString(aep.ranges));
+		if (mb.getEntity() != null)
+			for (int i = 0; i < 2; i++)
+				mb.getEntity().rangePointers[i] = aep.ranges[i];
 	}
 
 	private void setTree(AnimCE dat) {

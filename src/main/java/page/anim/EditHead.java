@@ -30,6 +30,7 @@ public class EditHead extends Page implements EditLink {
 	private boolean changing = false;
 
 	protected AnimCE anim;
+	protected int[] ranges = {0,0};
 
 	public EditHead(Page p, int v) {
 		super(p.getFront());
@@ -153,6 +154,25 @@ public class EditHead extends Page implements EditLink {
 			review();
 			((AbEditPage) cur).setSelection(anim);
 		});
+	}
+
+	protected void setRange(int[] rngs) {
+		for (int i = 0; i < Math.min(rngs.length, 2); i++)
+			ranges[i] = rngs[i];
+		setRange();
+	}
+
+	protected void setRange() {
+		if (changing)
+			return;
+		changing = true;
+		if (p0 == cur)
+			p0.setRange();
+		if (p2 == cur)
+			p2.setRange();
+		if (p3 == cur)
+			p3.setRange();
+		changing = false;
 	}
 
 	protected void hotkey(KeyEvent e) {
