@@ -85,7 +85,7 @@ class SpriteBox extends JPanel implements KeyListener, MouseInputListener, Mouse
 			gra.setColor(white ? Color.WHITE : new Color(64, 64, 64));
 			gra.fillRect(0, 0, bw, bh);
 
-			gra.setColor(Color.LIGHT_GRAY);
+			gra.setColor(white ? Color.LIGHT_GRAY : new Color(102, 102, 102));
 			for (int i = 0; i < rw; i += 20)
 				for (int j = i / 20 % 2 * 20; j < rh; j += 40)
 					gra.fillRect(i, j, 20, 20);
