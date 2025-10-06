@@ -461,7 +461,7 @@ public interface BattleBox {
 					if(f == null)
 						continue;
 
-					int pri = sb.rem_spawns == 0 || sb.cantDeploy(f.unit().getRarity(), sb.b.lu.efs[i][j].getWill()) ? -1 : sb.elu.price[i][j];
+					int pri = sb.rem_spawns == 0 || sb.cantDeploy(f.unit().getRarity(), sb.b.lu.efs[i][j].getWill()) ? -1 : sb.getCost(i,j);
 					if (pri == -1 || pri == -2)
 						g.colRect(x, y, iw, ih, 255 / -pri, 0, 0, 100 * -pri);
 					else if (sb.elu.readySpirit(i,j)) {
@@ -554,7 +554,7 @@ public interface BattleBox {
 				g.drawImage(img, x - (imw - iw) / 2f, y - (imh - ih) / 2f, imw, imh);
 				if (f == null)
 					continue;
-				int pri = sb.rem_spawns == 0 || sb.cantDeploy(f.unit().getRarity(), sb.b.lu.efs[index][i].getWill()) ? -1 : sb.elu.price[index][i];
+				int pri = sb.rem_spawns == 0 || sb.cantDeploy(f.unit().getRarity(), sb.b.lu.efs[index][i].getWill()) ? -1 : sb.getCost(index,i);
 				if (pri == -1 || pri == -2)
 					g.colRect(x, y, iw, ih, 255 / -pri, 0, 0, 100 * -pri);
 				else if (sb.elu.readySpirit(index,i)) {
