@@ -29,7 +29,8 @@ public class ComboListTable extends SortTable<Combo> {
 		String str = MainLocale.getLoc(MainLocale.INFO, "unit");
 		tit = new String[] { "ID", "Lv.", MainLocale.getLoc(MainLocale.INFO, "desc"),
 				MainLocale.getLoc(MainLocale.INFO, "occu"), str + " 1", str + " 2", str + " 3", str + " 4",
-				str + " 5" };
+				str + " 5", MainLocale.getLoc(MainLocale.INFO, "ht15"),
+				MainLocale.getLoc(MainLocale.INFO, "row")};
 	}
 
 	@NonNull
@@ -90,7 +91,7 @@ public class ComboListTable extends SortTable<Combo> {
 		int c = getColumnModel().getColumnIndexAtX(p.x);
 		c = lnk[c];
 		int r = p.y / getRowHeight();
-		if (r < 0 || r >= list.size() || c <= 3)
+		if (r < 0 || r >= list.size() || c <= 3 || c >= 9)
 			return;
 		Form f = ((Form) get(list.get(r), c));
 		if (f == null)
@@ -103,7 +104,7 @@ public class ComboListTable extends SortTable<Combo> {
 		c = lnk[c];
 		if (c == 2)
 			return Combo.class;
-		if (c > 3)
+		if (c > 3 && c < 9)
 			return Form.class;
 		return String.class;
 	}
@@ -126,6 +127,10 @@ public class ComboListTable extends SortTable<Combo> {
 			Form f0 = e0.forms[c - 3];
 			Form f1 = e1.forms[c - 3];
 			return f0.uid.compareTo(f1.uid);
+		} else if (c == 9) {
+			return e0.restriction == null ? e1.restriction == null ? 0 : -1 : e1.restriction == null ? 1 : e0.restriction.compareTo(e1.restriction);
+		} else if (c == 10) {
+			return Integer.compare(e0.row, e1.row);
 		} else {
 			return Integer.compare(e0.lv, e1.lv);
 		}
@@ -141,9 +146,12 @@ public class ComboListTable extends SortTable<Combo> {
 			return t;
 		if (c == 3)
 			return lu.occupance(t);
-		if (t.forms.length > c - 4) {
+		if (c == 9)
+			return t.restriction == null ? "N/A" : t.restriction.get().toString();
+		if (c == 10)
+			return t.row == 0 ? "Any" : t.row == 3 ? "Same" : String.valueOf(t.row);
+		if (t.forms.length > c - 4)
 			return t.forms[c - 4];
-		}
 		return null;
 	}
 

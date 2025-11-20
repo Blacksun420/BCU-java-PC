@@ -569,7 +569,7 @@ public class BasisPage extends LubCont {
 		});
 
 		setc.addActionListener(arg0 -> {
-			lu().set(jlc.list.get(jlc.getSelectedRow()).forms);
+			lu().set(jlc.list.get(jlc.getSelectedRow()));
 			changeLU();
 		});
 

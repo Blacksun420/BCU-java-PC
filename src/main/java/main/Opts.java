@@ -302,11 +302,13 @@ public class Opts {
 		panel.setPreferredSize(new Dimension(w, h));
 
 		panel.setBackground(new Color(64, 64, 64));
-
+		String name = pack.getSID() + (pack.toString().equals(pack.getSID()) ? "" : " - " + pack);
+		if (pack.source instanceof Source.ZipSource && !((Source.ZipSource)pack.source).getPackFile().getName().contains(pack.getSID()))
+			name += " (" + ((Source.ZipSource)pack.source).getPackFile().getName() + ")";
 		JOptionPane.showOptionDialog(
 				null,
 				panel,
-				(pack.toString().equals(pack.getSID()) ? "" : pack.getSID() + " - ") + Page.get(MainLocale.PAGE, "pdesc").replace("_", pack.toString()),
+				(Page.get(MainLocale.PAGE, "pdesc").replace("_", name)),
 				JOptionPane.DEFAULT_OPTION,
 				JOptionPane.PLAIN_MESSAGE,
 				null,

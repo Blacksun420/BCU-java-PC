@@ -5,6 +5,7 @@ import common.battle.BasisLU;
 import common.battle.BasisSet;
 import common.battle.Treasure;
 import common.battle.data.*;
+import common.pack.Identifier;
 import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.system.P;
@@ -13,10 +14,7 @@ import common.util.Data.Proc.ProcItem;
 import common.util.lang.Formatter;
 import common.util.lang.MultiLangCont;
 import common.util.lang.ProcLang;
-import common.util.stage.BattlePreset;
-import common.util.stage.Limit;
-import common.util.stage.MapColc;
-import common.util.stage.StageLimit;
+import common.util.stage.*;
 import common.util.stage.info.CustomStageInfo;
 import common.util.stage.info.DefStageInfo;
 import common.util.stage.info.StageInfo;
@@ -105,7 +103,7 @@ public class Interpret extends Data {
 	 */
 	private static final byte[][] CDC = { { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 3 }, { 1, 0 }, { 1, 1 }, { 2, 1 },
 			{ 1, 1 }, { 1, 1 }, { 1, 1 }, { 2, 2 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 },
-			{ 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 } };
+			{ 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 2, 1 } };
 
 	//Filters abilities and procs that are available for enemies. Also gives better organization to the UI
 	public static final byte[] EABIIND = { ABI_ONLY, ABI_METALIC, ABI_SNIPERI, ABI_TIMEI, ABI_GHOST, ABI_GLASS, ABI_THEMEI };
@@ -173,7 +171,7 @@ public class Interpret extends Data {
 	}
 
 	public static String comboInfo(Combo c, BasisLU b) {
-		return combo(c.type, CommonStatic.getBCAssets().values[c.type][c.lv], b);
+		return combo(c.type, CommonStatic.getBCAssets().values[c.type][c.lv], b, c.restriction);
 	}
 
 	public static String deco(int type, BasisLU b) { // 0 = slow
@@ -637,7 +635,7 @@ public class Interpret extends Data {
 		ATKCONF = Page.get(MainLocale.UTIL, "aa", ATK_TOT);
 		TREA = Page.get(MainLocale.UTIL, "t", TIND.length);
 		COMF = Page.get(MainLocale.UTIL, "na", 6);
-		COMN = Page.get(MainLocale.UTIL, "nb", 25);
+		COMN = Page.get(MainLocale.UTIL, "nb", C_TOT);
 		TCTX = Page.get(MainLocale.UTIL, "tc", 6);
 		PCTX = Page.get(MainLocale.UTIL, "aq", PC_CORRES.length);
 		CCTX = Page.get(MainLocale.UTIL, "cq", PC_CUSTOM.length);
@@ -657,14 +655,20 @@ public class Interpret extends Data {
 			setVal(ind, v, bl.t());
 	}
 
+	private static String combo(int t, int val, BasisLU b, Identifier<CharaGroup> restr) {
+		String def = combo(t, val, b);
+		if (restr == null)
+			return def;
+		return def + " (" + restr.get() + " only)";
+	}
 	private static String combo(int t, int val, BasisLU b) {
 		byte[] con = CDC[t];
 		if (t == C_RESP) {
 			double research = (b.t().tech[LV_RES] - 1) * 6 + b.t().trea[T_RES] * 0.3;
 			return COMN[t] + " " + CDP[0][con[0]] + CDP[1][con[1]].replaceAll("_", String.valueOf(research * val / 100));
-		} else {
-			return COMN[t] + " " + CDP[0][con[0]] + CDP[1][con[1]].replaceAll("_", String.valueOf(val));
-		}
+		} else if (t == C_VKILL)
+			val /= 10;
+		return COMN[t] + " " + CDP[0][con[0]] + CDP[1][con[1]].replaceAll("_", String.valueOf(val));
 	}
 
 	private static void setVal(int ind, int v, Treasure t) {

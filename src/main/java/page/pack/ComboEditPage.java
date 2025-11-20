@@ -55,6 +55,12 @@ public class ComboEditPage extends DefaultPage {
     private UnitFindPage ufp;
     private final JBTN vuif = new JBTN(0, "vuif");
 
+    private final JBTN cgb = new JBTN(MainLocale.INFO, "ht15");
+    private final JL cgt = new JL();
+    private CharaGroupPage cgp;
+
+    private final JBTN row = new JBTN(MainLocale.INFO, "row");
+
     private boolean changing = false, unsorted = true;
 
     protected ComboEditPage(Page p, PackData.UserPack pack) {
@@ -68,7 +74,12 @@ public class ComboEditPage extends DefaultPage {
 
     @Override
     protected void renew() {
-        if (ufp != null && ufp.getList() != null) {
+        if (cgp != null) {
+            Combo c = jlc.list.get(jlc.getSelectedRow());
+            cgt.setText(cgp.cg == null ? "N/A" : cgp.cg.toString());
+            c.setRestriction(cgp.cg == null ? null : cgp.cg.id);
+            cgp = null;
+        } else if (ufp != null && ufp.getList() != null) {
             changing = true;
             List<Unit> list = new ArrayList<>();
             for (AbForm f : ufp.getList())
@@ -76,7 +87,7 @@ public class ComboEditPage extends DefaultPage {
                     list.add((Unit) f.unit());
             jlu.setListData(list.toArray(new Unit[0]));
             jlu.clearSelection();
-            if (list.size() > 0) {
+            if (!list.isEmpty()) {
                 changing = false;
                 jlu.setSelectedIndex(0);
             }
@@ -94,54 +105,10 @@ public class ComboEditPage extends DefaultPage {
                         unis.add(u);
             jlu.setListData(unis.toArray(new Unit[0]));
             jlu.clearSelection();
-            if (unis.size() > 0)
+            if (!unis.isEmpty())
                 jlu.setSelectedIndex(0);
             jlc.setList(pac.combos.getList());
         }
-
-        lbp.addActionListener(j -> {
-            int method = lbp.getSelectedIndex();
-            switch (method) {
-                case 0:
-                    if (unsorted)
-                        return;
-                    Vector<PackData.UserPack> vpack2 = new Vector<>(UserProfile.getUserPacks());
-                    vpack.clear();
-                    vpack.addAll(vpack2); //Dunno a more efficient way to unsort a list
-                    break;
-                case 1:
-                    vpack.sort(null);
-                    break;
-                case 2:
-                    vpack.sort(Comparator.comparing(PackData.UserPack::getSID));
-                    break;
-                case 3:
-                    vpack.sort(Comparator.comparing(p -> p.desc.getAuthor()));
-                    break;
-                case 4:
-                    vpack.sort(Comparator.comparing(p -> p.desc.BCU_VERSION));
-                    vpack.sort(Comparator.comparingInt(p -> p.desc.FORK_VERSION));
-                    break;
-                case 5:
-                    vpack.sort(Comparator.comparingLong(p -> p.desc.getTimestamp("cdate")));
-                    break;
-                case 6:
-                    vpack.sort(Comparator.comparingLong(p -> p.desc.getTimestamp("edate")));
-                    break;
-                case 7:
-                    vpack.sort(Comparator.comparingInt(p -> p.enemies.size()));
-                    break;
-                case 8:
-                    vpack.sort(Comparator.comparingInt(p -> p.units.size()));
-                    break;
-                case 9:
-                    vpack.sort(Comparator.comparingInt(p -> p.mc.getStageCount()));
-                    break;
-            }
-            jlp.setListData(vpack);
-            unsorted = method == 0;
-            jlp.setSelectedValue(pac, true);
-        });
     }
 
     private void ini() {
@@ -163,6 +130,10 @@ public class ComboEditPage extends DefaultPage {
         add(clvls);
         add(jspc);
         add(comboname);
+
+        add(cgb);
+        add(cgt);
+        add(row);
 
         jlu.setCellRenderer(new UnitLCR());
         jlf.setCellRenderer(new AnimLCR());
@@ -295,13 +266,68 @@ public class ComboEditPage extends DefaultPage {
             Combo combo = jlc.list.get(jlc.getSelectedRow());
             if (combo.name.equals(str))
                 return;
-            if (str.equals("")) {
+            if (str.isEmpty()) {
                 comboname.setText(combo.name);
                 return;
             }
             combo.name = str;
         });
 
+        cgb.addActionListener(arg0 -> {
+            cgp = new CharaGroupPage(this, pac, false);
+            changePanel(cgp);
+        });
+
+        row.setLnr(s -> {
+            Combo c = jlc.list.get(jlc.getSelectedRow());
+            c.row++;
+            c.row %= 4;
+            row.setText(MainLocale.INFO, "row" + c.row);
+        });
+
+        lbp.addActionListener(j -> {
+            int method = lbp.getSelectedIndex();
+            switch (method) {
+                case 0:
+                    if (unsorted)
+                        return;
+                    Vector<PackData.UserPack> vpack2 = new Vector<>(UserProfile.getUserPacks());
+                    vpack.clear();
+                    vpack.addAll(vpack2); //Dunno a more efficient way to unsort a list
+                    break;
+                case 1:
+                    vpack.sort(null);
+                    break;
+                case 2:
+                    vpack.sort(Comparator.comparing(PackData.UserPack::getSID));
+                    break;
+                case 3:
+                    vpack.sort(Comparator.comparing(p -> p.desc.getAuthor()));
+                    break;
+                case 4:
+                    vpack.sort(Comparator.comparing(p -> p.desc.BCU_VERSION));
+                    vpack.sort(Comparator.comparingInt(p -> p.desc.FORK_VERSION));
+                    break;
+                case 5:
+                    vpack.sort(Comparator.comparingLong(p -> p.desc.getTimestamp("cdate")));
+                    break;
+                case 6:
+                    vpack.sort(Comparator.comparingLong(p -> p.desc.getTimestamp("edate")));
+                    break;
+                case 7:
+                    vpack.sort(Comparator.comparingInt(p -> p.enemies.size()));
+                    break;
+                case 8:
+                    vpack.sort(Comparator.comparingInt(p -> p.units.size()));
+                    break;
+                case 9:
+                    vpack.sort(Comparator.comparingInt(p -> p.mc.getStageCount()));
+                    break;
+            }
+            jlp.setListData(vpack);
+            unsorted = method == 0;
+            jlp.setSelectedValue(pac, true);
+        });
     }
 
     @Override
@@ -325,6 +351,10 @@ public class ComboEditPage extends DefaultPage {
         set(remc, x, y, 1550, 900, 300, 50);
         set(ctypes, x, y, 1550, 950, 450, 50);
         set(clvls, x, y, 1850, 900, 150, 50);
+
+        set(cgb, x, y, 1550, 1050, 225, 50);
+        set(cgt, x, y, 1775, 1050, 225, 50);
+        set(row, x, y, 1550, 1100, 450, 50);
 
         jlc.setRowHeight(50);
         jlc.getColumnModel().getColumn(2).setPreferredWidth(size(x, y, 300));
@@ -375,7 +405,7 @@ public class ComboEditPage extends DefaultPage {
         boolean editable = frm != null && pac.editable;
         addc.setEnabled(editable);
         vuif.setEnabled(pac != null && pac.editable);
-        boolean size = pac != null && jlc.getSelectedRow() != -1 && jlc.list.size() > 0;
+        boolean size = pac != null && jlc.getSelectedRow() != -1 && !jlc.list.isEmpty();
         boolean dsize = size && pac.editable;
         boolean esize = editable && dsize;
         if (size) {
@@ -383,8 +413,15 @@ public class ComboEditPage extends DefaultPage {
             ctypes.setSelectedIndex(c.type);
             clvls.setSelectedIndex(c.lv);
             comboname.setText(c.name);
-        } else
+            cgt.setText(c.restriction == null ? "N/A" : c.restriction.get().toString());
+            row.setText(MainLocale.INFO, "row" + c.row);
+        } else {
             comboname.setText("");
+            cgt.setText("");
+            row.setText(MainLocale.INFO, "row");
+        }
+        row.setEnabled(dsize);
+        cgb.setEnabled(dsize);
         comboname.setEnabled(dsize);
         ctypes.setEnabled(dsize);
         clvls.setEnabled(dsize);
