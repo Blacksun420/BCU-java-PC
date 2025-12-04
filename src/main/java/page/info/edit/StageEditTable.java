@@ -7,11 +7,8 @@ import common.pack.PackData.UserPack;
 import common.pack.UserProfile;
 import common.system.ENode;
 import common.util.Data;
-import common.util.stage.CastleImg;
-import common.util.stage.SCDef;
+import common.util.stage.*;
 import common.util.stage.SCDef.Line;
-import common.util.stage.SCGroup;
-import common.util.stage.Stage;
 import common.util.unit.AbEnemy;
 import common.util.unit.EneRand;
 import common.util.unit.Enemy;
@@ -111,8 +108,37 @@ public class StageEditTable extends AbJTable implements Reorderable {
 
 	public void updateAbEnemy() {
 		AbEnemy ae = efp.getSelected();
-		if (findIndex != -1 && ae != null && stage.datas[findIndex].enemy != ae.getID() && Opts.conf("Are you sure you want to replace " + Identifier.get(stage.datas[findIndex].enemy) + " with " + ae + "?"))
-			stage.datas[findIndex].enemy = ae.getID();
+		if (findIndex != -1 && ae != null && stage.datas[findIndex].enemy != ae.getID()) {
+			Identifier<AbEnemy> ai = ae.getID(), si = stage.datas[findIndex].enemy;
+			int[] rep = si == null ? new int[1] : Opts.replaceEnemy("Are you sure you want to replace " + Identifier.get(si)
+					+ " with " + ae + "?", String.valueOf(Identifier.get(si)));
+			if (rep.length > 0) {
+				stage.datas[findIndex].enemy = ai;
+				if (rep.length == 3) {
+					stage.datas[findIndex].multiple = (int) ((long) stage.datas[findIndex].multiple * rep[1] / 100);
+					stage.datas[findIndex].mult_atk = (int) ((long) stage.datas[findIndex].mult_atk * rep[2] / 100);
+				}
+
+				if (rep[0] >= 1) {
+					List<Stage> sts = rep[0] == 2 ? s.getCont().list.getList() : new ArrayList<>();
+					if (rep[0] == 1)
+						sts.add(s);
+					else if (rep[0] == 3)
+						for (StageMap smap : s.getMC().maps)
+							sts.addAll(smap.list.getList());
+
+					for (Stage st : sts)
+						for (Line l : st.data.datas)
+							if (si.equals(l.enemy)) {
+								l.enemy = ai;
+								if (rep.length == 3) {
+									l.multiple = (int) ((long) l.multiple * rep[1] / 100);
+									l.mult_atk = (int) ((long) l.mult_atk * rep[2] / 100);
+								}
+							}
+				}
+			}
+		}
 		findIndex = -1;
 	}
 

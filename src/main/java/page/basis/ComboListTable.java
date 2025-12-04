@@ -29,8 +29,7 @@ public class ComboListTable extends SortTable<Combo> {
 		String str = MainLocale.getLoc(MainLocale.INFO, "unit");
 		tit = new String[] { "ID", "Lv.", MainLocale.getLoc(MainLocale.INFO, "desc"),
 				MainLocale.getLoc(MainLocale.INFO, "occu"), str + " 1", str + " 2", str + " 3", str + " 4",
-				str + " 5", MainLocale.getLoc(MainLocale.INFO, "ht15"),
-				MainLocale.getLoc(MainLocale.INFO, "row")};
+				str + " 5", MainLocale.getLoc(MainLocale.INFO, "row")};
 	}
 
 	@NonNull
@@ -68,6 +67,7 @@ public class ComboListTable extends SortTable<Combo> {
 				jl.setText("");
 				if (form == null) {
 					jl.setIcon(null);
+					jl.setBackground(null);
 					return jl;
 				}
 				ImageIcon icon = UtilPC.getIcon(form.anim.getUni());
@@ -79,6 +79,14 @@ public class ComboListTable extends SortTable<Combo> {
 				} else {
 					jl.setIcon(null);
 				}
+				byte fr = ((Combo)getValueAt(r, 2)).formRestriction[c - 4];
+				if (fr == 1)
+					jl.setBackground(Color.BLUE);
+				else if (fr == 2)
+					jl.setBackground(Color.RED);
+				else
+					jl.setBackground(null);
+
 				return jl;
 			}
 
@@ -96,7 +104,7 @@ public class ComboListTable extends SortTable<Combo> {
 		Form f = ((Form) get(list.get(r), c));
 		if (f == null)
 			return;
-		fr.callBack(f.unit);
+		fr.callBack(new Object[]{f.unit, list.get(r)});
 	}
 
 	@Override
@@ -128,8 +136,6 @@ public class ComboListTable extends SortTable<Combo> {
 			Form f1 = e1.forms[c - 3];
 			return f0.uid.compareTo(f1.uid);
 		} else if (c == 9) {
-			return e0.restriction == null ? e1.restriction == null ? 0 : -1 : e1.restriction == null ? 1 : e0.restriction.compareTo(e1.restriction);
-		} else if (c == 10) {
 			return Integer.compare(e0.row, e1.row);
 		} else {
 			return Integer.compare(e0.lv, e1.lv);
@@ -147,8 +153,6 @@ public class ComboListTable extends SortTable<Combo> {
 		if (c == 3)
 			return lu.occupance(t);
 		if (c == 9)
-			return t.restriction == null ? "N/A" : t.restriction.get().toString();
-		if (c == 10)
 			return t.row == 0 ? "Any" : t.row == 3 ? "Same" : String.valueOf(t.row);
 		if (t.forms.length > c - 4)
 			return t.forms[c - 4];

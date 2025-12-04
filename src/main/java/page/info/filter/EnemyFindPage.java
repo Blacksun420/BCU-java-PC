@@ -47,7 +47,7 @@ public class EnemyFindPage extends EntityFindPage<AbEnemy> implements SupPage<Ab
 	@Override
 	public AbEnemy getSelected() {
 		int sel = elt.getSelectedRow();
-		if (sel < 0)
+		if (sel < 0 || sel >= elt.list.size())
 			return null;
 		return elt.list.get(sel);
 	}

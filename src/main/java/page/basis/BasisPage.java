@@ -154,8 +154,8 @@ public class BasisPage extends LubCont {
 	public void callBack(Object o) {
 		if (o == null)
 			changeLU();
-		else if (o instanceof Unit) {
-			Unit unit = (Unit) o;
+		else if (o instanceof Object[] && ((Object[])o)[0] instanceof Unit) {
+			Unit unit = (Unit)((Object[])o)[0];
 			if (cunit != null && unit.compareTo(cunit) == 0)
 				return;
 			combo.setSelected(true);

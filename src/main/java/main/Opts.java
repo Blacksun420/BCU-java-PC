@@ -138,6 +138,51 @@ public class Opts {
 				null, choices, choices[0]);
 	}
 
+	public static int[] replaceEnemy(String text, String ene) {
+		JLabel txt = new JLabel(text);
+		Border b = txt.getBorder();
+		Border eb = new EmptyBorder(0, 0, 16, 0);
+
+		if(b == null) {
+			txt.setBorder(eb);
+		} else
+			txt.setBorder(new CompoundBorder(eb, b));
+
+		AtomicInteger selection = new AtomicInteger();
+		ButtonGroup bg = new ButtonGroup();
+
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.add(txt);
+
+		String[] options = new String[]{"Selected Only","Replace all " + ene + " in stage","Replace all " + ene + " in stagemap",
+				"Replace all " + ene + " in pack"};
+		for(int i = 0; i < options.length; i++) {
+			String e = options[i];
+			JRadioButton rb = new JRadioButton(e);
+			int finalI = i;
+
+			rb.addActionListener(e1 -> selection.set(finalI));
+			if(i == 0)
+				rb.setSelected(true);
+
+			bg.add(rb);
+			panel.add(rb);
+		}
+		JTF mag = new JTF();
+		mag.setHintText("[HP/ATK]: {100%,100%}x");
+		panel.add(mag);
+
+		int result = JOptionPane.showConfirmDialog(null, panel, "Confirmation", JOptionPane.OK_CANCEL_OPTION);
+		if(result == JOptionPane.OK_OPTION) {
+			int[] percs = CommonStatic.parseIntsN(mag.getText());
+			if (percs.length == 0)
+				return new int[]{selection.get()};
+			return new int[]{selection.get(), percs[0], percs.length >= 2 ? percs[1] : percs[0]};
+		} else
+			return new int[0];
+	}
+
 	public static boolean[] confirmSave() {
 		JLabel jl = new JLabel(Page.get(MainLocale.PAGE, "savwarn"));
 		JCheckBox check = new JCheckBox(Page.get(MainLocale.PAGE, "genbckp"));

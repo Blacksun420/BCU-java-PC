@@ -18,6 +18,7 @@ import page.support.UnitLCR;
 import utilpc.Interpret;
 
 import javax.swing.*;
+import java.awt.event.MouseEvent;
 import java.util.*;
 
 public class ComboEditPage extends DefaultPage {
@@ -109,6 +110,39 @@ public class ComboEditPage extends DefaultPage {
                 jlu.setSelectedIndex(0);
             jlc.setList(pac.combos.getList());
         }
+    }
+
+    boolean rightClick = false;
+    @Override
+    protected void mouseClicked(MouseEvent e) {
+        rightClick = SwingUtilities.isRightMouseButton(e);
+        if (e.getSource() == jlc)
+            jlc.clicked(e.getPoint());
+        super.mouseClicked(e);
+    }
+
+    @Override
+    public void callBack(Object obj) {
+        if (!(obj instanceof Object[]))
+            return;
+        Unit u = (Unit)((Object[])obj)[0];
+        Combo c = (Combo)((Object[])obj)[1];
+        int col = 0;
+        while (true)
+            if (c.forms[col].unit == u)
+                break;
+            else
+                col++;
+
+        if (rightClick) {
+            Form f = c.forms[col];
+            c.forms[col] = u.forms[f.fid == u.forms.length - 1 ? 0 : f.fid + 1];
+        } else {
+            c.formRestriction[col]++;
+            c.formRestriction[col] %= 3;
+        }
+        jlc.revalidate();
+        jlc.repaint();
     }
 
     private void ini() {
