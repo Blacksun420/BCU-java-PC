@@ -78,7 +78,7 @@ public class ComboEditPage extends DefaultPage {
         if (cgp != null) {
             Combo c = jlc.list.get(jlc.getSelectedRow());
             cgt.setText(cgp.cg == null ? "N/A" : cgp.cg.toString());
-            c.setRestriction(cgp.cg == null ? null : cgp.cg.id);
+            c.setGroup(cgp.cg);
             cgp = null;
         } else if (ufp != null && ufp.getList() != null) {
             changing = true;
@@ -447,7 +447,7 @@ public class ComboEditPage extends DefaultPage {
             ctypes.setSelectedIndex(c.type);
             clvls.setSelectedIndex(c.lv);
             comboname.setText(c.name);
-            cgt.setText(c.restriction == null ? "N/A" : c.restriction.get().toString());
+            cgt.setText(c.group == null ? "N/A" : c.group.toString());
             row.setText(MainLocale.INFO, "row" + c.row);
         } else {
             comboname.setText("");

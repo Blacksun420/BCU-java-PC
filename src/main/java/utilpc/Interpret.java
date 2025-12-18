@@ -5,7 +5,6 @@ import common.battle.BasisLU;
 import common.battle.BasisSet;
 import common.battle.Treasure;
 import common.battle.data.*;
-import common.pack.Identifier;
 import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.system.P;
@@ -31,8 +30,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class Interpret extends Data {
 
@@ -125,7 +124,7 @@ public class Interpret extends Data {
 			Data.P_STRONGAURA, Data.P_AI, Data.P_COMBOCOOLDOWN};
 
 	private static final DecimalFormat df;
-	public static final String[] comboLv = new String[] { "Sm", "M", "L", "XL", "DOWN" };
+	public static final String[] comboLv = new String[] { "Sm", "M", "L", "XL", "DOWN", "DEF" };
 
 	static {
 		redefine();
@@ -171,7 +170,7 @@ public class Interpret extends Data {
 	}
 
 	public static String comboInfo(Combo c, BasisLU b) {
-		return combo(c.type, CommonStatic.getBCAssets().values[c.type][c.lv], b, c.restriction);
+		return combo(c.type, CommonStatic.getBCAssets().values[c.type][c.lv], b, c.group);
 	}
 
 	public static String deco(int type, BasisLU b) { // 0 = slow
@@ -655,11 +654,11 @@ public class Interpret extends Data {
 			setVal(ind, v, bl.t());
 	}
 
-	private static String combo(int t, int val, BasisLU b, Identifier<CharaGroup> restr) {
+	private static String combo(int t, int val, BasisLU b, CharaGroup restr) {
 		String def = combo(t, val, b);
 		if (restr == null)
 			return def;
-		return def + " (" + restr.get() + " only)";
+		return def + " (" + restr + " only)";
 	}
 	private static String combo(int t, int val, BasisLU b) {
 		byte[] con = CDC[t];
