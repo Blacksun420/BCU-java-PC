@@ -413,11 +413,11 @@ public class CGLREditPage extends DefaultPage {
 
 	private void put(Level tar, int[] val) {
 		if (val.length == 1) {
-			tar.setLevel(Math.max(1, Math.min(val[0], 200 - tar.getPlusLv())));
+			tar.setLevel(Math.max(1, Math.min(val[0], 200)));
 			tar.setTalents(new int[0]);
 		} else {
-			tar.setLevel(Math.max(1, Math.min(val[0], 200 - val[1])));
-			tar.setPlusLevel(Math.max(0, Math.min(val[1], 200 - tar.getLv())));
+			tar.setLevel(Math.max(1, Math.min(val[0], 200)));
+			tar.setPlusLevel(Math.max(0, Math.min(val[1], 200)));
 
 			int[] nps = new int[Math.min(Data.PC_CORRES.length + Data.PC_CUSTOM.length, val.length - 2)];
 			System.arraycopy(val, 2, nps, 0, nps.length);

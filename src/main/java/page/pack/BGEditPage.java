@@ -310,6 +310,7 @@ public class BGEditPage extends DefaultPage {
 			for (int i = 0; i < 4; i++)
 				setCSText(i);
 
+			overlay.setSelected(bgr.overlay != null);
 			if(bgr.overlay != null)
 				for(int i = 0; i < 3; i++)
 					setOSText(i, i % 3 == 2);
@@ -324,6 +325,7 @@ public class BGEditPage extends DefaultPage {
 			else
 				eff.setSelectedItem(bgr.getEffect());
 		} else {
+			overlay.setSelected(false);
 			top.setEnabled(false);
 			for (int i = 0; i < 4; i++)
 				cs[i].setText(null);

@@ -2,7 +2,9 @@ package page.info.filter;
 
 import common.CommonStatic;
 import common.battle.data.MaskUnit;
+import common.battle.data.PCoin;
 import common.pack.*;
+import common.util.Data;
 import common.util.lang.MultiLangCont;
 import common.util.lang.ProcLang;
 import common.util.stage.Limit;
@@ -185,7 +187,12 @@ public class UnitFilterBox extends EntityFilterBox {
 		if (diff > minDiff)
 			return false;
 
-		MaskUnit du = f.maxu();
+		MaskUnit du = f.du;
+		if (f.du.getPCoin() != null) {
+			PCoin pc = f.du.getPCoin();
+			int[] talents = f.simulateBCTalents(f.unit.getTotalPreferredLevel());
+			du = Arrays.equals(talents, pc.max) ? pc.full : pc.improve(talents);
+		}
 		int a = du.getAbi();
 
 		if (limbtn.isSelected() && lim != null && lim.unusable(du, price, (byte)0))

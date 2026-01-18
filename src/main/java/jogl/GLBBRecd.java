@@ -10,6 +10,7 @@ class GLBBRecd extends GLBattleBox implements BBRecd {
 	private final GLRecorder glr;
 
 	private int time;
+	private boolean btlTick = true;//for 60 fps
 
 	protected GLBBRecd(OuterBox bip, BattleField bf, String path, int type) {
 		super(bip, bf, 0);
@@ -34,7 +35,9 @@ class GLBBRecd extends GLBattleBox implements BBRecd {
 		if (bbp.bf.sb.time > time) {
 			glr.update();
 			time = bbp.bf.sb.time;
-		}
+		} else if (bbp.bf.battleTick() != btlTick)
+			glr.update();
+		btlTick = bbp.bf.battleTick();
 	}
 
 	@Override

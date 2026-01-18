@@ -1,8 +1,11 @@
 package page.pack;
 
 import common.CommonStatic;
+import common.battle.data.MaskAtk;
 import common.pack.Context;
+import common.pack.PackData;
 import common.pack.Source;
+import common.pack.UserProfile;
 import common.util.unit.*;
 import common.pack.PackData.UserPack;
 import common.pack.FixIndexList.FixIndexMap;
@@ -19,10 +22,12 @@ import utilpc.UtilPC;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class TraitEditPage extends DefaultPage {
@@ -138,19 +143,40 @@ public class TraitEditPage extends DefaultPage {
         remct.addActionListener(arg0 -> {
             if (t == null)
                 return;
+            boolean used = t.isUsed();
+            if (used && !Opts.conf("This trait is being used. Delete it anyway?"))
+                return;
             changing = true;
             List<Trait> list = pct.getList();
             int ind = list.indexOf(t) - 1;
             if (ind < 0 && list.size() > 1)
                 ind = 0;
             File file = ((Source.Workspace) pack.source).getTraitIconFile(t.id);
-            if (file.exists()) {
-                if (!file.delete()) {
+            if (file.exists())
+                if (!file.delete())
                     Opts.warnPop("Failed to delete file : " + file.getAbsolutePath(), "Delete Failed");
-                }
-            }
+
             list.remove(t);
             pct.remove(t);
+            if (used) {
+                Collection<UserPack> pacs = UserProfile.getUserPacks();
+                for (PackData.UserPack pacc : pacs)
+                    if (pacc.desc.dependency.contains(pack.desc.id) || pacc == pack) {
+                        for (Enemy en : pacc.enemies.getList()) {
+                            en.de.getTraits(true).remove(t);
+                            for (MaskAtk[] atks : en.de.getAllAtks())
+                                for (MaskAtk atk : atks)
+                                    atk.getATKTraits().remove(t);
+                        }
+                        for (Unit un : pacc.units.getList())
+                            for (Form uf : un.forms) {
+                                uf.du.getTraits(true).remove(t);
+                                for (MaskAtk[] atks : uf.du.getAllAtks())
+                                    for (MaskAtk atk : atks)
+                                        atk.getATKTraits().remove(t);
+                            }
+                    }
+            }
             if (ind >= 0)
                 t = list.get(ind);
             else
@@ -236,7 +262,7 @@ public class TraitEditPage extends DefaultPage {
 
     private void updateCT() {
         altrg.setEnabled(t != null && editable);
-        remct.setEnabled(t != null && !Trait.isUsed(t) && editable);
+        remct.setEnabled(t != null && editable);
         ctrna.setEnabled(t != null && editable);
         adicn.setEnabled(t != null && editable);
         setIconImage(t);
@@ -246,6 +272,10 @@ public class TraitEditPage extends DefaultPage {
             altrg.setSelected(t.targetType);
             tlf.setListData(t.targetForms.toArray(new Form[0]));
             jl.setIcon(t.icon != null ? UtilPC.resizeIcon(t.icon, 200, 200) : null);
+
+            boolean used = t.isUsed();
+            remct.setText(MainLocale.PAGE, used ? "rema" : "rem");
+            remct.setForeground(used ? Color.RED : null);
         } else {
             tlf.clearSelection();
             tlf.setListData(new Form[0]);

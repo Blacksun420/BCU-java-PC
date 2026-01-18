@@ -8,6 +8,7 @@ import common.util.Data;
 import common.util.lang.ProcLang;
 import common.util.unit.AbUnit;
 import org.jcodec.common.tools.MathUtil;
+import org.jetbrains.annotations.NotNull;
 import page.*;
 import utilpc.Interpret;
 import utilpc.Theme;
@@ -127,31 +128,7 @@ class PCoinEditTable extends Page {
                     JL stTxt = stTxts[i];
                     add(stTxt);
                     chance.add(stTxt);
-                    JTF num = new JTF("" + (int)(par.unit.pcoin.info.get(par.talent)[2 + i] * (pdata[1] == Data.PC2_COST ? 1.5 : 1.0)));
-                    int fi = i + 2;
-                    num.setLnr(c -> {
-                        int[] v = CommonStatic.parseIntsN(num.getText().trim());
-                        if (v.length == 0 || v[0] < 0) {
-                            num.setText("" + par.unit.pcoin.info.get(par.talent)[fi]);
-                            return;
-                        }
-                        int ind = fi % 2 == 0 ? 1 : -1;
-                        int w = maxLv > 1 ? v.length > 1 && v[1] >= 0 ? v[1] : par.unit.pcoin.info.get(par.talent)[fi+ind] : v[0];
-                        if (pdata[1] == Data.PC2_COST) {
-                            v[0] = (int) (v[0] / 1.5);
-                            if (v.length > 1)
-                                w = (int) (w / 1.5);
-                        } else if (pdata[1] == Data.PC2_TBA) {
-                            v[0] = Math.min(v[0], 100);
-                            w = Math.min(w, 100);
-                        }
-                        par.unit.pcoin.info.get(par.talent)[fi + (ind == 1 ? 0 : ind)] = Math.min(v[0], w);
-                        par.unit.pcoin.info.get(par.talent)[fi + (ind != 1 ? 0 : ind)] = Math.max(v[0], w);
-                        num.setText("" + par.unit.pcoin.info.get(par.talent)[fi]);
-                        if (maxLv > 1)
-                            ((JTF)tchance.get(fi-2+ind)).setText("" + par.unit.pcoin.info.get(par.talent)[fi+ind]);
-                        par.unit.pcoin.update();
-                    });
+                    JTF num = getNum(pdata, i, maxLv);
                     add(num);
                     tchance.add(num);
                 }
@@ -260,6 +237,37 @@ class PCoinEditTable extends Page {
                     }
                 }
             }
+            curData = null;
+        }
+
+        @NotNull
+        private JTF getNum(int[] pdata, int i, int maxLv) {
+            JTF num = new JTF((int)(par.unit.pcoin.info.get(par.talent)[2 + i] * (pdata[1] == Data.PC2_COST ? 1.5 : 1.0)) + "");
+            int fi = i + 2;
+            num.setLnr(c -> {
+                int[] v = CommonStatic.parseIntsN(num.getText().trim());
+                if (v.length == 0 || v[0] < 0) {
+                    num.setText("" + par.unit.pcoin.info.get(par.talent)[fi]);
+                    return;
+                }
+                int ind = fi % 2 == 0 ? 1 : -1;
+                int w = maxLv > 1 ? v.length > 1 && v[1] >= 0 ? v[1] : par.unit.pcoin.info.get(par.talent)[fi+ind] : v[0];
+                if (pdata[1] == Data.PC2_COST) {
+                    v[0] = (int) (v[0] / 1.5);
+                    if (v.length > 1)
+                        w = (int) (w / 1.5);
+                } else if (pdata[1] == Data.PC2_TBA) {
+                    v[0] = Math.min(v[0], 100);
+                    w = Math.min(w, 100);
+                }
+                par.unit.pcoin.info.get(par.talent)[fi + (ind == 1 ? 0 : ind)] = Math.min(v[0], w);
+                par.unit.pcoin.info.get(par.talent)[fi + (ind != 1 ? 0 : ind)] = Math.max(v[0], w);
+                num.setText("" + (int)(par.unit.pcoin.info.get(par.talent)[fi] * (pdata[1] == Data.PC2_COST ? 1.5 : 1.0)));
+                if (maxLv > 1)
+                    ((JTF)tchance.get(fi-2+ind)).setText("" + (int)(par.unit.pcoin.info.get(par.talent)[fi+ind] * (pdata[1] == Data.PC2_COST ? 1.5 : 1.0)));
+                par.unit.pcoin.update();
+            });
+            return num;
         }
 
         @Override

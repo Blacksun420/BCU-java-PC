@@ -3,6 +3,7 @@ package page.info.filter;
 import common.battle.Basis;
 import common.battle.BasisSet;
 import common.battle.data.MaskUnit;
+import common.battle.data.PCoin;
 import common.pack.UserProfile;
 import common.system.Node;
 import common.util.Data;
@@ -18,6 +19,7 @@ import page.pack.UREditPage;
 import page.support.CharaTCR;
 
 import java.awt.*;
+import java.util.Arrays;
 
 public class UnitListTable extends EntityListTable<AbForm> {
 
@@ -89,17 +91,25 @@ public class UnitListTable extends EntityListTable<AbForm> {
 		Basis b = BasisSet.current();
 		if (f instanceof Form) {
 			Form e = (Form) f;
-			MaskUnit du = e.maxu();
-			double mul = e.unit.lv.getMult(e.unit.getPreferredLevel() + e.unit.getPreferredPlusLevel());
-			double atk = b.t().getAtkMulti() * (e.du.getPCoin() != null ? e.du.getPCoin().getStatMultiplication(Data.PC2_ATK, e.du.getPCoin().max) : 1);
-			double def = b.t().getDefMulti() * (e.du.getPCoin() != null ? e.du.getPCoin().getStatMultiplication(Data.PC2_HP, e.du.getPCoin().max) : 1);
+			int prefLv = e.unit.getTotalPreferredLevel();
+			MaskUnit du = e.du;
+			double mul = e.unit.lv.getMult(prefLv);
+			double atk = b.t().getAtkMulti();
+			double def = b.t().getDefMulti();
+			if (e.du.getPCoin() != null) {
+				PCoin pc = e.du.getPCoin();
+				int[] talents = e.simulateBCTalents(prefLv);
+				du = Arrays.equals(talents, pc.max) ? pc.full : pc.improve(talents);
+				atk *= pc.getStatMultiplication(Data.PC2_ATK, talents);
+				def *= pc.getStatMultiplication(Data.PC2_HP, talents);
+			}
 			int itv = e.anim != null ? du.getItv(0) : -1;
 			if (c == 0)
 				return e.uid + "-" + e.fid;
 			else if (c == 1)
 				return e;
 			else if (c == 2)
-				return e.unit.getPreferredLevel() + e.unit.getPreferredPlusLevel();
+				return prefLv;
 			else if (c == 3)
 				return (int) (du.getHp() * mul * def);
 			else if (c == 4)
