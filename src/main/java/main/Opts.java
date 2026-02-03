@@ -83,6 +83,7 @@ public class Opts {
 			return;
 
 		popped = true;
+		MainBCU.NO_ERR = false;
 		int opt = JOptionPane.DEFAULT_OPTION;
 		int result = JOptionPane.showOptionDialog(null, text, title, opt, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 

@@ -302,11 +302,11 @@ public class MainBCU {
 		}
 	}
 
-	public static final int ver = 60220;
+	public static final int ver = 60221;
 	private static final DecimalFormat df = new DecimalFormat("#.##");
 	public static int autoSaveTime = 0, searchTolerance = 4;
 	public static final boolean WRITE = !new File("./.idea").exists();
-	public static boolean preload = false, trueRun = true, loaded = false, USE_JOGL = false;
+	public static boolean preload = false, trueRun = true, loaded = false, USE_JOGL = false, NO_ERR = false, RELEASE = true;
 	public static boolean seconds = false, buttonSound = false, searchPerKey = false;
 	public static String author = "";
 	public static ImageBuilder<BufferedImage> builder;
