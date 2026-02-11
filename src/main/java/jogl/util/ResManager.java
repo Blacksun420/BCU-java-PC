@@ -66,6 +66,7 @@ public class ResManager {
 		if (n > 0)
 			gl.glDeleteTextures(n, tex, 0);
 		gl.glDeleteProgram(prog);
+		MAP.remove(gl);
 	}
 
 	public int load(GLGraphics g, GLImage img) {

@@ -107,7 +107,7 @@ public abstract class UIContext {
     public abstract static class UIChecker {
         private static final String LIB_URL = "https://repo1.maven.org/maven2/com/formdev/";
         private static final String LIB_DIRECTORY = "./BCU_lib/";
-        private static final String JAR_CHECK_URL = "https://raw.githubusercontent.com/Blacksun420/sun-bcu-assets/main/jar/check.json";
+        private static final String JAR_CHECK_URL = "https://raw.githubusercontent.com/Dreamy-Cat-X/o-bcu-assets/main/jar/check.json";
         private static final String[] UILibs = {
                 "flatlaf-intellij-themes-2.3.jar", "flatlaf-2.3.jar"
         };
@@ -251,7 +251,7 @@ public abstract class UIContext {
                 return "BCU-" + ver.replace(".", "-") + ".jar";
             }
             public String getURL() {
-                return "https://raw.githubusercontent.com/Blacksun420/sun-bcu-assets/main/jar/" + getArtifact();
+                return "https://raw.githubusercontent.com/Dreamy-Cat-X/sun-bcu-assets/main/jar/" + getArtifact();
             }
 
             public boolean prio() {
