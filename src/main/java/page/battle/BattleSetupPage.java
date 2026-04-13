@@ -5,6 +5,7 @@ import common.battle.BasisLU;
 import common.battle.BasisSet;
 import common.pack.SortedPackSet;
 import common.util.stage.Limit;
+import common.util.stage.MapColc.PackMapColc;
 import common.util.stage.RandStage;
 import common.util.stage.Stage;
 import common.util.unit.Form;
@@ -32,6 +33,8 @@ public class BattleSetupPage extends LubCont {
 	private final JTG snip = new JTG(0, "sniper");
 	private final JTG plus = new JTG(MainLocale.PAGE, "plusunlock");
 	private final JTG testMode = new JTG(MainLocale.PAGE, "testmode");
+	private final JTG tlu = new JTG(0, "testlu");
+	private final JBTN rtlu = new JBTN(0, "remtlu");
 	private final JComboBox<String> lvlim = new JComboBox<>();
 	private final JList<String> jls = new JList<>();
 	private final JScrollPane jsps = new JScrollPane(jls);
@@ -65,7 +68,9 @@ public class BattleSetupPage extends LubCont {
 	@Override
 	public void callBack(Object obj) {
 		BasisLU bu = getLU();
-		if (st.preset == null) {
+		if (tlu.isSelected()) {
+			jl.setText("Last Clear Lineup");
+		} else if (st.preset == null) {
 			BasisSet b = BasisSet.current();
 			jl.setText(b + "-" + bu);
 		} else
@@ -110,7 +115,9 @@ public class BattleSetupPage extends LubCont {
 	}
 
 	private BasisLU getLU() {
-		return st.preset == null ? BasisSet.current().sele : st.preset.apply();
+		if (st.preset != null)
+			return st.preset.apply();
+		return tlu.isSelected() ? st.lastClear : BasisSet.current().sele;
 	}
 
 	@Override
@@ -130,6 +137,8 @@ public class BattleSetupPage extends LubCont {
 		set(jstt, x, y, 50, 600, 1400, 650);
 		set(testMode, x, y, 300, 400, 200, 50);
 		set(ulock, x, y, 550, 550, 600, 50);
+		set(tlu, x, y, 300, 700, 200, 50);
+		set(rtlu, x, y, 550, 700, 200, 50);
 		sttb.setRowHeight(size(x, y, 50));
 	}
 
@@ -187,6 +196,14 @@ public class BattleSetupPage extends LubCont {
 		});
 
 		testMode.addActionListener(l -> lub.setTest(testMode.isSelected() ? st.getMC().getSave(true).getUnlockedsBeforeStage(st, true).keySet() : null));
+		tlu.addActionListener(l -> renew());
+		rtlu.setLnr(l -> {
+			tlu.setSelected(false);
+			remove(tlu);
+			remove(rtlu);
+			st.lastClear = null;
+			renew();
+		});
 	}
 
 	private void ini() {
@@ -206,6 +223,11 @@ public class BattleSetupPage extends LubCont {
 		sttb.setData(st, 0);
 		tmax.setEnabled(st.getLim(jls.getSelectedIndex()).lvr != null);
 		testMode.setEnabled(st.getMC().getSave(true) != null);
+		if (st.lastClear != null) {
+			add(tlu);
+			if (st.getMC() instanceof PackMapColc && ((PackMapColc) st.getMC()).pack.editable)
+				add(rtlu);
+		}
 		if(st.isAkuStage()) {
 			add(plus);
 			add(lvlim);

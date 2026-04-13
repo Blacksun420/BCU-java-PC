@@ -146,7 +146,7 @@ public class BGEditPage extends DefaultPage {
 				@Override
 				public void focusLost(FocusEvent arg0) {
 					int[] inp = CommonStatic.parseIntsN(cs[I].getText());
-					if (inp.length == 3)
+					if (inp.length >= 3)
 						bgr.cs[I] = new int[] { inp[0] & 255, inp[1] & 255, inp[2] & 255 };
 					setCSText(I);
 
@@ -164,7 +164,7 @@ public class BGEditPage extends DefaultPage {
 					if(I % 3 != 2) {
 						int[] inp = CommonStatic.parseIntsN(os[I].getText());
 
-						if(inp.length == 3)
+						if(inp.length >= 3)
 							bgr.overlay[I] = filterRGB(inp);
 					} else {
 						int alpha = CommonStatic.parseIntN(os[I].getText());

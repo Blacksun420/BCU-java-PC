@@ -411,6 +411,8 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 	@SuppressWarnings("unchecked")
 	public void claimReward() {
 		if (dataPopup == 0) {
+			if (packData.pack.editable)
+				basis.sb.st.lastClear = basis.sb.b;
 			Collection<?>[] clearStuff = packData.validClear(basis.sb.st);
 			if (clearStuff != null && !clearStuff[0].isEmpty()) {
 				String rewardText = get(MainLocale.PAGE, "rewardText");

@@ -139,6 +139,31 @@ public class Opts {
 				null, choices, choices[0]);
 	}
 
+	public static boolean[] replaceStats() {
+		JLabel txt = new JLabel("Do you want to overwrite stats? This operation cannot be undone");
+		Border b = txt.getBorder();
+		Border eb = new EmptyBorder(0, 0, 16, 0);
+
+		if(b == null) {
+			txt.setBorder(eb);
+		} else
+			txt.setBorder(new CompoundBorder(eb, b));
+
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.add(txt);
+
+		String str = "Also overwrite names/descriptions";
+		JCheckBox rb = new JCheckBox(str);
+		panel.add(rb);
+
+		int result = JOptionPane.showConfirmDialog(null, panel, "Confirmation", JOptionPane.OK_CANCEL_OPTION);
+		if(result == JOptionPane.OK_OPTION) {
+			return new boolean[]{true, rb.isSelected()};
+		} else
+			return new boolean[]{false, false};
+	}
+
 	public static int[] replaceEnemy(String text, String ene) {
 		JLabel txt = new JLabel(text);
 		Border b = txt.getBorder();

@@ -366,18 +366,10 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	protected void renew() {
-		if (efp != null && efp.getSelected() != null
-				&& Opts.conf("do you want to overwrite stats? This operation cannot be undone")) {
-			Enemy e = (Enemy) efp.getSelected();
-			ce.importData(e.de);
-			ce.traits.removeIf(t -> !(t.BCTrait() || pack.desc.dependency.contains(t.id.pack) || pack.desc.id.equals(t.id.pack)));
-			setData(ce);
-		} else if (ufp != null && ufp.getForm() != null
-				&& Opts.conf("do you want to overwrite stats? This operation cannot be undone")) {
-			Form f = (Form) ufp.getForm();
-			ce.importData(f.du);
-			ce.traits.removeIf(t -> !(t.BCTrait() || pack.desc.dependency.contains(t.id.pack) || pack.desc.id.equals(t.id.pack)));
-			setData(ce);
+		if (efp != null && efp.getSelected() != null) {
+			overwriteStats((Enemy)efp.getSelected());
+		} else if (ufp != null && ufp.getForm() != null) {
+			overwriteStats((Form)ufp.getForm());
 		} else if (sup != null && editor != null && ((sup.getSelected() == null && editor.field.get() != null) || (sup.getSelected() != null && !sup.getSelected().getID().equals(editor.field.get())))
 				&& (editor.field.get() == null || (Opts.conf("Replace " + ((Identifier<?>)editor.field.get()).get() + " with " + sup.getSelected() + "?")))) {
 			Identifier val = sup.getSelected() == null ? null : sup.getSelected().getID();
@@ -387,6 +379,19 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		editor = null;
 		efp = null;
 		ufp = null;
+	}
+
+	private void overwriteStats(Character c) {
+		boolean[] opts = Opts.replaceStats();
+		if (opts[0]) {
+			ce.importData(c.getMask());
+			ce.traits.removeIf(t -> !(t.BCTrait() || pack.desc.dependency.contains(t.id.pack) || pack.desc.id.equals(t.id.pack)));
+			if (opts[1]) {
+				ce.getPack().names.overwrite(c.names);
+				ce.getPack().description.overwrite(c.description);
+			}
+			setData(ce);
+		}
 	}
 
 	@Override
