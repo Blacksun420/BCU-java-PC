@@ -1,7 +1,7 @@
 package page.basis;
 
 import common.CommonStatic;
-import common.battle.data.OrbInfo;
+import common.battle.data.Orb;
 import common.system.fake.FakeGraphics;
 import utilpc.awt.FG2D;
 

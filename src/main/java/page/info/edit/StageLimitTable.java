@@ -232,6 +232,6 @@ public class StageLimitTable extends Page {
     }
 
     public int getPHeight() {
-        return 600;
+        return 700;
     }
 }

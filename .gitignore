@@ -7,7 +7,6 @@
 /raw/
 /replay/
 /res/
-/res*/
 /url/
 /user/
 /backup/
@@ -30,3 +29,6 @@
 /.idea/
 /classes/
 *.iml
+/*.jar
+/.gradle/
+/build/

@@ -17,12 +17,14 @@ import utilpc.UtilPC;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({"ResultOfMethodCallIgnored"})
 public class BGEditPage extends DefaultPage {
@@ -268,6 +270,27 @@ public class BGEditPage extends DefaultPage {
 			effVector.addAll(UserProfile.getPack(s).bgEffects.getList());
 
 		eff.setModel(new DefaultComboBoxModel<>(effVector));
+		eff.setRenderer(new DefaultListCellRenderer() {
+			@Override
+			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+				JLabel l = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+				int v = (int) value;
+				if (v == -1)
+					l.setText(get(MainLocale.PAGE, "none"));
+				else if (v >= 0 && v <= 9) {
+					l.setText(get(MainLocale.PAGE, "bgeff"+v));
+				} else if (BackgroundEffect.jsonList.contains(v)) {
+					String temp = get(MainLocale.PAGE, "bgjson"+v);
+					if(temp.equals("bgjson"+v))
+						temp = get(MainLocale.PAGE, "bgeffdum").replace("_", String.valueOf(v));
+
+					l.setText(temp);
+				} else {
+					l.setText("unknown bg effect " + value);
+				}
+				return l;
+			}
+		});
 
 		setList(null);
 		addListeners$0();

@@ -3,9 +3,8 @@ package page.basis;
 import common.CommonStatic;
 import common.battle.BasisLU;
 import common.battle.BasisSet;
-import common.battle.LineUp;
 import common.battle.data.MaskUnit;
-import common.battle.data.OrbInfo;
+import common.battle.data.Orb;
 import common.pack.UserProfile;
 import common.system.Node;
 import common.util.Data;
@@ -99,7 +98,7 @@ public class BasisPage extends LubCont {
 	private final JScrollPane jspcs = new JScrollPane(jlcs);
 	private final JList<String> jlcl = new JList<>();
 	private final JScrollPane jspcl = new JScrollPane(jlcl);
-	private final ComboListTable jlc = new ComboListTable(this, lu());
+	private final ComboListTable jlc = new ComboListTable(this);
 	private final JScrollPane jspc = new JScrollPane(jlc);
 	private final ModifierList jlcn = new ModifierList();
 	private final JScrollPane jspcn = new JScrollPane(jlcn);
@@ -109,7 +108,6 @@ public class BasisPage extends LubCont {
 	private final NyCasBox ncb = new NyCasBox();
 	private final JBTN[] jbcsR = new JBTN[3];
 	private final JBTN[] jbcsL = new JBTN[3];
-	private final JTG cost = new JTG(1, "price");
 
 	private final JList<OrbContainer> orbList = new JList<>();
 	private final JScrollPane orbScroll = new JScrollPane(orbList);
@@ -158,7 +156,6 @@ public class BasisPage extends LubCont {
 			Unit unit = (Unit)((Object[])o)[0];
 			if (cunit != null && unit.compareTo(cunit) == 0)
 				return;
-			combo.setSelected(true);
 			lub.select(unit.forms[unit.forms.length - 1]);
 		} else if (o instanceof Form) {
 			Unit unit = ((Form) o).unit;
@@ -247,7 +244,6 @@ public class BasisPage extends LubCont {
 		set(setpref, x, y, 1100, 100, 300, 50);
 		set(form, x, y, 500, 450, 200, 50);
 		set(reset, x, y, 700, 450, 200, 50);
-		set(cost, x, y, 900, 450, 200, 50);
 
 		set(lub, x, y, 500, 150, 600, 300);
 		set(ncb, x, y, 1175, 150, 150, 300);
@@ -666,6 +662,7 @@ public class BasisPage extends LubCont {
 		setCN();
 		updateSetC();
 		lub.updateLU();
+		lub.blu.lu.renew();
 		setLvs(lub.sf);
 		trea.callBack(null);
 	}
@@ -865,7 +862,7 @@ public class BasisPage extends LubCont {
 		String[] grades;
 		byte otype = (byte)data[Data.ORB_TYPE];
 		for (byte i = Data.ORB_MINIDEATHSURGE; i < Data.ORB_TYPE_TOTAL; i++)
-			if (!OrbInfo.onlyOne(i) || otype == i || !lv.equippingOrb(i)) {
+			if (!Orb.onlyOne(i) || otype == i || !lv.equippingOrb(i)) {
 				typeText.add(MainLocale.getLoc(MainLocale.UTIL, "ot" + i));
 				typeData.add(i);
 			}
@@ -961,8 +958,8 @@ public class BasisPage extends LubCont {
 		setOrb(f); //callBack(null);
 	}
 
-	private LineUp lu() {
-		return BasisSet.current().sele.lu;
+	private BasisLU lu() {
+		return BasisSet.current().sele;
 	}
 
 	private void setB(BasisLU b) {
@@ -1074,10 +1071,10 @@ public class BasisPage extends LubCont {
 
 	private void updateSetC() {
 		Combo com = !jlc.list.isEmpty() && jlc.getSelectedRow() != -1 ? jlc.list.get(jlc.getSelectedRow()) : null;
-		setc.setEnabled(com != null && !lu().contains(com));
+		setc.setEnabled(com != null && !lu().lu.contains(com));
 		boolean b = false;
 		if (com != null)
-			b = lu().willRem(com);
+			b = lu().lu.willRem(com);
 		setc.setForeground(b ? Color.RED : Color.BLACK);
 		setc.setText(0, "set" + (b ? "1" : "0"));
 	}

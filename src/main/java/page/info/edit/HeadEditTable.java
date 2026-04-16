@@ -272,6 +272,7 @@ class HeadEditTable extends Page {
 		add(cas);
 		add(con);
 		add(dojo);
+		//add(drop);
 		add(mus);
 		set(jhea);
 		set(jlen);
