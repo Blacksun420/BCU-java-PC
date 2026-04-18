@@ -15,6 +15,7 @@ import common.util.unit.Enemy;
 import common.util.unit.Form;
 import common.util.unit.Level;
 import main.Opts;
+import org.jcodec.common.tools.MathUtil;
 import page.*;
 import page.info.EnemyInfoPage;
 import page.info.StageViewPage;
@@ -362,6 +363,22 @@ public class AdvStEditPage extends DefaultPage {
 			setScoreBonus(jsco.getSelectedValue());
 		});
 
+		jcbs.addActionListener(x -> {
+			if (jcbs.getSelectedItem() == null)
+				return;
+			Stage.ScoreBonus bonus = jsco.getSelectedValue();
+			bonus.proc = (int) jcbs.getSelectedItem();
+			setScoreBonus(bonus);
+		});
+
+		jtfs.setLnr(x -> {
+			int[] v = CommonStatic.parseIntsN(jtfs.getText());
+			Stage.ScoreBonus bonus = jsco.getSelectedValue();
+			bonus.score = v.length >= 1 ? v[0] : 1000;
+			bonus.dire = v.length >= 2 ? MathUtil.clip(v[1], -1, 1) : 1;
+			setScoreBonus(bonus);
+		});
+
 		jlines.addListSelectionListener(l -> {
 			SCDef.Line li = jlines.getSelectedValue();
 			if (li == null)
@@ -568,6 +585,7 @@ public class AdvStEditPage extends DefaultPage {
 			jcbs.setSelectedItem(bonus.proc);
 			jtfs.setText("score: " + bonus.score + ", dire: " + bonus.dire);
 		}
+		fireDimensionChanged();
 	}
 
 	private void setFollowups(CustomStageInfo si) {
