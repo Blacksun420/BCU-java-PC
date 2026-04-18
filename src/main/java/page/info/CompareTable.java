@@ -261,8 +261,11 @@ public class CompareTable extends Page {
             preString.append(MainBCU.convertTime(atkDatum.getPre()));
 
             int effectiveDMG = att;
-            if (!traits.isEmpty() && me.getProc().DMGINC.mult != 0)
-                effectiveDMG *= isEnemy ? me.getProc().DMGINC.mult/100.0 : b.t().getATK(me.getProc().DMGINC.mult, traits);
+            if (!traits.isEmpty() && me.getProc().DMGINC.mult != 0) {
+                byte t = me.getProc().DMGINC.getType(false);
+                t = t == 0 ? Data.C_GOOD : t == 1 ? Data.C_MASSIVE : -1;
+                effectiveDMG *= isEnemy ? me.getProc().DMGINC.mult / 100.0 : b.t().getATK(me.getProc().DMGINC.mult, traits);
+            }
 
             if (spTraits.contains(DefTraits.get(Data.TRAIT_WITCH)) && (me.getAbi() & Data.AB_WKILL) > 0)
                 effectiveDMG *= b.t().getWKAtk(b.getInc(Data.C_WKILL));
@@ -281,7 +284,7 @@ public class CompareTable extends Page {
         }
         int effectiveHP = hp;
         if (!traits.isEmpty() && me.getProc().DEFINC.mult != 0)
-            effectiveHP /= isEnemy ? 100.0/me.getProc().DEFINC.mult : b.t().getDEF(me.getProc().DEFINC.mult, traits, traits, null, (Level) Lvl, b.getInc(me.getProc().DEFINC.mult < 400 ? Data.C_GOOD : Data.C_RESIST));
+            effectiveHP /= isEnemy ? 100.0/me.getProc().DEFINC.mult : b.t().getDEF(me.getProc().DEFINC.mult, traits, traits, (Level) Lvl, b.getInc(me.getProc().DEFINC.mult < 400 ? Data.C_GOOD : Data.C_RESIST));
 
         if (spTraits.contains(DefTraits.get(Data.TRAIT_WITCH)) && (me.getAbi() & Data.AB_WKILL) > 0)
             effectiveHP /= b.t().getWKDef(b.getInc(Data.C_WKILL));

@@ -55,6 +55,7 @@ public abstract class ProcTable extends Page {
 					h = 0;
 			}
 			setPreferredSize(size(x, y, getWidth(), height).toDimension());
+			revalidate();
 		}
 
 	}

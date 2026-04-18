@@ -79,7 +79,7 @@ public class HeadTable extends AbJTable {
 		int r = p.y / getRowHeight();
 		if (r == 0 && c > 1 && c < Math.min(sta.getCont().stars.length + 2, 6))
 			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		else if ((r == 1 && c == 5) || (r == 1 && c == 7) || (r == 3 && c == 1) || (r == 3 && c == 3) || (r == 3 && c == 5))
+		else if ((r == 1 && c == 5 && sta.mus0 != null) || (r == 1 && c == 7 && sta.mus1 != null) || (r == 3 && c == 1) || (r == 3 && c == 3) || (r == 3 && c == 5))
 			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		else if (r == 4 && c == 7 && data[r][c] instanceof LvRestrict)
 			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

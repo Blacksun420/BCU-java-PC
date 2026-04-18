@@ -1,7 +1,6 @@
 package page.pack;
 
 import common.CommonStatic;
-import common.battle.BasisSet;
 import common.pack.Identifier;
 import common.pack.PackData;
 import common.pack.UserProfile;
@@ -29,8 +28,6 @@ public class ComboEditPage extends DefaultPage {
     private Unit uni;
     private Form frm;
 
-    private final BasisSet b = BasisSet.current();
-
     private final Vector<PackData.UserPack> vpack = new Vector<>(UserProfile.getUserPacks());
     private final PackEditPage.PackList jlp = new PackEditPage.PackList(vpack);
     private final JScrollPane jspp = new JScrollPane(jlp);
@@ -38,10 +35,10 @@ public class ComboEditPage extends DefaultPage {
     private final JScrollPane jspu = new JScrollPane(jlu);
     private final ReorderList<Form> jlf = new ReorderList<>();
     private final JScrollPane jspf = new JScrollPane(jlf);
-    private final ComboListTable jlc = new ComboListTable(this, b.sele.lu);
+    private final ComboListTable jlc = new ComboListTable(this);
     private final JScrollPane jspc = new JScrollPane(jlc);
     private final JComboBox<String> ctypes = new JComboBox<>(Interpret.getComboFilter(0));
-    private final JComboBox<String> clvls = new JComboBox<>(Interpret.comboLv);
+    private final JComboBox<String> clvls = new JComboBox<>(Interpret.lvl);
     private final JTF comboname = new JTF();
 
     private final JBTN addf = new JBTN(0, "addf");
@@ -69,7 +66,6 @@ public class ComboEditPage extends DefaultPage {
         vpack.sort(null);
 
         pac = pack;
-
         ini();
     }
 

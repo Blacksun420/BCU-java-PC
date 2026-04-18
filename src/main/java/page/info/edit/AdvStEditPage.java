@@ -5,6 +5,7 @@ import common.pack.Identifier;
 import common.pack.PackData.UserPack;
 import common.pack.UserProfile;
 import common.system.ENode;
+import common.util.Data;
 import common.util.pack.Soul;
 import common.util.stage.*;
 import common.util.stage.info.CustomStageInfo;
@@ -23,6 +24,7 @@ import page.info.filter.UnitFindPage;
 import page.support.AnimLCR;
 import page.support.UnitLCR;
 import page.view.MusicPage;
+import utilpc.Interpret;
 import utilpc.Theme;
 import utilpc.UtilPC;
 
@@ -33,6 +35,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class AdvStEditPage extends DefaultPage {
 
@@ -73,6 +76,14 @@ public class AdvStEditPage extends DefaultPage {
 	private final JBTN remg = new JBTN(MainLocale.PAGE, "rem");
 	private final JBTN addt = new JBTN(MainLocale.PAGE, "addl");
 	private final JBTN remt = new JBTN(MainLocale.PAGE, "reml");
+
+	private final JL scores = new JL(0, "bscores");
+	private final JBTN adds = new JBTN(0, "add");
+	private final JBTN rems = new JBTN(0, "rem");
+	private final JList<Stage.ScoreBonus> jsco = new JList<>();
+	private final JScrollPane jssc = new JScrollPane(jsco);
+	private final JComboBox<Integer> jcbs = new JComboBox<>(IntStream.range(0, Data.SCORE_TOT).boxed().toArray(Integer[]::new));
+	private final JTF jtfs = new JTF();
 
 	private final JList<Stage> jex = new JList<>();
 	private final JScrollPane jsex = new JScrollPane(jex);
@@ -179,6 +190,14 @@ public class AdvStEditPage extends DefaultPage {
 		set(addrw, x, y, w, 150, 150, 50);
 		set(remrw, x, y, w + 150, 150, 150, 50);
 		set(jsrwd, x, y, w, 200, 300, 1000);
+
+		w += 350;
+		set(scores, x, y, w, 100, 300, 50);
+		set(jssc, x, y, w, 150, 300, 450);
+		set(adds, x, y, w, 600, 150, 50);
+		set(rems, x, y, w+150, 600, 150, 50);
+		set(jcbs, x, y, w, 650, 300, 50);
+		set(jtfs, x, y, w, 700, 300, 50);
 	}
 
 	private void addListeners$0() {
@@ -336,6 +355,13 @@ public class AdvStEditPage extends DefaultPage {
 
 		remt.setLnr(e -> sget.remLine());
 
+		jsco.addListSelectionListener(x -> {
+			if (isAdj() || jsco.getValueIsAdjusting())
+				return;
+
+			setScoreBonus(jsco.getSelectedValue());
+		});
+
 		jlines.addListSelectionListener(l -> {
 			SCDef.Line li = jlines.getSelectedValue();
 			if (li == null)
@@ -435,6 +461,9 @@ public class AdvStEditPage extends DefaultPage {
 			add(addt);
 			add(remt);
 		}
+		jle.setCellRenderer(new AnimLCR());
+		jle.setListData(aes);
+		sdef.setText("default: " + data.sdef);
 
 		add(jsex);
 		add(exSt);
@@ -453,9 +482,29 @@ public class AdvStEditPage extends DefaultPage {
 		jrwd.setCellRenderer(new UnitLCR());
 		add(lves);
 		add(ubaslv);
-		jle.setCellRenderer(new AnimLCR());
-		jle.setListData(aes);
-		sdef.setText("default: " + data.sdef);
+		if (st.trail) {
+			add(scores);
+			add(jssc);
+			add(adds);
+			add(rems);
+			add(jtfs);
+			add(jcbs);
+		}
+		jsco.setListData(st.scoreBonus.toArray(new Stage.ScoreBonus[0]));
+		jsco.setCellRenderer(new DefaultListCellRenderer() {
+			@Override
+			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+				JLabel jl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+				Stage.ScoreBonus bonus = (Stage.ScoreBonus) value;
+				if (value != null) {
+					jl.setText(Interpret.SCORES[bonus.proc] + " " + bonus.dire + " " + bonus.score);
+				} else {
+					jl.setText("?");
+				}
+				return jl;
+			}
+		});
+
 
 		add(jsines);
 		add(revback);
@@ -480,6 +529,7 @@ public class AdvStEditPage extends DefaultPage {
 		} else
 			setFollowups(null);
 		setListG();
+		setScoreBonus(null);
 		addListeners$0();
 		addListeners$1();
 		setUBase(st.info);
@@ -506,6 +556,18 @@ public class AdvStEditPage extends DefaultPage {
 		remg.setEnabled(scg != null);
 		smax.setEnabled(scg != null);
 		smax.setText(scg != null ? "max: " + scg.getMax(0) : "");
+	}
+
+	private void setScoreBonus(Stage.ScoreBonus bonus) {
+		if (jsco.getSelectedValue() != bonus)
+			change(bonus, b -> jsco.setSelectedValue(bonus, true));
+		rems.setEnabled(bonus != null);
+		jcbs.setEnabled(bonus != null);
+		jtfs.setEnabled(bonus != null);
+		if (bonus != null) {
+			jcbs.setSelectedItem(bonus.proc);
+			jtfs.setText("score: " + bonus.score + ", dire: " + bonus.dire);
+		}
 	}
 
 	private void setFollowups(CustomStageInfo si) {

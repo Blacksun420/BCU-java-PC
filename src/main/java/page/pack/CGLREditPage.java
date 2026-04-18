@@ -55,6 +55,7 @@ public class CGLREditPage extends DefaultPage {
 	private final JTF jtfsb = new JTF();
 	private final JTF jtfal = new JTF();
 	private final JTF[] jtfra = new JTF[Data.RARITY_TOT];
+	private final JTF[] jtfor = new JTF[Data.RARITY_TOT];
 	private final JTF jtfna = new JTF();
 	private final JTF jtflr = new JTF();
 
@@ -100,7 +101,7 @@ public class CGLREditPage extends DefaultPage {
 					list.remove(f);
 			jlua.setListData(list.toArray(new AbForm[0]));
 			jlua.clearSelection();
-			if (list.size() > 0)
+			if (!list.isEmpty())
 				jlua.setSelectedIndex(0);
 			changing = false;
 		}
@@ -128,9 +129,10 @@ public class CGLREditPage extends DefaultPage {
 		set(jtfsb, x, y, 1800, 550, 400, 50);
 		set(jtfna, x, y, 50, 900, 300, 50);
 		set(jtflr, x, y, 1100, 900, 300, 50);
-		for (int i = 0; i < jtfra.length; i++)
-			set(jtfra[i], x, y, 1800, 200 + 50 * i, 400, 50);
-
+		for (int i = 0; i < jtfra.length; i++) {
+			set(jtfra[i], x, y, 1650, 250 + 50 * i, 400, 50);
+			set(jtfor[i], x, y, 2050, 250 + 50 * i, 150, 50);
+		}
 		set(jscpc, x, y, 50, 1050, 300, 150);
 		set(cpc, x, y, 50, 1000, 150, 50);
 		set(ppc, x, y, 200, 1000, 150, 50);
@@ -191,7 +193,7 @@ public class CGLREditPage extends DefaultPage {
 
 		addus.addActionListener(arg0 -> {
 			List<AbForm> u = jlua.getSelectedValuesList();
-			if (cg == null || u.size() == 0)
+			if (cg == null || u.isEmpty())
 				return;
 			changing = true;
 			cg.fset.addAll(u);
@@ -389,8 +391,10 @@ public class CGLREditPage extends DefaultPage {
 		set(jtfal);
 		set(jtfna);
 		set(jtflr);
-		for (int i = 0; i < jtfra.length; i++)
+		for (int i = 0; i < jtfra.length; i++) {
 			set(jtfra[i] = new JTF());
+			set(jtfor[i] = new JTF());
+		}
 		add(jscpc);
 		add(cpc);
 		add(ppc);
@@ -443,6 +447,9 @@ public class CGLREditPage extends DefaultPage {
 				for (int i = 0; i < jtfra.length; i++)
 					if (jtf == jtfra[i])
 						put(lr.rs[i], inp);
+				for (int i = 0; i < jtfor.length; i++)
+					if (jtf == jtfor[i])
+						lr.rs[i].setOrbs(inp.length == 0 ? null : new int[][]{{inp[0]}});
 				updateSB();
 			}
 
@@ -544,8 +551,10 @@ public class CGLREditPage extends DefaultPage {
 
 		if (lr != null) {
 			set(jtfal, "all: ", lr.def);
-			for (int i = 0; i < jtfra.length; i++)
+			for (int i = 0; i < jtfra.length; i++) {
 				set(jtfra[i], RARITY[i] + ": ", lr.rs[i]);
+				jtfor[i].setText("Max orb: " + (lr.rs[i].getOrbs() == null ? "--" : lr.rs[i].getOrbs()));
+			}
 		} else {
 			set(jtfal, "all: ", null);
 			for (int i = 0; i < jtfra.length; i++)

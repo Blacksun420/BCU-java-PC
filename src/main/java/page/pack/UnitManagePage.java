@@ -4,6 +4,7 @@ import common.CommonStatic;
 import common.battle.BasisLU;
 import common.battle.data.AtkDataModel;
 import common.battle.data.CustomUnit;
+import common.battle.data.Orb;
 import common.pack.PackData.UserPack;
 import common.pack.Source;
 import common.pack.UserProfile;
@@ -23,9 +24,11 @@ import utilpc.Interpret;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.*;
+import java.util.List;
 
 public class UnitManagePage extends DefaultPage {
 
@@ -44,17 +47,17 @@ public class UnitManagePage extends DefaultPage {
 	private final JList<UnitLevel> jll = new JList<>();
 	private final JScrollPane jspl = new JScrollPane(jll);
 
-	private final JBTN addu = new JBTN(0, "add");
-	private final JBTN remu = new JBTN(0, "rem");
-	private final JBTN addf = new JBTN(0, "add");
-	private final JBTN remf = new JBTN(0, "rem");
-	private final JBTN addl = new JBTN(0, "add");
-	private final JBTN reml = new JBTN(0, "rem");
-	private final JBTN edit = new JBTN(0, "edit");
-	private final JBTN frea = new JBTN(0, "reassign");
-	private final JBTN vuni = new JBTN(0, "vuni");
+	private final JBTN addu = new JBTN(MainLocale.PAGE, "add");
+	private final JBTN remu = new JBTN(MainLocale.PAGE, "rem");
+	private final JBTN addf = new JBTN(MainLocale.PAGE, "add");
+	private final JBTN remf = new JBTN(MainLocale.PAGE, "rem");
+	private final JBTN addl = new JBTN(MainLocale.PAGE, "add");
+	private final JBTN reml = new JBTN(MainLocale.PAGE, "rem");
+	private final JBTN edit = new JBTN(MainLocale.PAGE, "edit");
+	private final JBTN frea = new JBTN(MainLocale.PAGE, "reassign");
+	private final JBTN vuni = new JBTN(MainLocale.PAGE, "vuni");
 	private final JBTN unir = new JBTN(MainLocale.PAGE, "unir");
-	private final JBTN cmbo = new JBTN(0, "combo");
+	private final JBTN cmbo = new JBTN(MainLocale.PAGE, "combo");
 	private final JBTN cdesc = new JBTN(MainLocale.PAGE, "pinfo");
 
 	private final JTF jtff = new JTF();
@@ -65,11 +68,22 @@ public class UnitManagePage extends DefaultPage {
 	private final JComboBox<UnitLevel> cbl = new JComboBox<>();
 
 	private final JComboBox<String> lbp = new JComboBox<>();
-	private final JL lbu = new JL(0, "unit");
-	private final JL lbd = new JL(0, "seleanim");
-	private final JL lbml = new JL(0, "maxl");
-	private final JL lbmp = new JL(0, "maxp");
-	private final JL lbf = new JL(1, "forms");
+	private final JL lbu = new JL(MainLocale.PAGE, "unit");
+	private final JL lbd = new JL(MainLocale.PAGE, "seleanim");
+	private final JL lbml = new JL(MainLocale.PAGE, "maxl");
+	private final JL lbmp = new JL(MainLocale.PAGE, "maxp");
+	private final JL lbf = new JL(MainLocale.PAGE, "forms");
+
+	private final JList<Orb> jor = new JList<>();
+	private final JScrollPane jsor = new JScrollPane(jor);
+	private final JTF ofrm = new JTF();
+	private final JTF olvl = new JTF();
+	private final JBTN addo = new JBTN(MainLocale.PAGE, "add");
+	private final JBTN remo = new JBTN(MainLocale.PAGE, "rem");
+	private final JL lbor = new JL(MainLocale.PAGE, "maxo");
+	private final JL lbof = new JL(0, "minfrm");
+	private final JL lbol = new JL(0, "minlvl");
+	private final JL lbul = new JL(MainLocale.PAGE, "lvlscale");
 
 	private UserPack pac;
 	private Unit uni;
@@ -128,9 +142,20 @@ public class UnitManagePage extends DefaultPage {
 		set(lbmp, x, y, w, 200, 300, 50);
 		set(maxp, x, y, w, 250, 300, 50);
 		set(rar, x, y, w, 300, 300, 50);
-		set(cbl, x, y, w, 400, 300, 50);
+		set(lbul, x, y, w, 400, 300, 50);
+		set(cbl, x, y, w, 450, 300, 50);
 		set(cmbo, x, y, w, 500, 300, 50);
-		w += 500;
+
+		set(lbor, x, y, w, 750, 300, 50);
+		set(jsor, x, y, w, 800, 300, 300);
+		set(lbof, x, y, w, 1100, 150, 50);
+		set(ofrm, x, y, w + dw, 1100, 150, 50);
+		set(lbol, x, y, w, 1150, 150, 50);
+		set(olvl, x, y, w + dw, 1150, 150, 50);
+		set(addo, x, y, w, 1200, 150, 50);
+		set(remo, x, y, w + dw, 1200, 150, 50);
+
+		w += 350;
 		set(jspl, x, y, w, 150, 300, 500);
 		set(jtfl, x, y, w, 700, 300, 50);
 		set(addl, x, y, w, 750, 150, 50);
@@ -310,6 +335,61 @@ public class UnitManagePage extends DefaultPage {
 
 		cmbo.addActionListener(x -> changePanel(new ComboEditPage(getThis(), pac)));
 
+		jor.addListSelectionListener(x -> {
+			if (changing)
+				return;
+			changing = true;
+			int index = jor.getSelectedIndex();
+			boolean canEdit = pac.editable && index != -1;
+			ofrm.setEnabled(canEdit);
+			ofrm.setText(index != -1 ? jor.getSelectedValue().minForm + "" : null);
+			olvl.setEnabled(canEdit);
+			olvl.setText(index != -1 ? jor.getSelectedValue().minLv + "" : null);
+			remo.setEnabled(canEdit);
+			changing = false;
+		});
+
+		addo.setLnr(x -> {
+			if (changing)
+				return;
+			changing = true;
+			Orb orb = new Orb(0, 0);
+			uni.orbs.add(orb);
+			jor.setListData(uni.orbs.toArray(new Orb[0]));
+			jor.setSelectedIndex(uni.orbs.size() - 1);
+			remo.setEnabled(pac.editable);
+			ofrm.setText(orb.minForm + "");
+			ofrm.setEnabled(pac.editable);
+			olvl.setText(orb.minLv + "");
+			olvl.setEnabled(pac.editable);
+			changing = false;
+		});
+
+		remo.setLnr(x -> {
+			if (changing)
+				return;
+			changing = true;
+			uni.orbs.remove(jor.getSelectedIndex());
+			setOrb(uni);
+			changing = false;
+		});
+
+		ofrm.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				int v = CommonStatic.parseIntN(ofrm.getText());
+				uni.orbs.get(jor.getSelectedIndex()).minForm = v == -1 ? 0 : Math.min(v, uni.forms.length - 1);
+				setOrb(uni);
+			}
+		});
+		olvl.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				int v = CommonStatic.parseIntN(olvl.getText());
+				uni.orbs.get(jor.getSelectedIndex()).minLv = v == -1 ? 0 : Math.min(v, uni.max + uni.maxp);
+				setOrb(uni);
+			}
+		});
 	}
 
 	private void addListeners$2() {
@@ -500,10 +580,28 @@ public class UnitManagePage extends DefaultPage {
 		add(cmbo);
 		add(cdesc);
 		add(unir);
+
+		add(lbul);
+		add(lbor);
+		add(jsor);
+		add(lbof);
+		add(ofrm);
+		add(lbol);
+		add(olvl);
+		add(addo);
+		add(remo);
 		jlu.setCellRenderer(new UnitLCR());
 		jlf.setCellRenderer(new AnimLCR());
 		jtd.setCellRenderer(new AnimTreeRenderer());
 		SwingUtilities.invokeLater(() -> jtd.setUI(new TreeNodeExpander(jtd)));
+		jor.setCellRenderer(new DefaultListCellRenderer() {
+			@Override
+			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+				JLabel jl = ((JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus));
+				jl.setText("slot " + index + ": " + value);
+				return jl;
+			}
+		});
 		lbp.setModel(new DefaultComboBoxModel<>(get(MainLocale.PAGE, "psort", 10)));
 		setPack(pac);
 		addListeners();
@@ -686,6 +784,7 @@ public class UnitManagePage extends DefaultPage {
 			jlf.setListData(new Form[0]);
 			maxl.setText("");
 			maxp.setText("");
+			maxl.setText(null);
 			rar.setSelectedItem(null);
 			cbl.setSelectedItem(null);
 		} else {
@@ -698,7 +797,32 @@ public class UnitManagePage extends DefaultPage {
 		changing = boo;
 		if (frm != null && frm.unit != unit)
 			frm = null;
+		setOrb(uni);
 		setForm(frm);
+	}
+
+	private void setOrb(Unit unit) {
+		boolean boo = changing;
+		boolean exists = unit != null;
+		boolean editable = exists && pac.editable;
+		int index = jor.getSelectedIndex();
+		boolean valid = editable && index != -1 && index < unit.orbs.size();
+		changing = true;
+		if (exists) {
+			jor.setListData(unit.orbs.toArray(new Orb[0]));
+			if (valid)
+				jor.setSelectedIndex(index);
+		} else {
+			jor.setListData(new Orb[0]);
+			jor.clearSelection();
+		}
+		addo.setEnabled(editable && unit.orbs.size() < 2);
+		remo.setEnabled(editable && valid);
+		ofrm.setEnabled(editable && valid);
+		olvl.setEnabled(editable && valid);
+		ofrm.setText(valid ? jor.getSelectedValue().minForm + "" : null);
+		olvl.setText(valid ? jor.getSelectedValue().minLv + "" : null);
+		changing = boo;
 	}
 
 	private AnimCI getSelectedAnim() {

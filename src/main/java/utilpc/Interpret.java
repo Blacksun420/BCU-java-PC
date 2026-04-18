@@ -19,6 +19,7 @@ import common.util.stage.info.DefStageInfo;
 import common.util.stage.info.StageInfo;
 import common.util.unit.Combo;
 import common.util.unit.Enemy;
+import common.util.unit.Form;
 import common.util.unit.Trait;
 import main.MainBCU;
 import page.MainLocale;
@@ -32,6 +33,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Interpret extends Data {
 
@@ -73,6 +75,8 @@ public class Interpret extends Data {
 	public static String[] TCTX;
 	public static String[] PCTX;
 	public static String[] CCTX;
+	public static String[] ORB;
+	public static String[] SCORES;
 
 	/**
 	 * treasure orderer
@@ -99,10 +103,21 @@ public class Interpret extends Data {
 
 	/**
 	 * combo string formatter
+	 * ---
+	 * 1st num (modification):
+	 * 1 = add
+	 * 2 = minus
+	 * ---
+	 * 2nd num (unit):
+	 * -1 = do not include number
+	 * 0 = include number with no units
+	 * 1 = x%
+	 * 2 = x frames
+	 * 3 = Lv. x
 	 */
-	private static final byte[][] CDC = { { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 3 }, { 1, 0 }, { 1, 1 }, { 2, 1 },
-			{ 1, 1 }, { 1, 1 }, { 1, 1 }, { 2, 2 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 },
-			{ 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 2, 1 } };
+	private static final byte[][] CDC = { { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 3 }, { 1, 0 }, { 1, 1 }, { 2, 1 },//8
+			{ 1, 1 }, { 1, 1 }, { 1, 1 }, { 2, 2 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 },//11
+			{ 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 1, 1 }, { 2, 1 }, { 1, 1 } };//10
 
 	//Filters abilities and procs that are available for enemies. Also gives better organization to the UI
 	public static final byte[] EABIIND = { ABI_ONLY, ABI_METALIC, ABI_SNIPERI, ABI_TIMEI, ABI_GHOST, ABI_GLASS, ABI_THEMEI };
@@ -125,7 +140,7 @@ public class Interpret extends Data {
 			Data.P_WEAKAURA, Data.P_STRONGAURA, Data.P_AI, Data.P_COMBOCOOLDOWN};
 
 	private static final DecimalFormat df;
-	public static final String[] comboLv = new String[] { "Sm", "M", "L", "XL", "DOWN", "DEF" };
+	public static String[] lvl = new String[] { "Sm", "M", "L", "XL", "XXL", "EX", "DEF" };
 
 	static {
 		redefine();
@@ -171,7 +186,10 @@ public class Interpret extends Data {
 	}
 
 	public static String comboInfo(Combo c, BasisLU b) {
-		return combo(c.type, CommonStatic.getBCAssets().values[c.type][c.lv], b, c.group);
+		String str = combo(c.type, CommonStatic.getBCAssets().values[c.type][c.lv], b);
+		if (c.group != null)
+			str += " (" + c.group + ")";
+		return str;
 	}
 
 	public static String deco(int type, BasisLU b) { // 0 = slow
@@ -309,7 +327,7 @@ public class Interpret extends Data {
 		int[] res = CommonStatic.getBCAssets().filter[n];
 		String[] strs = new String[res.length];
 		for (int i = 0; i < res.length; i++)
-			strs[i] = COMN[res[i]];
+			strs[i] = getComboName(res[i]);
 		return strs;
 	}
 
@@ -639,6 +657,8 @@ public class Interpret extends Data {
 		TCTX = Page.get(MainLocale.UTIL, "tc", 6);
 		PCTX = Page.get(MainLocale.UTIL, "aq", PC_CORRES.length);
 		CCTX = Page.get(MainLocale.UTIL, "cq", PC_CUSTOM.length);
+		ORB = Page.get(MainLocale.UTIL, "ot", ORB_TYPE_TOTAL);
+		SCORES = Page.get(MainLocale.UTIL, "sc", SCORE_TOT);
 		EABI = new String[EABIIND.length];
 		for (int i = 0; i < EABI.length; i++)
 			EABI[i] = SABIS[EABIIND[i]];
@@ -655,20 +675,14 @@ public class Interpret extends Data {
 			setVal(ind, v, bl.t());
 	}
 
-	private static String combo(int t, int val, BasisLU b, CharaGroup restr) {
-		String def = combo(t, val, b);
-		if (restr == null)
-			return def;
-		return def + " (" + restr + " only)";
-	}
 	private static String combo(int t, int val, BasisLU b) {
 		byte[] con = CDC[t];
 		if (t == C_RESP) {
 			double research = (b.t().tech[LV_RES] - 1) * 6 + b.t().trea[T_RES] * 0.3;
-			return COMN[t] + " " + CDP[0][con[0]] + CDP[1][con[1]].replaceAll("_", String.valueOf(research * val / 100));
+			return getComboName(t) + (con[1] == -1 ? "" : " " + CDP[0][con[0]] + CDP[1][con[1]].replaceAll("_", String.valueOf(research * val / 100)));
 		} else if (t == C_VKILL)
 			val /= 10;
-		return COMN[t] + " " + CDP[0][con[0]] + CDP[1][con[1]].replaceAll("_", String.valueOf(val));
+		return getComboName(t) + " " + (con[1] == -1 ? "" : " " + CDP[0][con[0]] + CDP[1][con[1]].replaceAll("_", String.valueOf(val)));
 	}
 
 	private static void setVal(int ind, int v, Treasure t) {
@@ -904,10 +918,16 @@ public class Interpret extends Data {
 	}
 
 	public static String infoHTML(StageInfo si, int star) {
-		return si instanceof CustomStageInfo ? customHTML((CustomStageInfo)si, star) : defHTML((DefStageInfo)si, star);
+		StringBuilder ans = si instanceof CustomStageInfo ? customHTML((CustomStageInfo)si, star) : defHTML((DefStageInfo)si, star);
+		if (!si.getStage().scoreBonus.isEmpty())
+			for (Stage.ScoreBonus bonus : si.getStage().scoreBonus)
+				ans.append("<br>ScoreBonus: ").append(SCORES[bonus.proc])
+						.append(" score ").append(bonus.score)
+						.append(" dire ").append(bonus.dire);
+		return ans.append("</html>").toString();
 	}
 
-	public static String defHTML(DefStageInfo si, int star) {
+	public static StringBuilder defHTML(DefStageInfo si, int star) {
 		StringBuilder ans = new StringBuilder("<html>" + MainLocale.getLoc(MainLocale.INFO,"energy") + ": "
 				+ si.energy + "<br> " + MainLocale.getLoc(MainLocale.INFO,"xp") + ": " + si.xp);
 
@@ -981,11 +1001,9 @@ public class Interpret extends Data {
 				ans.append("<tr><td>").append(tm[0]).append("</td><td>").append(MultiLangCont.getStageDrop(tm[1])).append("</td><td>").append(tm[2]).append("</td><tr>");
 			ans.append("</table>");
 		}
+		if (si.maxMaterial == -1)
+			return ans;
 
-		if (si.maxMaterial == -1) {
-			ans.append("</html>");
-			return ans.toString();
-		}
 		ans.append("<hr><b><h2><center>Material Drop Data</center></h2></b>");
 		ans.append(MainLocale.getLoc(MainLocale.PAGE, "maxmat")).append("<br>");
 		for (int i = 0; i < si.map.multiplier.length; i++) {
@@ -1013,8 +1031,8 @@ public class Interpret extends Data {
 					.append((double) (((100 - missChance) * chance * 100) / totalChances) / 100.0).append("%")
 					.append("</td></tr>");
 		}
-		ans.append("</table></html>");
-		return ans.toString();
+		ans.append("</table>");
+		return ans;
 	}
 	private static void appendDropData(DefStageInfo si, StringBuilder ans) {
 		if (si.drop == null || si.drop.length == 0) {
@@ -1065,7 +1083,7 @@ public class Interpret extends Data {
 		ans.append("</table>");
 	}
 
-	public static String customHTML(CustomStageInfo csi, int star) {
+	public static StringBuilder customHTML(CustomStageInfo csi, int star) {
 		StringBuilder ans = new StringBuilder();
 		ans.append("<html>");
 		if (csi.st.preset != null)
@@ -1095,7 +1113,7 @@ public class Interpret extends Data {
 			for (int i = 0; i < csi.rewards.size(); i++)
 				ans.append("<tr><td>").append(csi.rewards.get(i).toString()).append("</td></tr>");
 		}
-		return ans.toString();
+		return ans;
 	}
 	public static String stageLimHTML(StageLimit sl) {
 		StringBuilder ans = new StringBuilder();
@@ -1106,6 +1124,12 @@ public class Interpret extends Data {
 			for (int id : sl.bannedCatCombo)
 				comboData[i++] = MainLocale.getLoc(MainLocale.UTIL, "nb" + id);
 			ans.append(String.join(", ", comboData));
+		}
+		if (!sl.bannedOrb.isEmpty()) {
+			ans.append("<br>").append(Page.get(MainLocale.INFO, "orbban")).append(": ");
+			if (!sl.bannedOrb.isEmpty())
+				for (int id : sl.bannedOrb)
+					ans.append(Interpret.ORB[id]);
 		}
 		if (sl.coolStart)
 			ans.append("<br> Units will start on cooldown");
@@ -1221,5 +1245,17 @@ public class Interpret extends Data {
 
 	public static Point getPoint(Point p, P pp, double size) {
 		return new Point((int) ((p.x + pp.x) / size), (int) ((p.y + pp.y) / size));
+	}
+
+	public static String getComboName(int ind) {
+		if (COMN.length > ind)
+			return COMN[ind];
+		else
+			return "nb" + ind;
+	}
+
+	public static String getGroupTooltip(CharaGroup group) {
+		String type = Page.get(0, group.type == 0 ? "include" : "exclude");
+		return "<html>" + type + "<br>" + group.fset.stream().map(Form::toString).collect(Collectors.joining("<br>")) + "</html>";
 	}
 }

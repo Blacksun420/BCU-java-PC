@@ -27,7 +27,7 @@ public class ComboListTable extends SortTable<Combo> {
 	public static void redefine() {
 		String str = MainLocale.getLoc(MainLocale.INFO, "unit");
 		tit = new String[] { "ID", "Lv.", MainLocale.getLoc(MainLocale.INFO, "desc"),
-				MainLocale.getLoc(MainLocale.INFO, "occu"), str + " 1", str + " 2", str + " 3", str + " 4",
+				MainLocale.getLoc(MainLocale.INFO, "group"), str + " 1", str + " 2", str + " 3", str + " 4",
 				str + " 5", MainLocale.getLoc(MainLocale.INFO, "row")};
 	}
 
@@ -35,7 +35,6 @@ public class ComboListTable extends SortTable<Combo> {
 
 	public ComboListTable(Page p) {
 		super(tit);
-
 		fr = p;
 
 		setDefaultRenderer(CharaGroup.class, new DefaultTableCellRenderer() {
@@ -128,6 +127,8 @@ public class ComboListTable extends SortTable<Combo> {
 		c = lnk[c];
 		if (c == 2)
 			return Combo.class;
+		if (c == 3)
+			return CharaGroup.class;
 		if (c > 3 && c < 9)
 			return Form.class;
 		else
@@ -167,11 +168,11 @@ public class ComboListTable extends SortTable<Combo> {
 		if (c == 0)
 			return t.toString();
 		if (c == 1)
-			return Interpret.comboLv[t.lv];
+			return Interpret.lvl[t.lv];
 		if (c == 2)
 			return t;
 		if (c == 3)
-			return lu.occupance(t);
+			return t.group;
 		if (c == 9)
 			return t.row == 0 ? "Any" : t.row == 3 ? "Same" : String.valueOf(t.row);
 		if (t.forms.length > c - 4)
@@ -179,10 +180,7 @@ public class ComboListTable extends SortTable<Combo> {
 		return null;
 	}
 
-	public void setLU(@NonNull LineUp nlu) {
-		lu = nlu;
-		sort();
-
+	public void refresh() {
 		revalidate();
 		repaint();
 	}

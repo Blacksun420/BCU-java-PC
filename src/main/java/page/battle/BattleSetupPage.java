@@ -76,7 +76,7 @@ public class BattleSetupPage extends LubCont {
 		} else
 			jl.setText("Preset Lineup");
 
-		Limit lim = st.getLim(jls.getSelectedIndex());
+		Limit lim = st.getLim(getStarLevel());
 		rich.setEnabled(!lim.rich);
 		snip.setEnabled(!lim.sniper);
         boolean val = lim.valid(bu.lu);
@@ -108,7 +108,8 @@ public class BattleSetupPage extends LubCont {
 	protected void renew() {
 		BasisLU b = getLU();
 		callBack(null);
-		lub.setLU(b.lu);
+		lub.setLU(b);
+		b.lu.renew();
 
 		mod.setBasis(b);
 		mod.setBanned(lub.getLim().stageLimit != null ? lub.getLim().stageLimit.bannedCatCombo : null);
@@ -159,31 +160,29 @@ public class BattleSetupPage extends LubCont {
 			if (jls.getSelectedIndex() == -1)
 				jls.setSelectedIndex(0);
 
-			sttb.setData(st, jls.getSelectedIndex());
-			lub.setLimit(st.getLim(jls.getSelectedIndex()), st.getMC().getSave(false), st.getCont().price);
+			sttb.setData(st, getStarLevel());
+			lub.setLimit(st.getLim(getStarLevel()), st.getMC().getSave(false), st.getCont().price);
 			renew();
 		});
 
-		jlu.addActionListener(arg0 -> changePanel(new BasisPage(getThis(), st, !rand ? jls.getSelectedIndex() : -1, testMode.isSelected())));
+		jlu.addActionListener(arg0 -> changePanel(new BasisPage(getThis(), st, getStarLevel(), testMode.isSelected())));
 
 		strt.addActionListener(arg0 -> {
-			int star = jls.getSelectedIndex();
+			int star = getStarLevel();
 			int cfg = 0;
 			if (rich.isSelected())
 				cfg |= 1;
 			if (snip.isSelected())
 				cfg |= 2;
 			BasisLU b = getLU();
-			if (rand) {
+			if (rand)
 				b = RandStage.getLU(star);
-				star = 0;
-			}
 			byte saveMode = (byte)(testMode.isSelected() ? 2 : st.getMC().getSave(false) != null ? 1 : 0);
 			changePanel(new BattleInfoPage(getThis(), st, star, b, cfg, saveMode));
 		});
 
 		tmax.addActionListener(arg0 -> {
-			st.getLim(jls.getSelectedIndex()).lvr.validate(getLU().lu);
+			st.getLim(getStarLevel()).lvr.validate(getLU().lu);
 			renew();
 		});
 
@@ -221,7 +220,7 @@ public class BattleSetupPage extends LubCont {
 		add(testMode);
 		add(ulock);
 		sttb.setData(st, 0);
-		tmax.setEnabled(st.getLim(jls.getSelectedIndex()).lvr != null);
+		tmax.setEnabled(st.getLim(getStarLevel()).lvr != null);
 		testMode.setEnabled(st.getMC().getSave(true) != null);
 		if (st.lastClear != null) {
 			add(tlu);
@@ -263,8 +262,11 @@ public class BattleSetupPage extends LubCont {
         }
         jls.setListData(tit);
         jls.setSelectedIndex(0);
-		lub.setLimit(st.getLim(!rand ? jls.getSelectedIndex() : -1), st.getMC().getSave(false), st.getCont().price);
+		lub.setLimit(st.getLim(getStarLevel()), st.getMC().getSave(false), st.getCont().price);
 		addListeners();
 	}
 
+	int getStarLevel() {
+		return rand ? 0 : jls.getSelectedIndex();
+	}
 }

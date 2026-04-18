@@ -139,7 +139,10 @@
         "abbr_name": "Lethargy",
         "full_name": "Lethargy",
         "tooltip": null,
-        "format": "[(prob<100){(prob)% chance to }][(mult>0){Increase}(mult<0){Decrease}][(prob==100){s}] target's TBA by [(percentage){(_abs(mult))%}(!percentage){(_dispTimeD(mult))}] for (_dispTimeF(time))[(stackable){ (_left)Stackable(_right)}]",
+        "format": ["[(prob<100){(prob)% chance to }][((_strEqual(type,`SET))){Set}(!(_strEqual(type,`SET)))",
+            "{[(mult>0){Increase}(mult<0){Decrease}][(prob==100){s}]}] target's TBA by ",
+            "[((_strEqual(type,`PERCENTAGE))){(_abs(mult))%}(!(_strEqual(type,`PERCENTAGE))){(_dispTimeD(mult))}] for ",
+            "(_dispTimeF(time))[(stackable){ (_left)Stackable(_right)}]"],
         "class": {
             "prob": {
                 "name": "chance",
@@ -157,8 +160,8 @@
                 "name": "Stackable",
                 "tooltip": "If true, the weaken effect will stack, increasing the effect the more stacks there are"
             },
-            "percentage": {
-                "name": "Percentage",
+            "type": {
+                "name": "Type",
                 "tooltip": "Simply adds when false, and increases the TBA by percentage when true"
             }
         }
@@ -467,7 +470,7 @@
             }
         }
     },
-    "IMULETHARGY": {
+    "IMULETH": {
         "abbr_name": "imu. Lethargy",
         "full_name": "Immune/Resistant to Lethargy",
         "tooltip": null,
@@ -1573,31 +1576,52 @@
             }
         }
     },
-    "CDSETTER": {
-        "abbr_name": "CD Modifier",
-        "full_name": "Research Breaker",
-        "tooltip": "Increases a certain unit's cooldown by a given amount",
+    "DELAY": {
+        "abbr_name": "delay",
+        "full_name": "Delay/Advance",
+        "tooltip": null,
         "format": [
-            "(prob)% chance to [(type==2){set}(type!=2){[(amount>0){increase}(amount<0){decrease}]}] ",
-            "[(slot<0){a random unit}(slot>=0&slot<10){the unit in the lineup's (slot+1)[(slot==0){st}(slot==1){nd}(slot==2){rd}(slot>2){th}] slot}(slot==10){attacked unit}(slot==11){all unit}]'s cooldown ",
-            "[(type==2){to}(type!=2){by}] (amount)[(type!=1){f}(type==1){%}]"
+            "(prob)% chance to [((_strEqual(type,`FIXED))){ set respawn to}(!(_strEqual(type,`FIXED))){[(strength>=0){delay}(strength<0){advance}] respawn by}]",
+            " (_abs(strength))[(type==0|type==2){%}(type==1){f}]",
+            "[((_strEqual(type,`MAX))){ of maximum respawn}((_strEqual(type,`CURRENT))){ of current respawn}]"
         ],
         "class": {
             "prob": {
-                "name": "Chance",
+                "name": "chance",
                 "tooltip": null
             },
-            "amount": {
-                "name": "increase",
-                "tooltip": "The amount to add. Use negative numbers to decrease cooldown instead"
-            },
-            "slot": {
-                "name": "slot",
-                "tooltip": "The slot of the unit to affect. Use -1 for random, and 10 to make the slot depend on the hit unit, and 11 to affect every unit"
+            "strength": {
+                "name": "strength",
+                "tooltip": "How much the cooldown gets delayed. Set negative to speed up instead."
             },
             "type": {
                 "name": "type",
-                "tooltip": "0 = unit increase, 1 = percentage increase, 2 = set to value"
+                "tooltip": "0 = Apply x% current cooldown. 1 = Apply a direct amount. 2 = Apply x% max cooldown."
+            }
+        }
+    },
+    "IMUDELAY" : {
+        "abbr_name": "imu. Delay",
+        "full_name": "Immune/Resistant to Delay",
+        "tooltip": null,
+        "format": [
+            "[(mult!=0&block!=100){[(mult==100){Immune}(mult<100&mult>0){Resistant}(mult<0){Weak}] to [((_strEqual(focus,`ALL))){Delay/Advance}((_strEqual(focus,`DEBUFF))){Delay}((_strEqual(focus,`BUFF))){Advance}]",
+            "[(mult<100&mult>0){ (_left)Decreases strength by (mult)%(_right)}(mult<0){ (_left)Increases strength by (_abs(mult))%(_right)}]",
+            "[(block!=0&block<100){ & }]}][(block!=0){[((_strEqual(focus,`ALL))){Delay/Advance}((_strEqual(focus,`DEBUFF))){Delay}((_strEqual(focus,`BUFF))){Advance}] [(block==100){blocker}(block<100&block>0){absorber}(block<0){increaser}]",
+            " (_left)[(block<100&block>0){De}(block<0){In}]creases strength by (_abs(block))%(_right)}]"
+        ],
+        "class": {
+            "mult": {
+                "name": "percent",
+                "tooltip": "Set negative to make this unit weak to the effect"
+            },
+            "block": {
+                "name": "Blocker",
+                "tooltip": "Set from 1 to 99 to reduce duration amongst all units. Set to 100 to completely block delay. Set negative to increase the effect."
+            },
+            "focus": {
+                "name": "Selective",
+                "tooltip": "0 = Resist buffs and debuffs, 1 = Only resistant to attack debuffs, -1 = Only resistant to attack buffs"
             }
         }
     },
@@ -2246,18 +2270,18 @@
             }
         }
     },
-    "KILLSTRENGTHEN": {
-        "abbr_name": "Kill Strengthen",
-        "full_name": "Strengthen When Defeating",
+    "BERSERK": {
+        "abbr_name": "K.Berserk",
+        "full_name": "Kill Berserker",
         "tooltip": null,
-        "format": ["[(mult>0){In}(mult<0){De}]creases damage by (_abs(mult))% after killing (kill_count) enemies",
+        "format": ["[(mult>0){In}(mult<0){De}]creases damage by (_abs(mult))% after killing (killCount) enemies",
         "[(max_stacks!=1){, [(max_stacks==0){stacks indefinitely}(max_stacks>1){up to (max_stacks)x stacks}]}]"],
         "class": {
             "mult": {
                 "name": "Percentage",
                 "tooltip": null
             },
-            "kill_count": {
+            "killCount": {
                 "name": "Kill Count",
                 "tooltip": null
             },

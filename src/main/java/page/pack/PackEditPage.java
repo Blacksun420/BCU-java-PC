@@ -133,6 +133,7 @@ public class PackEditPage extends DefaultPage {
 	private final JBTN ener = new JBTN(MainLocale.PAGE, "ener");
 	private final JBTN vmsc = new JBTN(MainLocale.PAGE, "vmsc");
 	private final JBTN unpk = new JBTN(MainLocale.PAGE, "unpack");
+	private final JBTN ccmb = new JBTN(MainLocale.PAGE, "combo");
 	private final JBTN recd = new JBTN(MainLocale.PAGE, "replay");
 	private final JBTN csol = new JBTN(MainLocale.PAGE, "csoul");
 	private final JBTN cbge = new JBTN(MainLocale.PAGE, "cbge");
@@ -234,7 +235,7 @@ public class PackEditPage extends DefaultPage {
 		set(remr, x, y, w + 175, 800, 175, 50);
 
 		set(skld, x, y, w, 850, 300, 50);
-		set(recd, x, y, w, 950, 300, 50);
+		set(ccmb, x, y, w, 950, 300, 50);
 		set(tdiy, x, y, w, 1050, 300, 50);
 		set(csol, x, y, w, 1150, 300, 50);
 		w += 350;
@@ -243,6 +244,7 @@ public class PackEditPage extends DefaultPage {
 		set(lbt, x, y, w, 100, 350, 50);
 		set(jspt, x, y, w, 150, 350, 600);
 		set(merge, x, y, w, 800, 350, 50);
+		set(recd, x, y, w, 950, 350, 50);
 		SwingUtilities.invokeLater(() -> jtd.setUI(new TreeNodeExpander(jtd)));
 	}
 
@@ -378,6 +380,8 @@ public class PackEditPage extends DefaultPage {
 				Opts.pop("You typed incorrect password", "Incorrect password");
 			}
 		});
+
+		ccmb.addActionListener(x -> changePanel(new ComboEditPage(getThis(), pac)));
 
 		cmbo.setLnr(x -> {
 			if (cmbo.isSelected())
@@ -755,6 +759,7 @@ public class PackEditPage extends DefaultPage {
 		add(ener);
 		add(vmsc);
 		add(unpk);
+		add(ccmb);
 		add(recd);
 		add(csol);
 		add(cbge);
@@ -851,6 +856,7 @@ public class PackEditPage extends DefaultPage {
 		cbge.setEnabled(pac != null);
 		csav.setEnabled(pac != null);
 		cdesc.setEnabled(pac != null);
+		ccmb.setEnabled(pac != null);
 		boolean canUnpack = pac != null && !pac.editable;
 		boolean canExport = pac != null && pac.editable;
 		unpk.setEnabled(canUnpack);

@@ -42,7 +42,7 @@ public abstract class LubCont extends DefaultPage {
 			if (e.getButton() == MouseEvent.BUTTON1)
 				getLub().click(e.getPoint());
 			else if (getLub().sf instanceof Form)
-				changePanel(new UnitInfoPage(this, (Unit)getLub().sf.unit(), getLub().lu.getLv(getLub().sf)));
+				changePanel(new UnitInfoPage(this, (Unit)getLub().sf.unit(), getLub().lu().getLv(getLub().sf)));
 			else if (getLub().sf != null)
 				changePanel(new UREditPage(this, UserProfile.getUserPack(getLub().sf.getID().pack), (UniRand)getLub().sf));
 	}

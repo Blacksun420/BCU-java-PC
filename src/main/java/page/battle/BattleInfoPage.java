@@ -474,7 +474,10 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 	private void updateTablesL() {
 		long h = basis.sb.ebase.health;
 		long mh = basis.sb.ebase.maxH;
-		ebase.setText("HP: " + h + "/" + mh + ", " + 10000 * h / mh / 100.0 + "%");
+		if (!basis.sb.st.trail)
+			ebase.setText("HP: " + h + "/" + mh + ", " + 10000 * h / mh / 100.0 + "%");
+		else
+			ebase.setText("SCORE: " + basis.sb.score);
 		h = basis.sb.ubase.health;
 		mh = basis.sb.ubase.maxH;
 		ubase.setText("HP: " + h + "/" + mh + ", " + 10000 * h / mh / 100.0 + "%");

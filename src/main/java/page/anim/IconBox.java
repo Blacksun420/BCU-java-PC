@@ -94,11 +94,10 @@ public interface IconBox extends ViewBox {
 
 				int t = mode == 0 ? (type == 1 || type == 2) ? type : 0 : 4;
 
+				// black outline
 				FakeImage bimg = aux.ico[mode][t].getImg();
-
 				int bw = bimg.getWidth();
 				int bh = bimg.getHeight();
-
 				float r = Math.min(1f * line[2] / bw, 1f * line[3] / bh);
 
 				gra.setColor(FakeGraphics.BLACK);

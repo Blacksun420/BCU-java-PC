@@ -110,6 +110,7 @@ public strictfp class MainLocale {
 
 	protected static void redefine() {
 		Interpret.redefine();
+		MainPage.redefine();
 		EnemyListTable.redefine();
 		UnitListTable.redefine();
 		ComboListTable.redefine();

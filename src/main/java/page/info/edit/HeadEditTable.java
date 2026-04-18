@@ -44,6 +44,7 @@ class HeadEditTable extends Page {
 	private final JTF jres = new JTF();
 	private final JTF jures = new JTF();
 	private final JTG dojo = new JTG(MainLocale.PAGE, "dojo");
+	private final JTG drop = new JTG(MainLocale.PAGE, "drop");
 	private final JTG bbrr = new JTG(MainLocale.INFO, "bossguard");
 	private final LimitTable lt;
 	private final JScrollPane jt;
@@ -139,6 +140,7 @@ class HeadEditTable extends Page {
 		set(cas, x, y, w * 4, 100, w, 50);
 		set(jcas, x, y, w * 5, 100, w, 50);
 		set(bbrr, x, y, w * 6, 100, w, 50);
+		set(drop, x, y, w * 7, 100, w, 50);
 		set(mus, x, y, 0, 150, w, 50);
 		set(jm0, x, y, w, 150, w, 50);
 		set(jmh, x, y, w * 2, 150, w, 50);
@@ -180,6 +182,7 @@ class HeadEditTable extends Page {
 		jmax.setText(String.valueOf(st.max));
 		con.setSelected(!st.non_con);
 		dojo.setSelected(st.trail);
+		drop.setSelected(st.drop);
 		bbrr.setSelected(st.bossGuard);
 		barrierAbler();
 
@@ -223,6 +226,7 @@ class HeadEditTable extends Page {
 		jmh.setEnabled(b);
 		jm1.setEnabled(b);
 		dojo.setEnabled(b);
+		drop.setEnabled(b);
 		lt.abler(b);
 	}
 
@@ -261,6 +265,11 @@ class HeadEditTable extends Page {
 			}
 		});
 
+		drop.addActionListener(x -> {
+			sta.drop = drop.isSelected();
+			setData(sta);
+		});
+
 		bbrr.setLnr(a -> sta.bossGuard = bbrr.isSelected());
 	}
 
@@ -272,7 +281,7 @@ class HeadEditTable extends Page {
 		add(cas);
 		add(con);
 		add(dojo);
-		//add(drop);
+		add(drop);
 		add(mus);
 		set(jhea);
 		set(jlen);

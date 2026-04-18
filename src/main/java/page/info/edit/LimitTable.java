@@ -57,8 +57,12 @@ public class LimitTable extends Page {
 	private final JTF ccos = new JTF();
 
 	private final CrossList<String> jlco = new CrossList<>(Interpret.getComboFilter(0));
+	private final CrossList<String> jlorb = new CrossList<>(Interpret.ORB);
 	private final JScrollPane jsco = new JScrollPane(jlco);
+	private final JScrollPane jsorb = new JScrollPane(jlorb);
 	private final JBTN banc = new JBTN(MainLocale.PAGE, "ban0");
+	private final JBTN bano = new JBTN(MainLocale.PAGE, "ban0");
+
 
 	private final JL rard = new JL(MainLocale.INFO, "ht11");
 	private final JTF[] brard = new JTF[trar.length];
@@ -120,6 +124,8 @@ public class LimitTable extends Page {
 
 		jlco.setEnabled(b);
 		banc.setEnabled(b && jlco.getSelectedIndex() != -1);
+		jlorb.setEnabled(b);
+		bano.setEnabled(b && jlorb.getSelectedIndex() != -1);
 		jptot.setEnabled(b);
 		jccan.setEnabled(b);
 		jcuspd.setEnabled(b);
@@ -176,6 +182,10 @@ public class LimitTable extends Page {
 		set(jsco, x, y, 0, yy, w * 6, 100);
 		set(banc, x, y, w * 6, yy, w * 2, 100);
 
+		yy += 100;
+		set(jsorb, x, y, 0, yy, w * 6, 100);
+		set(bano, x, y, w * 6, yy, w * 2, 100);
+
 		w = 1400 / (trar.length + 1);
 		yy += 100;//250
 		set(rar, x, y, 0, yy, w, 50);
@@ -198,7 +208,7 @@ public class LimitTable extends Page {
 		return (int) (1400 / 7.5);
 	}
 	public int getPHeight() {
-		return 550;
+		return 650;
 	}
 
 	protected void setLimit(Limit l) {
@@ -227,6 +237,7 @@ public class LimitTable extends Page {
 			jcespd.setText(MainLocale.getLoc(MainLocale.INFO, "ht26") + ": ");
 
 			jlco.repaint();
+			jlorb.repaint();
 			abler(false);
 			return;
 		}
@@ -255,14 +266,15 @@ public class LimitTable extends Page {
 		jcmin.setText(limits[3] + ": " + lim.min);
 		jnum.setText(limits[1] + ": " + lim.num);
 		jccan.setText(MainLocale.getLoc(MainLocale.INFO, "ht24") + ": " + stli.cannonMultiplier + "%");
-		jcuspd.setText(MainLocale.getLoc(MainLocale.INFO, "ht25") + ": " + stli.unitSpeedOverride);
-		jcespd.setText(MainLocale.getLoc(MainLocale.INFO, "ht26") + ": " + stli.enemySpeedOverride);
+		jcuspd.setText(MainLocale.getLoc(MainLocale.INFO, "ht25") + ": " + (stli.unitSpeedOverride == -1 ? "--" : ((stli.unitSpeedOverrideMode == StageLimit.SpeedOverrideMode.MULTIPLY ? "x" : "=") + stli.unitSpeedOverride)));
+		jcespd.setText(MainLocale.getLoc(MainLocale.INFO, "ht26") + ": " + (stli.enemySpeedOverride == -1 ? "--" : ((stli.enemySpeedOverrideMode == StageLimit.SpeedOverrideMode.MULTIPLY ? "x" : "=") + stli.enemySpeedOverride)));
 		star.setText(l.starString());//l.star == -1 ? "all stars" : ((l.star + 1) + " star"));
 		one.setText(MainLocale.getLoc(MainLocale.INFO, "row" + lim.line));
 		jcg.setText(lim.group + (lim.group != null && lim.group.type % 2 != 0 ? ": " + lim.fa : ""));
 		jlr.setText(String.valueOf(lim.lvr));
 		jptot.setText(String.valueOf(stli.maxUnitSpawn));
 		jlco.repaint();
+		jlorb.repaint();
 	}
 
 	private void addListeners() {
@@ -329,6 +341,25 @@ public class LimitTable extends Page {
 			jlco.repaint();
 		});
 
+		jlorb.addListSelectionListener(x -> {
+			bano.setEnabled(jlorb.getSelectedIndex() != -1);
+			bano.setText(MainLocale.PAGE, "ban" + (!lim.stageLimit.bannedCatCombo.contains(jlorb.getSelectedIndex()) ? "0" : "1"));
+		});
+
+		bano.setLnr(x -> {
+			if (lim.stageLimit == null || jlorb.getSelectedIndex() == -1)
+				return;
+
+			if (lim.stageLimit.bannedOrb.contains(jlorb.getSelectedIndex())) {
+				lim.stageLimit.bannedOrb.remove(jlorb.getSelectedIndex());
+				bano.setText(MainLocale.PAGE, "ban0");
+			} else {
+				lim.stageLimit.bannedOrb.add(jlorb.getSelectedIndex());
+				bano.setText(MainLocale.PAGE, "ban1");
+			}
+			jlorb.repaint();
+		});
+
 		rich.addActionListener(arg0 -> lim.rich = rich.isSelected());
 		snip.addActionListener(arg0 -> lim.sniper = snip.isSelected());
 	}
@@ -362,6 +393,8 @@ public class LimitTable extends Page {
 
 		add(jsco);
 		add(banc);
+		add(jsorb);
+		add(bano);
 		set(ccos);
 
 		add(rard);
@@ -379,7 +412,9 @@ public class LimitTable extends Page {
 
 		set(jccan);
 		set(jcuspd);
+		jcuspd.setToolTipText("<html>Use \"=\" to set speed equal to value (ex. =10)<br>Use \"x\" to multiply speed by value (ex. x10)");
 		set(jcespd);
+		jcespd.setToolTipText("<html>Use \"=\" to set speed equal to value (ex. =10)<br>Use \"x\" to multiply speed by value (ex. x10)");
 
 		jlco.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jlco.setCheck(i -> lim != null && lim.stageLimit.bannedCatCombo.contains(i));
@@ -420,11 +455,20 @@ public class LimitTable extends Page {
 			lim.stageLimit.maxUnitSpawn = Math.max(val, 0);
 		else if (jtf == jccan)
 			lim.stageLimit.cannonMultiplier = Math.max(val, 0);
-		else if (jtf == jcuspd)
+		else if (jtf == jcuspd) {
 			lim.stageLimit.unitSpeedOverride = Math.max(val, -1);
-		else if (jtf == jcespd)
+			if (str.startsWith("x") || str.startsWith("*"))
+				lim.stageLimit.unitSpeedOverrideMode = StageLimit.SpeedOverrideMode.MULTIPLY;
+			else
+				lim.stageLimit.unitSpeedOverrideMode = StageLimit.SpeedOverrideMode.SET;
+
+		} else if (jtf == jcespd) {
 			lim.stageLimit.enemySpeedOverride = Math.max(val, -1);
-		for (int i = 0; i < bcost.length; i++) {
+			if (str.startsWith("x") || str.startsWith("*"))
+				lim.stageLimit.enemySpeedOverrideMode = StageLimit.SpeedOverrideMode.MULTIPLY;
+			else
+				lim.stageLimit.enemySpeedOverrideMode = StageLimit.SpeedOverrideMode.SET;
+		} for (int i = 0; i < bcost.length; i++) {
 			if (jtf == bcost[i]) {
 				lim.stageLimit.costMultiplier[i] = Math.max(0, val);
 				break;

@@ -35,12 +35,17 @@ public class ModifierList extends JList<Object> {
                 if (o instanceof Combo) {
                     Combo c = (Combo) o;
                     if (banned != null && banned.contains(c.type) || CommonStatic.getConfig().excludeCombo.contains(c.id.pack)) {
-                        jl.setText("<html><strike>" + Interpret.comboLv[c.lv] + " Combo: " + Interpret.comboInfo(c, lineup) + "</strike></html>");
+                        jl.setText("<html><strike>" + Interpret.lvl[c.lv] + " Combo: " + Interpret.comboInfo(c, lineup) + "</strike></html>");
                         jl.setForeground(getSelectedIndex() == ind ? Color.WHITE : Color.GRAY);
-                    } else
-                        jl.setText(Interpret.comboLv[c.lv] + " Combo: " + Interpret.comboInfo(c, lineup));
-                } else
+                        jl.setToolTipText(null);
+                    } else {
+                        jl.setText(Interpret.lvl[c.lv] + " Combo: " + Interpret.comboInfo(c, lineup));
+                        jl.setToolTipText(c.group != null ? Interpret.getGroupTooltip(c.group) : null);
+                    }
+                } else {
                     jl.setText(o.toString());
+                    jl.setToolTipText(null);
+                }
                 return jl;
             }
         });

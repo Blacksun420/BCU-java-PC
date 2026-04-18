@@ -459,6 +459,8 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 
 		jsp.getVerticalScrollBar().setUnitIncrement(size(x, y, 50));
 		jspm.getVerticalScrollBar().setUnitIncrement(size(x, y, 50));
+		jsp.revalidate();
+		jspm.revalidate();
 	}
 
 	protected void set(JL jl) {

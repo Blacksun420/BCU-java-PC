@@ -26,6 +26,17 @@ import javax.swing.*;
 
 public class MainPage extends Page {
 
+	private static int TIP_COUNT = -1;
+
+	static {
+		redefine();
+	}
+	public static void redefine() {
+		TIP_COUNT = -1;
+		while (!get(MainLocale.PAGE, "tip" + (TIP_COUNT + 1)).equals("tip" + (TIP_COUNT + 1)))
+			TIP_COUNT++;
+	}
+
 	private static final long serialVersionUID = 1L;
 
 	private final JLabel memo = new JLabel();
@@ -268,8 +279,8 @@ public class MainPage extends Page {
 	}
 
 	private void refrTips() {
-		String[] ALLTIPS = get(MainLocale.PAGE, "tip", 19);
-		tips.setText("<html>" + ALLTIPS[(int)(Math.random() * ALLTIPS.length)] + "</html>");
+		int sTip = (int)(Math.random() * TIP_COUNT);
+		this.tips.setText("<html>" + get(MainLocale.PAGE, "tip"+sTip) + "</html>");
 	}
 
 	private final JBTN ui = new JBTN(0, "UI Plugin");

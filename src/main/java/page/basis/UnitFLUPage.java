@@ -79,7 +79,7 @@ public class UnitFLUPage extends LubCont {
 
 	@Override
 	protected void renew() {
-		lub.setLU(BasisSet.current().sele.lu);
+		lub.setLU(BasisSet.current().sele);
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package page.basis;
 import common.CommonStatic;
 import common.battle.data.Orb;
 import common.system.fake.FakeGraphics;
+import common.util.Data;
 import utilpc.awt.FG2D;
 
 import java.awt.*;
@@ -45,10 +46,10 @@ public class OrbBox extends Canvas {
 
 	public static void paintOrb(FakeGraphics f, int[] orbs, float x, float y, float a, boolean small) {
 		byte i = (byte)(small ? 1 : 0);
-		f.drawImage(CommonStatic.getBCAssets().TRAITS[i][OrbInfo.reverse(orbs[1])], x, y, a, a);
+		f.drawImage(CommonStatic.getBCAssets().TRAITS[i][Orb.reverse(orbs[Data.ORB_TRAIT])], x, y, a, a);
 		f.setComposite(FakeGraphics.TRANS, 204, 0);
-		f.drawImage(orbs[0] < CommonStatic.getBCAssets().TYPES[i].length ? CommonStatic.getBCAssets().TYPES[i][orbs[0]] : CommonStatic.getBCAssets().TYPES[1-i][orbs[0]], x, y, a, a);
+		f.drawImage(orbs[Data.ORB_TYPE] < CommonStatic.getBCAssets().TYPES[i].length ? CommonStatic.getBCAssets().TYPES[i][orbs[Data.ORB_TYPE]] : CommonStatic.getBCAssets().TYPES[1-i][orbs[Data.ORB_TYPE]], x, y, a, a);
 		f.setComposite(FakeGraphics.DEF, 0, 0);
-		f.drawImage(CommonStatic.getBCAssets().GRADES[orbs[2]], x, y, a, a);
+		f.drawImage(CommonStatic.getBCAssets().GRADES[orbs[Data.ORB_GRADE]], x, y, a, a);
 	}
 }

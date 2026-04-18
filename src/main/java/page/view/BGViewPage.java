@@ -6,6 +6,7 @@ import common.pack.UserProfile;
 import common.util.pack.Background;
 import page.*;
 import page.awt.BBBuilder;
+import page.info.StageFilterPage;
 import utilpc.UtilPC;
 
 import javax.swing.*;
@@ -19,6 +20,7 @@ public class BGViewPage extends DefaultPage implements SupPage<Background> {
 	private static final long serialVersionUID = 1L;
 
 	private final JTG prev = new JTG(MainLocale.PAGE, "preview");
+	private final JBTN find = new JBTN(MainLocale.PAGE, "stage");
 	private final JList<Background> jlst = new JList<>();
 	private final JScrollPane jspst = new JScrollPane(jlst);
 	private final JLabel jl = new JLabel();
@@ -56,6 +58,7 @@ public class BGViewPage extends DefaultPage implements SupPage<Background> {
 	protected void resized(int x, int y) {
 		super.resized(x, y);
 		set(prev, x, y, 300, 0, 200, 50);
+		set(find, x, y, 550, 0, 200, 50);
 		set(jspst, x, y, 50, 100, 300, 1100);
 		set((Canvas) vb, x, y, 400, 50, 1800, 1100);
 		set(jl, x, y, 400, 50, 1800, 1100);
@@ -95,12 +98,20 @@ public class BGViewPage extends DefaultPage implements SupPage<Background> {
 			else
 				add(jl);
 		});
+
+		find.addActionListener(x -> {
+			if (jlst.getSelectedValue() == null)
+				return;
+
+			changePanel(new StageFilterPage(this, jlst.getSelectedValue().getStages()));
+		});
 	}
 
 	private void ini() {
 		add(prev);
 		add(jspst);
 		add(jl);
+		add(find);
 		addListeners();
 	}
 }

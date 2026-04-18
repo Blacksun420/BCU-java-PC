@@ -8,6 +8,7 @@ import common.battle.StageBasis;
 import common.battle.attack.ContAb;
 import common.battle.attack.ContWaveAb;
 import common.battle.data.DataEnemy;
+import common.battle.data.Orb;
 import common.battle.entity.*;
 import common.pack.Identifier;
 import common.system.P;
@@ -494,15 +495,77 @@ public interface BattleBox {
 					if (sb.locks[i][j])
 						g.colRect((int) (x - (imw - iw) / 2.0), (int) (y - (imh - ih) / 2.0), imw, imh, 0, 255, 0, 100);
 					if (cool > 0) {
+						int maxC = sb.elu.maxC[i][j];
 						int dw = (int) (hr * 10);
 						int dh = (int) (hr * 12);
-						float cd = 1f - (float)(cool / sb.elu.maxC[i][j]);
+						float cd = 1f - (float)(cool / maxC);
+						int xw = (int) (cd * (iw - dw * 2));
 						int cw = iw - dw * 2;
 
 						g.colRect(x + iw - dw - cw, y + ih - dh * 2, cw, dh, 0, 0, 0, -1);
-						g.colRect((x + dw + 2f), (y + ih - dh * 2) + 2f, (int)((cd * cw) - (cd * 4)), dh - 4, 0, 255, 255, -1);
-					} else if (pri != -1 && pri != -2 && !(sb.elu.validSpirit(i,j) && !sb.elu.readySpirit(i,j)))
+						float barX = (x + dw + 2f);
+						float barY = (y + ih - dh * 2) + 2f;
+						float barW = Math.max(0, (iw - dw * 2 - xw) - 4);
+						float barH = dh - 4;
+
+						int[] delay = sb.elu.cdDelayVisual[i][j];
+
+						if (delay[1] > 0) {
+							float delayCd = 1f * delay[0] / maxC;
+							int xw3 = (int) (delayCd * (iw - dw * 2));
+							float delayW = (iw - dw * 2 - xw3) - 4;
+							g.colRect(barX, barY, delayW, barH, 255, 0, 0, -1);
+						}
+
+						g.colRect(barX, barY, barW, barH, 0, 255, 255, -1);
+
+						if (delay[3] > 0) {
+							int delayBar = -delay[2];
+							float delayCd = 1f * (maxC - delayBar - (10 - delay[3])) / maxC;
+							float xw3 = (int) (delayCd * (iw - dw * 2));
+							float delayW = (iw - dw * 2 - xw3) - 4;
+
+							float prevCd = (float)(1f * (delayBar + (10 - delay[3]) + cool) / maxC);
+							float prevXw = (int) (prevCd * (iw - dw * 2));
+							float prevBarW = (iw - dw * 2 - prevXw);
+
+							g.colRect(barX + prevBarW, barY, delayW, barH, 255, 255, 0, -1);
+						}
+					} else if (pri != -1 && pri != -2 && !(sb.elu.validSpirit(i,j) && !sb.elu.readySpirit(i,j))) {
 						Res.getCost(pri / 100, !b, setSym(g, hr, x + iw * 1.05f, y + ih * 1.05f, 3));
+						if (sb.spawns.getOrDefault(f, 0) % 2 == 1) {
+							int[][] orbs = sb.b.lu.map.get(f.unit().getID()).getOrbs();
+							if (orbs != null) {
+								float orbX = 0;
+								for (int[] orb : orbs) {
+									if (orb.length < Data.ORB_TOT || orb[Data.ORB_TYPE] < Data.ORB_DEATH_SURGE)
+										continue;
+									FakeImage orbBall = aux.TRAITS[1][Orb.reverse(orb[Data.ORB_TRAIT])];
+									FakeImage orbIcon = aux.TYPES[1][orb[Data.ORB_TYPE]];
+									float ballW = orbBall.getWidth() * hr;
+									float iconW = orbIcon.getWidth() * hr;
+									float ballH = orbBall.getHeight() * hr;
+									float iconH = orbIcon.getHeight() * hr;
+									g.setRenderingHint(3, 2);
+									g.drawImage(orbBall, x - 4f + orbX,
+											y + 2f - (ballH / 3f), ballW, ballH);
+									g.drawImage(orbIcon, x - 4f + (orbX) + (ballW - iconW) / 2f,
+											y + 2f - (ballH / 3f) + (ballH - iconH) / 2f, iconW, iconH);
+									orbX += ballW;
+								}
+								if (orbX > 0 && sb.time - sb.elu.frameOffCd[i][j] < 10) {
+									float diff = sb.time - sb.elu.frameOffCd[i][j]; // first frame: 100%
+
+									g.setComposite(FakeGraphics.BLEND, (int) Math.max(0, 256 * (1f - 0.1f * diff)), 1);
+									FakeImage glowBox = aux.battle[1][22].getImg();
+									float glowW = glowBox.getWidth() * hr * (1f + Math.min(0.12f, 0.02f * diff));
+									float glowH = glowBox.getHeight() * hr * (1f + Math.min(0.12f, 0.02f * diff));
+									g.drawImage(glowBox, x + (iw - glowW) / 2f, y + (ih - glowH) / 2f, glowW, glowH);
+									g.setComposite(FakeGraphics.DEF, 0, 0);
+								}
+							}
+						}
+					}
 
 					if (sb.est.lim.stageLimit != null && sb.est.lim.stageLimit.rarityDeployLimit[f.unit().getRarity()] != -1)
 						Res.getRarity(f.unit().getRarity(), setSym(g, hr, x + iw * 1.1f, y + ih / 4f, 3));
@@ -588,14 +651,76 @@ public interface BattleBox {
 					g.colRect((int) (x - (imw - iw) / 2.0), (int) (y - (imh - ih) / 2.0), imw, imh, 0, 255, 0, 100);
 				if(!isBehind) {
 					if (cool > 0) {
+						int maxC = sb.elu.maxC[index][i];
 						int dw = (int) (hr * 10);
 						int dh = (int) (hr * 12);
-						float cd = 1f - (float)(cool / sb.elu.maxC[index][i]);
+						float cd = 1f - (float)(cool / maxC);
+						int xw = (int) (cd * (iw - dw * 2));
 						int cw = iw - dw * 2;
 						g.colRect(x + iw - dw - cw, y + ih - dh * 2, cw, dh, 0, 0, 0, -1);
-						g.colRect(x + dw + 2f, (y + ih - dh * 2) + 2f, (int)((cd * cw) - (cd * 4)), dh - 4, 0, 255, 255, -1);
-					} else if (pri != -1 && pri != -2 && !(sb.elu.validSpirit(index,i) && !sb.elu.readySpirit(index,i)))
+						float barX = (x + dw + 2f);
+						float barY = (y + ih - dh * 2) + 2f;
+						float barW = Math.max(0, (iw - dw * 2 - xw) - 4);
+						float barH = dh - 4;
+
+						int[] delay = sb.elu.cdDelayVisual[index][i];
+
+						if (delay[1] > 0) {
+							float delayCd = 1f * delay[0] / maxC;
+							int xw3 = (int) (delayCd * (iw - dw * 2));
+							float delayW = (iw - dw * 2 - xw3) - 4;
+							g.colRect(barX, barY, delayW, barH, 255, 0, 0, -1);
+						}
+
+						g.colRect(barX, barY, barW, barH, 0, 255, 255, -1);
+
+						if (delay[3] > 0) {
+							int delayBar = -delay[2];
+							float delayCd = 1f * (maxC - delayBar - (10 - delay[3])) / maxC;
+							float xw3 = (int) (delayCd * (iw - dw * 2));
+							float delayW = (iw - dw * 2 - xw3) - 4;
+
+							float prevCd = (float)(1f * (delayBar + (10 - delay[3]) + cool) / maxC);
+							float prevXw = (int) (prevCd * (iw - dw * 2));
+							float prevBarW = (iw - dw * 2 - prevXw);
+
+							g.colRect(barX + prevBarW, barY, delayW, barH, 255, 255, 0, -1);
+						}
+					} else if (pri != -1 && pri != -2 && !(sb.elu.validSpirit(index,i) && !sb.elu.readySpirit(index,i))) {
 						Res.getCost(pri / 100, !b, setSym(g, hr, x + iw, y + ih, 3));
+						if (sb.spawns.getOrDefault(f, 0) % 2 == 1) {
+							int[][] orbs = sb.b.lu.map.get(f.unit().getID()).getOrbs();
+							if (orbs != null) {
+								float orbX = 0;
+								for (int[] orb : orbs) {
+									if (orb.length < Data.ORB_TOT || orb[Data.ORB_TYPE] < Data.ORB_DEATH_SURGE)
+										continue;
+									FakeImage orbBall = aux.TRAITS[1][Orb.reverse(orb[Data.ORB_TRAIT])];
+									FakeImage orbIcon = aux.TYPES[1][orb[Data.ORB_TYPE]];
+									float ballW = orbBall.getWidth() * hr;
+									float iconW = orbIcon.getWidth() * hr;
+									float ballH = orbBall.getHeight() * hr;
+									float iconH = orbIcon.getHeight() * hr;
+									g.setRenderingHint(3, 2);
+									g.drawImage(orbBall, x - 4f + orbX,
+											y + 2f - (ballH / 3f), ballW, ballH);
+									g.drawImage(orbIcon, x - 4f + (orbX) + (ballW - iconW) / 2f,
+											y + 2f - (ballH / 3f) + (ballH - iconH) / 2f, iconW, iconH);
+									orbX += ballW;
+								}
+								if (sb.time - sb.elu.frameOffCd[index][i] < 10) {
+									float diff = sb.time - sb.elu.frameOffCd[index][i]; // first frame: 100%
+
+									g.setComposite(FakeGraphics.BLEND, (int) Math.max(0, 256 * (1f - 0.1f * diff)), 1);
+									FakeImage glowBox = aux.battle[1][22].getImg();
+									float glowW = glowBox.getWidth() * hr * (1f + Math.min(0.12f, 0.02f * diff));
+									float glowH = glowBox.getHeight() * hr * (1f + Math.min(0.12f, 0.02f * diff));
+									g.drawImage(glowBox, x + (iw - glowW) / 2f, y + (ih - glowH) / 2f, glowW, glowH);
+									g.setComposite(FakeGraphics.DEF, 0, 0);
+								}
+							}
+						}
+					}
 
 					if (sb.est.lim.stageLimit != null && sb.est.lim.stageLimit.rarityDeployLimit[f.unit().getRarity()] != -1)
 						Res.getRarity(f.unit().getRarity(), setSym(g, hr, x + iw * 1.1f, y + ih / 4f, 3));

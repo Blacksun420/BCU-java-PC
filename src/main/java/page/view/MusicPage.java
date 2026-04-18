@@ -7,6 +7,7 @@ import common.util.stage.Music;
 import io.BCMusic;
 import main.Opts;
 import page.*;
+import page.info.StageFilterPage;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class MusicPage extends DefaultPage implements SupPage<Music> {
 	private final JBTN strt = new JBTN(MainLocale.PAGE, "start");
 	private final JBTN stop = new JBTN(MainLocale.PAGE, "stop");
 	private final JBTN popout = new JBTN(MainLocale.PAGE, "popout");
+	private final JBTN find = new JBTN(MainLocale.PAGE, "stage");
 
 	private final JList<Music> jlf = new JList<>();
 	private final JScrollPane jsp = new JScrollPane(jlf);
@@ -68,14 +70,19 @@ public class MusicPage extends DefaultPage implements SupPage<Music> {
 		set(strt, x, y, 400, 100, 200, 50);
 		set(stop, x, y, 400, 200, 200, 50);
 		set(popout, x, y, 400, 300, 200, 50);
+		set(find, x, y, 400, 400, 200, 50);
 	}
 
 	private void addListeners() {
 		getBackButton().addActionListener(arg0 -> BCMusic.clear());//There should be the default changePanel list so this is fien
 
+		jlf.addListSelectionListener(l -> {
+			boolean able = !jlf.isSelectionEmpty();
+			strt.setEnabled(able);
+			find.setEnabled(able);
+		});
+
 		strt.addActionListener(arg0 -> {
-			if (jlf.getSelectedValue() == null)
-				return;
 			BCMusic.setBG(jlf.getSelectedValue());
 			stop.setEnabled(BCMusic.BG != null);
 		});
@@ -89,6 +96,8 @@ public class MusicPage extends DefaultPage implements SupPage<Music> {
 		});
 
 		popout.setLnr(arg -> Opts.showMusicPopup(mus, jlf.getSelectedValue()));
+
+		find.addActionListener(x -> changePanel(new StageFilterPage(this, jlf.getSelectedValue().getStages())));
 	}
 
 	private void ini() {
@@ -96,7 +105,11 @@ public class MusicPage extends DefaultPage implements SupPage<Music> {
 		add(stop);
 		add(popout);
 		add(jsp);
+		add(find);
 		addListeners();
+		strt.setEnabled(false);
+		stop.setEnabled(false);
+		find.setEnabled(false);
 	}
 
 	@Override

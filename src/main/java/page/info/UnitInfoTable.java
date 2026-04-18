@@ -82,9 +82,9 @@ public class UnitInfoTable extends CharacterInfoTable {
 		double atk = b.t().getAtkMulti();
 		double def = b.t().getDefMulti();
 
-		int attack = (int) (Math.round(ef.du.allAtk(dispAtk) * mul) * atk);
+		int attack = (int) (Math.round(ef.du.allAtk(dispAtk) * mul) * atk * (1 + b.sele.getInc(Data.C_ATK, f) / 100f));
 
-		int hp = (int) (Math.round(ef.du.getHp() * mul) * def);
+		int hp = (int) (Math.round(ef.du.getHp() * mul) * def * (1 + b.sele.getInc(Data.C_DEF, f) / 100f));
 
 		PCoin pc = f.du.getPCoin();
 
@@ -96,20 +96,20 @@ public class UnitInfoTable extends CharacterInfoTable {
 		main[0][3].setText(hp + " / " + ef.du.getHb());
 		main[1][1].setText(String.valueOf(ef.du.getRange()));
 		main[1][3].setText(String.valueOf((attack * 30 / ef.du.getItv(dispAtk))));
-		main[1][5].setText(String.valueOf((int) (ef.du.getSpeed() * (1 + b.getInc(Data.C_SPE) * 0.01))));
+		main[1][5].setText(String.valueOf((int) (ef.du.getSpeed() * (1 + b.sele.getInc(Data.C_SPE, f) * 0.01))));
 		main[1][7].setText(MainBCU.convertTime(ef.du.getItv(dispAtk)));
 		main[2][1].setText(MainBCU.convertTime(ef.du.getTBA()));
 
-		int respawn = b.t().getFinRes(ef.du.getRespawn(), b.getInc(Data.C_RESP));
+		int respawn = b.t().getFinRes(ef.du.getRespawn(), b.sele.getInc(Data.C_RESP, f));
 		main[0][5].setText(MainBCU.convertTime(respawn));
 
-		main[0][7].setText("" + ef.getPrice(1));
+		main[0][7].setText("" + (ef.getPrice(1) * b.sele.getInc(Data.C_DISCOUNT, f) / 100));
 		String[] TraitBox = Interpret.getTrait(ef.du.getTraits(false));
 		inis[2].setText(Interpret.getTrait(TraitBox, 0));
 		inis[1].setToolTipText(inis[2].getText());
 		MaskAtk[] atkData = ef.du.getAtks(dispAtk);
 		for (int i = 0; i < atks.length; i++) {
-			int a = (int) (Math.round((i < atkData.length ? atkData[i] : atkList.get(i - atkData.length)).getAtk() * mul) * b.t().getAtkMulti());
+			int a = (int) (Math.round((i < atkData.length ? atkData[i] : atkList.get(i - atkData.length)).getAtk() * mul) * b.t().getAtkMulti() * (1 + b.sele.getInc(Data.C_ATK, f) / 100f));
 			if (pc != null)
 				a = (int) (a * pc.getStatMultiplication(Data.PC2_ATK, multi.getTalents()));
 			atks[i][1].setText(a + "");
