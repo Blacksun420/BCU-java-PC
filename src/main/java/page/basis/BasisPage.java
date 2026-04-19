@@ -262,11 +262,11 @@ public class BasisPage extends LubCont {
 		set(trait, x, y, 1100, 500, cw * 3, 50);
 		set(grade, x, y, 1250, 500, cw * 3, 50);
 
-		if (cw != 0 && (lu().getLv(lub.sf).getOrbs() == null || lu().getLv(lub.sf).getOrbs().length < (((Form)lub.sf).getOrbs() == null || ((Form)lub.sf).getOrbs().size() >= 2 ? 1 : 2)))
+		if (cw != 0 && (lu().getLv(lub.sf).getOrbs() == null || lu().getLv(lub.sf).getOrbs().length < (lub.sf.getOrbs() == null || lub.sf.getOrbs().size() >= 2 ? 1 : 2)))
 			cw = 0;
 		set(jspcn, x, y, 500, 500, 600 - (cw*5), 250);
 		set(orbScroll, x, y, 850, 500, cw * 5, 250);
-		cw = lub.sf instanceof Form && ((Form)lub.sf).getOrbs() != null && !((Form)lub.sf).getOrbs().isEmpty() ? 150 : 0;
+		cw = lub.sf instanceof Form && lub.sf.getOrbs() != null && !lub.sf.getOrbs().isEmpty() ? 150 : 0;
 		set(addo, x, y, 1100, 700, cw, 50);
 		set(remo, x, y, 1250, 700, cw, 50);
 		set(orbb, x, y, 1100, 550, 300, 200-(cw/3));
@@ -790,7 +790,7 @@ public class BasisPage extends LubCont {
 		changing = ch;
 	}
 	private int[][] getOrbs(int substr) {
-		if (!(lub.sf instanceof Form) || ((Form) lub.sf).getOrbs() == null || lu().getLv(lub.sf).getOrbs() == null)
+		if (!(lub.sf instanceof Form) || lub.sf.getOrbs() == null || lu().getLv(lub.sf).getOrbs() == null)
 			return new int[0][];
 		int[][] orbs = lu().getLv(lub.sf).getOrbs();
 		if (substr == -1)
@@ -802,9 +802,9 @@ public class BasisPage extends LubCont {
 	}
 	private OrbContainer[] generateNames() {
 		int[][] orbs = getOrbs(-1);
-		int min = lub.sf instanceof Form && ((Form)lub.sf).getOrbs() != null && !((Form)lub.sf).getOrbs().isEmpty() ? ((Form)lub.sf).getOrbs().size() : 0;
+		int min = lub.sf instanceof Form && lub.sf.getOrbs() != null && !lub.sf.getOrbs().isEmpty() ? ((Form)lub.sf).getOrbs().size() : 0;
 		OrbContainer[] res = new OrbContainer[Math.max(min, orbs.length)];
-		HashSet<Integer> bans = st.lim.stageLimit == null ? null : st.lim.stageLimit.bannedOrb;
+		HashSet<Integer> bans = st == null || st.lim.stageLimit == null ? null : st.lim.stageLimit.bannedOrb;
 		for (int i = 0; i < orbs.length; i++)
 			res[i] = new OrbContainer(i, orbs[i], bans);
 		for (int i = orbs.length; i < min; i++)
@@ -815,7 +815,7 @@ public class BasisPage extends LubCont {
 	private void initializeDrops(int[] data, boolean setTypes) {
 		CommonStatic.BCAuxAssets aux = CommonStatic.getBCAssets();
 
-		if (!(lub.sf instanceof Form) || lub.sf.unit() == null || ((Form)lub.sf).getOrbs() == null)
+		if (lub.sf.unit() == null || lub.sf.getOrbs() == null)
 			return;
 		Form f = (Form)lub.sf;
 		Level lv = lu().getLv(f);
@@ -841,10 +841,10 @@ public class BasisPage extends LubCont {
 			mas = atk >= 300 && atk < 500;
 			res = def >= 400 && def < 600;
 		}
-		if (f.getOrbs() != null)
-			typeText.add("None");
-
 		if (setTypes) {
+			if (f.getOrbs() != null)
+				typeText.add("None");
+
 			typeData = new ArrayList<>();
 			typeText.add(MainLocale.getLoc(MainLocale.UTIL, "ot0"));
 			typeData.add(Data.ORB_ATK);
@@ -951,16 +951,16 @@ public class BasisPage extends LubCont {
 		if (valid())
 			changeOrb(f, data, false);
 
-        type.setModel(new DefaultComboBoxModel<>(typeText.toArray(new String[0])));
         trait.setModel(new DefaultComboBoxModel<>(traits));
         grade.setModel(new DefaultComboBoxModel<>(grades));
-
         trait.setEnabled(traits.length > 1);
-        if (f.getOrbs() != null)
-            type.setSelectedIndex(typeData.indexOf(otype) + 1);
-        else
-            type.setSelectedIndex(typeData.indexOf(otype));
-
+		if (setTypes) {
+			type.setModel(new DefaultComboBoxModel<>(typeText.toArray(new String[0])));
+			if (f.getOrbs() != null)
+				type.setSelectedIndex(typeData.indexOf(otype) + 1);
+			else
+				type.setSelectedIndex(typeData.indexOf(otype));
+		}
         trait.setSelectedIndex(traitData.indexOf(data[Data.ORB_TRAIT]));
         grade.setSelectedIndex(gradeData.indexOf(ograde));
 

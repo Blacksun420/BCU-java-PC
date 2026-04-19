@@ -43,7 +43,7 @@ public class StageEditTable extends AbJTable implements Reorderable {
 	}
 
 	protected static void redefine() {
-		title = Page.get(MainLocale.INFO, "t", 11);
+		title = Page.get(MainLocale.INFO, "t", 12);
 	}
 
 	private SCDef stage;
@@ -426,9 +426,8 @@ public class StageEditTable extends AbJTable implements Reorderable {
 			SCGroup scg = stage.sub.get(g);
 
 			return scg == null ? g != 0 ? Data.trio(g) + " - invalid" : "" : scg.toString();
-		} else if (c == 11) {
+		} else if (c == 11)
 			return data.score;
-		}
 		return null;
 	}
 

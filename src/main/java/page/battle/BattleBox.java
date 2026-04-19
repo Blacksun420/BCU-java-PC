@@ -495,25 +495,25 @@ public interface BattleBox {
 					if (sb.locks[i][j])
 						g.colRect((int) (x - (imw - iw) / 2.0), (int) (y - (imh - ih) / 2.0), imw, imh, 0, 255, 0, 100);
 					if (cool > 0) {
-						int maxC = sb.elu.maxC[i][j];
+						int maxC = sb.elu.getMaxCD(i,j);
 						int dw = (int) (hr * 10);
 						int dh = (int) (hr * 12);
 						float cd = 1f - (float)(cool / maxC);
-						int xw = (int) (cd * (iw - dw * 2));
 						int cw = iw - dw * 2;
+						int xw = (int) (cd * cw);
 
 						g.colRect(x + iw - dw - cw, y + ih - dh * 2, cw, dh, 0, 0, 0, -1);
 						float barX = (x + dw + 2f);
 						float barY = (y + ih - dh * 2) + 2f;
-						float barW = Math.max(0, (iw - dw * 2 - xw) - 4);
+						float barW = Math.max(0, xw - (cd * 4));
 						float barH = dh - 4;
 
 						int[] delay = sb.elu.cdDelayVisual[i][j];
 
 						if (delay[1] > 0) {
 							float delayCd = 1f * delay[0] / maxC;
-							int xw3 = (int) (delayCd * (iw - dw * 2));
-							float delayW = (iw - dw * 2 - xw3) - 4;
+							int xw3 = (int) (delayCd * cw);
+							float delayW = (cw - xw3) - 4;
 							g.colRect(barX, barY, delayW, barH, 255, 0, 0, -1);
 						}
 
@@ -522,12 +522,12 @@ public interface BattleBox {
 						if (delay[3] > 0) {
 							int delayBar = -delay[2];
 							float delayCd = 1f * (maxC - delayBar - (10 - delay[3])) / maxC;
-							float xw3 = (int) (delayCd * (iw - dw * 2));
-							float delayW = (iw - dw * 2 - xw3) - 4;
+							float xw3 = (int) (delayCd * cw);
+							float delayW = (cw - xw3) - 4;
 
 							float prevCd = (float)(1f * (delayBar + (10 - delay[3]) + cool) / maxC);
-							float prevXw = (int) (prevCd * (iw - dw * 2));
-							float prevBarW = (iw - dw * 2 - prevXw);
+							float prevXw = (int) (prevCd * cw);
+							float prevBarW = (cw - prevXw);
 
 							g.colRect(barX + prevBarW, barY, delayW, barH, 255, 255, 0, -1);
 						}
@@ -651,24 +651,24 @@ public interface BattleBox {
 					g.colRect((int) (x - (imw - iw) / 2.0), (int) (y - (imh - ih) / 2.0), imw, imh, 0, 255, 0, 100);
 				if(!isBehind) {
 					if (cool > 0) {
-						int maxC = sb.elu.maxC[index][i];
+						int maxC = sb.elu.getMaxCD(index,i);
 						int dw = (int) (hr * 10);
 						int dh = (int) (hr * 12);
 						float cd = 1f - (float)(cool / maxC);
-						int xw = (int) (cd * (iw - dw * 2));
 						int cw = iw - dw * 2;
+						int xw = (int) (cd * cw);
 						g.colRect(x + iw - dw - cw, y + ih - dh * 2, cw, dh, 0, 0, 0, -1);
 						float barX = (x + dw + 2f);
 						float barY = (y + ih - dh * 2) + 2f;
-						float barW = Math.max(0, (iw - dw * 2 - xw) - 4);
+						float barW = Math.max(0, xw - (cd * 4));
 						float barH = dh - 4;
 
 						int[] delay = sb.elu.cdDelayVisual[index][i];
 
 						if (delay[1] > 0) {
 							float delayCd = 1f * delay[0] / maxC;
-							int xw3 = (int) (delayCd * (iw - dw * 2));
-							float delayW = (iw - dw * 2 - xw3) - 4;
+							int xw3 = (int) (delayCd * cw);
+							float delayW = (cw - xw3) - 4;
 							g.colRect(barX, barY, delayW, barH, 255, 0, 0, -1);
 						}
 
@@ -677,12 +677,12 @@ public interface BattleBox {
 						if (delay[3] > 0) {
 							int delayBar = -delay[2];
 							float delayCd = 1f * (maxC - delayBar - (10 - delay[3])) / maxC;
-							float xw3 = (int) (delayCd * (iw - dw * 2));
-							float delayW = (iw - dw * 2 - xw3) - 4;
+							float xw3 = (int) (delayCd * cw);
+							float delayW = (cw - xw3) - 4;
 
 							float prevCd = (float)(1f * (delayBar + (10 - delay[3]) + cool) / maxC);
 							float prevXw = (int) (prevCd * (iw - dw * 2));
-							float prevBarW = (iw - dw * 2 - prevXw);
+							float prevBarW = (cw - prevXw);
 
 							g.colRect(barX + prevBarW, barY, delayW, barH, 255, 255, 0, -1);
 						}

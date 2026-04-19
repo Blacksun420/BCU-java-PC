@@ -920,10 +920,12 @@ public class Interpret extends Data {
 	public static String infoHTML(StageInfo si, int star) {
 		StringBuilder ans = si instanceof CustomStageInfo ? customHTML((CustomStageInfo)si, star) : defHTML((DefStageInfo)si, star);
 		if (!si.getStage().scoreBonus.isEmpty())
+			ans.append("<hr><table><tr><th>").append("Score Bonus</th><th>Score</th><th>Dire</th>");
 			for (Stage.ScoreBonus bonus : si.getStage().scoreBonus)
-				ans.append("<br>ScoreBonus: ").append(SCORES[bonus.proc])
-						.append(" score ").append(bonus.score)
-						.append(" dire ").append(bonus.dire);
+				ans.append("<tr><td>")
+						.append(SCORES[bonus.proc]).append("</td><td>")
+						.append(bonus.score).append("</td><td>")
+						.append(bonus.dire).append("<td></tr>");
 		return ans.append("</html>").toString();
 	}
 

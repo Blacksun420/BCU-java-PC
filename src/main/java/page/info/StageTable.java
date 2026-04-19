@@ -36,7 +36,7 @@ public class StageTable extends AbJTable {
 	}
 
 	public static void redefine() {
-		title = Page.get(MainLocale.INFO, "t", 11);
+		title = Page.get(MainLocale.INFO, "t", 12);
 	}
 
 	protected Object[][] data;
@@ -159,7 +159,7 @@ public class StageTable extends AbJTable {
 			st.getCont().price = starId; //Temp fix to EoC price problem
 		starMult = st.getCont().stars[starId];
 
-		data = new Object[info.length][11];
+		data = new Object[info.length][12];
 		revs = new Revival[info.length];
 
 		for (int i = 0; i < info.length; i++) {

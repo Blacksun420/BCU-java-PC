@@ -56,13 +56,13 @@ public class LineUpBox extends Canvas {
 		for (byte i = 0; i < 3; i++)
 			for (int j = 0; j < 5; j++) {
 				AbForm f = getForm(i, j);
-				VImg img;
+				FakeImage img;
 				if (f == null)
-					img = slot[0];
+					img = slot[0].getImg();
 				else
-					img = f.getDeployIcon();
+					img = f.getDeployIcon().getImg();
 				if (sf == null || sf != f || relative == null)
-					gra.drawImage(img.getImg(), 120 * j, 100 * i);
+					gra.drawImage(img, 120 * j, 100 * i);
 				if (f == null)
 					continue;
 				if (!time && sc != null)
@@ -79,16 +79,16 @@ public class LineUpBox extends Canvas {
 					byte unuse = unusable(f, ef, i);
 					int pri = lim == null || lim.stageLimit == null || lim.stageLimit.globalCost == -1 ? (int)ef.getPrice(price) : lim.stageLimit.globalCost;
 					if (unuse != 0) {
-						gra.colRect(120 * j, 100 * i, img.getImg().getWidth(), img.getImg().getHeight(), 255 / unuse, 0, 0, 100 * unuse);
+						gra.colRect(120 * j, 100 * i, img.getWidth(), img.getHeight(), 255 / unuse, 0, 0, 100 * unuse);
 						Res.getCost(-1, false,
-							new SymCoord(gra, 1, 120 * j, 100 * i + img.getImg().getHeight(), 2));
+							new SymCoord(gra, 1, 120 * j, 100 * i + img.getHeight(), 2));
 					} else {
 						Res.getCost(pri, true,
-							new SymCoord(gra, 1, 120 * j, 100 * i + img.getImg().getHeight(), 2));
+							new SymCoord(gra, 1, 120 * j, 100 * i + img.getHeight(), 2));
 						Res.getLv(lu().getLv(f).getLv() + lu().getLv(f).getPlusLv(),
-							new SymCoord(gra, 0.8f, 120 * j, 100 * i + (img.getImg().getHeight() / 3.5f), 2));
+							new SymCoord(gra, 0.8f, 120 * j, 100 * i + (img.getHeight() / 3.5f), 2));
 					}
-					if (lu().getLv(f).getOrbs() != null) {
+					if (f.getOrbs() != null && lu().getLv(f).getOrbs() != null) {
 						int[][] orbs = lu().getLv(f).getOrbs();
 						int validOrbs = 0;
 						for (int[] orb : orbs)
@@ -97,9 +97,9 @@ public class LineUpBox extends Canvas {
 						int count = validOrbs-1;
 						for (int k = orbs.length-1; k >= 0; k--)
 							if (orbs[k].length == Data.ORB_TOT) {
-								float siz = 24, x = (120 * j) + 90 - (count-- * Math.min(siz, (siz*3) / validOrbs)), y = 100 * i;
+								float siz = 32, x = (img.getWidth() * j) + (img.getWidth()-24) - (count-- * Math.min(siz, (siz*3) / validOrbs)), y = img.getHeight() * i;
 								OrbBox.paintOrb(gra, orbs[k], x, y, siz, true);
-								if (((Unit)f.unit()).orbs.get(k).isRestricted(f.getFid(), lu().getLv(f).getTotalLv()) || lim.stageLimit != null && lim.stageLimit.bannedOrb.contains(orbs[k][0])) {
+								if (f.getOrbs().get(k).isRestricted(f.getFid(), lu().getLv(f).getTotalLv()) || (lim != null && lim.stageLimit != null && lim.stageLimit.bannedOrb.contains(orbs[k][0]))) {
 									gra.setColor(FakeGraphics.RED);
 									gra.setComposite(FakeGraphics.TRANS, 100, 0);
 									gra.fillOval(x, y, siz, siz);
@@ -125,7 +125,7 @@ public class LineUpBox extends Canvas {
 				Res.getLv(lu().getLv(sf).getLv() + lu().getLv(sf).getPlusLv(),
 					new SymCoord(gra, 0.8f, p.x, p.y + (uni.getHeight() / 3.5f), 2));
 			}
-			if (lu().getLv(sf).getOrbs() != null) {
+			if (sf.getOrbs() != null && lu().getLv(sf).getOrbs() != null) {
 				int[][] orbs = lu().getLv(sf).getOrbs();
 				int validOrbs = 0;
 				for (int[] orb : orbs)
@@ -133,8 +133,16 @@ public class LineUpBox extends Canvas {
 						validOrbs++;
 				int count = validOrbs-1;
 				for (int k = orbs.length-1; k >= 0; k--)
-					if (orbs[k].length == Data.ORB_TOT)
-						OrbBox.paintOrb(gra, orbs[k], p.x + 90 - (count-- * Math.min(24, 72f / validOrbs)), p.y, 24, true);
+					if (orbs[k].length == Data.ORB_TOT) {
+						float siz = 32, x = p.x + (uni.getWidth()-24) - (count-- * Math.min(siz, (siz*3) / validOrbs));
+						OrbBox.paintOrb(gra, orbs[k], x, p.y, siz, true);
+						if (sf.getOrbs().get(k).isRestricted(sf.getFid(), lu().getLv(sf).getTotalLv()) || (lim != null && lim.stageLimit != null && lim.stageLimit.bannedOrb.contains(orbs[k][0]))) {
+							gra.setColor(FakeGraphics.RED);
+							gra.setComposite(FakeGraphics.TRANS, 100, 0);
+							gra.fillOval(x, p.y, siz, siz);
+							gra.setComposite(FakeGraphics.DEF, 0, 0);
+						}
+					}
 			}
 		}
 		g.drawImage(bimg, 0, 0, getWidth(), getHeight(), null);
