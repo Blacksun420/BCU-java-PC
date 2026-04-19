@@ -103,7 +103,7 @@ public class UnitInfoTable extends CharacterInfoTable {
 		int respawn = b.t().getFinRes(ef.du.getRespawn(), b.sele.getInc(Data.C_RESP, f));
 		main[0][5].setText(MainBCU.convertTime(respawn));
 
-		main[0][7].setText("" + (ef.getPrice(1) * b.sele.getInc(Data.C_DISCOUNT, f) / 100));
+		main[0][7].setText("" + (ef.getPrice(1) * (1f - b.sele.getInc(Data.C_DISCOUNT, f) / 100f)));
 		String[] TraitBox = Interpret.getTrait(ef.du.getTraits(false));
 		inis[2].setText(Interpret.getTrait(TraitBox, 0));
 		inis[1].setToolTipText(inis[2].getText());
