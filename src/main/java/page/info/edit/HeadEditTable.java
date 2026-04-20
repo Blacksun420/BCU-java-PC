@@ -263,6 +263,7 @@ class HeadEditTable extends Page {
 				hea.setText(get(MainLocale.INFO, "ht00"));
 				jhea.setText(String.valueOf(sta.health));
 			}
+			getFront().callBack(null);
 		});
 
 		drop.addActionListener(x -> {

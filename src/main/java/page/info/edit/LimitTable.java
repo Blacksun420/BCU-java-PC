@@ -525,7 +525,5 @@ public class LimitTable extends Page {
 				par.callBack(lim);
 			}
 		});
-
 	}
-
 }

@@ -503,6 +503,7 @@ public class StageEditPage extends DefaultPage {
 	private void setData(Stage st) {
 		stage = st;
 		hinf.setData(st);
+		sinf.setData(st != null ? st.getCont() : null);
 		jt.setData(st);
 		strt.setEnabled(st != null);
 		recd.setEnabled(st != null);

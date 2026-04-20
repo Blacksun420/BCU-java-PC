@@ -137,30 +137,37 @@ public class ComboListTable extends SortTable<Combo> {
 
 	@Override
 	protected int compare(Combo e0, Combo e1, int c) {
-		c = lnk[c];
 		if (c == 0) {
 			return e0.getID().compareTo(e1.getID());
 		} else if (c == 2) {
 			return Integer.compare(e0.type, e1.type);
 		} else if (c == 3) {
-			if (e0.group == null)
+			boolean b0 = e0.group == null;
+			boolean b1 = e1.group == null;
+			if (b0 && b1)
+				return 0;
+			else if (b0)
 				return -1;
-			else if (e1.group == null)
+			else if (b1)
 				return 1;
-			return e0.group.id.compareTo(e1.group.id);
+			else
+				return e0.group.id.compareTo(e1.group.id);
 		} else if (c >= 4 && c <= 8) {
-			if (e0.forms.length <= c - 3)
+			boolean b0 = e0.forms.length <= c - 3;
+			boolean b1 = e1.forms.length <= c - 3;
+			if (b0 && b1)
+				return 0;
+			else if (b0)
 				return -1;
-			if (e1.forms.length <= c - 3)
+			else if (b1)
 				return 1;
 			Form f0 = e0.forms[c - 3];
 			Form f1 = e1.forms[c - 3];
 			return f0.uid.compareTo(f1.uid);
 		} else if (c == 9) {
 			return Integer.compare(e0.row, e1.row);
-		} else {
-			return Integer.compare(e0.lv, e1.lv);
 		}
+		return Integer.compare(e0.lv, e1.lv);
 	}
 
 	@Override

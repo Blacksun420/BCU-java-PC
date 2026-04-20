@@ -610,8 +610,6 @@ public class BattleInfoPage extends KeyHandler implements OuterBox {
 				jsl.setEnabled(pause);
 			}
 		}
-
 		addListeners();
 	}
-
 }
