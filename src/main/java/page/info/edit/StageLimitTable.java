@@ -139,7 +139,7 @@ public class StageLimitTable extends Page {
         lname.setEnabled(l instanceof Limit.PackLimit);
         if (l instanceof Limit.PackLimit)
             lname.setText(((Limit.PackLimit)l).name);
-        lt.setLimit(l);
+        lt.setLimit(l, false);
         getFront().fireDimensionChanged();
     }
 

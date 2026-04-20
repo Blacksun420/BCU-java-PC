@@ -379,6 +379,26 @@ public class AdvStEditPage extends DefaultPage {
 			setScoreBonus(bonus);
 		});
 
+		adds.setLnr(x -> {
+			if (isAdj() || jsco.getValueIsAdjusting())
+				return;
+			Stage.ScoreBonus bonus = new Stage.ScoreBonus(0, 1000, 1);
+			st.scoreBonus.add(bonus);
+			jsco.setListData(st.scoreBonus.toArray(new Stage.ScoreBonus[0]));
+			setScoreBonus(bonus);
+		});
+
+		rems.setLnr(x -> {
+			if (isAdj() || jsco.getValueIsAdjusting())
+				return;
+			int index = jsco.getSelectedIndex();
+			if (index == -1)
+				return;
+			st.scoreBonus.remove(index);
+			jsco.setListData(st.scoreBonus.toArray(new Stage.ScoreBonus[0]));
+			setScoreBonus(!st.scoreBonus.isEmpty() ? st.scoreBonus.get(Math.max(0, index - 1)) : null);
+		});
+
 		jlines.addListSelectionListener(l -> {
 			SCDef.Line li = jlines.getSelectedValue();
 			if (li == null)

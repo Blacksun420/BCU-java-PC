@@ -187,7 +187,7 @@ class HeadEditTable extends Page {
 		barrierAbler();
 
 		Limit lim = st.lim;
-		lt.setLimit(lim);
+		lt.setLimit(lim, st.trail);
 		change(false);
 
 		jres.setEnabled(true);
@@ -227,7 +227,7 @@ class HeadEditTable extends Page {
 		jm1.setEnabled(b);
 		dojo.setEnabled(b);
 		drop.setEnabled(b);
-		lt.abler(b);
+		lt.abler(b, sta != null && sta.trail);
 	}
 
 	private void addListeners() {

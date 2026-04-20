@@ -16,6 +16,7 @@ import utilpc.Interpret;
 import javax.swing.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.util.Arrays;
 
 public class LimitTable extends Page {
 
@@ -56,8 +57,8 @@ public class LimitTable extends Page {
 	private final JTF cres = new JTF();
 	private final JTF ccos = new JTF();
 
-	private final CrossList<String> jlco = new CrossList<>(Interpret.getComboFilter(0));
-	private final CrossList<String> jlorb = new CrossList<>(Interpret.ORB);
+	private final CrossList<String> jlco = new CrossList<>(Arrays.stream(Interpret.getComboFilter(0)).map(c -> ("COMBO: " + c)).toArray(String[]::new));
+	private final CrossList<String> jlorb = new CrossList<>(Arrays.stream(Interpret.ORB).map(o -> ("ORB: " + o)).toArray(String[]::new));
 	private final JScrollPane jsco = new JScrollPane(jlco);
 	private final JScrollPane jsorb = new JScrollPane(jlorb);
 	private final JBTN banc = new JBTN(MainLocale.PAGE, "ban0");
@@ -78,9 +79,13 @@ public class LimitTable extends Page {
 	private final JTF jcuspd = new JTF();
 	private final JTF jcespd = new JTF();
 
+	private final JTF sco = new JTF();
+	private final JL doj = new JL(MainLocale.INFO, "ht19");
+
 
 	private final UserPack pac;
 	private final Page par, main;
+	private int colHeight = 0;
 
 	private CharaGroupPage cgp;
 	private LvRestrictPage lrp;
@@ -95,7 +100,7 @@ public class LimitTable extends Page {
 		ini();
 	}
 
-	protected void abler(boolean b) {
+	protected void abler(boolean b, boolean dojo) {
 		jcmin.setEnabled(b);
 		jnum.setEnabled(b);
 		jcmax.setEnabled(b);
@@ -126,6 +131,7 @@ public class LimitTable extends Page {
 		banc.setEnabled(b && jlco.getSelectedIndex() != -1);
 		jlorb.setEnabled(b);
 		bano.setEnabled(b && jlorb.getSelectedIndex() != -1);
+		sco.setEnabled(b && dojo);
 		jptot.setEnabled(b);
 		jccan.setEnabled(b);
 		jcuspd.setEnabled(b);
@@ -179,15 +185,17 @@ public class LimitTable extends Page {
 		set(jcuspd, x, y, w * 5, yy, ww, 50);
 		set(jcespd, x, y, w * 5 + ww, yy, ww, 50);
 		yy += 50;//150
-		set(jsco, x, y, 0, yy, w * 6, 100);
-		set(banc, x, y, w * 6, yy, w * 2, 100);
+		set(jsco, x, y, 0, yy, w * 3, 100);
+		set(banc, x, y, w * 3, yy, w, 100);
 
-		yy += 100;
-		set(jsorb, x, y, 0, yy, w * 6, 100);
-		set(bano, x, y, w * 6, yy, w * 2, 100);
+		set(jsorb, x, y, w * 4, yy, w * 3, 100);
+		set(bano, x, y, w * 7, yy, w, 100);
+		yy += 100;//250
+		set(doj, x, y, 0, yy, w * 2, 50);
+		set(sco, x, y, w * 2, yy, w * 6, 50);
 
 		w = 1400 / (trar.length + 1);
-		yy += 100;//250
+		yy += 50;//300
 		set(rar, x, y, 0, yy, w, 50);
 		set(costo, x, y, 0, yy+50, w, 50);
 		set(cdo, x, y, 0, yy+100, w, 50);
@@ -202,16 +210,17 @@ public class LimitTable extends Page {
 			set(jatot[i], x, y, w + w * i, yy+200, w, 50);
 			set(jctot[i], x, y, w + w * i, yy+250, w, 50);
 		}
+		colHeight = yy + 300;
 	}
 
 	public int getPWidth() {
 		return (int) (1400 / 7.5);
 	}
 	public int getPHeight() {
-		return 650;
+		return colHeight;
 	}
 
-	protected void setLimit(Limit l) {
+	protected void setLimit(Limit l, boolean dojo) {
 		lim = l;
 		if (l == null) {
             for (JTG brar : brars)
@@ -224,6 +233,7 @@ public class LimitTable extends Page {
 			jcmax.setText(limits[4] + ": ");
 			jcmin.setText(limits[3] + ": ");
 			jnum.setText(limits[1] + ": ");
+			sco.setText("");
 			star.setText("");
 			one.setText(MainLocale.getLoc(MainLocale.INFO, "row0"));
 			jcg.setText("");
@@ -238,10 +248,10 @@ public class LimitTable extends Page {
 
 			jlco.repaint();
 			jlorb.repaint();
-			abler(false);
+			abler(false, false);
 			return;
 		}
-		abler(true);
+		abler(true, dojo);
 		for (int i = 0; i < brars.length; i++)
 			brars[i].setSelected(lim.rare == 0 || ((lim.rare >> i) & 1) > 0);
 		StageLimit stli = lim.stageLimit == null ? lim.stageLimit = new StageLimit() : lim.stageLimit;
@@ -265,6 +275,7 @@ public class LimitTable extends Page {
         jcmax.setText(limits[4] + ": " + lim.max);
 		jcmin.setText(limits[3] + ": " + lim.min);
 		jnum.setText(limits[1] + ": " + lim.num);
+		sco.setText("" + lim.score);
 		jccan.setText(MainLocale.getLoc(MainLocale.INFO, "ht24") + ": " + stli.cannonMultiplier + "%");
 		jcuspd.setText(MainLocale.getLoc(MainLocale.INFO, "ht25") + ": " + (stli.unitSpeedOverride == -1 ? "--" : ((stli.unitSpeedOverrideMode == StageLimit.SpeedOverrideMode.MULTIPLY ? "x" : "=") + stli.unitSpeedOverride)));
 		jcespd.setText(MainLocale.getLoc(MainLocale.INFO, "ht26") + ": " + (stli.enemySpeedOverride == -1 ? "--" : ((stli.enemySpeedOverrideMode == StageLimit.SpeedOverrideMode.MULTIPLY ? "x" : "=") + stli.enemySpeedOverride)));
@@ -371,6 +382,7 @@ public class LimitTable extends Page {
 		add(one);
 		add(rich);
 		add(snip);
+		add(doj);
 		set(jcmin);
 		set(jcmax);
 		set(jnum);
@@ -396,6 +408,7 @@ public class LimitTable extends Page {
 		add(jsorb);
 		add(bano);
 		set(ccos);
+		set(sco);
 
 		add(rard);
 		for (int i = 0; i < brard.length; i++)
@@ -468,25 +481,22 @@ public class LimitTable extends Page {
 				lim.stageLimit.enemySpeedOverrideMode = StageLimit.SpeedOverrideMode.MULTIPLY;
 			else
 				lim.stageLimit.enemySpeedOverrideMode = StageLimit.SpeedOverrideMode.SET;
-		} for (int i = 0; i < bcost.length; i++) {
+		} for (int i = 0; i < bcost.length; i++)
 			if (jtf == bcost[i]) {
 				lim.stageLimit.costMultiplier[i] = Math.max(0, val);
 				break;
 			}
-		}
-		for (int i = 0; i < bcd.length; i++) {
+		for (int i = 0; i < bcd.length; i++)
 			if (jtf == bcd[i]) {
 				lim.stageLimit.cooldownMultiplier[i] = Math.max(0, val);
 				break;
 			}
-		}
-		for (int i = 0; i < brard.length; i++) {
+		for (int i = 0; i < brard.length; i++)
 			if (jtf == brard[i]) {
 				lim.stageLimit.rarityDeployLimit[i] = Math.max(-1, val);
 				break;
 			}
-		}
-		for (int i = 0; i < jatot.length; i++) {
+		for (int i = 0; i < jatot.length; i++)
 			if (jtf == jatot[i]) {
 				lim.stageLimit.deployDuplicationTimes[i] = Math.max(0, val);
 
@@ -497,12 +507,15 @@ public class LimitTable extends Page {
 
 				break;
 			}
-		}
-		for (int i = 0; i < jctot.length; i++) {
+		for (int i = 0; i < jctot.length; i++)
 			if (jtf == jctot[i]) {
 				lim.stageLimit.deployDuplicationDelay[i] = Math.max(1, val);
 				break;
 			}
+		if (jtf == sco) {
+			if (val < 0)
+				return;
+			lim.score = val;
 		}
 	}
 
