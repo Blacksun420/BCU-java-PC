@@ -848,12 +848,12 @@ public interface BattleBox {
 				if(e.dead)
 					continue;
 
-				int dep = e.getLayer() * DEP;
+				int dep = e.layer * DEP;
 
 				while(!efList.isEmpty()) {
 					ContAb wc = efList.getFirst();
 
-					if(wc.layer + 1 <= e.getLayer()) {
+					if(wc.layer + 1 <= e.layer) {
 						drawEff(gra, wc, at, psiz);
 						efList.pop();
 					} else
@@ -861,7 +861,7 @@ public interface BattleBox {
 				}
 
 				for (DoorCont d : sb.doors)
-					if (d.ECheck(e.getLayer())) {
+					if (d.ECheck(e.layer)) {
 						gra.setTransform(at);
 						d.draw(gra, setP(getX(d.pos), midh - (road_h - d.layer * DEP) * bf.sb.siz), psiz);
 					}
@@ -1068,7 +1068,7 @@ public interface BattleBox {
 						continue;
 
 					if ((e.getAbi() & Data.AB_TIMEI) > 0) {
-						int dep = e.getLayer() * DEP;
+						int dep = e.layer * DEP;
 						gra.setTransform(at);
 
 						float p = getX(e.pos);

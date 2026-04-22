@@ -1,5 +1,6 @@
 package page.pack;
 
+import common.CommonStatic;
 import common.pack.Identifier;
 import common.pack.PackData.UserPack;
 import common.pack.Source;
@@ -26,13 +27,17 @@ public class SoulEditPage extends AbViewPage {
 
     private static final long serialVersionUID = 1L;
 
-    private final JBTN adds = new JBTN(0, "add");
-    private final JBTN rems = new JBTN(0, "rem");
-    private final JBTN srea = new JBTN(0, "reassign");
+    private final JBTN adds = new JBTN(MainLocale.PAGE, "add");
+    private final JBTN rems = new JBTN(MainLocale.PAGE, "rem");
+    private final JBTN srea = new JBTN(MainLocale.PAGE, "reassign");
+
+    private final JTG slayer = new JTG(MainLocale.PAGE, "fixlayer");
+    private final JL layer = new JL(MainLocale.INFO, "layer");
+    private final JTF jlayer = new JTF();
 
     private final JComboBox<String> lbp = new JComboBox<>();
-    private final JL lbs = new JL(0, "soul");
-    private final JL lbd = new JL(0, "seleanim");
+    private final JL lbs = new JL(MainLocale.PAGE, "soul");
+    private final JL lbd = new JL(MainLocale.PAGE, "seleanim");
 
     private final JTF jtfs = new JTF();
 
@@ -55,7 +60,7 @@ public class SoulEditPage extends AbViewPage {
         vpack.sort(null);
         cx += 150;
 
-        ini(pack != null && (pack.souls.size() > 0 || pack.editable) ? pack : null);
+        ini(pack != null && (!pack.souls.isEmpty() || pack.editable) ? pack : null);
     }
 
     @Override
@@ -91,11 +96,14 @@ public class SoulEditPage extends AbViewPage {
 
             set(lbd, x, y, cx, 100, 300, 50);
             set(jspd, x, y, cx, 150, 300, 600);
+            set(slayer, x, y, cx, 850, 300, 50);
+            set(layer, x, y, cx, 900, 150, 50);
+            set(jlayer, x, y, cx + 150, 900, 150, 50);
 
             cx += 350;
         } else {
-            set(lbp, x, y, 50, 100, 400, 50);
-            set(jspp, x, y, 50, 150, 400, 350);
+            set(lbp, x, y, 50, 150, 400, 50);
+            set(jspp, x, y, 50, 200, 400, 300);
 
             set(lbs, x, y, 50, 800, 400, 50);
             set(jsps, x, y, 50, 850, 400, 400);
@@ -106,6 +114,9 @@ public class SoulEditPage extends AbViewPage {
             set(jcbm, 0, 0, 0, 0, 0, 0);
             set(lbd, 0, 0, 0, 0, 0, 0);
             set(jspd, 0, 0, 0, 0, 0, 0);
+            set(slayer, 0, 0, 0, 0, 0, 0);
+            set(layer, 0, 0, 0, 0, 0, 0);
+            set(jlayer, 0, 0, 0, 0, 0, 0);
         }
     }
 
@@ -218,6 +229,12 @@ public class SoulEditPage extends AbViewPage {
             jls.repaint();
         });
 
+        slayer.setLnr(l -> {
+            soul.fixedLayer = slayer.isSelected();
+            jlayer.setEnabled(slayer.isSelected());
+        });
+        jlayer.setLnr(x -> soul.layer = CommonStatic.parseIntN(jlayer.getText()));
+
         jcbm.addActionListener(x -> {
             if (changing || soul == null)
                 return;
@@ -293,6 +310,10 @@ public class SoulEditPage extends AbViewPage {
         add(jtfs);
         add(jcbm);
 
+        add(slayer);
+        add(layer);
+        add(jlayer);
+
         add((Canvas)vb);
         jls.setCellRenderer(new SoulLCR());
         jld.setCellRenderer(new AnimLCR());
@@ -351,7 +372,9 @@ public class SoulEditPage extends AbViewPage {
 
         if (s != null) {
             jtfs.setText(soul.name);
+            jlayer.setText(String.valueOf(soul.layer));
             jcbm.setSelectedItem(Identifier.get(s.audio));
+            slayer.setSelected(s.fixedLayer);
             setAnim(s.anim);
         }
 
@@ -360,6 +383,8 @@ public class SoulEditPage extends AbViewPage {
         srea.setEnabled(editable && jld.getSelectedValue() != null);
         jcbm.setEnabled(editable);
         jtfs.setEnabled(editable);
+        slayer.setEnabled(editable);
+        jlayer.setEnabled(editable && s.fixedLayer);
 
         changing = boo;
     }

@@ -1064,7 +1064,7 @@ public class PackEditPage extends DefaultPage {
 			}
 			if (rand.icon != null)
 				try {
-					File file = ((Source.Workspace)dest.source).getRandIconFile("enemyDisplayIcons", nr.id);
+					File file = ((Source.Workspace)dest.source).getEneRandFile(nr.id);
 					Context.check(file);
 
 					BufferedImage bimg = (BufferedImage) rand.icon.getImg().bimg();
@@ -1170,7 +1170,7 @@ public class PackEditPage extends DefaultPage {
 			}
 			if (rand.icon != null)
 				try {
-					File file = ((Source.Workspace)dest.source).getRandIconFile("unitDisplayIcons", nr.id);
+					File file = ((Source.Workspace)dest.source).getUniRandFile(nr.id);
 					Context.check(file);
 
 					BufferedImage bimg = (BufferedImage) rand.icon.getImg().bimg();
@@ -1181,7 +1181,7 @@ public class PackEditPage extends DefaultPage {
 				}
 			if (rand.deployIcon != null)
 				try {
-					File file = ((Source.Workspace)dest.source).getRandIconFile("unitDeployIcons", nr.id);
+					File file = ((Source.Workspace)dest.source).getUniRandFile(nr.id);
 					Context.check(file);
 
 					BufferedImage bimg = (BufferedImage) rand.icon.getImg().bimg();

@@ -155,7 +155,7 @@ public class EREditPage extends DefaultPage {
 			if (ind < 0)
 				ind = -1;
 			if (rand.icon != null) {
-				File file = ((Source.Workspace) pack.source).getRandIconFile("enemyDisplayIcons", rand.id);
+				File file = ((Source.Workspace) pack.source).getEneRandFile(rand.id);
 				file.delete();
 			}
 			pack.randEnemies.remove(rand);
@@ -174,7 +174,7 @@ public class EREditPage extends DefaultPage {
 		adicn.addActionListener(arg0 -> getFile("Choose your file"));
 
 		reicn.addActionListener(arg0 -> {
-			File file = ((Source.Workspace) pack.source).getRandIconFile("enemyDisplayIcons", rand.id);
+			File file = ((Source.Workspace) pack.source).getEneRandFile(rand.id);
 			if (file.delete()) {
 				rand.icon = null;
 				reicn.setEnabled(false);
@@ -280,7 +280,7 @@ public class EREditPage extends DefaultPage {
 		else
 			rand.icon = MainBCU.builder.toVImg(bimg);
 		try {
-			File file = ((Source.Workspace) pack.source).getRandIconFile("enemyDisplayIcons", rand.id);
+			File file = ((Source.Workspace) pack.source).getEneRandFile(rand.id);
 			Context.check(file);
 			ImageIO.write(bimg, "PNG", file);
 		} catch (IOException e) {

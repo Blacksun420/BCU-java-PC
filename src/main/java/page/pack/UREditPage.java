@@ -185,11 +185,11 @@ public class UREditPage extends DefaultPage {
             if (ind < 0)
                 ind = -1;
             if (rand.icon != null) {
-                File file = ((Source.Workspace) pack.source).getRandIconFile("unitDisplayIcons", rand.id);
+                File file = ((Source.Workspace) pack.source).getUniRandFile(rand.id);
                 file.delete();
             }
             if (rand.deployIcon != null) {
-                File file = ((Source.Workspace) pack.source).getRandIconFile("unitDeployIcons", rand.id);
+                File file = ((Source.Workspace) pack.source).getUniRandFile(rand.id);
                 file.delete();
             }
             pack.randUnits.remove(rand);
@@ -256,7 +256,7 @@ public class UREditPage extends DefaultPage {
         adicn.addActionListener(arg0 -> getFile("Choose your file (recommended size: 85x32)", false));
 
         reicn.addActionListener(arg0 -> {
-            File file = ((Source.Workspace) pack.source).getRandIconFile("unitDisplayIcons", rand.id);
+            File file = ((Source.Workspace) pack.source).getUniRandFile(rand.id);
             if (file.delete()) {
                 rand.icon = null;
                 reicn.setEnabled(false);
@@ -266,7 +266,7 @@ public class UREditPage extends DefaultPage {
         aduni.addActionListener(arg0 -> getFile("Choose your file (recommended size: 110x85)", true));
 
         reuni.addActionListener(arg0 -> {
-            File file = ((Source.Workspace) pack.source).getRandIconFile("unitDeployIcons", rand.id);
+            File file = ((Source.Workspace) pack.source).getUniRandFile(rand.id);
             if (file.delete()) {
                 rand.icon = null;
                 reuni.setEnabled(false);
@@ -362,7 +362,7 @@ public class UREditPage extends DefaultPage {
             else
                 rand.deployIcon = MainBCU.builder.toVImg(bimg);
             try {
-                File file = ((Source.Workspace) pack.source).getRandIconFile("unitDeployIcons", rand.id);
+                File file = ((Source.Workspace) pack.source).getUniRandFile(rand.id);
                 Context.check(file);
                 ImageIO.write(bimg, "PNG", file);
             } catch (IOException e) {
@@ -378,7 +378,7 @@ public class UREditPage extends DefaultPage {
             else
                 rand.icon = MainBCU.builder.toVImg(bimg);
             try {
-                File file = ((Source.Workspace) pack.source).getRandIconFile("unitDisplayIcons", rand.id);
+                File file = ((Source.Workspace) pack.source).getUniRandFile(rand.id);
                 Context.check(file);
                 ImageIO.write(bimg, "PNG", file);
             } catch (IOException e) {

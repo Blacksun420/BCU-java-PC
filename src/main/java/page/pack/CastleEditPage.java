@@ -2,6 +2,7 @@ package page.pack;
 
 import common.CommonStatic;
 import common.pack.PackData.UserPack;
+import common.pack.Source;
 import common.pack.Source.Workspace;
 import common.system.VImg;
 import common.util.Data;
@@ -178,7 +179,7 @@ public class CastleEditPage extends DefaultPage {
 		}
 
 		try {
-			OutputStream os = ((Workspace) pack.source).writeFile("castles/" + Data.trio(vimg.id.id) + ".png");
+			OutputStream os = ((Workspace) pack.source).writeFile(Source.BasePath.CASTLE, vimg.id);
 			ImageIO.write(bimg, "PNG", os);
 			os.flush();
 			os.close();
