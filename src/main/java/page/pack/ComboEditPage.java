@@ -98,7 +98,7 @@ public class ComboEditPage extends DefaultPage {
             List<Unit> unis = new ArrayList<>();
             for (PackData p : UserProfile.getAllPacks())
                 for (Unit u : p.units.getList())
-                    if (u.id.pack.equals(Identifier.DEF) || u.id.pack.equals(pac.getSID()) || pac.desc.dependency.contains(u.id.pack))
+                    if (u.fromBC() || u.id.pack.equals(pac.getSID()) || pac.desc.dependency.contains(u.id.pack))
                         unis.add(u);
             jlu.setListData(unis.toArray(new Unit[0]));
             jlu.clearSelection();

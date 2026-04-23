@@ -52,7 +52,7 @@ public abstract class CharacterInfoTable extends Page {
             atkList.addAll(Arrays.asList(atks));
         dispAtk = ch.getMask().firstAtk();
         multiAtk = getNext() != -1;
-        isBC = c.getID().pack.equals(Identifier.DEF);
+        isBC = c.getID().fromBC();
         displaySpecial = !isBC;
     }
 

@@ -136,7 +136,7 @@ public class EnemyInfoTable extends CharacterInfoTable {
 					+ " units inside the base<br>once it passes that threshold."
 					+ "</html>");
 		String eDesc = e.getExplanation();
-		if (eDesc.replace("\n", "").length() > 0)
+		if (!eDesc.replace("\n", "").isEmpty())
 			add(desc);
 		descr.setText("<h2>" + e.toString().replace(Data.trio(e.id.id) + " - ", "") + (e.de.getStar() > 2 ? " (Cool Dude)" : "") + "</h2><hr>" + eDesc);
 		resetAtk();

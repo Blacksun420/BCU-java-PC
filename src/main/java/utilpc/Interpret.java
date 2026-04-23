@@ -476,7 +476,7 @@ public class Interpret extends Data {
 		String[] TraitBox = new String[trs.size()];
 		for (int i = 0; i < TraitBox.length; i++) {
 			Trait trait = trs.get(i);
-			if (trait.BCTrait())
+			if (trait.fromBC())
 				TraitBox[i] = Interpret.TRAIT[trait.id.id];
 			else
 				TraitBox[i] = trait.name;

@@ -35,7 +35,7 @@ public class UnitInfoPage extends DefaultPage {
 		super(p);
 		n = new Node<>(u);
 		b = BasisSet.current();
-		boolean sp = !u.id.pack.equals(Identifier.DEF);
+		boolean sp = !u.fromBC();
 
 		info = new UnitInfoTable[u.forms.length];
 		for (int i = 0; i < info.length; i++)
@@ -46,7 +46,7 @@ public class UnitInfoPage extends DefaultPage {
 	}
 
 	public UnitInfoPage(Page p, Node<Unit> de) {
-		this(p, de, BasisSet.current(), !de.val.id.pack.equals(Identifier.DEF));
+		this(p, de, BasisSet.current(), !de.val.fromBC());
 	}
 
 	private UnitInfoPage(Page p, Node<Unit> de, BasisSet bas, boolean sp) {
@@ -81,7 +81,7 @@ public class UnitInfoPage extends DefaultPage {
 		for (int i = 0; i < info.length; i++) {
 			int ih = info[i].getH();
 			set(info[i], x, y, 0, h, 1600, ih);
-			h += ih + (n.val.forms[i].getExplanation().length() == 0 ? 50 : 0);
+			h += ih + (n.val.forms[i].getExplanation().isEmpty() ? 50 : 0);
 		}
 		cont.setPreferredSize(size(x, y, 1600, h).toDimension());
 		jsp.getVerticalScrollBar().setUnitIncrement(size(x, y, 50));

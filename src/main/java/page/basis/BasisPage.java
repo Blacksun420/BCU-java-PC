@@ -907,13 +907,13 @@ public class BasisPage extends LubCont {
 					for(Form form : f.unit.forms) {
 						MaskUnit mu = form.du.getPCoin() != null ? form.du.getPCoin().improve(lv.getTalents()) : form.du;
 						for(Trait t : mu.getTraits(true))
-							if(t.BCTrait() && !traitList.contains(t))
+							if(t.fromBC() && !traitList.contains(t))
 								traitList.add(t);
 					}
 				} else {
 					MaskUnit mu = f.du.getPCoin() != null ? f.du.getPCoin().improve(lv.getTalents()) : f.du;
 					for(Trait t : mu.getTraits(true))
-						if(t.BCTrait() && !traitList.contains(t))
+						if(t.fromBC() && !traitList.contains(t))
 							traitList.add(t);
 				}
 				for (Trait t : traitList)

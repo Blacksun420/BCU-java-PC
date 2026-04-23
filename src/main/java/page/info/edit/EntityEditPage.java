@@ -385,7 +385,7 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		boolean[] opts = Opts.replaceStats();
 		if (opts[0]) {
 			ce.importData(c.getMask());
-			ce.traits.removeIf(t -> !(t.BCTrait() || pack.desc.dependency.contains(t.id.pack) || pack.desc.id.equals(t.id.pack)));
+			ce.traits.removeIf(t -> !(t.fromBC() || pack.desc.dependency.contains(t.id.pack) || pack.desc.id.equals(t.id.pack)));
 			if (opts[1]) {
 				ce.getPack().names.overwrite(c.names);
 				ce.getPack().description.overwrite(c.description);

@@ -290,8 +290,7 @@ class PCoinEditTable extends Page {
 
         protected void renew(AbUnit su) {
             if (su != null) {
-                Identifier<AbUnit> s = su.getID();
-                par.unit.pcoin.info.get(par.talent)[cind] = (s.id+1) * (s.pack.equals(Identifier.DEF) ? 1 : -1);
+                par.unit.pcoin.info.get(par.talent)[cind] = (su.getID().id+1) * (su.fromBC() ? 1 : -1);
                 btn.setText(su.toString());
             } else {
                 par.unit.pcoin.info.get(par.talent)[cind] = 0;

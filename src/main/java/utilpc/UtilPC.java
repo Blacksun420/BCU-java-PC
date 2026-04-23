@@ -215,7 +215,7 @@ public class UtilPC {
 			String[] TraitsHolder = new String[pc.trait.size()];
 			for (int i = 0 ; i < pc.trait.size() ; i++) {
 				Trait trait = pc.trait.get(i);
-				if (trait.BCTrait())
+				if (trait.fromBC())
 					TraitsHolder[i] = Interpret.TRAIT[trait.id.id];
 				else
 					TraitsHolder[i] = trait.name;

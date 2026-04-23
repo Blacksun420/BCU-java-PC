@@ -263,7 +263,7 @@ public class BCMusic extends Data {
 		if (!play || VOL_SE == 0)
 			return;
 
-		if (mus.pack.equals(Identifier.DEF)) {
+		if (mus.fromBC()) {
 			setSE(mus.id);
 			return;
 		}

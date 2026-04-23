@@ -27,7 +27,7 @@ public class EnemyInfoPage extends DefaultPage {
 	private final ENode e;
 
 	public EnemyInfoPage(Page p, ENode de) {
-		this(p, de, !de.val.id.pack.equals(Identifier.DEF));
+		this(p, de, !de.val.fromBC());
 	}
 
 	public EnemyInfoPage(Page p, ENode de, boolean sp) {

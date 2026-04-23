@@ -248,7 +248,7 @@ public class CGLREditPage extends DefaultPage {
 		ppc.addActionListener(c -> {
 			changing = true;
 			CharaGroup pcg = new CharaGroup(pack.getNextID(CharaGroup.class), jcpc.getSelectedValue());
-			pcg.fset.removeIf(f -> !(f.getID().pack.equals(Identifier.DEF) || f.getID().pack.equals(pack.getSID()) || pack.desc.dependency.contains(f.getID().pack)));
+			pcg.fset.removeIf(f -> !(f.unit.fromBC() || f.getID().pack.equals(pack.getSID()) || pack.desc.dependency.contains(f.getID().pack)));
 
 			lcg.add(pcg);
 			updateCGL();
@@ -357,7 +357,7 @@ public class CGLREditPage extends DefaultPage {
 		plr.addActionListener(c -> {
 			changing = true;
 			lr = new LvRestrict(pack.getNextID(LvRestrict.class), jclr.getSelectedValue());
-			lr.cgl.keySet().removeIf(cg -> !(cg.getID().pack.equals(Identifier.DEF) || cg.getID().pack.equals(pack.getSID()) || pack.desc.dependency.contains(cg.getID().pack)));
+			lr.cgl.keySet().removeIf(cg -> !(cg.fromBC() || cg.getID().pack.equals(pack.getSID()) || pack.desc.dependency.contains(cg.getID().pack)));
 
 			llr.add(lr);
 			updateLRL();

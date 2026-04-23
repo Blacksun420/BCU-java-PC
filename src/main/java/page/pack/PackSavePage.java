@@ -112,7 +112,7 @@ public class PackSavePage extends DefaultPage {
             }
             changing = true;
             AbUnit u = ulkUnits.getSelectedValue();
-            if (u.getID().pack.equals(Identifier.DEF)) {
+            if (u.fromBC()) {
                 for (String s : pk.syncPar) {
                     UserPack p = UserProfile.getUserPack(s);
                     if (p.save.ulkUni.containsKey(u) && p.save.ulkUni.get(u) + 1 >= f)
