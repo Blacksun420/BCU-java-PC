@@ -668,7 +668,7 @@ public class AdvStEditPage extends DefaultPage {
 			revEne.setText(ene.toString());
 
 			revBGM.setText("BGM: " + r.bgm);
-			revSoul.setSelectedItem(r.soul);
+			revSoul.setSelectedItem(r.soul.get());
 
 			jtMults.setText(r.mhp + "% / " + r.matk + "%");
 			bossType.setText(get(MainLocale.INFO, "b" + rev.boss));
