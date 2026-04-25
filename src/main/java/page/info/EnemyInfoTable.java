@@ -145,10 +145,10 @@ public class EnemyInfoTable extends CharacterInfoTable {
 
 	@Override
 	protected void panelClicked(Data.Proc.ProcItem item) {
-		if (item instanceof Data.Proc.SUMMON && (((Data.Proc.SUMMON)item).id == null || Enemy.class.isAssignableFrom(((Data.Proc.SUMMON)item).id.cls))) {
+		if (item instanceof Data.Proc.SUMMON && (((Data.Proc.SUMMON)item).id == null || AbEnemy.class.isAssignableFrom(((Data.Proc.SUMMON)item).id.cls))) {
 			Data.Proc.SUMMON su = (Data.Proc.SUMMON)item;
-			if (((Data.Proc.SUMMON)item).id == null || AbEnemy.class.isAssignableFrom(((Data.Proc.SUMMON)item).id.cls))
-				if (su.id.cls == EneRand.class)
+			if (su.id == null || AbEnemy.class.isAssignableFrom(su.id.cls))
+				if (su.id != null && su.id.cls == EneRand.class)
 					changePanel(new EREditPage(getFront(), UserProfile.getUserPack(su.id.pack), (EneRand)su.id.get()));
 				else
 					changePanel(new EnemyInfoPage(getFront(), new ENode(Identifier.getOr(su.id, Enemy.class), su.fix_buff ? new int[]{su.mult, su.mult} : new int[]{(int)((su.mult / 100.0) * multi), (int)((su.mult / 100.0) * mulatk)})));

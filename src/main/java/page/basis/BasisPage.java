@@ -774,7 +774,7 @@ public class BasisPage extends LubCont {
 			orbList.setSelectedIndex(s);
 			type.setEnabled(!orbList.isSelectionEmpty());
 
-			boolean valid = f.getOrbs() != null && orbList.getSelectedValue().orb.length == Data.ORB_TOT;
+			boolean valid = f.getOrbs() != null && !orbList.isSelectionEmpty() && orbList.getSelectedValue().orb.length == Data.ORB_TOT;
 			trait.setEnabled(valid);
 			grade.setEnabled(valid);
 			if (!orbList.isSelectionEmpty()) {

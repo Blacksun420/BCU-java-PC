@@ -6,12 +6,14 @@ import common.battle.data.PCoin;
 import common.pack.Identifier;
 import common.pack.UserProfile;
 import common.system.ENode;
-import common.system.Node;
 import common.system.VImg;
 import common.util.Data;
 import common.util.unit.*;
 import main.MainBCU;
-import page.*;
+import page.HTMLTextField;
+import page.JL;
+import page.MainLocale;
+import page.Page;
 import page.pack.EREditPage;
 import page.pack.UREditPage;
 import utilpc.Interpret;
@@ -20,6 +22,8 @@ import utilpc.UtilPC;
 import javax.swing.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class UnitInfoTable extends CharacterInfoTable {
@@ -62,18 +66,32 @@ public class UnitInfoTable extends CharacterInfoTable {
 	@Override
 	protected void panelClicked(Data.Proc.ProcItem item) {
 		if (item instanceof Data.Proc.SUMMON) {
+			int[] levels;
 			Data.Proc.SUMMON su = (Data.Proc.SUMMON)item;
-			if (((Data.Proc.SUMMON)item).id == null || AbUnit.class.isAssignableFrom(((Data.Proc.SUMMON)item).id.cls))
-				if (su.id != null && su.id.cls == UniRand.class)
-					changePanel(new UREditPage(getFront(), UserProfile.getUserPack(su.id.pack), (UniRand)su.id.get()));
-				else
-					changePanel(new UnitInfoPage(getFront(), new Node<>(Identifier.getOr(su.id, Unit.class))));
-			else if (su.id.cls == EneRand.class)
-				changePanel(new EREditPage(getFront(), UserProfile.getUserPack(su.id.pack), (EneRand)su.id.get()));
+			if (su.id == null || AbUnit.class.isAssignableFrom(su.getClass()))
+				levels = new int[]{su.mult + (su.fix_buff ? 0 : multi.getTotalLv())};
 			else
-				changePanel(new EnemyInfoPage(getFront(), new ENode((Enemy)su.id.get(), su.fix_buff ? new int[]{su.mult, su.mult}
-						: new int[]{(int)(su.mult / 100.0 * ((multi.getTotalLv() - 1) * 20)), (int)(su.mult / 100.0 * ((multi.getTotalLv() - 1) * 20))})));
-		}
+				levels = su.fix_buff ? new int[]{su.mult, su.mult}
+						: new int[]{(int)(su.mult / 100.0 * ((multi.getTotalLv() - 1) * 20)), (int)(su.mult / 100.0 * ((multi.getTotalLv() - 1) * 20))};
+			switchEntity(su.id, levels);
+		} else if (item instanceof Data.Proc.SPIRIT)
+			switchEntity(((Data.Proc.SPIRIT) item).id, new int[]{multi.getTotalLv()});
+	}
+
+	private void switchEntity(Identifier<?> id, int[] mults) {
+		if (id == null || AbUnit.class.isAssignableFrom(id.cls))
+			if (id != null && id.cls == UniRand.class)
+				changePanel(new UREditPage(getFront(), UserProfile.getUserPack(id.pack), (UniRand)id.get()));
+			else {
+				Unit u = Identifier.getOr(id, Unit.class);
+				int lv = Math.max(1, Math.min(u.max, mults[0]));
+				int plv = Math.max(0, Math.min(u.maxp, mults[0]-lv));
+				changePanel(new UnitInfoPage(getFront(), u, new Level(lv, plv, u.getPrefLvs().getTalents())));
+			}
+		else if (id.cls == EneRand.class)
+			changePanel(new EREditPage(getFront(), UserProfile.getUserPack(id.pack), (EneRand)id.get()));
+		else
+			changePanel(new EnemyInfoPage(getFront(), new ENode((Enemy)id.get(), mults)));
 	}
 
 	protected void reset() {
@@ -126,6 +144,15 @@ public class UnitInfoTable extends CharacterInfoTable {
 			add(proc[i] = new JLabel(display.toString()));
 			proc[i].setIcon(UtilPC.getScaledIcon(display.icon, UtilPC.iconSize, UtilPC.iconSize));
 			proc[i].setBorder(BorderFactory.createEtchedBorder());
+			final int FI = i;
+			proc[FI].addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					super.mouseClicked(e);
+					if (e.getSource() == proc[FI])
+						panelClicked(display.item);
+				}
+			});
 		}
 		if (pc != null) {
 			add(pcoin = proc[ls.size()] = new JLabel(UtilPC.lvText(f, multi)[1]));
