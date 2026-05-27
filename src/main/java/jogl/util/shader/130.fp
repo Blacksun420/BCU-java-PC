@@ -17,19 +17,25 @@ uniform vec4 solid;
 
 void main() {
 	vec4 c = texture2D(tex,texp);
-	if(mode == 1) {
-		c.a*=para;
-		c.xyz*=para;
-	}
-	else if(mode == 2){
-		c.a*=para;
-		c.xyz=1.0-c.a+c.xyz*c.a;
-	}
-	else if(mode == 3)
-		c.a*=para;
-    else if (mode == 4) {
-        c.xyz = solid.xyz * c.a;
-        c.a *= solid.a;
+
+    if(mode == 1)
+    {
+        c.w *= para;
+        c.xyz *= para;
+    }
+    else if(mode == 2)
+    {
+        c.w *= para;
+        c.xyz = 1.0 - c.w + c.xyz * c.w;
+    }
+    else if (mode == 3)
+    {
+        c.w *= para;
+    }
+    else if (mode == 4)
+    {
+        c.xyz = solid.xyz * c.w;
+        c.w *= solid.w;
     }
 	mgl_FragColor=c;
 }

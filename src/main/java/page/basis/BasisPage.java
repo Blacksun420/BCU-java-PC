@@ -841,6 +841,7 @@ public class BasisPage extends LubCont {
 			mas = atk >= 300 && atk < 500;
 			res = def >= 400 && def < 600;
 		}
+		HashSet<Integer> bans = st.lim.stageLimit != null ? st.lim.stageLimit.bannedOrb : new HashSet<>();
 		if (setTypes) {
 			if (f.getOrbs() != null)
 				typeText.add("None");
@@ -851,15 +852,15 @@ public class BasisPage extends LubCont {
 			typeText.add(MainLocale.getLoc(MainLocale.UTIL, "ot1"));
 			typeData.add(Data.ORB_RES);
 
-			if (str) {
+			if (str && !bans.contains((int)Data.ORB_STRONG)) {
 				typeText.add(MainLocale.getLoc(MainLocale.UTIL, "ot2"));
 				typeData.add(Data.ORB_STRONG);
 			}
-			if (mas) {
+			if (mas && !bans.contains((int)Data.ORB_MASSIVE)) {
 				typeText.add(MainLocale.getLoc(MainLocale.UTIL, "ot3"));
 				typeData.add(Data.ORB_MASSIVE);
 			}
-			if (res) {
+			if (res && !bans.contains((int)Data.ORB_RESISTANT)) {
 				typeText.add(MainLocale.getLoc(MainLocale.UTIL, "ot4"));
 				typeData.add(Data.ORB_RESISTANT);
 			}
@@ -867,6 +868,8 @@ public class BasisPage extends LubCont {
 		if (data.length != Data.ORB_TOT) {
 			if (setTypes) {
 				for (byte i = Data.ORB_DEATH_SURGE; i < Data.ORB_TYPE_TOTAL; i++) {
+					if (bans.contains((int)i))
+						continue;
 					typeText.add(Interpret.ORB[i]);
 					typeData.add(i);
 				}
@@ -889,7 +892,7 @@ public class BasisPage extends LubCont {
 		byte otype = (byte)data[Data.ORB_TYPE];
 		if (setTypes) {
 			for (byte i = Data.ORB_DEATH_SURGE; i < Data.ORB_TYPE_TOTAL; i++)
-				if (otype == i || !Orb.onlyOne(i) || !lv.equippingOrb(i)) {
+				if (!bans.contains((int)i) && (otype == i || !Orb.onlyOne(i) || !lv.equippingOrb(i))) {
 					typeText.add(Interpret.ORB[i]);
 					typeData.add(i);
 				}

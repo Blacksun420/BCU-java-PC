@@ -329,6 +329,7 @@ public class BGEditPage extends DefaultPage {
 			bgr.check();
 			top.setEnabled(bgr.parts.length > Background.TOP && bgr.img.getImg().getHeight() == 1024);
 			top.setSelected(bgr.top);
+			overlay.setSelected(bgr.overlay != null);
 
 			for (int i = 0; i < 4; i++)
 				setCSText(i);

@@ -168,6 +168,8 @@ public class StageViewPage extends StagePage {
 		cpsm.setEnabled(false);
 		cpst.setEnabled(false);
 		recd.setEnabled(false);
+		//smnm.setHint("Search stage map");
+		//snam.setHint("Search stage");
 		addListeners();
 	}
 
