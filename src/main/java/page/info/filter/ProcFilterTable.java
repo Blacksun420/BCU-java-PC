@@ -14,6 +14,7 @@ import common.util.unit.Trait;
 import main.MainBCU;
 import page.*;
 import page.info.edit.BlessPage;
+import page.info.edit.ConditionPage;
 import page.info.edit.SwingEditor;
 import page.support.ListJtfPolicy;
 import utilpc.Interpret;
@@ -181,6 +182,61 @@ public class ProcFilterTable extends Page {
                     par.callback.run();
             };
             edi.setData(field.get() == null ? Proc.blank() : (Proc)field.get());
+        }
+
+        @Override
+        public void add(Consumer<JComponent> con) {
+            con.accept(btn);
+        }
+    }
+
+    public static class ConditionFilter extends SwingEditor {
+
+        public final JBTN btn;
+        private final JTG rej = new JTG("!");
+        private final FilterCtrl cont;
+        private ConditionPage edi;
+
+        public ConditionFilter(Editors.EditorGroup eg, Editors.EdiField field, String f, boolean edit, FilterCtrl ec) {
+            super(eg, field, f, edit);
+            cont = ec;
+            btn = new JBTN(ProcLang.get().get(eg.proc).get(f));
+            btn.setLnr(e -> MainFrame.changePanel(edi));
+        }
+
+        @Override
+        public void setVisible(boolean res) {
+            btn.setVisible(res);
+            rej.setVisible(res);
+        }
+
+        @Override
+        public boolean isInvisible() {
+            return !btn.isVisible();
+        }
+
+        @Override
+        public void resize(int x, int y, int x0, int y0, int w0, int h0) {
+            Page.set(btn, x, y, x0, y0, w0, h0);
+            set(btn, x, y, x0, y0, w0 - 85, h0);
+            set(rej, x, y, x0 + w0 - 85, y0, 85, h0);
+        }
+
+        @Override
+        public void setData() {
+            field.setData(par.obj);
+            if (edi != null)
+                edi.setData(field.get() == null ? new Proc.Condition() : (Proc.Condition)field.get());
+            else if (par.obj.exists())
+                ini();
+        }
+        private void ini() {
+            edi = new ConditionPage(cont.table);
+            edi.exitter = l -> {
+                if (par.callback != null)
+                    par.callback.run();
+            };
+            edi.setData(field.get() == null ? new Proc.Condition() : (Proc.Condition)field.get());
         }
 
         @Override
@@ -370,6 +426,8 @@ public class ProcFilterTable extends Page {
                     return new EnumFilter(group, field, f, edit);
                 if (fc == Proc.class)
                     return new ProcFilter(group, field, f, edit, this);
+                if (fc == Proc.Condition.class)
+                    return new ConditionFilter(group, field, f, edit, this);
                 if (fc == SortedPackSet.class)
                     return new TraitFilter(group, field, f, edit, this);
                 if (fc == Proc.ProcID.class)

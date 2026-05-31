@@ -112,6 +112,8 @@ public abstract class SwingEditor extends Editor {
 					return new EnumEditor(group, field, f, edit);
 				if (fc == Data.Proc.class)
 					return new ProcEditor(group, field, f, edit, this);
+				if (fc == Data.Proc.Condition.class)
+					return new ConditionEditor(group, field, f, edit, this);
 				if (fc == SortedPackSet.class)
 					return new TraitEditor(group, field, f, edit, this);
 				throw new Exception("unexpected class " + fc);
@@ -439,9 +441,54 @@ public abstract class SwingEditor extends Editor {
 					edi = new BlessPage(ed.table, ed.isEnemy);
 					edi.exitter = field::set;
 				}
-				Editors.def = false;
 				MainFrame.changePanel(edi);
 				edi.setData(field.get() == null ? Data.Proc.blank() : (Data.Proc)field.get());
+			});
+		}
+
+		@Override
+		public void setVisible(boolean res) {
+			btn.setVisible(res);
+		}
+
+		@Override
+		public boolean isInvisible() {
+			return !btn.isVisible();
+		}
+
+		@Override
+		public void resize(int x, int y, int x0, int y0, int w0, int h0) {
+			Page.set(btn, x, y, x0, y0, w0, h0);
+		}
+
+		@Override
+		public void setData() {
+			field.setData(par.obj);
+		}
+
+		@Override
+		public void add(Consumer<JComponent> con) {
+			con.accept(btn);
+		}
+	}
+
+	public static class ConditionEditor extends SwingEditor {
+
+		private final EditCtrl ed;
+		public final JBTN btn;
+		private ConditionPage edi;
+
+		public ConditionEditor(EditorGroup eg, Editors.EdiField field, String f, boolean edit, EditCtrl ec) {
+			super(eg, field, f, edit);
+			ed = ec;
+			btn = new JBTN(ProcLang.get().get(eg.proc).get(f));
+			btn.setLnr(e -> {
+				if (edi == null) {
+					edi = new ConditionPage(ed.table);
+					edi.exitter = field::set;
+				}
+				MainFrame.changePanel(edi);
+				edi.setData((Data.Proc.Condition)field.get());
 			});
 		}
 

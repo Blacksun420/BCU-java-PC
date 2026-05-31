@@ -274,20 +274,21 @@ public class BGEditPage extends DefaultPage {
 			@Override
 			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel l = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-				int v = (int) value;
-				if (v == -1)
+				BackgroundEffect v = (BackgroundEffect)value;
+				if (v == null)
 					l.setText(get(MainLocale.PAGE, "none"));
-				else if (v >= 0 && v <= 9) {
+				else if (!v.fromBC())
+					l.setText(v.getName());
+				else if (v.id.id >= 0 && v.id.id <= 9) {
 					l.setText(get(MainLocale.PAGE, "bgeff"+v));
-				} else if (BackgroundEffect.jsonList.contains(v)) {
+				} else if (BackgroundEffect.jsonList.contains(v.id.id)) {
 					String temp = get(MainLocale.PAGE, "bgjson"+v);
 					if(temp.equals("bgjson"+v))
 						temp = get(MainLocale.PAGE, "bgeffdum").replace("_", String.valueOf(v));
 
 					l.setText(temp);
-				} else {
+				} else
 					l.setText("unknown bg effect " + value);
-				}
 				return l;
 			}
 		});

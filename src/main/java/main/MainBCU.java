@@ -142,6 +142,7 @@ public class MainBCU {
 
 		@Override
 		public void noticeErr(Exception e, ErrType t, String str) {
+			NO_ERR = false;
 			if (noNeedToShow(t)) {
 				System.out.println(str);
 				e.printStackTrace(System.out);
@@ -159,6 +160,7 @@ public class MainBCU {
 
 		@Override
 		public void printErr(ErrType t, String str) {
+			NO_ERR = false;
 			if (noNeedToShow(t)) {
 				System.out.println(str);
 				return;
@@ -174,7 +176,7 @@ public class MainBCU {
 		}
 
 		private boolean noNeedToShow(ErrType t) {
-			return t == ErrType.DEBUG || !(t == ErrType.CORRUPT || t == ErrType.ERROR || t == ErrType.FATAL || t == ErrType.WARN || !MainBCU.WRITE);
+			return t == ErrType.DEBUG || t == ErrType.NEW;
 		}
 
 		@Override
@@ -306,7 +308,7 @@ public class MainBCU {
 	private static final DecimalFormat df = new DecimalFormat("#.##");
 	public static int autoSaveTime = 0, searchTolerance = 4;
 	public static final boolean WRITE = !new File("./.idea").exists();
-	public static boolean preload = false, trueRun = true, loaded = false, USE_JOGL = false, NO_ERR = false, RELEASE = true;
+	public static boolean preload = false, trueRun = true, loaded = false, USE_JOGL = false, NO_ERR = true, RELEASE = true;
 	public static boolean seconds = false, buttonSound = false, searchPerKey = false;
 	public static String author = "";
 	public static ImageBuilder<BufferedImage> builder;

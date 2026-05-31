@@ -1773,7 +1773,8 @@
             "[(retreatDist>0|danger){ (_left)[(danger){When in danger[(retreatDist>0){ or }]}][(retreatDist>0)",
             "{enemies are (retreatDist) units away from this entity}],this unit will retreat at (retreatSpeed) speed(_right)}]",
             "[(calcblindspot){ (_left)Unit will not count entities on it's blindspot for attack detection or other effectiveness calculations(_right)}]",
-            "[(ignHypno){ (_left)Will not attack hypnotized enemies nor support hypnotized allies(_right)}]"
+            "[(ignHypno){ (_left)Will not attack hypnotized enemies nor support hypnotized allies(_right)}]",
+            "[(atkHypno>0){ (_left)Will attack hypnotized allies and lower their hypnosis duration by (_dispTime(atkHypno))(_right)}]"
         ],
         "class": {
             "calcstrongest": {
@@ -1799,6 +1800,10 @@
             "ignHypno": {
                 "name": "Ignore the Hypnotized",
                 "tooltip": "Will not attack hypnotized enemies nor support hypnotized allies"
+            },
+            "atkHypno": {
+                "name": "De-Hypnotizer",
+                "tooltip": "Will attack hypnotized allies and lower hypnosis duration by the specified amount, if the number is anything above 0"
             }
         }
     },
