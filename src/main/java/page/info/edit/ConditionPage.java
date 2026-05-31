@@ -3,7 +3,7 @@ package page.info.edit;
 import common.util.Data.Proc.Condition;
 import page.DefaultPage;
 import page.JL;
-import page.JTF;
+import page.JTA;
 import page.Page;
 
 import javax.swing.*;
@@ -14,11 +14,11 @@ public class ConditionPage extends DefaultPage {
     public Consumer<Condition> exitter;
     private Condition condition;
     private final JL pre = new JL("Pre-ATK");
-    private final JTF jpre = new JTF();
+    private final JTA jpre = new JTA();
     private final JScrollPane spre = new JScrollPane(jpre);
     private final JL post = new JL("Post-ATK");
-    private final JTF jpost = new JTF();
-    private final JScrollPane spost = new JScrollPane(jpre);
+    private final JTA jpost = new JTA();
+    private final JScrollPane spost = new JScrollPane(jpost);
 
     public ConditionPage(Page pg) {
         super(pg);
