@@ -142,7 +142,7 @@
         "format": ["[(prob<100){(prob)% chance to }][((_strEqual(type,`SET))){Set}(!(_strEqual(type,`SET)))",
             "{[(mult>0){Increase}(mult<0){Decrease}][(prob==100){s}]}] target's TBA by ",
             "[((_strEqual(type,`PERCENTAGE))){(_abs(mult))%}(!(_strEqual(type,`PERCENTAGE))){(_dispTimeD(mult))}] for ",
-            "(_dispTimeF(time))[(stackable){ (_left)Stackable(_right)}]"],
+            "(_dispTimeF(time))[(stackable){ (_left)Stackable(_right)}][(old){ (_left)Uses old calculation(_right)}]"],
         "class": {
             "prob": {
                 "name": "chance",
@@ -162,7 +162,15 @@
             },
             "type": {
                 "name": "Type",
-                "tooltip": "Simply adds when false, and increases the TBA by percentage when true"
+                "tooltip": "FIXED - Adds TBA, PERCENTAGE - Adds TBA based on % of the unit's TBA, SET - Sets the attacker's TBA to value (doesn't work on Old Mode)"
+            },
+            "old": {
+                "name": "Old",
+                "tooltip": "Uses this fork's older way of handling lethargy"
+            },
+            "conditions": {
+                "name": "Conditions",
+                "tooltip": "Pre-ATK: Conditions are checked when applying procs to the attack/Post-ATK: Conditions are checked when applying proc to the unit"
             }
         }
     },

@@ -433,7 +433,7 @@ public class Interpret extends Data {
 							inds.add(i + 1);
 
 							atkMap.put(formatted, inds);
-							procIcons.add(UtilPC.getIcon(1, j));
+							procIcons.add(UtilPC.getIcon(item, 1, j));
 							procItems.add(item);
 						}
 					}

@@ -167,7 +167,7 @@ public class MainBCU {
 			}
 
 			if (t != ErrType.INFO)
-				Opts.errOnce(str, "ERROR", t == ErrType.FATAL);
+				Opts.errOnce(str, t == ErrType.FATAL ? "FATAL ERROR" : "ERROR", t == ErrType.FATAL);
 		}
 
 		@Override
