@@ -31,7 +31,6 @@ public class UnitInfoTable extends CharacterInfoTable {
 	private static final long serialVersionUID = 1L;
 
 	private final JL[][] upgrade = new JL[3][2];
-	private JLabel pcoin;
 	private final HTMLTextField cfdesc = new HTMLTextField();
 
 	private final Form f;
@@ -95,6 +94,7 @@ public class UnitInfoTable extends CharacterInfoTable {
 	}
 
 	protected void reset() {
+		JLabel pcoin = getPCoinLabel();
 		EForm ef = new EForm(f, multi);
 		double mul = f.unit.lv.getMult(multi.getTotalLv());
 		double atk = b.t().getAtkMulti();
@@ -192,6 +192,7 @@ public class UnitInfoTable extends CharacterInfoTable {
 				multi = f.regulateLv(Level.lvList(f.unit, CommonStatic.parseIntsN(jtf.getText()), null), multi);
 				String[] strs = UtilPC.lvText(f, multi);
 				jtf.setText(strs[0]);
+				JLabel pcoin = getPCoinLabel();
 				if (pcoin != null)
 					pcoin.setText(strs[1]);
 				reset();
@@ -215,6 +216,7 @@ public class UnitInfoTable extends CharacterInfoTable {
 		}
 		add(jtf);
 		jtf.setText(UtilPC.lvText(f, multi)[0]);
+		JLabel pcoin = getPCoinLabel();
 		if (pcoin != null)
 			add(pcoin);
 
@@ -279,5 +281,9 @@ public class UnitInfoTable extends CharacterInfoTable {
 		descr.setBorder(BorderFactory.createEtchedBorder());
 		resetAtk();
 		addListeners();
+	}
+
+	public JLabel getPCoinLabel() {
+		return f.du.getPCoin() != null ? proc[proc.length - 1] : null;
 	}
 }

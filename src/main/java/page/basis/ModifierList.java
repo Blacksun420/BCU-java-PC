@@ -3,6 +3,8 @@ package page.basis;
 import common.CommonStatic;
 import common.battle.BasisLU;
 import common.pack.SortedPackSet;
+import common.util.stage.BattlePreset;
+import common.util.stage.Stage;
 import common.util.unit.Combo;
 import page.MainLocale;
 import utilpc.Interpret;
@@ -17,6 +19,7 @@ public class ModifierList extends JList<Object> {
     private BasisLU lineup;
     private SortedPackSet<Combo> combos;
     private Set<Integer> banned;
+    private Stage st;
 
     private static final long serialVersionUID = 1L;
 
@@ -50,10 +53,10 @@ public class ModifierList extends JList<Object> {
             }
         });
 
-        reset();
+        renew();
     }
 
-    protected void reset() {
+    public void renew() {
         List<Object> list = new ArrayList<>();
 
         if (lineup != null) {
@@ -62,27 +65,38 @@ public class ModifierList extends JList<Object> {
             if (lvls[1] > 0 && lu.t().deco[lvls[1] - 1] > 0)
                 list.add("Lv. " + lu.t().deco[lvls[1] - 1] + " "
                         + MainLocale.getLoc(MainLocale.UTIL, "t" + (lvls[1] + 43)) + ": "
-                        + Interpret.deco(lvls[1] - 1, lineup));
+                        + Interpret.deco(lvls[1] - 1, lu));
             if (lvls[2] > 0 && lu.t().base[lvls[2] - 1] > 0)
                 list.add("Lv. " + lu.t().base[lvls[2] - 1] + " "
                         + MainLocale.getLoc(MainLocale.UTIL, "t" + (lvls[2] + 36)) + ": "
-                        + Interpret.base(lvls[2] - 1, lineup));
+                        + Interpret.base(lvls[2] - 1, lu));
         }
 
         if (combos != null)
             list.addAll(combos);
+        if (st != null) {
+            if (st.preset != null && BattlePreset.isCurrentLineupPreset(st.preset)) {
+                if (st.preset.baseHealthBoost)
+                    list.add("Preset Boost: +20000 Base HP");
+            }
+        }
 
         setListData(list.toArray(new Object[0]));
     }
 
     public void setBanned(Set<Integer> lb) {
         banned = lb;
-        reset();
+        renew();
     }
 
     public void setBasis(BasisLU b) {
         lineup = b;
         combos = b.lu.coms;
-        reset();
+        renew();
+    }
+
+    public void setStage(Stage s) {
+        st = s;
+        renew();
     }
 }

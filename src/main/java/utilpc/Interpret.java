@@ -1260,4 +1260,11 @@ public class Interpret extends Data {
 		String type = Page.get(0, group.type == 0 ? "include" : "exclude");
 		return "<html>" + type + "<br>" + group.fset.stream().map(Form::toString).collect(Collectors.joining("<br>")) + "</html>";
 	}
+
+	public static String layer(int back, int front) {
+		if (front == back)
+			return String.valueOf(front);
+		else
+			return back + "~" + front;
+	}
 }

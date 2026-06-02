@@ -41,6 +41,7 @@ public class BattleSetupPage extends LubCont {
 	private final JLabel jl = new JLabel();
 	private final JLabel ulock = new JLabel();
 	private final JBTN jlu = new JBTN(0, "line");
+	private final JTG pre = new JTG(0, "usepreset");
 	private final LineUpBox lub = new LineUpBox(this);
 	private final ModifierList mod = new ModifierList();
 	private final JScrollPane jmod = new JScrollPane(mod);
@@ -112,7 +113,9 @@ public class BattleSetupPage extends LubCont {
 		b.lu.renew();
 
 		mod.setBasis(b);
+		pre.setEnabled(st.preset != null);
 		mod.setBanned(lub.getLim().stageLimit != null ? lub.getLim().stageLimit.bannedCatCombo : null);
+		mod.setStage(st);
 	}
 
 	private BasisLU getLU() {
@@ -128,9 +131,12 @@ public class BattleSetupPage extends LubCont {
 		set(jl, x, y, 50, 350, 200, 50);
 		set(jlu, x, y, 50, 400, 200, 50);
 		set(strt, x, y, 50, 500, 200, 50);
+
 		set(rich, x, y, 300, 100, 200, 50);
 		set(snip, x, y, 300, 200, 200, 50);
+		set(pre, x, y, 300, 400, 200, 50);
 		set(tmax, x, y, 300, 500, 200, 50);
+
 		set(lub, x, y, 550, 50, 600, 300);
 		set(jmod, x, y, 550, 350, 600, 200);
 		set(plus, x, y, 1200, 100, 200, 50);
@@ -197,11 +203,17 @@ public class BattleSetupPage extends LubCont {
 		testMode.addActionListener(l -> lub.setTest(testMode.isSelected() ? st.getMC().getSave(true).getUnlockedsBeforeStage(st, true).keySet() : null));
 		tlu.addActionListener(l -> renew());
 		rtlu.setLnr(l -> {
-			tlu.setSelected(false);
-			remove(tlu);
-			remove(rtlu);
-			st.lastClear = null;
-			renew();
+					tlu.setSelected(false);
+					remove(tlu);
+					remove(rtlu);
+					st.lastClear = null;
+		});
+		pre.addActionListener(x -> {
+			//if (!Opts.conf("This will replace your current lineup, and adjust treasure/cannon values for the lineup's set. Continue anyway?"))
+			//	return;
+			callBack(null);
+			//BattlePreset.generateBasis(st.preset);
+			//renew();
 		});
 	}
 
@@ -213,6 +225,7 @@ public class BattleSetupPage extends LubCont {
 		add(strt);
 		add(rich);
 		add(snip);
+		add(pre);
 		add(tmax);
 		add(lub);
 		add(jmod);

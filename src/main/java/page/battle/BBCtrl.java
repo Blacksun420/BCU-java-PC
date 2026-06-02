@@ -103,7 +103,7 @@ public class BBCtrl extends BBPainter {
 	}
 
 	@Override
-	protected synchronized void drag(Point p) {
+	protected synchronized void drag(Point p, int button) {
 		if(!CommonStatic.getConfig().twoRow) {
 			if(!dragging) {
 				dragInit = p;
@@ -116,7 +116,7 @@ public class BBCtrl extends BBPainter {
 			checkDragUpDown();
 		}
 
-		super.drag(p);
+		super.drag(p, button);
 	}
 
 	private void checkDragUpDown() {

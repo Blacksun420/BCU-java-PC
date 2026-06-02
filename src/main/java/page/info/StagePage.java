@@ -27,6 +27,7 @@ public class StagePage extends DefaultPage {
 	private final JScrollPane jspjt = new JScrollPane(jt);
 	private final HeadTable info = new HeadTable(this);
 	private final JScrollPane jspinfo = new JScrollPane(info);
+	private final JBTN pres = new JBTN(0, "preset");
 
 	protected Stage stage;
 	private final JBTN binf = new JBTN(0, "info");
@@ -69,6 +70,7 @@ public class StagePage extends DefaultPage {
 		super.resized(x, y);
 		set(jspinfo, x, y, 800, 50, 1400, 350);
 		set(jspjt, x, y, 800, 400, 1400, 800);
+		set(pres, x, y, 1400, 0, 200, 50);
 		jt.setRowHeight(size(x, y, 50));
 		info.setRowHeight(size(x, y, 50));
 		set(binf, x, y, 1600, 0, 200, 50);
@@ -77,6 +79,7 @@ public class StagePage extends DefaultPage {
 	protected void setData(Stage st, int starId) {
 		stage = st;
 		strt.setEnabled(st != null);
+		pres.setEnabled(st != null && st.preset != null);
 		if(st != null) {
 			jt.setData(st, Math.min(starId, st.getCont().stars.length - 1));
 			info.setData(st);
@@ -120,6 +123,11 @@ public class StagePage extends DefaultPage {
 				str.append("<tr><td>").append(newUnlock).append("</td></tr>");
 		}
 		return str.toString();
+
+		pres.setLnr(x -> {
+			if (stage != null && stage.preset != null)
+				Opts.pop(Interpret.readBattlePreset(stage.preset), "preset lineup");
+		});
 	}
 
 	private void ini() {
@@ -166,6 +174,8 @@ public class StagePage extends DefaultPage {
 			}
 		});
 		strt.setEnabled(false);
+		add(pres);
+		pres.setEnabled(false);
 		info.addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
