@@ -560,6 +560,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 					continue;
 				p.animChanged(maet.anim, -1);
 			}
+			maet.anim.unSave("maanim add attack pattern (Not applicable for undo)");
 			jlt.setSelectedIndex(jlt.getSelectedIndex() + 1);
 			setA(maet.anim);
 		});
@@ -572,6 +573,7 @@ public class MaAnimEditPage extends DefaultPage implements AbEditPage {
 			}
 			int ind = jlt.getSelectedIndex();
 			maet.anim.remAttack(ind);
+			maet.anim.unSave("maanim remove attack pattern (Not applicable for undo)");
 			jlt.setSelectedIndex(ind - 1);
 			for (PackData.UserPack p : UserProfile.getUserPacks()) {
 				if (!p.editable)

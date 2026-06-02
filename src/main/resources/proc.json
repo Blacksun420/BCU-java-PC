@@ -1556,7 +1556,8 @@
         "abbr_name": "BST Kill",
         "full_name": "Behemoth Slayer",
         "tooltip": null,
-        "format": "Behemoth Slayer (_left)Deals 2.5x damage[(prob>0){, }(prob==0){ and }]only takes 0.6x damage[(prob>0){, and (prob)% chance to dodge their attacks for (_dispTime(time))}](_right)",
+        "format": ["Behemoth Slayer (_left)Deals 2.5x damage[(prob>0){, }(prob==0){ and }]only takes 0.6x damage",
+            "[(prob>0){, and (prob)% chance to dodge their attacks for (_dispTime(time))[(cd>0){, with a cooldown of (_dispTimeF(cd)) per dodge}]}](_right)"],
         "class": {
             "active": {
                 "name": "Stronger Vs. Behemoth",
@@ -1569,6 +1570,10 @@
             "time": {
                 "name": "duration",
                 "tooltip": null
+            },
+            "cd": {
+                "name": "cooldown",
+                "tooltip": "Unit will not be able to dodge after the given amount of frames after proc ends"
             }
         }
     },
