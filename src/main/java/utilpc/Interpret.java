@@ -1183,7 +1183,7 @@ public class Interpret extends Data {
 					.append(UtilPC.lvText(p.fs[i][j], p.levels[i][j])[0]).append("</td></tr>");
 				}
 		ans.append("</table>");
-		ans.append("Preset Cannon: ").append(p.cannonType);
+		ans.append("Preset Cannon: ").append(Arrays.toString(p.nyc));
 		ans.append("<hr><b><h2><center>Preset Treasures</center></h2></b>").append("<table><tr><th>")
 				.append(MainLocale.getLoc(MainLocale.INFO, "name")).append("</th><th>")
 				.append(MainLocale.getLoc(MainLocale.INFO, "eff")).append("</th><th>");

@@ -76,8 +76,9 @@ public class ModifierList extends JList<Object> {
             list.addAll(combos);
         if (st != null) {
             if (st.preset != null && BattlePreset.isCurrentLineupPreset(st.preset)) {
-                if (st.preset.baseHealthBoost)
-                    list.add("Preset Boost: +20000 Base HP");
+                if (st.preset.baseHealthBoost != 0)
+                    list.add("Preset Boost: " + (st.preset.baseHealthBoost>0?"+":"")
+                            + st.preset.baseHealthBoost + " Base HP");
             }
         }
 
