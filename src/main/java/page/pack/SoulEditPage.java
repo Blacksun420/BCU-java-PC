@@ -32,7 +32,7 @@ public class SoulEditPage extends AbViewPage {
     private final JBTN rems = new JBTN(MainLocale.PAGE, "rem");
     private final JBTN srea = new JBTN(MainLocale.PAGE, "reassign");
 
-    private final JTG slayer = new JTG(MainLocale.PAGE, "fixlayer");
+    private final JComboBox<CommonStatic.LayerType> slayer = new JComboBox<>(CommonStatic.LayerType.values());
     private final JL layer = new JL(MainLocale.INFO, "layer");
     private final JTF jlayer = new JTF();
 
@@ -230,9 +230,9 @@ public class SoulEditPage extends AbViewPage {
             jls.repaint();
         });
 
-        slayer.setLnr(l -> {
-            soul.fixedLayer = slayer.isSelected();
-            jlayer.setEnabled(slayer.isSelected());
+        slayer.addActionListener(l -> {
+            soul.layertype = (CommonStatic.LayerType)slayer.getSelectedItem();
+            jlayer.setEnabled(slayer.getSelectedItem() != CommonStatic.LayerType.ORIG);
         });
         jlayer.setLnr(x -> {
             int[] lays = CommonStatic.parseIntsN(jlayer.getText());
@@ -383,7 +383,7 @@ public class SoulEditPage extends AbViewPage {
             jtfs.setText(soul.name);
             jlayer.setText(Interpret.layer(soul.layer_0,soul.layer_1));
             jcbm.setSelectedItem(Identifier.get(s.audio));
-            slayer.setSelected(s.fixedLayer);
+            slayer.setSelectedItem(s.layertype);
             setAnim(s.anim);
         }
 
@@ -393,7 +393,7 @@ public class SoulEditPage extends AbViewPage {
         jcbm.setEnabled(editable);
         jtfs.setEnabled(editable);
         slayer.setEnabled(editable);
-        jlayer.setEnabled(editable && s.fixedLayer);
+        jlayer.setEnabled(editable && slayer.getSelectedItem() != CommonStatic.LayerType.ORIG);
 
         changing = boo;
     }
