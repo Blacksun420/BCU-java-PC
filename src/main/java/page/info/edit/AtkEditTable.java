@@ -134,6 +134,8 @@ class AtkEditTable extends Page {
 				atktr.addSelectionInterval(k, k);
 			else
 				atktr.removeSelectionInterval(k, k);
+		fpre.setEnabled(!adm.str.equals("sacrifice"));
+		getFront().fireDimensionChanged();
 		changing = false;
 	}
 
@@ -267,7 +269,7 @@ class AtkEditTable extends Page {
 				adm.atk = findIdealAtkValue(v);
 			} else if (jtf == fpre) {
 				double w = CommonStatic.parseDoubleN(text);
-				adm.pre = w < 0 ? 1 : convertPreTime(w);
+				adm.pre = w < 0 || adm.str.startsWith("sacrifice") ? 1 : convertPreTime(w);
 				((EntityEditPage)getFront()).sortSpecial(adm.str);
 			} else if (jtf == fp0) {
 				adm.ld0 = v;

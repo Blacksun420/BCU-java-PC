@@ -16,6 +16,7 @@ import page.anim.ImgCutEditPage;
 import page.support.AnimLCR;
 import page.support.SoulLCR;
 import page.view.AbViewPage;
+import utilpc.Interpret;
 
 import javax.swing.*;
 import java.awt.*;
@@ -233,7 +234,15 @@ public class SoulEditPage extends AbViewPage {
             soul.fixedLayer = slayer.isSelected();
             jlayer.setEnabled(slayer.isSelected());
         });
-        jlayer.setLnr(x -> soul.layer = CommonStatic.parseIntN(jlayer.getText()));
+        jlayer.setLnr(x -> {
+            int[] lays = CommonStatic.parseIntsN(jlayer.getText());
+            if (lays.length == 0) {
+                jlayer.setText(Interpret.layer(soul.layer_0,soul.layer_1));
+                return;
+            }
+            soul.layer_0 = lays[0];
+            soul.layer_1 = lays[lays.length == 1 ? 0 : 1];
+        });
 
         jcbm.addActionListener(x -> {
             if (changing || soul == null)
@@ -372,7 +381,7 @@ public class SoulEditPage extends AbViewPage {
 
         if (s != null) {
             jtfs.setText(soul.name);
-            jlayer.setText(String.valueOf(soul.layer));
+            jlayer.setText(Interpret.layer(soul.layer_0,soul.layer_1));
             jcbm.setSelectedItem(Identifier.get(s.audio));
             slayer.setSelected(s.fixedLayer);
             setAnim(s.anim);

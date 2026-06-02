@@ -48,8 +48,8 @@ import static common.util.Data.*;
 public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 
 	private static final long serialVersionUID = 1L;
-	private static final String[] spNames = new String[]{"revenge", "resurrection", "burrow", "resurface", "revive", "entrance"};
-	private static final String[] spcNames = new String[]{"Revenge", "Resurrection", "Counterattack", "Burrow", "Resurface", "Revive", "Entrance"};
+	private static final String[] spNames = new String[]{"revenge", "resurrection", "burrow", "resurface", "revive", "entrance","sacrifice"};
+	private static final String[] spcNames = new String[]{"Revenge", "Resurrection", "Counterattack", "Burrow", "Resurface", "Revive", "Entrance", "Sacrifice"};
 
 	private final JL lhp = new JL(MainLocale.INFO, "HP");
 	private final JL lhb = new JL(MainLocale.INFO, "hb");
@@ -338,7 +338,8 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 				+ "use name \"counterattack\" for a more customizable counterattack (Needs Counter proc parameters still)<br>"
 				+ "use name \"burrow\" for attack during burrow down animation<br>"
 				+ "use name \"resurface\" for attack during burrow up animation<br>"
-				+ "use name \"revive\" for attack during reviving</html>");
+				+ "use name \"revive\" for attack during reviving<br>"
+				+ "use name \"sacrifice\" for attack on self destruct</html>");
 		ftp.setToolTipText(
 				"<html>Modify unit's enemy detection<br>" + "+1 for normal attack<br>" + "+2 to attack kb<br>" + "+4 to attack underground<br>"
 						+ "+8 to attack corpse<br>" + "+16 to attack soul<br>" + "+32 to attack ghost<br>" +
@@ -788,6 +789,12 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 				ce.entrs = Arrays.copyOf(ce.entrs, ce.entrs.length + 1);
 				ce.entrs[ce.entrs.length - 1] = adm;
 				ce.entrs[ce.entrs.length - 1].str = spcNames[selection].toLowerCase() + (ce.entrs.length > 1 ? " " + ce.entrs.length : "");
+				break;
+			case 7:
+				ce.glas = adm;
+				adm.pre = 1;
+				ce.glas.str = spcNames[selection].toLowerCase();
+				break;
 		}
 		return true;
 	}
@@ -1014,23 +1021,23 @@ public abstract class EntityEditPage extends DefaultPage implements EntSupInt {
 		atkn.setText(adm.str);
 		aet.setData(adm, getAtk(), getLvAtk());
 		if (isSp()) {
-			if (adm.str.contains("revenge")) {
+			if (adm.str.startsWith("revenge")) {
 				lpst.setText(MainLocale.INFO, "Post-HB");
 				vpst.setText(MainBCU.convertTime(KB_TIME[INT_HB] + ce.getPost(true, 0)));
-			} else if (adm.str.contains("resurrection")) {
+			} else if (adm.str.startsWith("resurrection")) {
 				lpst.setText(MainLocale.INFO, "Post-Death");
 				Soul s = Identifier.get(ce.death);
 				vpst.setText(s == null ? "-" : MainBCU.convertTime((s.anim.len(AnimU.SOUL[0]) + ce.getPost(true, 1))));
-			} else if (adm.str.contains("counterattack")) {
-				lpst.setText(MainLocale.INFO, "Post-Counter");
+			} else if (adm.str.startsWith("counterattack") || adm.str.startsWith("sacrifice")) {
+				lpst.setText(MainLocale.INFO, "Post-" + (adm.str.startsWith("counterattack") ? "Counter" : "Sacrifice"));
 				vpst.setText("-");
-			} else if (adm.str.contains("burrow")) {
+			} else if (adm.str.startsWith("burrow")) {
 				lpst.setText(MainLocale.INFO, "Post-Bury Atk");
 				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[4].len + ce.getPost(true, 2) + 1));
-			} else if (adm.str.contains("resurface")) {
+			} else if (adm.str.startsWith("resurface")) {
 				lpst.setText(MainLocale.INFO, "Post-Unburrow Atk");
 				vpst.setText(MainBCU.convertTime(ce.getPack().anim.anims[6].len + ce.getPost(true, 3) + 1));
-			} else if (adm.str.contains("revive")) {
+			} else if (adm.str.startsWith("revive")) {
 				lpst.setText(MainLocale.INFO, "Post-Revival Atk");
 				vpst.setText(MainBCU.convertTime(effas().A_ZOMBIE.getEAnim(EffAnim.ZombieEff.REVIVE).len() + ce.getPost(true, 4)));
 			} else {

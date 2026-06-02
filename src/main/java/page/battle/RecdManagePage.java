@@ -14,6 +14,7 @@ import utilpc.UtilPC;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.Comparator;
 import java.util.Vector;
 
 public class RecdManagePage extends AbRecdPage {
@@ -59,6 +60,7 @@ public class RecdManagePage extends AbRecdPage {
 		Vector<MapColc> cols = new Vector<>(jlm.getSelectedValuesList());
 		if (!cols.isEmpty())
 			replays.removeIf(re -> re.st.safeGet() == null || !cols.contains(re.st.get().getMC()));
+		replays.sort(Comparator.comparing(rep0 -> rep0.rl.id));
 		jlr.setListData(replays);
 		jlr.setSelectedValue(r, true);
 		setRecd(r);
@@ -107,6 +109,7 @@ public class RecdManagePage extends AbRecdPage {
 			if (!Replay.getMap().containsKey(name) || Opts.conf("A replay named " + name + " already exists. Do you wish to overwrite?"))
 				r.rename(name);
 			rena.setText(r.rl.id);
+			fireDimensionChanged();
 			jlr.revalidate();
 			jlr.repaint();
 		});

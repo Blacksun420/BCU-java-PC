@@ -211,7 +211,7 @@ public class BattleSetupPage extends LubCont {
 		pre.addActionListener(x -> {
 			//if (!Opts.conf("This will replace your current lineup, and adjust treasure/cannon values for the lineup's set. Continue anyway?"))
 			//	return;
-			callBack(null);
+			renew();
 			//BattlePreset.generateBasis(st.preset);
 			//renew();
 		});

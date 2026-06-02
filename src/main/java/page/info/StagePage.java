@@ -97,6 +97,11 @@ public class StagePage extends DefaultPage {
 		});
 
 		binf.setLnr(x -> Opts.pop(getInfo(), stage + " info"));
+
+		pres.setLnr(x -> {
+			if (stage != null && stage.preset != null)
+				Opts.pop(Interpret.readBattlePreset(stage.preset), "preset lineup");
+		});
 	}
 
 	private String getInfo() {
@@ -123,11 +128,6 @@ public class StagePage extends DefaultPage {
 				str.append("<tr><td>").append(newUnlock).append("</td></tr>");
 		}
 		return str.toString();
-
-		pres.setLnr(x -> {
-			if (stage != null && stage.preset != null)
-				Opts.pop(Interpret.readBattlePreset(stage.preset), "preset lineup");
-		});
 	}
 
 	private void ini() {

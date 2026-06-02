@@ -17,10 +17,7 @@ import common.util.stage.*;
 import common.util.stage.info.CustomStageInfo;
 import common.util.stage.info.DefStageInfo;
 import common.util.stage.info.StageInfo;
-import common.util.unit.Combo;
-import common.util.unit.Enemy;
-import common.util.unit.Form;
-import common.util.unit.Trait;
+import common.util.unit.*;
 import main.MainBCU;
 import page.MainLocale;
 import page.Page;
@@ -451,7 +448,7 @@ public class Interpret extends Data {
 			}
 		}
 
-		if (!du.isCommon()) {
+		if (!du.isCommon()) {//TODO: Remove duplicate proc icons
 			AtkDataModel[][] sps = du.getSpAtks(true);
 			for (int i = 0; i < sps.length; i++)
 				for (int j = 0; j < sps[i].length; j++) {
@@ -464,7 +461,8 @@ public class Interpret extends Data {
 
 							String format = ProcLang.get().get(k).format;
 							String formatted = Formatter.format(format, item, ctx);
-							l.add(new ProcDisplay(formatted + " [" + Page.get(MainLocale.UTIL, "aa" + ((du.getCounter() == null && i >= 2 ? 7 : 6) + i)) + " #" + j + "]", UtilPC.getIcon(1, k), item));
+							l.add(new ProcDisplay(formatted + " [" + Page.get(MainLocale.UTIL, "aa" + ((du.getCounter() == null && i >= 2 ? 7 : 6) + i))
+									+ (sps[i].length == 1 ? "" : (" #" + (j+1) + "]")), UtilPC.getIcon(item,1, k), item));
 						}
 				}
 		}
@@ -1259,6 +1257,41 @@ public class Interpret extends Data {
 	public static String getGroupTooltip(CharaGroup group) {
 		String type = Page.get(0, group.type == 0 ? "include" : "exclude");
 		return "<html>" + type + "<br>" + group.fset.stream().map(Form::toString).collect(Collectors.joining("<br>")) + "</html>";
+	}
+
+	public static String readBattlePreset(BattlePreset bp) {
+		StringBuilder ans = new StringBuilder("<html>");
+
+		ans.append("<br><table><tr><th align='left'>")
+				.append(Page.get(MainLocale.INFO, "unit")).append("</th><th align='left'>")
+				.append("Level").append("</th><th align='left'>")
+				.append(Page.get(MainLocale.INFO, "orb")).append("</th></tr>");
+
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 5; j++) {
+				Form form = bp.fs[i][j];
+				Level lv = bp.levels[i][j];
+				if (form == null)
+					continue;
+				int[][] orbs = lv.getOrbs();
+
+				ans.append("<tr><td>")
+						.append(form).append("</td><td>")
+						.append(UtilPC.lvText(form, lv)[0]).append("</td>");
+				if (lv.getOrbs() != null) {
+					// todo: read orb data
+				}
+				ans.append("</tr>");
+			}
+		}
+
+		ans.append("</table><br><br>");
+
+		// todo: add more battle preset info
+
+		ans.append("</html>");
+
+		return ans.toString();
 	}
 
 	public static String layer(int back, int front) {
