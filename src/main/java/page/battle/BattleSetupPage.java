@@ -254,8 +254,8 @@ public class BattleSetupPage extends LubCont {
 
 			lvlim.setModel(new DefaultComboBoxModel<>(levLimitText));
 
-			plus.setToolTipText(MainLocale.getLoc(MainLocale.PAGE, "plusunlocktip"));
-			lvlim.setToolTipText(MainLocale.getLoc(MainLocale.PAGE, "levellimit"));
+			plus.setToolTipText(MainLocale.getLoc(MainLocale.TIPS, "plusunlocktip"));
+			lvlim.setToolTipText(MainLocale.getLoc(MainLocale.TIPS, "levellimit"));
 
 			plus.setSelected(CommonStatic.getConfig().plus);
 			lvlim.setSelectedIndex(CommonStatic.getConfig().levelLimit);

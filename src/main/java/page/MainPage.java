@@ -33,7 +33,7 @@ public class MainPage extends Page {
 	}
 	public static void redefine() {
 		TIP_COUNT = -1;
-		while (!get(MainLocale.PAGE, "tip" + (TIP_COUNT + 1)).equals("tip" + (TIP_COUNT + 1)))
+		while (!get(MainLocale.TIPS, "tip" + (TIP_COUNT + 1)).equals("tip" + (TIP_COUNT + 1)))
 			TIP_COUNT++;
 	}
 
@@ -67,7 +67,7 @@ public class MainPage extends Page {
 	private final JBTN bckp = new JBTN(MainLocale.PAGE, "backup");
 	private final JBTN logs = new JBTN(MainLocale.PAGE, "logs");
 
-	private final JBTN refr = new JBTN(MainLocale.PAGE, "refrtips");
+	private final JBTN refr = new JBTN(MainLocale.TIPS, "refrtips");
 	private final JLabel tips = new JLabel();
 	private final JScrollPane stips = new JScrollPane(tips);
 
@@ -183,85 +183,85 @@ public class MainPage extends Page {
 
 	private void ini() {
 		add(vuni);
-		vuni.setToolTipText(get(MainLocale.PAGE,"vunitip"));
+		vuni.setToolTipText(get(MainLocale.TIPS,"vunitip"));
 
 		add(vene);
-		vene.setToolTipText(get(MainLocale.PAGE,"venetip"));
+		vene.setToolTipText(get(MainLocale.TIPS,"venetip"));
 
 		add(vsta);
-		vsta.setToolTipText(get(MainLocale.PAGE,"vstatip"));
+		vsta.setToolTipText(get(MainLocale.TIPS,"vstatip"));
 
 		add(vdiy);
-		vdiy.setToolTipText(get(MainLocale.PAGE,"vdiytip"));
+		vdiy.setToolTipText(get(MainLocale.TIPS,"vdiytip"));
 
 		add(conf);
-		conf.setToolTipText(get(MainLocale.PAGE,"conftip"));
+		conf.setToolTipText(get(MainLocale.TIPS,"conftip"));
 
 		add(veff);
-		veff.setToolTipText(get(MainLocale.PAGE,"vefftip"));
+		veff.setToolTipText(get(MainLocale.TIPS,"vefftip"));
 
 		add(vcas);
-		vcas.setToolTipText(get(MainLocale.PAGE,"vcastip"));
+		vcas.setToolTipText(get(MainLocale.TIPS,"vcastip"));
 
 		add(vbgr);
-		vbgr.setToolTipText(get(MainLocale.PAGE,"vbgrtip"));
+		vbgr.setToolTipText(get(MainLocale.TIPS,"vbgrtip"));
 
 		add(veif);
-		veif.setToolTipText(get(MainLocale.PAGE,"veiftip"));
+		veif.setToolTipText(get(MainLocale.TIPS,"veiftip"));
 
 		add(vuif);
-		vuif.setToolTipText(get(MainLocale.PAGE,"vuiftip"));
+		vuif.setToolTipText(get(MainLocale.TIPS,"vuiftip"));
 
 		add(vmsc);
-		vmsc.setToolTipText(get(MainLocale.PAGE,"vmsctip"));
+		vmsc.setToolTipText(get(MainLocale.TIPS,"vmsctip"));
 
 		add(bass);
-		bass.setToolTipText(get(MainLocale.PAGE,"basstip"));
+		bass.setToolTipText(get(MainLocale.TIPS,"basstip"));
 
 		add(memo);
 		add(curr);
-		curr.setToolTipText(get(MainLocale.PAGE,"currtip"));
+		curr.setToolTipText(get(MainLocale.TIPS,"currtip"));
 
 		add(pcus);
-		pcus.setToolTipText(get(MainLocale.PAGE,"pcustip"));
+		pcus.setToolTipText(get(MainLocale.TIPS,"pcustip"));
 
 		add(caic);
-		caic.setToolTipText(get(MainLocale.PAGE,"caictip"));
+		caic.setToolTipText(get(MainLocale.TIPS,"caictip"));
 
 		add(camm);
-		camm.setToolTipText(get(MainLocale.PAGE,"cammtip"));
+		camm.setToolTipText(get(MainLocale.TIPS,"cammtip"));
 
 		add(cama);
-		cama.setToolTipText(get(MainLocale.PAGE,"camatip"));
+		cama.setToolTipText(get(MainLocale.TIPS,"camatip"));
 
 		add(save);
-		save.setToolTipText(get(MainLocale.PAGE,"savetip"));
+		save.setToolTipText(get(MainLocale.TIPS,"savetip"));
 
 		add(sgifau);
 		add(welcome);
 		add(rply);
-		rply.setToolTipText(get(MainLocale.PAGE,"rplytip"));
+		rply.setToolTipText(get(MainLocale.TIPS,"rplytip"));
 
 		add(allf);
-		allf.setToolTipText(get(MainLocale.PAGE,"allftip"));
+		allf.setToolTipText(get(MainLocale.TIPS,"allftip"));
 
 		add(auth);
-		auth.setToolTipText(get(MainLocale.PAGE,"authtip"));
+		auth.setToolTipText(get(MainLocale.TIPS,"authtip"));
 
 		add(comp);
-		comp.setToolTipText(get(MainLocale.PAGE,"comptip"));
+		comp.setToolTipText(get(MainLocale.TIPS,"comptip"));
 
 		add(bckp);
-		bckp.setToolTipText(get(MainLocale.PAGE,"bckptip"));
+		bckp.setToolTipText(get(MainLocale.TIPS,"bckptip"));
 
 		add(logs);
-		logs.setToolTipText(""); // TODO: Logs tool tip
+		logs.setToolTipText(get(MainLocale.TIPS,"errltip"));
 
 		add(refr);
 		add(stips);
 
 		add(ui);
-		ui.setToolTipText(get(MainLocale.PAGE,"ui-tip"));
+		ui.setToolTipText(get(MainLocale.TIPS,"uitip"));
 
 		welcome.setVisible(!MainBCU.author.isEmpty());
 
@@ -280,7 +280,7 @@ public class MainPage extends Page {
 
 	private void refrTips() {
 		int sTip = (int)(Math.random() * TIP_COUNT);
-		this.tips.setText("<html>" + get(MainLocale.PAGE, "tip"+sTip) + "</html>");
+		this.tips.setText("<html>" + get(MainLocale.TIPS, "tip"+sTip) + "</html>");
 	}
 
 	private final JBTN ui = new JBTN(0, "UI Plugin");

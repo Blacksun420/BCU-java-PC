@@ -232,7 +232,11 @@ public class SoulEditPage extends AbViewPage {
 
         slayer.addActionListener(l -> {
             soul.layertype = (CommonStatic.LayerType)slayer.getSelectedItem();
-            jlayer.setEnabled(slayer.getSelectedItem() != CommonStatic.LayerType.ORIG);
+            jlayer.setEnabled(soul.layertype != CommonStatic.LayerType.ORIG);
+            if (soul.layertype == CommonStatic.LayerType.ORIG) {
+                soul.layer_0 = soul.layer_1 = 0;
+                jlayer.setText("0");
+            }
         });
         jlayer.setLnr(x -> {
             int[] lays = CommonStatic.parseIntsN(jlayer.getText());
@@ -242,6 +246,7 @@ public class SoulEditPage extends AbViewPage {
             }
             soul.layer_0 = lays[0];
             soul.layer_1 = lays[lays.length == 1 ? 0 : 1];
+            jlayer.setText(Interpret.layer(soul.layer_0,soul.layer_1));
         });
 
         jcbm.addActionListener(x -> {

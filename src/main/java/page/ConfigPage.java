@@ -551,14 +551,14 @@ public class ConfigPage extends DefaultPage {
 		jsbg.setEnabled(BCMusic.play);
 		jsse.setEnabled(BCMusic.play);
 		jcsnd.setEnabled(BCMusic.play);
-		jcraw.setToolTipText(get(MainLocale.PAGE, "rawdmgtip"));
+		jcraw.setToolTipText(get(MainLocale.TIPS, "rawdmgtip"));
 		if (cfg().maxBackup != -1)
 			jsba.setValue(cfg().maxBackup);
 		else
 			jsba.setEnabled(false);
-		reallv.setToolTipText(get(MainLocale.PAGE, "reallvtip"));
-		pkprog.setToolTipText(get(MainLocale.PAGE, "pkprogtip"));
-		stat.setToolTipText(get(MainLocale.PAGE, "defstattip"));
+		reallv.setToolTipText(get(MainLocale.TIPS, "reallvtip"));
+		pkprog.setToolTipText(get(MainLocale.TIPS, "pkprogtip"));
+		stat.setToolTipText(get(MainLocale.TIPS, "defstattip"));
 		tole.setText(String.valueOf(MainBCU.searchTolerance));
 		comv.setBorder(null);
 		addListeners();

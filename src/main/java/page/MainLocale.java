@@ -21,13 +21,11 @@ import java.util.Map.Entry;
 
 public strictfp class MainLocale {
 
-	public static final int PAGE = 0;
-	public static final int INFO = 1;
-	public static final int UTIL = 2;
+	public static final int PAGE = 0, INFO = 1, UTIL = 2, TIPS = 3;
 	public static final Map<String, MainLocale> NAMP = new TreeMap<>();
 	public static final Map<String, TTT> TMAP = new TreeMap<>();
 	public static final Lang.Locale[] LOC_LIST = { Lang.Locale.EN, Lang.Locale.ZH, Lang.Locale.KR, Lang.Locale.JP, Lang.Locale.RU, Lang.Locale.DE, Lang.Locale.FR, Lang.Locale.ES, Lang.Locale.IT, Lang.Locale.TH };
-	public static final String[] RENN = { "page", "info", "util" };
+	public static final String[] RENN = { "page", "info", "util", "tips" };
 	private static final ResourceBundle[] RENS = new ResourceBundle[3];
 
 	static {
