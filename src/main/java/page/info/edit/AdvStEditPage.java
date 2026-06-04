@@ -125,6 +125,7 @@ public class AdvStEditPage extends DefaultPage {
 	private final JTF jtMults = new JTF();
 	private final JBTN addrev = new JBTN(MainLocale.PAGE, "add");
 	private final JBTN bossType = new JBTN(MainLocale.PAGE, "b0");
+	private final JTF jprops = new JTF(get(MainLocale.INFO, "baseprops")+":");
 	private Revival rev;
 	private boolean addEne = false, rewUni = false, summons;
 
@@ -172,6 +173,7 @@ public class AdvStEditPage extends DefaultPage {
 		set(jubas, x, y, w, 1050, 300, 50);
 		set(lves, x, y, w, 1100, 300, 50);
 		set(ubaslv, x, y, w, 1150, 300, 50);
+		set(jprops, x, y, w, 1200, 300, 50);
 		w += 350;
 
 		set(jsines, x, y, w, 100, 300, 800);
@@ -247,7 +249,7 @@ public class AdvStEditPage extends DefaultPage {
 				jprob.setText("");
 			else
 				jprob.setText(((CustomStageInfo)st.info).chances.get(jex.getSelectedIndex()) + "%");
-			jprob.setEnabled(!jprob.getText().equals(""));
+			jprob.setEnabled(!jprob.getText().isEmpty());
 		});
 
 		addex.setLnr(e -> {
@@ -342,6 +344,12 @@ public class AdvStEditPage extends DefaultPage {
 				return;
 			csi.lv.setLvs(Level.lvList(csi.ubase.unit(), CommonStatic.parseIntsN(ubaslv.getText()), null));
 			ubaslv.setText(UtilPC.lvText(csi.ubase, csi.lv)[0]);
+		});
+
+		jprops.setLnr(r -> {
+			CustomStageInfo csi = (CustomStageInfo)st.info;
+			csi.props = CommonStatic.parseIntN(jprops.getText());
+			jprops.setText(get(MainLocale.INFO, "baseprops")+":"+csi.props);
 		});
 
 		equal.setLnr(e -> {
@@ -511,6 +519,8 @@ public class AdvStEditPage extends DefaultPage {
 		add(jltprob);
 		add(jtprob);
 		add(equal);
+		add(jprops);
+		jprops.setToolTipText(get(MainLocale.TIPS,"basepropstip"));
 		add(jubas);
 		add(jurwd);
 		add(addrw);
@@ -627,6 +637,7 @@ public class AdvStEditPage extends DefaultPage {
 			ubaslv.setText("");
 			lves.setText("");
 			jubas.setIcon(null);
+			jprops.setEnabled(false);
 			jubas.setText(get(MainLocale.PAGE, "ubase"));
 			return;
 		}
@@ -635,6 +646,8 @@ public class AdvStEditPage extends DefaultPage {
 		String[] lvss = UtilPC.lvText(csi.ubase, csi.lv);
 		lves.setText(lvss[1]);
 		ubaslv.setText(lvss[0]);
+		jprops.setEnabled(true);
+		jprops.setText(get(MainLocale.INFO, "baseprops")+":"+csi.props);
 		if (csi.ubase.getIcon() != null)
 			jubas.setIcon(new ImageIcon((BufferedImage) csi.ubase.getIcon().getImg().bimg()));
 		jubas.setText(csi.ubase.toString());
@@ -689,7 +702,7 @@ public class AdvStEditPage extends DefaultPage {
 
 	@Override
 	public void renew() {
-		if (svp != null && svp.getSelectedStages().size() > 0) {
+		if (svp != null && !svp.getSelectedStages().isEmpty()) {
 			if (st.info == null)
 				st.info = new CustomStageInfo(st);
 			CustomStageInfo csi = (CustomStageInfo)st.info;
@@ -759,6 +772,7 @@ public class AdvStEditPage extends DefaultPage {
 				if (csi.ubase != null)
 					csi.lv = csi.ubase.unit().getPrefLvs();
 				else {
+					csi.props = 0;
 					csi.lv = null;
 					csi.destroy(true);
 				}

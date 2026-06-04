@@ -20,6 +20,10 @@
             "dis": {
                 "name": "distance",
                 "tooltip": "enter 0 for default value"
+            },
+            "conditions": {
+                "name": "Conditions",
+                "tooltip": "Pre-ATK: Conditions are checked when applying procs to the attack/Post-ATK: Conditions are checked when applying proc to the unit"
             }
         }
     },
@@ -40,6 +44,10 @@
             "mult": {
                 "name": "strength",
                 "tooltip": "Set to 0 for default BC freeze. Set to any number above 0 and below 100 to slow down enemy's timeFlow. Set to negative to speed it up instead"
+            },
+            "conditions": {
+                "name": "Conditions",
+                "tooltip": "Pre-ATK: Conditions are checked when applying procs to the attack/Post-ATK: Conditions are checked when applying proc to the unit"
             }
         }
     },
@@ -56,6 +64,10 @@
             "time": {
                 "name": "duration",
                 "tooltip": "actual duration is subjected to treasure values and traits. Set duration to negative to override only if proc duration is higher"
+            },
+            "conditions": {
+                "name": "Conditions",
+                "tooltip": "Pre-ATK: Conditions are checked when applying procs to the attack/Post-ATK: Conditions are checked when applying proc to the unit"
             }
         }
     },
@@ -76,6 +88,10 @@
             "mult": {
                 "name": "multiplier",
                 "tooltip": "default value is 200. enter negative value for water cannon type attack that deal percent damage to metal enemies."
+            },
+            "conditions": {
+                "name": "Conditions",
+                "tooltip": "Pre-ATK: Conditions are checked when applying procs to the attack/Post-ATK: Conditions are checked when applying proc to the unit"
             }
         }
     },

@@ -62,6 +62,8 @@ public class UREditPage extends DefaultPage {
     private final JTF jost = new JTF();
     private final JL cd = new JL(MainLocale.INFO, "cdo");
     private final JTF jd = new JTF();
+    private final JL icd = new JL(MainLocale.INFO, "icd");
+    private final JTF jid = new JTF();
     private final JLabel uni = new JLabel();
     private final JList<AbForm> jlu = new JList<>();
     private final JScrollPane jspe = new JScrollPane(jlu);
@@ -125,8 +127,10 @@ public class UREditPage extends DefaultPage {
 
         set(jost, x, y, 150, 350, 100, 50);
         set(cost, x, y, 250, 350, 200, 50);
-        set(jd, x, y, 150, 400, 100, 50);
-        set(cd, x, y, 250, 400, 200, 50);
+        set(cd, x, y, 100, 400, 150, 50);
+        set(jd, x, y, 250, 400, 200, 50);
+        set(icd, x, y, 100, 450, 150, 50);
+        set(jid, x, y, 250, 450, 200, 50);
 
         for (int i = 0; i < 3; i++)
             set(type[i], x, y, 1550 + 250 * i, 250, 200, 50);
@@ -243,6 +247,18 @@ public class UREditPage extends DefaultPage {
 
         });
 
+        jd.addFocusListener(new FocusAdapter() {
+
+            @Override
+            public void focusLost(FocusEvent fe) {
+                if (rand == null)
+                    return;
+                rand.initial_cd = bas.t().getIniRes(CommonStatic.parseIntN(jd.getText().trim()));
+                setUR(rand);
+            }
+
+        });
+
         for (byte i = 0; i < 3; i++) {
             byte I = i;
             type[i].addActionListener(arg0 -> {
@@ -293,6 +309,8 @@ public class UREditPage extends DefaultPage {
         add(jost);
         add(cd);
         add(jd);
+        add(icd);
+        add(jid);
         for (int i = 0; i < 3; i++)
             add(type[i] = new JTG(1, "ert" + i));
         setES();
@@ -326,6 +344,7 @@ public class UREditPage extends DefaultPage {
             if (t != -1) {
                 jost.setText("" + st.price * 1.5);
                 jd.setText("" + bas.t().getFinRes(st.cooldown, bas.getInc(Data.C_RESP)));
+                jid.setText("" + bas.t().getFinRes(st.initial_cd, bas.getInc(Data.C_RESP)));
             }
             jspjt.scrollRectToVisible(new Rectangle(0, 0, 1, 1));
         });
@@ -341,7 +360,7 @@ public class UREditPage extends DefaultPage {
         adds.setEnabled(pack.editable);
         List<UniRand> l = pack.randUnits.getList();
         jlst.setListData(l.toArray(new UniRand[0]));
-        if (l.size() == 0) {
+        if (l.isEmpty()) {
             jlst.clearSelection();
             setUR(null);
             return;

@@ -9,10 +9,7 @@ import common.pack.UserProfile;
 import common.system.Node;
 import common.util.unit.Form;
 import common.util.unit.Unit;
-import page.JBTN;
-import page.JL;
-import page.JTF;
-import page.Page;
+import page.*;
 import page.info.UnitInfoPage;
 import page.info.filter.UnitEditBox;
 import utilpc.Interpret;
@@ -21,19 +18,21 @@ public class FormEditPage extends EntityEditPage {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JL llv = new JL(1, "Lv");
-	private final JL ldr = new JL(1, "price");
-	private final JL lrs = new JL(1, "cdo");
-	private final JL llr = new JL(1, "t7");
+	private final JL llv = new JL(MainLocale.INFO, "Lv");
+	private final JL ldr = new JL(MainLocale.INFO, "price");
+	private final JL lrs = new JL(MainLocale.INFO, "cdo");
+	private final JL llr = new JL(MainLocale.INFO, "t7");
+	private final JL lic = new JL(MainLocale.INFO, "icd");
 	private final JTF fdr = new JTF();
 	private final JTF flv = new JTF();
 	private final JTF frs = new JTF();
 	private final JTF flr = new JTF();
-	private final JBTN vuni = new JBTN(0, "vuni");
-	private final JBTN stat = new JBTN(0, "stat");
-	private final JBTN impt = new JBTN(0, "import");
-	private final JBTN vene = new JBTN(0, "enemy");
-	private final JBTN pcoin = new JBTN(0, "pcoin");
+	private final JTF fic = new JTF();
+	private final JBTN vuni = new JBTN(MainLocale.PAGE, "vuni");
+	private final JBTN stat = new JBTN(MainLocale.PAGE, "stat");
+	private final JBTN impt = new JBTN(MainLocale.PAGE, "import");
+	private final JBTN vene = new JBTN(MainLocale.PAGE, "enemy");
+	private final JBTN pcoin = new JBTN(MainLocale.PAGE, "pcoin");
 	private final JBTN pf = new JBTN("<");
 	private final JBTN nf = new JBTN(">");
 	private final UnitEditBox ueb;
@@ -80,15 +79,18 @@ public class FormEditPage extends EntityEditPage {
 	protected void getInput(JTF jtf, int[] v) {
 		if (jtf == fdr)
 			cu.price = (int) (v[0] / 1.5);
-		if (jtf == flv) {
+		else if (jtf == flv) {
 			if (v[0] <= 0)
 				v[0] = 1;
 			lv = v[0];
-		}
-		if (jtf == frs) {
+		} else if (jtf == frs) {
 			if (v[0] <= 60)
 				v[0] = 60;
 			cu.resp = bas.t().getRevRes(v[0]);
+		} else if (jtf == fic) {
+			if (v[0] < 0)
+				v[0] = 0;
+			cu.ini_resp = bas.t().getIniRes(v[0]);
 		}
 		if (jtf == flr) {
 			try {
@@ -132,6 +134,8 @@ public class FormEditPage extends EntityEditPage {
 		super.ini();
 
 		set(flr);
+		add(lic);
+		set(fic);
 
 		add(ueb);
 
@@ -172,6 +176,8 @@ public class FormEditPage extends EntityEditPage {
 		set(frs, x, y, 1150, 50, 200, 50);
 		set(llr, x, y, 1350, 50, 100, 50);
 		set(flr, x, y, 1450, 50, 200, 50);
+		set(lic, x, y, 1650, 50, 150, 50);
+		set(fic, x, y, 1800, 50, 200, 50);
 		set(ueb, x, y, 50, 650, 600, 500);
 		if (pack.editable) {
 			set(vuni, x, y, 1800, 1100, 200, 50);
@@ -187,12 +193,13 @@ public class FormEditPage extends EntityEditPage {
 		short nx = 350, w = 300;
 		if (form.fid > 0)
 			nx += 150;
+		int ny = form.du.getAtkTypeCount() == 1 ? 50 : 0;
 		if (form.fid + 1 < form.unit.forms.length) {
 			if (nx == 500)
 				w -= 150;
-			set(nf, x, y, nx, 50, w, 50);
+			set(nf, x, y, nx, ny, w, 50);
 		}
-		set(pf, x, y, 350, 50, w, 50);
+		set(pf, x, y, 350, ny, w, 50);
 	}
 
 	@Override
@@ -206,6 +213,7 @@ public class FormEditPage extends EntityEditPage {
 		fli.setToolTipText("<html>This unit will always stay at least "
 				+ cu.getLimit()
 				+ " units away from the max stage length<br>once it passes that threshold.");
+		fic.setText(String.valueOf(bas.t().getIniRes(cu.getFirstRespawn(), 0)));
 		ueb.setData(cu.abi, data.traits);
 		if (cu.getPCoin() != null) {
 			cu.pcoin.verify();

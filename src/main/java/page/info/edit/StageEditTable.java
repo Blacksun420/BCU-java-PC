@@ -430,7 +430,7 @@ public class StageEditTable extends AbJTable implements Reorderable {
 			return data.score;
 		return null;
 	}
-
+	//r: row, c: column, v: value
 	private void set(int r, int c, int v, int para) {
 		if (changing)
 			return;
@@ -441,7 +441,7 @@ public class StageEditTable extends AbJTable implements Reorderable {
 		if (c == 1 && (v < 0 || para == -1))
 			return;
 
-		if (c != 5 && c != 7 && v < 0)
+		if (!(c == 4 && r == 0) && c != 5 && c != 7 && v < 0)
 			v = 0;
 
 		if (c == 0 && v > 2)

@@ -26,7 +26,7 @@ public strictfp class MainLocale {
 	public static final Map<String, TTT> TMAP = new TreeMap<>();
 	public static final Lang.Locale[] LOC_LIST = { Lang.Locale.EN, Lang.Locale.ZH, Lang.Locale.KR, Lang.Locale.JP, Lang.Locale.RU, Lang.Locale.DE, Lang.Locale.FR, Lang.Locale.ES, Lang.Locale.IT, Lang.Locale.TH };
 	public static final String[] RENN = { "page", "info", "util", "tips" };
-	private static final ResourceBundle[] RENS = new ResourceBundle[3];
+	private static final ResourceBundle[] RENS = new ResourceBundle[4];
 
 	static {
 		for (int i = 0; i < RENN.length; i++)
