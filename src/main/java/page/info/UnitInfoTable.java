@@ -94,7 +94,6 @@ public class UnitInfoTable extends CharacterInfoTable {
 	}
 
 	protected void reset() {
-		JLabel pcoin = getPCoinLabel();
 		EForm ef = new EForm(f, multi);
 		double mul = f.unit.lv.getMult(multi.getTotalLv());
 		double atk = b.t().getAtkMulti();
@@ -155,11 +154,11 @@ public class UnitInfoTable extends CharacterInfoTable {
 			});
 		}
 		if (pc != null) {
-			add(pcoin = proc[ls.size()] = new JLabel(UtilPC.lvText(f, multi)[1]));
+			JLabel pcoin = proc[ls.size()] = new JLabel(UtilPC.lvText(f, multi)[1]);
+			add(pcoin);
 			pcoin.setBorder(BorderFactory.createEtchedBorder());
-		} else
-			pcoin = null;
-		updateTooltips();
+		}
+        updateTooltips();
 	}
 
 	@Override
@@ -216,9 +215,6 @@ public class UnitInfoTable extends CharacterInfoTable {
 		}
 		add(jtf);
 		jtf.setText(UtilPC.lvText(f, multi)[0]);
-		JLabel pcoin = getPCoinLabel();
-		if (pcoin != null)
-			add(pcoin);
 
 		if (!isBC && UserProfile.getUserPack(f.uid.pack).save != null) {
 			String st = String.valueOf(UserProfile.getUserPack(f.uid.pack).save.unlockedAt(f));

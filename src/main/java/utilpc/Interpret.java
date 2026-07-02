@@ -462,7 +462,7 @@ public class Interpret extends Data {
 							String format = ProcLang.get().get(k).format;
 							String formatted = Formatter.format(format, item, ctx);
 							l.add(new ProcDisplay(formatted + " [" + Page.get(MainLocale.UTIL, "aa" + ((du.getCounter() == null && i >= 2 ? 7 : 6) + i))
-									+ (sps[i].length == 1 ? "" : (" #" + (j+1) + "]")), UtilPC.getIcon(item,1, k), item));
+									+ (sps[i].length == 1 ? "]" : (" #" + (j+1) + "]")), UtilPC.getIcon(item,1, k), item));
 						}
 				}
 		}
