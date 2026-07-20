@@ -12,7 +12,6 @@ import common.util.lang.Editors.Editor;
 import common.util.lang.Editors.EditorGroup;
 import common.util.lang.Editors.EditorSupplier;
 import common.util.lang.Formatter;
-import common.util.lang.LocaleCenter;
 import common.util.lang.ProcLang;
 import common.util.unit.EneRand;
 import common.util.unit.Trait;

@@ -1144,9 +1144,11 @@ public class Interpret extends Data {
 		if (sl.cannonMultiplier != 100)
 			ans.append("<br> Cat Cannon Power: ").append(sl.cannonMultiplier);
 		if (sl.unitSpeedOverride > 0)
-			ans.append("<br> Unit Speed Limit: ").append(sl.unitSpeedOverride);
+			ans.append("<br> Unit Speed Limit: ").append(sl.unitSpeedOverrideMode == StageLimit.SpeedOverrideMode.MULTIPLY ? "x" : "").append(sl.unitSpeedOverride);
 		if (sl.enemySpeedOverride > 0)
-			ans.append("<br> Enemy Speed Limit: ").append(sl.enemySpeedOverride);
+			ans.append("<br> Enemy Speed Limit: ").append(sl.enemySpeedOverrideMode == StageLimit.SpeedOverrideMode.MULTIPLY ? "x" : "").append(sl.enemySpeedOverride);
+		if (sl.costIncreaseValue != 0)
+				ans.append("<br> Cost Increase: ").append(sl.costIncreaseMode == StageLimit.CostIncreaseMode.MULTIPLY ? "x" : "+").append(sl.costIncreaseValue).append(" ~ ").append(sl.costMaxIncreaseValue);
 		if (!sl.defMoney() || !sl.defCD() || !sl.defDeploy() || !sl.defDupe()) {
 			ans.append("<br><table><tr><th>")
 					.append(MainLocale.getLoc(MainLocale.INFO, "ht10")).append("</th><th>")
