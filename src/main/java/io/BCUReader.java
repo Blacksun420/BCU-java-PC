@@ -195,7 +195,7 @@ public class BCUReader extends DataIO {
 										List<Combo> combo = Arrays.stream(UserProfile.getBCData().combos.toArray())
 												.filter(c -> c.name.equals(str[0]))
 												.collect(Collectors.toList());
-										if (combo.size() > 0)
+										if (!combo.isEmpty())
 											MultiLangCont.getStatic().COMNAME.put(locale, combo.get(0), str[1]);
 									}
 								}

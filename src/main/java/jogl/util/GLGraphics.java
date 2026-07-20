@@ -58,6 +58,11 @@ public class GLGraphics implements GeoAuto {
 		protected void drawOval(float i, float j, float k, float l) {
 			checkMode();
 			setColor();
+			
+			i *= 2;
+			j *= 2;
+			k *= 2;
+			l *= 2;
 
 			float endX = i+k;
 
@@ -92,6 +97,11 @@ public class GLGraphics implements GeoAuto {
 		protected void fillOval(float i, float j, float k, float l) {
 			checkMode();
 			setColor();
+
+			i *= 2;
+			j *= 2;
+			k *= 2;
+			l *= 2;
 
 			float endX = i+k;
 

@@ -669,8 +669,9 @@
             "[(bond_hp){the summoner's hp will be bound with each summoned entity's hp, }]",
             "[(pass_proc==0){and }]are[(ignore_limit){n't}] restricted by the stage entity limit",
             "[(pass_proc!=0){, and carry all procs from [(pass_proc!=2){the summoner}][(pass_proc==3){ and }][(pass_proc!=1){ each entity hit}]}]. ",
-            "Summoned entities will be in [(min_layer==max_layer){[(min_layer==-1){the same layer as this entity}(min_layer!=-1){layer (min_layer)}]}",
-            "(min_layer!=max_layer){a random layer between (min_layer) and (max_layer)}]. ",
+            "[(type.layer_type==0){in same layer as summoner}",
+            "(type.layer_type==1|type.layer_type==2){on layer [(min_layer==max_layer){(min_layer)}(min_layer!=max_layer){(min_layer)~(max_layer)}]}",
+            "(type.layer_type==2){ relative to summoner}]. ",
             "[(!(_strEqual(anim_type,`NONE))){Summon will display [((_strEqual(anim_type,`WARP))){warp}((_strEqual(anim_type,`BURROW))|(_strEqual(anim_type,`BURROW_DISABLE)))",
             "{burrow}((_strEqual(anim_type,`ENTRY))){entry}((_strEqual(anim_type,`ATTACK))){attack}((_strEqual(anim_type,`EVERYWHERE_DOOR))){Everywhere Door}] ",
             "animation[((_strEqual(anim_type,`BURROW_DISABLE`))){ and disable burrow for summoned entities}].}]"
@@ -773,6 +774,14 @@
             "interval": {
                 "name": "Interval",
                 "tooltip": "Interval of time between the first and subsequent summons, similar to respawn"
+            },
+            "layer_type": {
+                "name": "layer type",
+                "tooltip": [
+                    "0 (original): Use exact layer of summoner for summon.<br>",
+                    "1 (set): Set layer of summon.<br>",
+                    "2 (relative): Add/subtract to summoner's layer for summon."
+                ]
             }
         }
     },

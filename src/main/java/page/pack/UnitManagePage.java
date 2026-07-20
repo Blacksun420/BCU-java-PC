@@ -836,5 +836,4 @@ public class UnitManagePage extends DefaultPage {
 		}
 		return null;
 	}
-
 }

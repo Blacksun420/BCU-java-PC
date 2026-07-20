@@ -254,7 +254,7 @@ class MaModelEditTable extends AnimTable<int[]> {
 		int c2 = ((getBackground().getRGB() & m) >>> 1) + ((getForeground().getRGB() & m) >>> 1);
 		g.setColor(new Color(c2, true));
 		for (int i = 0; i < mm.strs0.length; i++) {
-			if (!mm.strs0[i].isEmpty() || anim.imgcut.strs[mm.parts[i][2]].isEmpty())
+			if (!mm.strs0[i].isEmpty() || mm.parts[i][2] == -1 || anim.imgcut.strs[mm.parts[i][2]].isEmpty())
 				continue;
 			int leadRow = getSelectionModel().getLeadSelectionIndex();
 			int leadCol = getColumnModel().getSelectionModel().getLeadSelectionIndex();

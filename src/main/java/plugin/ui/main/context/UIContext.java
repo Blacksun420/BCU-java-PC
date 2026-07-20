@@ -211,6 +211,13 @@ public abstract class UIContext {
                     for (int i = 1; i < history.length; i++) {
                         if (history[i].getVer() <= MainBCU.ver)
                             break;
+                        /*for (UpdateCheck.UpdateJson.AnnouncementJson announce : json.pc_announcement) {
+                            if (cfg.receivedAnnouncements.contains(announce.id + "_PC") || MainBCU.ver < announce.min_ver || MainBCU.ver > announce.max_ver)
+                                continue;
+
+                            if (Opts.warningLong(announce.title + "\n" + String.join("\n\n", announce.text), "Announcement", 700, 350))
+                                cfg.receivedAnnouncements.add(announce.id + "_PC");
+                        }*/
                         volds.append("\n\n").append(history[i].getDescription());
                     }
                     upd.info = volds.toString();

@@ -409,7 +409,7 @@ class HeadEditTable extends Page {
 			if (result.length == 1 || result[1].isEmpty()) {
 				if (!CommonStatic.isInteger(result[0]))
 					return;
-				Background b = UserProfile.getBCData().bgs.get(CommonStatic.safeParseInt(result[0]));
+				Background b = UserProfile.getBCData().bgs.findByID(CommonStatic.safeParseInt(result[0]));
 				if (b == null)
 					return;
 				jtf.setText(b.toString());
@@ -426,7 +426,7 @@ class HeadEditTable extends Page {
 			PackData pack = PackData.getPack(p);
 			if (pack == null)
 				return;
-			Background bg = pack.bgs.get(CommonStatic.safeParseInt(i));
+			Background bg = pack.bgs.findByID(CommonStatic.safeParseInt(i));
 			if (bg == null)
 				return;
 
