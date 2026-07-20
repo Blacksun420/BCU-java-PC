@@ -106,6 +106,8 @@ public interface IconBox extends ViewBox {
 				if (glow) {
 					gra.setComposite(FakeGraphics.BLEND, 255, 3);
 					bimg = aux.ico[0][6].getImg();
+					//if ((mode == 0 && type == 5) || (mode == 1 && type == 3) ? 8 : 6)
+					//	gra.setColor();
 					gra.drawImage(bimg, line[0], line[1], (int) (bw * r), (int) (bh * r));
 //					gra.setComposite(FakeGraphics.BLEND, 117, 3);
 //					bimg = aux.ico[0][7].getImg();

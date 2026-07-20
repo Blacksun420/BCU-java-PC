@@ -250,7 +250,7 @@ public class DIYViewPage extends AbViewPage implements AbEditPage {
 			int type = t % 6;
 			IconBox.IBConf.mode = mode; // [ Def, Str, Sou,
 			IconBox.IBConf.type = type; // [ 0,   1,   2,  3, 4, 5, 6, 7]
-			IconBox.IBConf.glow = (mode == 0 && type > 2 && type < 5) || (mode == 1 && type > 0 && type < 3);
+			IconBox.IBConf.glow = (mode == 0 && type > 2) || (mode == 1 && type > 0);
 			ib.changeType();
 		});
 
