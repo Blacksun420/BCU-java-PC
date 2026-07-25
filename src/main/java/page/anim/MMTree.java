@@ -75,7 +75,7 @@ class MMTree implements TreeExpansionListener {
 					DefaultMutableTreeNode pre = (line[0] == -1 ? top : data[line[0]]);
 					if (pre == null)
 						continue;
-					data[i] = new DefaultMutableTreeNode(i + " - " + (mm.strs0[i].isEmpty() ? anim.imgcut.strs[mm.parts[i][2]] : mm.strs0[i]));
+					data[i] = new DefaultMutableTreeNode(i + " - " + (mm.strs0[i].isEmpty() && mm.parts[i][2] >= 0 ? anim.imgcut.strs[mm.parts[i][2]] : mm.strs0[i]));
 					pre.add(data[i]);
 					c++;
 				}

@@ -173,7 +173,7 @@ public class MaAnimEditTable extends AnimTable<Part> {
 		int c2 = ((getBackground().getRGB() & m) >>> 1) + ((getForeground().getRGB() & m) >>> 1);
 		g.setColor(new Color(c2, true));
 		for (int i = 0; i < ma.parts.length; i++) {
-			if (!ma.parts[i].name.isEmpty())
+			if (!ma.parts[i].name.isEmpty() || anim.mamodel.parts[ma.parts[i].ints[0]][2] == -1)
 				continue;
 			String s = anim.mamodel.strs0[ma.parts[i].ints[0]].isEmpty() ? anim.imgcut.strs[anim.mamodel.parts[ma.parts[i].ints[0]][2]] : anim.mamodel.strs0[ma.parts[i].ints[0]];
 			if (s.isEmpty())
