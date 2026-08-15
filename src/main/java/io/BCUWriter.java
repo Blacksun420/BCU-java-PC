@@ -19,6 +19,7 @@ import main.Opts;
 import main.Printer;
 import page.MainFrame;
 import page.battle.BattleInfoPage;
+import page.battle.RecdSavePage;
 import page.support.Exporter;
 import page.support.Importer;
 import page.view.ViewBox;
@@ -282,6 +283,8 @@ public class BCUWriter extends DataIO {
 		addPropertyIf(jo, "searchtype", MainBCU.searchPerKey, false);//jo.addProperty("searchtype", MainBCU.searchPerKey);
 		addPropertyIf(jo, "tolerance", MainBCU.searchTolerance, 4);//jo.addProperty("tolerance", MainBCU.searchTolerance);
 		addPropertyIf(jo, "usedynamic", MainBCU.useDynamic, false);//jo.addProperty("usedynamic", MainBCU.useDynamic);
+		if (!RecdSavePage.defaultReplayFormat.equals("new ${s} replay"))
+			jo.addProperty("replayFormat", RecdSavePage.defaultReplayFormat);
 		String[] exp = new String[Exporter.curs.length];
 		for (int i = 0; i < exp.length; i++)
 			exp[i] = Exporter.curs[i] == null ? null : Exporter.curs[i].toString();

@@ -24,6 +24,7 @@ import page.LoadPage;
 import page.MainFrame;
 import page.MainLocale;
 import page.battle.BattleInfoPage;
+import page.battle.RecdSavePage;
 import page.support.Exporter;
 import page.support.Importer;
 import page.view.ViewBox;
@@ -98,6 +99,8 @@ public class BCUReader extends DataIO {
 				MainBCU.useDynamic = jo.has("usedynamic");
 				String[] exp = JsonDecoder.decode(jo.get("export_paths"), String[].class);
 				String[] imp = JsonDecoder.decode(jo.get("import_paths"), String[].class);
+				if (jo.has("replayFormat"))
+					RecdSavePage.defaultReplayFormat = jo.get("replayFormat").getAsString();
 				for (int i = 0; i < Math.min(Exporter.curs.length, exp.length); i++)
 					Exporter.curs[i] = exp[i] == null ? null : new File(exp[i]);
 				for (int i = 0; i < Math.min(Importer.curs.length, imp.length); i++)
