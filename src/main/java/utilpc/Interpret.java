@@ -137,7 +137,7 @@ public class Interpret extends Data {
 			Data.P_WEAKAURA, Data.P_STRONGAURA, Data.P_AI, Data.P_COMBOCOOLDOWN};
 
 	private static final DecimalFormat df;
-	public static String[] lvl = new String[] { "Sm", "M", "L", "XL", "XXL", "EX", "DEF" };
+	public static String[] lvl = new String[] { "Sm", "M", "L", "XL", "DOWN", "DEF" };
 
 	static {
 		redefine();
@@ -1275,12 +1275,11 @@ public class Interpret extends Data {
 				Level lv = bp.levels[i][j];
 				if (form == null)
 					continue;
-				int[][] orbs = lv.getOrbs();
-
 				ans.append("<tr><td>")
 						.append(form).append("</td><td>")
 						.append(UtilPC.lvText(form, lv)[0]).append("</td>");
-				if (lv.getOrbs() != null) {
+				int[][] orbs = lv.getOrbs();
+				if (orbs != null) {
 					// todo: read orb data
 				}
 				ans.append("</tr>");
