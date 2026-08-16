@@ -488,7 +488,7 @@ public abstract class SwingEditor extends Editor {
 					edi.exitter = field::set;
 				}
 				MainFrame.changePanel(edi);
-				edi.setData((Data.Proc.Condition)field.get());
+				edi.setData((Data.Proc.Condition)field.get(), par.obj);
 			});
 		}
 

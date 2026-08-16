@@ -226,7 +226,7 @@ public class ProcFilterTable extends Page {
         public void setData() {
             field.setData(par.obj);
             if (edi != null)
-                edi.setData(field.get() == null ? new Proc.Condition() : (Proc.Condition)field.get());
+                edi.setData(field.get() == null ? new Proc.Condition() : (Proc.Condition)field.get(), par.obj);
             else if (par.obj.exists())
                 ini();
         }
@@ -236,7 +236,7 @@ public class ProcFilterTable extends Page {
                 if (par.callback != null)
                     par.callback.run();
             };
-            edi.setData(field.get() == null ? new Proc.Condition() : (Proc.Condition)field.get());
+            edi.setData(field.get() == null ? new Proc.Condition() : (Proc.Condition)field.get(), par.obj);
         }
 
         @Override
